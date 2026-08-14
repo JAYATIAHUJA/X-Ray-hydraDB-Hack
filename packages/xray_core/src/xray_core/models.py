@@ -358,6 +358,13 @@ class QuerySpec(XrayModel):
         return _validate_scalar_mapping(value, "parameters")
 
 
+class EndpointExpectation(XrayModel):
+    path_key: str = Field(pattern=r"^[a-z]+:[0-9]{20}$")
+    hydra_id: HydraId
+    canonical_key: str = Field(min_length=1)
+    dataset_id: str = Field(min_length=1)
+
+
 class WriteBatchSpec(XrayModel):
     name: str = Field(min_length=1)
     statement: str = Field(min_length=1)
@@ -438,6 +445,7 @@ __all__ = [
     "CanonicalBundle",
     "CanonicalRecord",
     "EdgeRow",
+    "EndpointExpectation",
     "EvidenceClass",
     "EvidenceRecord",
     "ExecutionStatus",
