@@ -1,0 +1,83 @@
+{
+  "dataset_id": "xray-demo-v1",
+  "fixture_version": 1,
+  "schema_version": "1.0.0",
+  "created_at_epoch": 1735689600,
+  "evidence_classes": [
+    "observed",
+    "inferred",
+    "demo_ground_truth"
+  ],
+  "source_files": [
+    {
+      "path": "directory.json",
+      "source_type": "directory",
+      "source_uri": "fixture://xray-demo/directory",
+      "record_count": 10,
+      "sha256": "441a6d24431dfadca5d17c3fa4bd2655bcd1bdbfd6a11311b349cab5f32b0fd7",
+      "input_status": "complete"
+    },
+    {
+      "path": "events.json",
+      "source_type": "event_export",
+      "source_uri": "fixture://xray-demo/events",
+      "record_count": 14,
+      "sha256": "6dd6e304532fe7468ab1a25a7e250237e1fcde6970f595108e707c0353114094",
+      "input_status": "complete"
+    },
+    {
+      "path": "git_facts.json",
+      "source_type": "git",
+      "source_uri": "fixture://xray-demo/git-facts",
+      "record_count": 9,
+      "sha256": "de5f104d5f5ef64ef460d681ef169f4c3b0110cad15500ad189eab24a5c5e86a",
+      "input_status": "complete"
+    }
+  ],
+  "ground_truth_file": "ground_truth.json",
+  "ground_truth_descriptor": {
+    "evidence_class": "demo_ground_truth",
+    "sha256": "11542d214ceb11e1c392b2dabe873a297513401826e1bc86daf676d2b7a06783"
+  },
+  "sequence_contracts": [
+    {
+      "contract_id": "contract:approval-sequence:v1",
+      "contract_kind": "contiguous_sequence",
+      "sequence_key": "payments-change-approval",
+      "steps": [
+        {
+          "ordinal": 0,
+          "canonical_key": "artifact:directive",
+          "artifact_kind": "directive",
+          "required": true
+        },
+        {
+          "ordinal": 1,
+          "canonical_key": "artifact:missing-approval",
+          "artifact_kind": "approval",
+          "required": true
+        },
+        {
+          "ordinal": 2,
+          "canonical_key": "artifact:code-change",
+          "artifact_kind": "code_change",
+          "required": true
+        }
+      ],
+      "source_uri": "fixture://xray-demo/contracts/approval-sequence",
+      "content_sha256": "4f76d4b291e953e6cb0efac2351e7f9d096d26f332e0e59bbc15d5108d090386",
+      "limitations": [
+        "Export filtering is an alternative explanation."
+      ]
+    }
+  ],
+  "acceptance_labels": {
+    "ghost_broker_key": "person:maya-chen",
+    "weighted_degree_baseline_key": "person:nina-okafor",
+    "communication_isolate_key": "person:theo-brooks"
+  },
+  "limitations": [
+    "This is a labelled synthetic fixture and is not a measured real-organization result.",
+    "Absence does not establish deletion. The corpus is structurally incomplete at this point."
+  ]
+}

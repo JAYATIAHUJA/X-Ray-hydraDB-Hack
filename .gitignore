@@ -1,0 +1,15 @@
+.cache/
+.coverage
+.env
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.tmp-buildx-research/
+.venv/
+__pycache__/
+*.py[cod]
+coverage.xml
+htmlcov/
+node_modules/
+playwright-report/
+test-results/

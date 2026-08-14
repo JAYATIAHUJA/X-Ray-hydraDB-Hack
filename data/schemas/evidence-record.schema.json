@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xray.local/schemas/evidence-record.schema.json",
+  "title": "Evidence Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "evidence_id",
+    "run_id",
+    "source_type",
+    "source_uri",
+    "source_record_id",
+    "observed_epoch",
+    "subject_key",
+    "predicate",
+    "object_key",
+    "evidence_class",
+    "confidence",
+    "extraction_method",
+    "content_sha256",
+    "redacted_excerpt",
+    "metadata_json"
+  ],
+  "properties": {
+    "evidence_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_uri": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "observed_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "subject_key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "predicate": {
+      "type": "string",
+      "minLength": 1
+    },
+    "object_key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_class": {
+      "enum": ["observed", "inferred", "demo_ground_truth"]
+    },
+    "confidence": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "extraction_method": {
+      "type": "string",
+      "minLength": 1
+    },
+    "content_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "redacted_excerpt": {
+      "type": "string"
+    },
+    "metadata_json": {
+      "type": "string"
+    }
+  }
+}
