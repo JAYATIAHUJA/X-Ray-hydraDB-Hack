@@ -1,0 +1,148 @@
+[
+  {
+    "source": "xray-demo-git",
+    "external_id": "module-payments-api",
+    "kind": "module",
+    "occurred_at_epoch": 1735862400,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": ["module:payments-api"],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "canonical_key": "module:payments-api",
+      "criticality": 1.0,
+      "module_name": "payments-api"
+    }
+  },
+  {
+    "source": "xray-demo-git",
+    "external_id": "module-ledger-worker",
+    "kind": "module",
+    "occurred_at_epoch": 1735862400,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": ["module:ledger-worker"],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "canonical_key": "module:ledger-worker",
+      "criticality": 0.95,
+      "module_name": "ledger-worker"
+    }
+  },
+  {
+    "source": "xray-demo-git",
+    "external_id": "module-identity-api",
+    "kind": "module",
+    "occurred_at_epoch": 1735862400,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": ["module:identity-api"],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "canonical_key": "module:identity-api",
+      "criticality": 0.8,
+      "module_name": "identity-api"
+    }
+  },
+  {
+    "source": "xray-demo-git",
+    "external_id": "module-audit-sink",
+    "kind": "module",
+    "occurred_at_epoch": 1735862400,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": ["module:audit-sink"],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "canonical_key": "module:audit-sink",
+      "criticality": 0.7,
+      "module_name": "audit-sink"
+    }
+  },
+  {
+    "source": "xray-demo-git",
+    "external_id": "authorship-alex-rivera-payments-api",
+    "kind": "authorship_aggregate",
+    "occurred_at_epoch": 1735948800,
+    "author_external_id": "alex-rivera",
+    "parent_external_id": null,
+    "subjects": ["person:alex-rivera", "module:payments-api"],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "attributed_count": 12,
+      "module_external_id": "payments-api",
+      "total_attributed_count": 12
+    }
+  },
+  {
+    "source": "xray-demo-git",
+    "external_id": "authorship-theo-brooks-ledger-worker",
+    "kind": "authorship_aggregate",
+    "occurred_at_epoch": 1735948800,
+    "author_external_id": "theo-brooks",
+    "parent_external_id": null,
+    "subjects": ["person:theo-brooks", "module:ledger-worker"],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "attributed_count": 9,
+      "module_external_id": "ledger-worker",
+      "total_attributed_count": 9
+    }
+  },
+  {
+    "source": "xray-demo-git",
+    "external_id": "authorship-omar-haddad-identity-api",
+    "kind": "authorship_aggregate",
+    "occurred_at_epoch": 1735948800,
+    "author_external_id": "omar-haddad",
+    "parent_external_id": null,
+    "subjects": ["person:omar-haddad", "module:identity-api"],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "attributed_count": 7,
+      "module_external_id": "identity-api",
+      "total_attributed_count": 7
+    }
+  },
+  {
+    "source": "xray-demo-git",
+    "external_id": "dependency-payments-api-ledger-worker-import",
+    "kind": "dependency",
+    "occurred_at_epoch": 1736035200,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": ["module:payments-api", "module:ledger-worker"],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "dependency_kind": "import",
+      "source_module_external_id": "payments-api",
+      "target_module_external_id": "ledger-worker",
+      "weight": 12
+    }
+  },
+  {
+    "source": "xray-demo-git",
+    "external_id": "cochange-identity-api-audit-sink",
+    "kind": "cochange",
+    "occurred_at_epoch": 1736035200,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": ["module:identity-api", "module:audit-sink"],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "cochange_count": 3,
+      "relationship_class": "inferred_coupling",
+      "source_module_external_id": "identity-api",
+      "target_module_external_id": "audit-sink"
+    }
+  }
+]

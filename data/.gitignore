@@ -1,0 +1,6 @@
+*
+!.gitignore
+!fixtures/
+!fixtures/**
+!schemas/
+!schemas/**
