@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xray.local/schemas/canonical-record.schema.json",
+  "title": "Canonical Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source",
+    "external_id",
+    "kind",
+    "occurred_at_epoch",
+    "author_external_id",
+    "parent_external_id",
+    "subjects",
+    "content_sha256",
+    "content",
+    "metadata"
+  ],
+  "properties": {
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "external_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "type": "string",
+      "minLength": 1
+    },
+    "occurred_at_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "author_external_id": {
+      "type": ["string", "null"]
+    },
+    "parent_external_id": {
+      "type": ["string", "null"]
+    },
+    "subjects": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "content_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "content": {
+      "type": ["string", "null"]
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": {
+        "type": ["integer", "number", "boolean", "string"]
+      }
+    }
+  }
+}

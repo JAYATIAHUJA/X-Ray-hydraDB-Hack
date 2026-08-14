@@ -1,0 +1,25 @@
+[project]
+name = "xray-api"
+version = "0.1.0"
+description = "Versioned HTTP API for the X-Ray evidence platform"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "cryptography>=44.0.0",
+    "duckdb>=1.2.0",
+    "fastapi>=0.115.0",
+    "huggingface-hub>=0.28.0",
+    "pydantic>=2.10.0",
+    "uvicorn[standard]>=0.34.0",
+    "xray-analytics",
+    "xray-core",
+    "xray-hydra",
+    "xray-ingest",
+    "xray-runtime",
+]
+
+[build-system]
+requires = ["hatchling>=1.27.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/xray_api"]
