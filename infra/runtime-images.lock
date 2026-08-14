@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "images": {
+    "hydradb": {
+      "repository": "ghcr.io/hydra-db/hydradb",
+      "digest": "sha256:db78309a233be54662db29744047e985a39b51c45a270d1a1f47c31a62cdb709",
+      "source_commit": "02a40025d2d57e97ab2754c8256219cdbfeab379",
+      "license": "AGPL-3.0"
+    },
+    "python": {
+      "repository": "python",
+      "tag": "3.13-slim",
+      "platform": "linux/amd64",
+      "digest": "sha256:8fef26df932191825664e4957ff488c96dfe64918327634a357a55facbc994d3",
+      "license": "Python-2.0"
+    },
+    "golang": {
+      "repository": "golang",
+      "tag": "1.25-bookworm",
+      "platform": "linux/amd64",
+      "digest": "sha256:40dfc169bd5ad8a8617e49c8ead7fe16c6873e79d6937539e9c2e5947b7984ef",
+      "license": "BSD-3-Clause"
+    }
+  }
+}

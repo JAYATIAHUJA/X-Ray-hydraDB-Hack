@@ -1,0 +1,7 @@
+services:
+  hydradb:
+    environment:
+      XRAY_TEST_MODE: "true"
+  hydradb-indexer:
+    environment:
+      XRAY_TEST_MODE: "true"

@@ -1,0 +1,112 @@
+name: ${XRAY_COMPOSE_PROJECT}
+
+services:
+  minio:
+    build:
+      context: ./infra/minio
+    profiles: ["core"]
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER_FILE: /run/secrets/minio-root-user
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio-root-password
+    ports:
+      - "127.0.0.1:${XRAY_MINIO_API_PORT}:9000"
+      - "127.0.0.1:${XRAY_MINIO_CONSOLE_PORT}:9001"
+    secrets:
+      - minio-root-user
+      - minio-root-password
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:9000/minio/health/live"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  minio-init:
+    build:
+      context: ./infra/minio
+      dockerfile: init.Dockerfile
+    profiles: ["core"]
+    environment:
+      XRAY_BUCKET_NAME: ${XRAY_BUCKET_NAME}
+      AWS_ENDPOINT_URL: http://minio:9000
+      AWS_ACCESS_KEY_ID_FILE: /run/secrets/minio-root-user
+      AWS_SECRET_ACCESS_KEY_FILE: /run/secrets/minio-root-password
+    secrets:
+      - minio-root-user
+      - minio-root-password
+    depends_on:
+      minio:
+        condition: service_healthy
+
+  hydradb:
+    image: ghcr.io/hydra-db/hydradb@sha256:db78309a233be54662db29744047e985a39b51c45a270d1a1f47c31a62cdb709
+    profiles: ["core"]
+    environment: &hydra-env
+      RUST_MIN_STACK: "33554432"
+      CLOUD_PROVIDER: aws
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_ALLOW_HTTP: "true"
+      AWS_ENDPOINT: http://minio:9000
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      GRAPH_NAMESPACE: ${XRAY_GRAPH_NAMESPACE}
+      GRAPH_ID: ${XRAY_GRAPH_ID}
+      GRAPH_DATABASE: ${XRAY_GRAPH_DATABASE}
+      GRAPH_OBJECT_PREFIX: ${XRAY_OBJECT_PREFIX}
+      GRAPH_CELL_ID: cell-0
+      GRAPH_CELLS: cell-0
+      GRAPH_DATA_CACHE_DIR: /var/cache/slatedb/data
+      GRAPH_NODE_ID: node-0
+      GRAPH_BOLT_ADDR: 0.0.0.0:7687
+      GRAPH_HTTP_ADDR: 0.0.0.0:8443
+      GRAPH_ADMIN_ADDR: 0.0.0.0:9090
+      GRAPH_BOLT_NODE_ADDRESSES: node-0=hydradb:7687
+      GRAPH_ADVERTISED_BOLT_ADDR: hydradb:7687
+      GRAPH_AUTH_TOKEN_FILE: /run/secrets/hydra-auth-token
+      GRAPH_ALLOW_PLAINTEXT: "true"
+    ports:
+      - "127.0.0.1:${XRAY_BOLT_PORT}:7687"
+      - "127.0.0.1:${XRAY_HTTP_PORT}:8443"
+      - "127.0.0.1:${XRAY_ADMIN_PORT}:9090"
+    secrets:
+      - hydra-auth-token
+    depends_on:
+      minio-init:
+        condition: service_completed_successfully
+    volumes:
+      - hydra-cache:/var/cache/slatedb
+
+  hydradb-indexer:
+    image: ghcr.io/hydra-db/hydradb@sha256:db78309a233be54662db29744047e985a39b51c45a270d1a1f47c31a62cdb709
+    profiles: ["core"]
+    entrypoint: ["/usr/local/bin/graph-indexer"]
+    environment:
+      <<: *hydra-env
+      GRAPH_INDEXER_ADMIN_ADDR: 0.0.0.0:9091
+    ports:
+      - "127.0.0.1:${XRAY_INDEXER_ADMIN_PORT}:9091"
+    secrets:
+      - hydra-auth-token
+    depends_on:
+      minio-init:
+        condition: service_completed_successfully
+    volumes:
+      - hydra-indexer-cache:/var/cache/slatedb
+
+secrets:
+  hydra-auth-token:
+    file: ${XRAY_RUNTIME_DIR}/hydra-auth-token
+  minio-root-user:
+    file: ${XRAY_RUNTIME_DIR}/minio-root-user
+  minio-root-password:
+    file: ${XRAY_RUNTIME_DIR}/minio-root-password
+
+volumes:
+  minio-data:
+    name: ${XRAY_COMPOSE_PROJECT}-minio-data
+  hydra-cache:
+    name: ${XRAY_COMPOSE_PROJECT}-hydra-cache
+  hydra-indexer-cache:
+    name: ${XRAY_COMPOSE_PROJECT}-hydra-indexer-cache
