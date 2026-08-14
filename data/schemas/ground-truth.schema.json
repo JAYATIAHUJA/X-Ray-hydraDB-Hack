@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xray.local/schemas/ground-truth.schema.json",
+  "title": "X-Ray Demo Ground Truth",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ghost_person_key",
+    "faultline_module_keys",
+    "gap_path"
+  ],
+  "properties": {
+    "ghost_person_key": {
+      "const": "person:maya-chen"
+    },
+    "faultline_module_keys": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "const": "module:payments-api"
+        },
+        {
+          "const": "module:ledger-worker"
+        }
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "gap_path": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_artifact_key",
+        "target_artifact_key",
+        "phantom_key"
+      ],
+      "properties": {
+        "source_artifact_key": {
+          "const": "artifact:code-change"
+        },
+        "target_artifact_key": {
+          "const": "artifact:directive"
+        },
+        "phantom_key": {
+          "const": "artifact:missing-approval"
+        }
+      }
+    }
+  }
+}

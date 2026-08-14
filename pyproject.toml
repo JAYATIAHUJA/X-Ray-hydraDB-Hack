@@ -1,0 +1,73 @@
+[project]
+name = "xray-evidence-platform"
+version = "0.1.0"
+description = "Evidence-first socio-technical analysis on self-hosted HydraDB"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "xray-analytics",
+    "xray-api",
+    "xray-core",
+    "xray-hydra",
+    "xray-ingest",
+    "xray-runtime",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "hypothesis>=6.135.0",
+    "mypy>=1.15.0",
+    "pip-audit>=2.8.0",
+    "pypdf>=5.4.0",
+    "pytest>=8.3.5",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.11.0",
+    "types-pyyaml>=6.0.12.20241230",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["apps/api", "packages/*"]
+
+[tool.uv.sources]
+xray-analytics = { workspace = true }
+xray-api = { workspace = true }
+xray-core = { workspace = true }
+xray-hydra = { workspace = true }
+xray-ingest = { workspace = true }
+xray-runtime = { workspace = true }
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-config --strict-markers -p no:cacheprovider"
+minversion = "8.0"
+testpaths = ["tests", "apps/api/tests"]
+xfail_strict = true
+markers = [
+    "integration: tests that require service or persistence boundaries",
+    "acceptance: complete user-facing or release-gate journeys",
+    "external_data: opt-in tests that require licensed or downloaded corpora",
+]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+extend-exclude = [".tmp-buildx-research"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP", "B", "RUF"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+files = ["apps/api/src", "packages"]
+exclude = ["(^|[\\/])tests([\\/]|$)"]
+pretty = true
+show_error_codes = true
+warn_unreachable = true

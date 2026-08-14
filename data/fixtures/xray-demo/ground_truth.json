@@ -1,0 +1,12 @@
+{
+  "ghost_person_key": "person:maya-chen",
+  "faultline_module_keys": [
+    "module:payments-api",
+    "module:ledger-worker"
+  ],
+  "gap_path": {
+    "source_artifact_key": "artifact:code-change",
+    "target_artifact_key": "artifact:directive",
+    "phantom_key": "artifact:missing-approval"
+  }
+}
