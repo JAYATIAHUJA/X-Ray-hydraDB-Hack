@@ -4,6 +4,16 @@ import userEvent from "@testing-library/user-event";
 import { App } from "./App";
 
 const responses: Record<string, object> = {
+  "/api/v1/health": {
+    status: "ok",
+    hydra: {
+      status: "fallback",
+      configured: false,
+      database: null,
+      uri: null,
+      detail: "XRAY_HYDRA_URI is not configured; using in-memory fixture analytics."
+    }
+  },
   "/api/v1/snapshots/current": {
     snapshot_id: "xray-demo-v1:fixture",
     dataset_id: "xray-demo-v1",
@@ -153,6 +163,7 @@ test("renders the three-lens shell from API responses", async () => {
   expect(screen.getByRole("heading", { name: "X-Ray" })).toBeInTheDocument();
   expect(screen.getByText("Loading")).toBeInTheDocument();
   expect(await screen.findByText("Graph: 17 nodes / 29 edges")).toBeInTheDocument();
+  expect(await screen.findByText("HydraDB: fallback")).toBeInTheDocument();
   expect(await screen.findAllByText("Maya Chen")).toHaveLength(2);
   expect(await screen.findByText("Operations specialist / operations")).toBeInTheDocument();
   const alexNode = screen.getByRole("button", { name: /Alex Rivera/ });

@@ -1,7 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCurrentSnapshot, getFaultlines, getGapPath, getGhosts, getGraph } from "./api";
+import { getCurrentSnapshot, getFaultlines, getGapPath, getGhosts, getGraph, getHealth } from "./api";
 
 export function useXraySnapshot() {
+  const health = useQuery({
+    queryKey: ["health"],
+    queryFn: getHealth
+  });
+
   const snapshot = useQuery({
     queryKey: ["snapshot", "current"],
     queryFn: getCurrentSnapshot
@@ -32,5 +37,5 @@ export function useXraySnapshot() {
     queryFn: () => getGapPath(snapshotId ?? "")
   });
 
-  return { faultlines, gapPath, ghosts, graph, snapshot };
+  return { faultlines, gapPath, ghosts, graph, health, snapshot };
 }

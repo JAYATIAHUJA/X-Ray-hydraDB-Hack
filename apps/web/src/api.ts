@@ -7,6 +7,17 @@ export type SnapshotResponse = {
   limitations: string[];
 };
 
+export type HealthResponse = {
+  status: string;
+  hydra: {
+    status: "fallback" | "live" | "offline";
+    configured: boolean;
+    database: string | null;
+    uri: string | null;
+    detail: string;
+  };
+};
+
 export type LensEnvelope<TFinding> = {
   snapshot_id: string;
   analysis_status: "complete" | "partial" | "unsupported";
@@ -93,6 +104,10 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
 
 export function getCurrentSnapshot() {
   return requestJson<SnapshotResponse>("/api/v1/snapshots/current");
+}
+
+export function getHealth() {
+  return requestJson<HealthResponse>("/api/v1/health");
 }
 
 export function getGraph(snapshotId: string) {

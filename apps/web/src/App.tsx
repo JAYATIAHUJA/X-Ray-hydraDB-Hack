@@ -30,7 +30,7 @@ export function App() {
   const [activeLens, setActiveLens] = useState<Lens>("org");
   const [mode, setMode] = useState<"actual" | "official">("actual");
   const [selectedNodeKey, setSelectedNodeKey] = useState<string | undefined>();
-  const { faultlines, gapPath, ghosts, graph, snapshot } = useXraySnapshot();
+  const { faultlines, gapPath, ghosts, graph, health, snapshot } = useXraySnapshot();
   const people = graph.data?.nodes ?? [];
   const defaultSelectedKey = people.find((person) => person.selected)?.key ?? people[0]?.key;
   const selectedKey = people.some((person) => person.key === selectedNodeKey) ? selectedNodeKey : defaultSelectedKey;
@@ -40,9 +40,15 @@ export function App() {
     ghosts.data?.findings[0];
   const faultlineRows = toFaultlineRows(faultlines.data?.findings ?? []);
   const gapRows = toGapRows(gapPath.data?.findings ?? []);
-  const hasError = snapshot.isError || graph.isError || ghosts.isError || faultlines.isError || gapPath.isError;
+  const hasError =
+    health.isError || snapshot.isError || graph.isError || ghosts.isError || faultlines.isError || gapPath.isError;
   const isLoading =
-    snapshot.isPending || graph.isPending || ghosts.isPending || faultlines.isPending || gapPath.isPending;
+    health.isPending ||
+    snapshot.isPending ||
+    graph.isPending ||
+    ghosts.isPending ||
+    faultlines.isPending ||
+    gapPath.isPending;
   const graphLinks = useMemo(
     () =>
       (graph.data?.edges ?? []).map((link) => ({
@@ -76,7 +82,9 @@ export function App() {
         <div className="topbar-metric">
           Graph: {snapshot.data?.node_count ?? "--"} nodes / {snapshot.data?.edge_count ?? "--"} edges
         </div>
-        <div className="topbar-metric">HydraDB: {ghosts.data?.analysis_status ?? "pending"}</div>
+        <div className={health.data?.hydra.status === "offline" ? "topbar-metric unhealthy" : "topbar-metric"}>
+          HydraDB: {formatHydraStatus(health.data?.hydra.status)}
+        </div>
       </header>
 
       <div className="workspace">
@@ -239,6 +247,13 @@ function formatRankGap(finding: GhostFinding | undefined) {
     return "--";
   }
   return finding.rank_gap > 0 ? `+${finding.rank_gap} places` : `${finding.rank_gap} places`;
+}
+
+function formatHydraStatus(status: "fallback" | "live" | "offline" | undefined) {
+  if (status === undefined) {
+    return "pending";
+  }
+  return status;
 }
 
 function toFaultlineRows(findings: FaultlineFinding[]) {
