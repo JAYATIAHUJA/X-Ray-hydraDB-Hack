@@ -10,7 +10,7 @@ from xray_core.models import AnalysisStatus, EdgeRow, NodeRow
 from .config import get_settings
 from .dependencies import current_snapshot_id, demo_bundle
 from .errors import not_found
-from .hydra import hydra_health
+from .hydra import HydraHealth, hydra_health, seed_bundle
 from .schemas import (
     GapPathRequest,
     GraphEdge,
@@ -18,7 +18,9 @@ from .schemas import (
     GraphResponse,
     HealthResponse,
     HydraHealthResponse,
+    HydraSeedResponse,
     LensEnvelope,
+    LoadReportResponse,
     SnapshotResponse,
 )
 
@@ -51,12 +53,28 @@ def create_app() -> FastAPI:
         hydra = hydra_health(get_settings())
         return HealthResponse(
             status="ok",
-            hydra=HydraHealthResponse(
-                status=hydra.status,
-                configured=hydra.configured,
-                database=hydra.database,
-                uri=hydra.uri,
-                detail=hydra.detail,
+            hydra=_hydra_health_response(hydra),
+        )
+
+    @app.post("/api/v1/hydra/seed-fixture", response_model=HydraSeedResponse)
+    def seed_fixture() -> HydraSeedResponse:
+        result = seed_bundle(get_settings(), demo_bundle())
+        report = result.report
+        return HydraSeedResponse(
+            status=result.status,
+            detail=result.detail,
+            hydra=_hydra_health_response(result.hydra),
+            report=None
+            if report is None
+            else LoadReportResponse(
+                snapshot_id=report.snapshot_id,
+                node_count=report.node_count,
+                edge_count=report.edge_count,
+                attempted_batches=report.attempted_batches,
+                completed_batches=report.completed_batches,
+                resumed_batches=report.resumed_batches,
+                failed_batches=report.failed_batches,
+                graph_fingerprint=report.graph_fingerprint,
             ),
         )
 
@@ -161,6 +179,16 @@ def _lens_envelope(
         status_explanation=explanation,
         limitations=limitations,
         findings=findings,
+    )
+
+
+def _hydra_health_response(hydra: HydraHealth) -> HydraHealthResponse:
+    return HydraHealthResponse(
+        status=hydra.status,
+        configured=hydra.configured,
+        database=hydra.database,
+        uri=hydra.uri,
+        detail=hydra.detail,
     )
 
 
