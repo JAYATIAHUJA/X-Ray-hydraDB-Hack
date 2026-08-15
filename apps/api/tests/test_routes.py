@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from xray_api import create_app
 from xray_api.config import settings_from_env
 from xray_api.dependencies import demo_bundle
-from xray_api.hydra import seed_bundle
+from xray_api.hydra import graph_rows, seed_bundle
 from xray_core.models import CanonicalBundle, LoadReport, SnapshotManifest, WriteBatchSpec
 from xray_hydra import HydraGateway
 
@@ -146,6 +146,35 @@ def recording_snapshot_writer(bundle: CanonicalBundle, snapshot_dir: object) -> 
     )
 
 
+class GraphRowsDriver:
+    def __init__(self) -> None:
+        self.parameters: list[dict[str, object] | None] = []
+
+    def execute_query(
+        self,
+        query_: str,
+        parameters_: dict[str, object] | None = None,
+    ) -> list[dict[str, object]]:
+        self.parameters.append(parameters_)
+        if "MATCH (p:Person" in query_:
+            return [
+                {
+                    "key": "person:alex-rivera",
+                    "properties": (
+                        '{"display_name":"Alex Rivera","role_rank":4,'
+                        '"team_id":"team:payments"}'
+                    ),
+                }
+            ]
+        return [
+            {
+                "source": "person:alex-rivera",
+                "target": "person:maya-chen",
+                "properties": '{"weight":5}',
+            }
+        ]
+
+
 def test_graph_endpoint_projects_person_communication_graph() -> None:
     response = client().get("/api/v1/snapshots/xray-demo-v1:fixture/graph")
 
@@ -158,6 +187,21 @@ def test_graph_endpoint_projects_person_communication_graph() -> None:
     assert maya["selected"] is True
     assert maya["actual_size"] > maya["official_size"]
     assert payload["edges"][0]["strength"] in {"strong", "medium", "weak"}
+
+
+def test_graph_rows_reads_live_hydradb_projection() -> None:
+    settings = settings_from_env({"XRAY_HYDRA_URI": "bolt://hydra.example:7687"})
+    driver = GraphRowsDriver()
+
+    rows = graph_rows(settings, "xray-demo-v1", gateway=HydraGateway(driver))
+
+    assert rows is not None
+    assert rows.nodes[0].key == "person:alex-rivera"
+    assert rows.nodes[0].properties["display_name"] == "Alex Rivera"
+    assert rows.edges[0].source == "person:alex-rivera"
+    assert rows.edges[0].target == "person:maya-chen"
+    assert rows.edges[0].weight == 5.0
+    assert driver.parameters == [{"dataset_id": "xray-demo-v1"}, {"dataset_id": "xray-demo-v1"}]
 
 
 def test_faultlines_endpoint_returns_no_path_coordination_debt() -> None:
