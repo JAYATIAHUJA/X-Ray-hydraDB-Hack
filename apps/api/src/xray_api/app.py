@@ -7,14 +7,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from xray_analytics import GhostScore, bus_factor_impact, faultlines, gap_findings, ghost_scores
 from xray_core.models import AnalysisStatus, EdgeRow, NodeRow
 
+from .config import get_settings
 from .dependencies import current_snapshot_id, demo_bundle
 from .errors import not_found
+from .hydra import hydra_health
 from .schemas import (
     GapPathRequest,
     GraphEdge,
     GraphNode,
     GraphResponse,
     HealthResponse,
+    HydraHealthResponse,
     LensEnvelope,
     SnapshotResponse,
 )
@@ -45,7 +48,17 @@ def create_app() -> FastAPI:
 
     @app.get("/api/v1/health", response_model=HealthResponse)
     def health() -> HealthResponse:
-        return HealthResponse(status="ok")
+        hydra = hydra_health(get_settings())
+        return HealthResponse(
+            status="ok",
+            hydra=HydraHealthResponse(
+                status=hydra.status,
+                configured=hydra.configured,
+                database=hydra.database,
+                uri=hydra.uri,
+                detail=hydra.detail,
+            ),
+        )
 
     @app.get("/api/v1/snapshots/current", response_model=SnapshotResponse)
     def current_snapshot() -> SnapshotResponse:

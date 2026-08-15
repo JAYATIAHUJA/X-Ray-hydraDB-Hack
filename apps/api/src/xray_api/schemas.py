@@ -4,8 +4,17 @@ from pydantic import BaseModel, Field
 from xray_core.models import AnalysisStatus
 
 
+class HydraHealthResponse(BaseModel):
+    status: str
+    configured: bool
+    database: str | None
+    uri: str | None
+    detail: str
+
+
 class HealthResponse(BaseModel):
     status: str
+    hydra: HydraHealthResponse
 
 
 class SnapshotResponse(BaseModel):
@@ -69,6 +78,7 @@ __all__ = [
     "GraphNode",
     "GraphResponse",
     "HealthResponse",
+    "HydraHealthResponse",
     "LensEnvelope",
     "ProblemDetail",
     "SnapshotResponse",

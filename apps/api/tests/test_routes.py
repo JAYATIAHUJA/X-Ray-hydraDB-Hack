@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 from xray_api import create_app
+from xray_api.config import settings_from_env
 
 
 def client() -> TestClient:
@@ -11,13 +12,33 @@ def client() -> TestClient:
 def test_health_and_current_snapshot() -> None:
     api = client()
 
-    assert api.get("/api/v1/health").json() == {"status": "ok"}
+    health = api.get("/api/v1/health").json()
+    assert health["status"] == "ok"
+    assert health["hydra"]["status"] == "fallback"
+    assert health["hydra"]["configured"] is False
     snapshot = api.get("/api/v1/snapshots/current").json()
 
     assert snapshot["snapshot_id"] == "xray-demo-v1:fixture"
     assert snapshot["node_count"] == 17
     assert snapshot["edge_count"] == 29
     assert snapshot["evidence_count"] == 34
+
+
+def test_settings_reads_hydradb_environment_contract() -> None:
+    settings = settings_from_env(
+        {
+            "XRAY_HYDRA_URI": "bolt://localhost:7687",
+            "XRAY_HYDRA_USER": "neo4j",
+            "XRAY_HYDRA_PASSWORD": "password",
+            "XRAY_HYDRA_DATABASE": "xray",
+        }
+    )
+
+    assert settings.hydra_configured is True
+    assert settings.hydra_uri == "bolt://localhost:7687"
+    assert settings.hydra_user == "neo4j"
+    assert settings.hydra_password == "password"
+    assert settings.hydra_database == "xray"
 
 
 def test_ghosts_endpoint_returns_complete_fixture_finding() -> None:
