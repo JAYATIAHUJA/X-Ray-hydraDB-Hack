@@ -14,7 +14,9 @@ class DerivationError(ValueError):
 
 
 def _canonical_json(value: object) -> str:
-    return json.dumps(value, ensure_ascii=False, allow_nan=False, sort_keys=True, separators=(",", ":"))
+    return json.dumps(
+        value, ensure_ascii=False, allow_nan=False, sort_keys=True, separators=(",", ":")
+    )
 
 
 def _evidence_metadata(record: EvidenceRecord) -> dict[str, object]:
@@ -123,6 +125,7 @@ class CommunicationAggregate:
     last_epoch: int
     mention_weight: int = 0
     reply_weight: int = 0
+    email_weight: int = 0
     evidence_ids: tuple[str, ...] = ()
 
     def add(
@@ -140,6 +143,7 @@ class CommunicationAggregate:
             last_epoch=max(self.last_epoch, last_epoch),
             mention_weight=self.mention_weight + (count if kind == "mention" else 0),
             reply_weight=self.reply_weight + (count if kind == "reply" else 0),
+            email_weight=self.email_weight + (count if kind == "email" else 0),
             evidence_ids=tuple(sorted((*self.evidence_ids, evidence_id))),
         )
 
@@ -151,20 +155,26 @@ def _communication_edges(bundle: CanonicalBundle) -> tuple[EdgeRow, ...]:
             continue
         metadata = _evidence_metadata(evidence)
         source_key = f"person:{_str_metadata(metadata, 'sender_external_id', evidence.evidence_id)}"
-        target_key = f"person:{_str_metadata(metadata, 'recipient_external_id', evidence.evidence_id)}"
+        target_key = (
+            f"person:{_str_metadata(metadata, 'recipient_external_id', evidence.evidence_id)}"
+        )
         kind = _str_metadata(metadata, "interaction_kind", evidence.evidence_id)
-        if kind not in {"mention", "reply"}:
-            raise DerivationError(f"{evidence.evidence_id} has unsupported interaction_kind {kind!r}")
+        if kind not in {"mention", "reply", "email"}:
+            raise DerivationError(
+                f"{evidence.evidence_id} has unsupported interaction_kind {kind!r}"
+            )
         count = _int_metadata(metadata, "interaction_count", evidence.evidence_id)
         first_epoch = _int_metadata(metadata, "first_epoch", evidence.evidence_id)
         last_epoch = _int_metadata(metadata, "last_epoch", evidence.evidence_id)
         key = (source_key, target_key)
-        current = aggregates.get(key) or CommunicationAggregate(source_key, target_key, first_epoch, last_epoch)
+        current = aggregates.get(key) or CommunicationAggregate(
+            source_key, target_key, first_epoch, last_epoch
+        )
         aggregates[key] = current.add(kind, count, first_epoch, last_epoch, evidence.evidence_id)
 
     edges = []
     for aggregate in aggregates.values():
-        total = aggregate.mention_weight + aggregate.reply_weight
+        total = aggregate.mention_weight + aggregate.reply_weight + aggregate.email_weight
         edges.append(
             _add_edge(
                 bundle,
@@ -177,6 +187,7 @@ def _communication_edges(bundle: CanonicalBundle) -> tuple[EdgeRow, ...]:
                     "last_epoch": aggregate.last_epoch,
                     "mention_weight": aggregate.mention_weight,
                     "reply_weight": aggregate.reply_weight,
+                    "email_weight": aggregate.email_weight,
                     "weight": total,
                 },
                 evidence_ids=aggregate.evidence_ids,

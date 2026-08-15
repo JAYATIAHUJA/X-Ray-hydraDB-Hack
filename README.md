@@ -27,3 +27,22 @@ Invoke-RestMethod -Method Post http://127.0.0.1:8000/api/v1/hydra/seed-fixture
 
 When `XRAY_HYDRA_URI` is unset, the seed endpoint returns `status = fallback` and does not
 write anything.
+
+## Source ingestion
+
+X-Ray can now normalize deterministic exports from Slack, email, ticketing systems, and Git
+before they enter the canonical evidence pipeline. The adapters intentionally require explicit
+external IDs, recipients, reply authors, and module references; they do not infer those facts
+from message text.
+
+| Export | Adapter | Required fields |
+| --- | --- | --- |
+| Slack message | `slack_records` | `id`, `occurred_at_epoch`, `author_id` |
+| Email | `email_records` | `id`, `occurred_at_epoch`, `from_id`, `to_ids` |
+| Ticket | `ticket_records` | `id`, `occurred_at_epoch`, `reporter_id` |
+| Git commit | `code_records` | `sha`, `occurred_at_epoch`, `author_id` |
+
+All adapters also accept `module_keys` when the source has an explicit module reference.
+Slack accepts resolved `parent_author_id` and `mentions`; email recipients become observed
+communication inputs. Directory records for the referenced people and modules must be present
+in the same canonical bundle before derived graph relationships are calculated.
