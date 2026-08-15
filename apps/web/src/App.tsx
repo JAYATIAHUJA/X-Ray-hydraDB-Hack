@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import { useEffect, useMemo, useState } from "react";
 import type { FaultlineFinding, GapFinding, GhostFinding } from "./api";
 import type { Lens } from "./data";
-import { queryText } from "./data";
+import { queryTextByLens } from "./data";
 import { useXraySnapshot } from "./queries";
 
 const tabs: Array<{ id: Lens; label: string; sublabel: string; icon: string }> = [
@@ -40,6 +40,13 @@ export function App() {
     ghosts.data?.findings[0];
   const faultlineRows = toFaultlineRows(faultlines.data?.findings ?? []);
   const gapRows = toGapRows(gapPath.data?.findings ?? []);
+  const activeQuery = queryTextByLens[activeLens];
+  const activeAnalysisStatus =
+    activeLens === "org"
+      ? ghosts.data?.analysis_status
+      : activeLens === "faultlines"
+        ? faultlines.data?.analysis_status
+        : gapPath.data?.analysis_status;
   const hasError =
     health.isError || snapshot.isError || graph.isError || ghosts.isError || faultlines.isError || gapPath.isError;
   const isLoading =
@@ -75,13 +82,14 @@ export function App() {
           <h1>X-Ray</h1>
           <p>X-Ray Evidence Platform</p>
         </div>
-        <div className="status-pill">Local fixture</div>
+        <div className="status-pill">{snapshot.data?.dataset_id ?? "fixture"}</div>
         <div className={hasError ? "topbar-metric unhealthy" : "topbar-metric healthy"}>
           {hasError ? "API offline" : isLoading ? "Loading" : "Healthy"}
         </div>
         <div className="topbar-metric">
           Graph: {snapshot.data?.node_count ?? "--"} nodes / {snapshot.data?.edge_count ?? "--"} edges
         </div>
+        <div className="topbar-metric">Sources: Slack · Email · Tickets · Git</div>
         <div className={health.data?.hydra.status === "offline" ? "topbar-metric unhealthy" : "topbar-metric"}>
           HydraDB: {formatHydraStatus(health.data?.hydra.status)}
         </div>
@@ -224,12 +232,12 @@ export function App() {
           </section>
 
           <details className="query-card" open>
-            <summary>How HydraDB Answered This</summary>
-            <pre>{queryText}</pre>
+            <summary>How HydraDB answered {activeLens}</summary>
+            <pre>{activeQuery}</pre>
             <footer>
-              <span>maxLen: 4</span>
-              <span>resultLimit: 100</span>
-              <span>status: {ghosts.data?.analysis_status ?? "pending"}</span>
+              <span>maxLen: {activeLens === "gaps" ? 8 : 4}</span>
+              <span>source: {snapshot.data?.dataset_id ?? "pending"}</span>
+              <span>status: {activeAnalysisStatus ?? "pending"}</span>
             </footer>
           </details>
         </aside>
