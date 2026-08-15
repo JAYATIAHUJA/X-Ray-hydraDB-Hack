@@ -1402,12 +1402,14 @@ version = "0.1.0"
 source = { editable = "packages/xray_hydra" }
 dependencies = [
     { name = "neo4j" },
+    { name = "polars" },
     { name = "xray-core" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "neo4j", specifier = ">=5.28.0" },
+    { name = "polars", specifier = ">=1.27.1" },
     { name = "xray-core", editable = "packages/xray_core" },
 ]
 
