@@ -1,0 +1,10 @@
+{
+  "dataset_id": "xray-mixed-v1",
+  "fixture_version": 1,
+  "schema_version": "1.0.0",
+  "limitations": [
+    "This is a labelled synthetic mixed-source fixture.",
+    "Absence does not establish deletion. The corpus is structurally incomplete at this point."
+  ],
+  "sequence_contracts": []
+}
