@@ -32,6 +32,21 @@ const responses: Record<string, object> = {
           pairs_lost_without_person: 5,
           max_len: 4
         }
+      },
+      {
+        person_key: "person:alex-rivera",
+        display_name: "Alex Rivera",
+        role_rank: 4,
+        structural_rank: 2,
+        formal_rank: 1,
+        rank_gap: -1,
+        sampled_centrality: 0.042,
+        communication_degree: 2,
+        removal_impact: {
+          reachable_pairs_before: 15,
+          pairs_lost_without_person: 1,
+          max_len: 4
+        }
       }
     ]
   },
@@ -52,7 +67,7 @@ const responses: Record<string, object> = {
       {
         key: "person:alex-rivera",
         name: "Alex Rivera",
-        title: "payments director",
+        title: "Payments director",
         team: "payments",
         x: 50,
         y: 16,
@@ -140,7 +155,9 @@ test("renders the three-lens shell from API responses", async () => {
   expect(await screen.findByText("Graph: 17 nodes / 29 edges")).toBeInTheDocument();
   expect(await screen.findAllByText("Maya Chen")).toHaveLength(2);
   expect(await screen.findByText("Operations specialist / operations")).toBeInTheDocument();
-  expect(screen.getByText("Alex Rivera")).toBeInTheDocument();
+  const alexNode = screen.getByRole("button", { name: /Alex Rivera/ });
+  expect(alexNode).toBeInTheDocument();
+  expect(alexNode).toHaveAttribute("aria-pressed", "false");
   expect(await screen.findByText("0.231")).toBeInTheDocument();
   expect(await screen.findByText("payments-api -> ledger-worker")).toBeInTheDocument();
   expect(await screen.findByText("code-change -> missing-approval -> directive")).toBeInTheDocument();
@@ -148,4 +165,12 @@ test("renders the three-lens shell from API responses", async () => {
   await userEvent.click(screen.getByRole("button", { name: /Faultlines/ }));
 
   expect(screen.getByRole("button", { name: /Faultlines/ })).toHaveAttribute("aria-current", "page");
+
+  await userEvent.click(alexNode);
+
+  expect(alexNode).toHaveAttribute("aria-pressed", "true");
+  expect(await screen.findByText("Payments director / payments")).toBeInTheDocument();
+  expect(screen.getByText("person:alex-rivera")).toBeInTheDocument();
+  expect(screen.getByText("0.042")).toBeInTheDocument();
+  expect(screen.getByText("-1 places")).toBeInTheDocument();
 });
