@@ -204,6 +204,10 @@ select {
   accent-color: var(--teal);
 }
 
+.check {
+  white-space: nowrap;
+}
+
 .scale {
   align-items: center;
   color: var(--muted);

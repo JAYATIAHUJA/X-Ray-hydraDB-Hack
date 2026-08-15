@@ -4,12 +4,33 @@ from dataclasses import asdict
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from xray_analytics import bus_factor_impact, faultlines, gap_findings, ghost_scores
-from xray_core.models import AnalysisStatus
+from xray_analytics import GhostScore, bus_factor_impact, faultlines, gap_findings, ghost_scores
+from xray_core.models import AnalysisStatus, EdgeRow, NodeRow
 
 from .dependencies import current_snapshot_id, demo_bundle
 from .errors import not_found
-from .schemas import GapPathRequest, HealthResponse, LensEnvelope, SnapshotResponse
+from .schemas import (
+    GapPathRequest,
+    GraphEdge,
+    GraphNode,
+    GraphResponse,
+    HealthResponse,
+    LensEnvelope,
+    SnapshotResponse,
+)
+
+PERSON_LAYOUT = {
+    "person:maya-chen": (50, 49),
+    "person:alex-rivera": (50, 16),
+    "person:priya-shah": (32, 24),
+    "person:omar-haddad": (65, 55),
+    "person:lena-park": (38, 64),
+    "person:theo-brooks": (48, 82),
+    "person:nina-okafor": (18, 56),
+    "person:sam-wu": (78, 30),
+    "person:ines-costa": (82, 52),
+    "person:jon-bell": (73, 72),
+}
 
 
 def create_app() -> FastAPI:
@@ -36,6 +57,27 @@ def create_app() -> FastAPI:
             edge_count=len(bundle.edges),
             evidence_count=len(bundle.evidence),
             limitations=bundle.limitations,
+        )
+
+    @app.get("/api/v1/snapshots/{snapshot_id}/graph", response_model=GraphResponse)
+    def graph(snapshot_id: str) -> GraphResponse:
+        _require_current_snapshot(snapshot_id)
+        bundle = demo_bundle()
+        scores = {score.person_key: score for score in ghost_scores(bundle)}
+        selected_key = max(scores.values(), key=lambda score: score.rank_gap).person_key
+        people = tuple(sorted((node for node in bundle.nodes if node.label == "Person"), key=lambda node: node.canonical_key))
+        node_key_by_id = {node.id: node.canonical_key for node in people}
+
+        return GraphResponse(
+            snapshot_id=snapshot_id,
+            nodes=tuple(_graph_node(node, scores.get(node.canonical_key), selected_key) for node in people),
+            edges=tuple(
+                _graph_edge(edge, node_key_by_id)
+                for edge in sorted(bundle.edges, key=lambda item: item.canonical_key)
+                if edge.rel_type == "COMMUNICATES"
+                and edge.source_id in node_key_by_id
+                and edge.target_id in node_key_by_id
+            ),
         )
 
     @app.get("/api/v1/snapshots/{snapshot_id}/ghosts", response_model=LensEnvelope)
@@ -107,6 +149,54 @@ def _lens_envelope(
         limitations=limitations,
         findings=findings,
     )
+
+
+def _graph_node(node: NodeRow, score: GhostScore | None, selected_key: str) -> GraphNode:
+    properties = node.properties
+    team = str(properties.get("team_id", "team:unknown")).removeprefix("team:")
+    role_rank = int(properties.get("role_rank", 1))
+    centrality = getattr(score, "sampled_centrality", 0.0)
+    degree = getattr(score, "communication_degree", 0)
+    x, y = PERSON_LAYOUT.get(node.canonical_key, (50, 50))
+    return GraphNode(
+        key=node.canonical_key,
+        name=str(properties.get("display_name", node.canonical_key)),
+        title=_person_title(team, role_rank),
+        team=team,
+        x=x,
+        y=y,
+        official_size=max(20, 78 - (role_rank * 10)),
+        actual_size=max(20, min(82, round(20 + (centrality * 250) + (degree * 3)))),
+        selected=node.canonical_key == selected_key,
+    )
+
+
+def _graph_edge(edge: EdgeRow, node_key_by_id: dict[int, str]) -> GraphEdge:
+    weight = edge.properties.get("weight", 0)
+    return GraphEdge(
+        source=node_key_by_id[edge.source_id],
+        target=node_key_by_id[edge.target_id],
+        strength=_edge_strength(float(weight)),
+    )
+
+
+def _edge_strength(weight: float) -> str:
+    if weight >= 5:
+        return "strong"
+    if weight >= 3:
+        return "medium"
+    return "weak"
+
+
+def _person_title(team: str, role_rank: int) -> str:
+    team_name = team.replace("-", " ").capitalize()
+    if role_rank >= 4:
+        return f"{team_name} director"
+    if role_rank == 3:
+        return f"{team_name} lead"
+    if role_rank == 2:
+        return f"{team_name} partner"
+    return f"{team_name} specialist"
 
 
 app = create_app()

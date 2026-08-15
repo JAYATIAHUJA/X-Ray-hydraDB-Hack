@@ -15,6 +15,30 @@ export type LensEnvelope<TFinding> = {
   findings: TFinding[];
 };
 
+export type GraphNode = {
+  key: string;
+  name: string;
+  title: string;
+  team: string;
+  x: number;
+  y: number;
+  official_size: number;
+  actual_size: number;
+  selected: boolean;
+};
+
+export type GraphEdge = {
+  source: string;
+  target: string;
+  strength: "strong" | "medium" | "weak";
+};
+
+export type GraphResponse = {
+  snapshot_id: string;
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+};
+
 export type GhostFinding = {
   person_key: string;
   display_name: string;
@@ -69,6 +93,10 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
 
 export function getCurrentSnapshot() {
   return requestJson<SnapshotResponse>("/api/v1/snapshots/current");
+}
+
+export function getGraph(snapshotId: string) {
+  return requestJson<GraphResponse>(`/api/v1/snapshots/${encodeURIComponent(snapshotId)}/graph`);
 }
 
 export function getGhosts(snapshotId: string) {

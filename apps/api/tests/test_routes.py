@@ -30,6 +30,20 @@ def test_ghosts_endpoint_returns_complete_fixture_finding() -> None:
     assert "removal_impact" in payload["findings"][0]
 
 
+def test_graph_endpoint_projects_person_communication_graph() -> None:
+    response = client().get("/api/v1/snapshots/xray-demo-v1:fixture/graph")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["snapshot_id"] == "xray-demo-v1:fixture"
+    assert len(payload["nodes"]) == 10
+    assert len(payload["edges"]) == 12
+    maya = next(node for node in payload["nodes"] if node["key"] == "person:maya-chen")
+    assert maya["selected"] is True
+    assert maya["actual_size"] > maya["official_size"]
+    assert payload["edges"][0]["strength"] in {"strong", "medium", "weak"}
+
+
 def test_faultlines_endpoint_returns_no_path_coordination_debt() -> None:
     payload = client().get("/api/v1/snapshots/xray-demo-v1:fixture/faultlines").json()
 

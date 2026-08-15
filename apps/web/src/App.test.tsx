@@ -35,6 +35,40 @@ const responses: Record<string, object> = {
       }
     ]
   },
+  "/api/v1/snapshots/xray-demo-v1%3Afixture/graph": {
+    snapshot_id: "xray-demo-v1:fixture",
+    nodes: [
+      {
+        key: "person:maya-chen",
+        name: "Maya Chen",
+        title: "Operations specialist",
+        team: "operations",
+        x: 50,
+        y: 49,
+        official_size: 68,
+        actual_size: 82,
+        selected: true
+      },
+      {
+        key: "person:alex-rivera",
+        name: "Alex Rivera",
+        title: "payments director",
+        team: "payments",
+        x: 50,
+        y: 16,
+        official_size: 38,
+        actual_size: 26,
+        selected: false
+      }
+    ],
+    edges: [
+      {
+        source: "person:alex-rivera",
+        target: "person:maya-chen",
+        strength: "strong"
+      }
+    ]
+  },
   "/api/v1/snapshots/xray-demo-v1%3Afixture/faultlines": {
     snapshot_id: "xray-demo-v1:fixture",
     analysis_status: "complete",
@@ -104,7 +138,9 @@ test("renders the three-lens shell from API responses", async () => {
   expect(screen.getByRole("heading", { name: "X-Ray" })).toBeInTheDocument();
   expect(screen.getByText("Loading")).toBeInTheDocument();
   expect(await screen.findByText("Graph: 17 nodes / 29 edges")).toBeInTheDocument();
-  expect(screen.getAllByText("Maya Chen")).toHaveLength(2);
+  expect(await screen.findAllByText("Maya Chen")).toHaveLength(2);
+  expect(await screen.findByText("Operations specialist / operations")).toBeInTheDocument();
+  expect(screen.getByText("Alex Rivera")).toBeInTheDocument();
   expect(await screen.findByText("0.231")).toBeInTheDocument();
   expect(await screen.findByText("payments-api -> ledger-worker")).toBeInTheDocument();
   expect(await screen.findByText("code-change -> missing-approval -> directive")).toBeInTheDocument();
