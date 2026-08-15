@@ -100,6 +100,10 @@ also accepts resolved `parent_author_id` and `mentions`; email recipients become
 communication inputs. Directory records for referenced people and modules must be present in the
 same bundle before relationships are derived.
 
+The `ingest_exports` runner combines all four adapters with directory records and executes the
+full `canonicalize → derive → detect gaps` pipeline in one deterministic build. Git rows may also
+declare `dependency_keys` to create explicit `DEPENDS_ON` evidence.
+
 ## Run locally
 
 ### Requirements

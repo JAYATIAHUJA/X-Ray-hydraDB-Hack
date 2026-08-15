@@ -5,6 +5,7 @@ from xray_core.models import CanonicalRecord, SequenceContractSet
 from xray_ingest.canonicalize import canonicalize
 from xray_ingest.derive import derive_edges
 from xray_ingest.gaps import detect_gaps
+from xray_ingest.pipeline import ingest_exports
 from xray_ingest.sources import (
     SourceAdapterError,
     code_records,
@@ -197,3 +198,72 @@ def test_dangling_thread_parent_becomes_phantom_and_reply_edge() -> None:
     finding = gap_findings(enriched)[0]
     assert finding.reason == "dangling_thread_parent"
     assert finding.successor_keys == ("artifact:slack:child",)
+
+
+def test_mixed_source_runner_builds_one_evidence_graph() -> None:
+    modules = tuple(
+        CanonicalRecord.model_validate(
+            {
+                "source": "directory",
+                "external_id": module,
+                "kind": "module",
+                "occurred_at_epoch": 1,
+                "author_external_id": None,
+                "parent_external_id": None,
+                "subjects": [f"module:{module}"],
+                "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "content": None,
+                "metadata": {"canonical_key": f"module:{module}"},
+            }
+        )
+        for module in ("payments-api", "ledger-worker")
+    )
+    bundle = ingest_exports(
+        directory_records=(*(_person_record(person) for person in ("alex", "maya")), *modules),
+        contracts=SequenceContractSet(),
+        dataset_id="mixed-source-test",
+        slack_rows=[
+            {
+                "id": "child",
+                "occurred_at_epoch": 2,
+                "author_id": "maya",
+                "thread_parent_id": "missing-parent",
+                "mentions": ["alex"],
+            }
+        ],
+        email_rows=[
+            {
+                "id": "mail-1",
+                "occurred_at_epoch": 3,
+                "from_id": "alex",
+                "to_ids": ["maya"],
+            }
+        ],
+        ticket_rows=[
+            {
+                "id": "PAY-1",
+                "occurred_at_epoch": 4,
+                "reporter_id": "maya",
+                "module_keys": ["payments-api"],
+            }
+        ],
+        git_rows=[
+            {
+                "sha": "commit-1",
+                "occurred_at_epoch": 5,
+                "author_id": "alex",
+                "module_keys": ["payments-api"],
+                "dependency_keys": ["ledger-worker"],
+            }
+        ],
+    )
+
+    assert {node.label for node in bundle.nodes} == {"Person", "Module", "Artifact", "Phantom"}
+    assert {edge.rel_type for edge in bundle.edges} >= {
+        "COMMUNICATES",
+        "DEPENDS_ON",
+        "REPLIES_TO",
+    }
+    assert any(
+        node.properties.get("reason") == "dangling_thread_parent" for node in bundle.nodes
+    )

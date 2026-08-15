@@ -120,6 +120,36 @@ def _communication(
     )
 
 
+def _dependency(
+    *,
+    source: str,
+    external_id: str,
+    epoch: int,
+    source_module: str,
+    target_module: str,
+    weight: int,
+) -> CanonicalRecord:
+    source_key = f"module:{source_module.removeprefix('module:')}"
+    target_key = f"module:{target_module.removeprefix('module:')}"
+    return CanonicalRecord(
+        source=source,
+        external_id=f"{source}:{external_id}:dependency:{target_module}",
+        kind="dependency",
+        occurred_at_epoch=epoch,
+        author_external_id=None,
+        parent_external_id=None,
+        subjects=(source_key, target_key),
+        content_sha256=_content_hash(source, external_id, source_key, target_key),
+        content=None,
+        metadata={
+            "dependency_kind": "explicit_reference",
+            "source_module_external_id": source_key.removeprefix("module:"),
+            "target_module_external_id": target_key.removeprefix("module:"),
+            "weight": weight,
+        },
+    )
+
+
 def slack_records(rows: Iterable[RawRecord]) -> tuple[CanonicalRecord, ...]:
     """Normalize Slack messages with explicit mentions or a resolved reply author.
 
@@ -234,20 +264,39 @@ def ticket_records(rows: Iterable[RawRecord]) -> tuple[CanonicalRecord, ...]:
 
 
 def code_records(rows: Iterable[RawRecord]) -> tuple[CanonicalRecord, ...]:
-    """Normalize commits; explicit module references become ABOUT relationships downstream."""
-    return tuple(
-        _artifact(
-            source="git",
-            external_id=_required_string(row, "sha"),
-            epoch=_required_epoch(row, "occurred_at_epoch"),
-            author_id=_required_string(row, "author_id"),
-            parent_id=None,
-            content=_optional_string(row, "message"),
-            artifact_kind="commit",
-            module_subjects=_module_subjects(row),
+    """Normalize commits and their explicitly declared module dependencies."""
+    records: list[CanonicalRecord] = []
+    for row in rows:
+        external_id = _required_string(row, "sha")
+        epoch = _required_epoch(row, "occurred_at_epoch")
+        author_id = _required_string(row, "author_id")
+        records.append(
+            _artifact(
+                source="git",
+                external_id=external_id,
+                epoch=epoch,
+                author_id=author_id,
+                parent_id=None,
+                content=_optional_string(row, "message"),
+                artifact_kind="commit",
+                module_subjects=_module_subjects(row),
+            )
         )
-        for row in rows
-    )
+        source_modules = _string_list(row, "module_keys")
+        dependency_keys = _string_list(row, "dependency_keys")
+        for source_module in source_modules:
+            for target_module in dependency_keys:
+                records.append(
+                    _dependency(
+                        source="git",
+                        external_id=external_id,
+                        epoch=epoch,
+                        source_module=source_module,
+                        target_module=target_module,
+                        weight=1,
+                    )
+                )
+    return tuple(records)
 
 
 __all__ = [
