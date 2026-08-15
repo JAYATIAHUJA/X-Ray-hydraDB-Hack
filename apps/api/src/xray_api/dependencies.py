@@ -5,7 +5,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from xray_core.models import CanonicalBundle, CanonicalRecord, SequenceContractSet
-from xray_ingest.pipeline import build_bundle
+from xray_ingest.pipeline import ingest_exports
 
 FIXTURE_ROOT = Path(__file__).parents[4] / "data" / "fixtures" / "xray-demo"
 DATASET_ID = "xray-demo-v1"
@@ -26,7 +26,14 @@ def demo_bundle() -> CanonicalBundle:
             "limitations": manifest["limitations"],
         }
     )
-    return build_bundle(records, contracts, DATASET_ID)
+    directory_records = tuple(record for record in records if record.kind == "directory_person")
+    canonical_records = tuple(record for record in records if record.kind != "directory_person")
+    return ingest_exports(
+        directory_records=directory_records,
+        canonical_records=canonical_records,
+        contracts=contracts,
+        dataset_id=DATASET_ID,
+    )
 
 
 def current_snapshot_id() -> str:

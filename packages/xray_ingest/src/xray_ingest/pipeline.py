@@ -58,6 +58,7 @@ def ingest_exports(
     directory_records: Iterable[CanonicalRecord],
     contracts: SequenceContractSet,
     dataset_id: str,
+    canonical_records: Iterable[CanonicalRecord] = (),
     slack_rows: Iterable[Mapping[str, object]] = (),
     email_rows: Iterable[Mapping[str, object]] = (),
     ticket_rows: Iterable[Mapping[str, object]] = (),
@@ -66,6 +67,7 @@ def ingest_exports(
     """Build one evidence bundle from the supported mixed source exports."""
     records = (
         *tuple(directory_records),
+        *tuple(canonical_records),
         *slack_records(slack_rows),
         *email_records(email_rows),
         *ticket_records(ticket_rows),

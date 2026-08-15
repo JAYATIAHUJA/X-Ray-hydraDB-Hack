@@ -101,8 +101,9 @@ communication inputs. Directory records for referenced people and modules must b
 same bundle before relationships are derived.
 
 The `ingest_exports` runner combines all four adapters with directory records and executes the
-full `canonicalize → derive → detect gaps` pipeline in one deterministic build. Git rows may also
-declare `dependency_keys` to create explicit `DEPENDS_ON` evidence.
+full `canonicalize → derive → detect gaps` pipeline in one deterministic build. Existing
+canonical exports can also be passed through the same boundary while a source is being migrated.
+Git rows may declare `dependency_keys` to create explicit `DEPENDS_ON` evidence.
 
 ## Run locally
 
