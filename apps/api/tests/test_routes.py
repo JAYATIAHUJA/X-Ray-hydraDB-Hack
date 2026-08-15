@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from xray_api import create_app
 from xray_api.config import settings_from_env
 from xray_api.dependencies import demo_bundle
-from xray_api.hydra import graph_rows, seed_bundle
+from xray_api.hydra import communication_distances, gap_rows, graph_rows, seed_bundle
 from xray_core.models import CanonicalBundle, LoadReport, SnapshotManifest, WriteBatchSpec
 from xray_hydra import HydraGateway
 
@@ -175,6 +175,38 @@ class GraphRowsDriver:
         ]
 
 
+class DistanceDriver:
+    def __init__(self) -> None:
+        self.parameters: list[dict[str, object] | None] = []
+
+    def execute_query(
+        self,
+        query_: str,
+        parameters_: dict[str, object] | None = None,
+    ) -> list[dict[str, int]]:
+        self.parameters.append(parameters_)
+        return [{"distance": 2}]
+
+
+class GapRowsDriver:
+    def execute_query(
+        self,
+        query_: str,
+        parameters_: dict[str, object] | None = None,
+    ) -> list[dict[str, object]]:
+        return [
+            {
+                "phantom_key": "artifact:missing-approval",
+                "properties": (
+                    '{"expected_kind":"approval","reason":"required_sequence_step_missing",'
+                    '"inferred_epoch":1736003600}'
+                ),
+                "predecessor_keys": ["artifact:directive"],
+                "successor_keys": ["artifact:code-change"],
+            }
+        ]
+
+
 def test_graph_endpoint_projects_person_communication_graph() -> None:
     response = client().get("/api/v1/snapshots/xray-demo-v1:fixture/graph")
 
@@ -202,6 +234,39 @@ def test_graph_rows_reads_live_hydradb_projection() -> None:
     assert rows.edges[0].target == "person:maya-chen"
     assert rows.edges[0].weight == 5.0
     assert driver.parameters == [{"dataset_id": "xray-demo-v1"}, {"dataset_id": "xray-demo-v1"}]
+
+
+def test_communication_distances_reads_live_hydradb_paths() -> None:
+    settings = settings_from_env({"XRAY_HYDRA_URI": "bolt://hydra.example:7687"})
+    driver = DistanceDriver()
+
+    distances = communication_distances(
+        settings,
+        "xray-demo-v1",
+        (("person:alex-rivera", "person:maya-chen"),),
+        gateway=HydraGateway(driver),
+    )
+
+    assert distances == {("person:alex-rivera", "person:maya-chen"): 2}
+    assert driver.parameters == [
+        {
+            "dataset_id": "xray-demo-v1",
+            "source": "person:alex-rivera",
+            "target": "person:maya-chen",
+        }
+    ]
+
+
+def test_gap_rows_reads_live_hydradb_lineage() -> None:
+    settings = settings_from_env({"XRAY_HYDRA_URI": "bolt://hydra.example:7687"})
+
+    rows = gap_rows(settings, "xray-demo-v1", gateway=HydraGateway(GapRowsDriver()))
+
+    assert rows is not None
+    assert rows[0].phantom_key == "artifact:missing-approval"
+    assert rows[0].properties["expected_kind"] == "approval"
+    assert rows[0].predecessor_keys == ("artifact:directive",)
+    assert rows[0].successor_keys == ("artifact:code-change",)
 
 
 def test_faultlines_endpoint_returns_no_path_coordination_debt() -> None:

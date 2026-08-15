@@ -53,6 +53,14 @@ class HydraGraphRows:
     edges: tuple[HydraGraphEdge, ...]
 
 
+@dataclass(frozen=True, slots=True)
+class HydraGapRow:
+    phantom_key: str
+    properties: dict[str, Scalar]
+    predecessor_keys: tuple[str, ...]
+    successor_keys: tuple[str, ...]
+
+
 def hydra_health(settings: XraySettings) -> HydraHealth:
     if not settings.hydra_configured:
         return HydraHealth(
@@ -182,6 +190,47 @@ def seed_bundle(
     )
 
 
+def communication_distances(
+    settings: XraySettings,
+    dataset_id: str,
+    pairs: tuple[tuple[str, str], ...],
+    *,
+    gateway: HydraGateway | None = None,
+    max_len: int = 4,
+) -> dict[tuple[str, str], int | None] | None:
+    if not settings.hydra_configured or not pairs:
+        return None
+
+    created_gateway = gateway is None
+    try:
+        resolved_gateway = gateway or _create_gateway(settings)
+        distances: dict[tuple[str, str], int | None] = {}
+        for source, target in pairs:
+            rows = resolved_gateway.run(
+                QuerySpec(
+                    name="hydra_communication_distance",
+                    statement=(
+                        "MATCH (s:Person {dataset_id: $dataset_id, canonical_key: $source}) "
+                        "MATCH (t:Person {dataset_id: $dataset_id, canonical_key: $target}) "
+                        f"MATCH p = shortestPath((s)-[:COMMUNICATES*..{max_len}]-(t)) "
+                        "RETURN length(p) AS distance"
+                    ),
+                    parameters={"dataset_id": dataset_id, "source": source, "target": target},
+                    max_len=max_len,
+                    result_limit=1,
+                )
+            )
+            distance = rows[0].get("distance") if rows else None
+            distances[(source, target)] = distance if type(distance) is int else None
+    except Exception:
+        return None
+    finally:
+        if created_gateway and "resolved_gateway" in locals() and hasattr(resolved_gateway.driver, "close"):
+            resolved_gateway.driver.close()
+
+    return distances
+
+
 def graph_rows(
     settings: XraySettings,
     dataset_id: str,
@@ -234,6 +283,57 @@ def graph_rows(
     )
 
 
+def gap_rows(
+    settings: XraySettings,
+    dataset_id: str,
+    *,
+    gateway: HydraGateway | None = None,
+) -> tuple[HydraGapRow, ...] | None:
+    if not settings.hydra_configured:
+        return None
+
+    created_gateway = gateway is None
+    try:
+        resolved_gateway = gateway or _create_gateway(settings)
+        rows = resolved_gateway.run(
+            QuerySpec(
+                name="hydra_gap_rows",
+                statement=(
+                    "MATCH (phantom:Phantom {dataset_id: $dataset_id}) "
+                    "OPTIONAL MATCH (phantom)-[:PRECEDED_BY]->(predecessor) "
+                    "OPTIONAL MATCH (successor)-[:PRECEDED_BY]->(phantom) "
+                    "RETURN phantom.canonical_key AS phantom_key, "
+                    "phantom.properties AS properties, "
+                    "collect(DISTINCT predecessor.canonical_key) AS predecessor_keys, "
+                    "collect(DISTINCT successor.canonical_key) AS successor_keys "
+                    "ORDER BY phantom.canonical_key"
+                ),
+                parameters={"dataset_id": dataset_id},
+                max_len=None,
+                result_limit=None,
+            )
+        )
+    except Exception:
+        return None
+    finally:
+        if created_gateway and "resolved_gateway" in locals() and hasattr(resolved_gateway.driver, "close"):
+            resolved_gateway.driver.close()
+
+    return tuple(_hydra_gap_row(row) for row in rows)
+
+
+def _hydra_gap_row(row: dict[str, object]) -> HydraGapRow:
+    phantom_key = row.get("phantom_key")
+    if not isinstance(phantom_key, str):
+        raise ValueError("Hydra gap row is missing phantom_key")
+    return HydraGapRow(
+        phantom_key=phantom_key,
+        properties=_properties(row.get("properties")),
+        predecessor_keys=_string_tuple(row.get("predecessor_keys")),
+        successor_keys=_string_tuple(row.get("successor_keys")),
+    )
+
+
 def _hydra_graph_node(row: dict[str, object]) -> HydraGraphNode:
     key = row.get("key")
     if not isinstance(key, str):
@@ -267,6 +367,12 @@ def _properties(value: object) -> dict[str, Scalar]:
     return properties
 
 
+def _string_tuple(value: object) -> tuple[str, ...]:
+    if not isinstance(value, list):
+        return ()
+    return tuple(sorted(item for item in value if isinstance(item, str)))
+
+
 def _create_gateway(settings: XraySettings) -> HydraGateway:
     hydra_uri = settings.hydra_uri
     if hydra_uri is None:
@@ -282,6 +388,7 @@ def _create_gateway(settings: XraySettings) -> HydraGateway:
 
 
 __all__ = [
+    "HydraGapRow",
     "HydraGraphEdge",
     "HydraGraphNode",
     "HydraGraphRows",
@@ -289,6 +396,8 @@ __all__ = [
     "HydraSeedResult",
     "HydraSeedStatus",
     "HydraStatus",
+    "communication_distances",
+    "gap_rows",
     "graph_rows",
     "hydra_health",
     "seed_bundle",

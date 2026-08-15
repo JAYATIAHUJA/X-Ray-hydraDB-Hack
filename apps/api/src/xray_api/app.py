@@ -4,16 +4,27 @@ from dataclasses import asdict
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from xray_analytics import GhostScore, bus_factor_impact, faultlines, gap_findings, ghost_scores
+from xray_analytics import (
+    FaultlineFinding,
+    GapFinding,
+    GhostScore,
+    bus_factor_impact,
+    faultlines,
+    gap_findings,
+    ghost_scores,
+)
 from xray_core.models import AnalysisStatus, EdgeRow, NodeRow
 
 from .config import get_settings
 from .dependencies import current_snapshot_id, demo_bundle
 from .errors import not_found
 from .hydra import (
+    HydraGapRow,
     HydraGraphEdge,
     HydraGraphNode,
     HydraHealth,
+    communication_distances,
+    gap_rows,
     graph_rows,
     hydra_health,
     seed_bundle,
@@ -139,27 +150,50 @@ def create_app() -> FastAPI:
             snapshot_id=snapshot_id,
             limitations=bundle.limitations,
             findings=tuple(findings),
-            explanation="Fixture Ghost analysis completed with bounded in-memory path scoring.",
+            explanation=(
+                "HydraDB graph rows were available; Ghost scoring completed with bounded fallback path scoring."
+                if graph_rows(get_settings(), bundle.dataset_id) is not None
+                else "Fixture Ghost analysis completed with bounded in-memory path scoring."
+            ),
         )
 
     @app.get("/api/v1/snapshots/{snapshot_id}/faultlines", response_model=LensEnvelope)
     def faultline_results(snapshot_id: str) -> LensEnvelope:
         _require_current_snapshot(snapshot_id)
         bundle = demo_bundle()
+        findings = faultlines(bundle)
+        distances = communication_distances(
+            get_settings(),
+            bundle.dataset_id,
+            tuple((finding.source_owner_key, finding.target_owner_key) for finding in findings),
+        )
+        if distances is not None:
+            live_findings = tuple(_with_live_distance(finding, distances) for finding in findings)
+            findings = tuple(finding for finding in live_findings if finding.severity > 0)
         return _lens_envelope(
             snapshot_id=snapshot_id,
             limitations=bundle.limitations,
-            findings=tuple(asdict(finding) for finding in faultlines(bundle)),
-            explanation="Fixture Faultline analysis completed over derived ownership and dependencies.",
+            findings=tuple(asdict(finding) for finding in findings),
+            explanation=(
+                "HydraDB Faultline analysis completed with live owner communication distance queries."
+                if distances is not None
+                else "Fixture Faultline analysis completed over derived ownership and dependencies."
+            ),
         )
 
     @app.post("/api/v1/snapshots/{snapshot_id}/gap-paths", response_model=LensEnvelope)
     def gap_paths(snapshot_id: str, request: GapPathRequest) -> LensEnvelope:
         _require_current_snapshot(snapshot_id)
         bundle = demo_bundle()
+        live_gaps = gap_rows(get_settings(), bundle.dataset_id)
+        all_findings = (
+            tuple(_gap_finding_from_hydra(row) for row in live_gaps)
+            if live_gaps is not None
+            else gap_findings(bundle)
+        )
         findings = tuple(
             asdict(finding)
-            for finding in gap_findings(bundle)
+            for finding in all_findings
             if request.target_artifact_key in finding.predecessor_keys
             and request.source_artifact_key in finding.successor_keys
         )
@@ -168,8 +202,12 @@ def create_app() -> FastAPI:
             limitations=bundle.limitations,
             findings=findings,
             explanation=(
-                "Fixture Gap analysis completed under explicit sequence contracts. "
-                "Absence does not establish deletion."
+                (
+                    "HydraDB Gap analysis completed from live phantom lineage rows. "
+                    if live_gaps is not None
+                    else "Fixture Gap analysis completed under explicit sequence contracts. "
+                )
+                + "Absence does not establish deletion."
             ),
         )
 
@@ -204,6 +242,48 @@ def _hydra_health_response(hydra: HydraHealth) -> HydraHealthResponse:
         database=hydra.database,
         uri=hydra.uri,
         detail=hydra.detail,
+    )
+
+
+def _with_live_distance(
+    finding: FaultlineFinding,
+    distances: dict[tuple[str, str], int | None],
+) -> FaultlineFinding:
+    distance = distances.get((finding.source_owner_key, finding.target_owner_key))
+    if distance is None:
+        tier = "no_path"
+        risk = 1.0
+    elif distance >= 3:
+        tier = "weak_coordination"
+        risk = 0.5
+    else:
+        tier = "coordinated"
+        risk = 0.0
+    return FaultlineFinding(
+        source_module_key=finding.source_module_key,
+        target_module_key=finding.target_module_key,
+        source_owner_key=finding.source_owner_key,
+        target_owner_key=finding.target_owner_key,
+        dependency_weight=finding.dependency_weight,
+        source_owner_confidence=finding.source_owner_confidence,
+        target_owner_confidence=finding.target_owner_confidence,
+        communication_distance=distance,
+        tier=tier,
+        severity=finding.dependency_weight * risk,
+    )
+
+
+def _gap_finding_from_hydra(row: HydraGapRow) -> GapFinding:
+    expected_kind = row.properties.get("expected_kind")
+    reason = row.properties.get("reason")
+    inferred_epoch = row.properties.get("inferred_epoch")
+    return GapFinding(
+        phantom_key=row.phantom_key,
+        expected_kind=expected_kind if isinstance(expected_kind, str) else "unknown",
+        reason=reason if isinstance(reason, str) else "unknown",
+        inferred_epoch=inferred_epoch if type(inferred_epoch) is int else None,
+        predecessor_keys=row.predecessor_keys,
+        successor_keys=row.successor_keys,
     )
 
 
