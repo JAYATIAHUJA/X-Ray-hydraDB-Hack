@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { FaultlineFinding, GapFinding, GhostFinding } from "./api";
 import type { Lens } from "./data";
 import { queryText } from "./data";
@@ -29,9 +29,12 @@ const tabs: Array<{ id: Lens; label: string; sublabel: string; icon: string }> =
 export function App() {
   const [activeLens, setActiveLens] = useState<Lens>("org");
   const [mode, setMode] = useState<"actual" | "official">("actual");
+  const [selectedNodeKey, setSelectedNodeKey] = useState<string | undefined>();
   const { faultlines, gapPath, ghosts, graph, snapshot } = useXraySnapshot();
   const people = graph.data?.nodes ?? [];
-  const selected = people.find((person) => person.selected) ?? people[0];
+  const defaultSelectedKey = people.find((person) => person.selected)?.key ?? people[0]?.key;
+  const selectedKey = people.some((person) => person.key === selectedNodeKey) ? selectedNodeKey : defaultSelectedKey;
+  const selected = people.find((person) => person.key === selectedKey);
   const ghostFinding =
     ghosts.data?.findings.find((finding) => finding.person_key === selected?.key) ??
     ghosts.data?.findings[0];
@@ -49,6 +52,12 @@ export function App() {
       })),
     [graph.data?.edges, people]
   );
+
+  useEffect(() => {
+    if (selectedNodeKey === undefined && defaultSelectedKey !== undefined) {
+      setSelectedNodeKey(defaultSelectedKey);
+    }
+  }, [defaultSelectedKey, selectedNodeKey]);
 
   return (
     <main className="app-shell">
@@ -134,8 +143,10 @@ export function App() {
               const size = mode === "actual" ? person.actual_size : person.official_size;
               return (
                 <button
-                  className={person.selected ? "person-node selected" : "person-node"}
+                  aria-pressed={person.key === selectedKey}
+                  className={person.key === selectedKey ? "person-node selected" : "person-node"}
                   key={person.key}
+                  onClick={() => setSelectedNodeKey(person.key)}
                   style={
                     {
                       "--node-size": `${size}px`,
