@@ -17,6 +17,24 @@ class HealthResponse(BaseModel):
     hydra: HydraHealthResponse
 
 
+class LoadReportResponse(BaseModel):
+    snapshot_id: str
+    node_count: int = Field(ge=0)
+    edge_count: int = Field(ge=0)
+    attempted_batches: int = Field(ge=0)
+    completed_batches: int = Field(ge=0)
+    resumed_batches: int = Field(ge=0)
+    failed_batches: tuple[str, ...]
+    graph_fingerprint: str
+
+
+class HydraSeedResponse(BaseModel):
+    status: str
+    detail: str
+    hydra: HydraHealthResponse
+    report: LoadReportResponse | None = None
+
+
 class SnapshotResponse(BaseModel):
     snapshot_id: str
     dataset_id: str
@@ -79,7 +97,9 @@ __all__ = [
     "GraphResponse",
     "HealthResponse",
     "HydraHealthResponse",
+    "HydraSeedResponse",
     "LensEnvelope",
+    "LoadReportResponse",
     "ProblemDetail",
     "SnapshotResponse",
 ]

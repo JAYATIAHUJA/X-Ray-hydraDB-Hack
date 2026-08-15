@@ -18,3 +18,12 @@ $env:XRAY_HYDRA_DATABASE = "neo4j"
 - `hydra.status = fallback` when no live URI is configured.
 - `hydra.status = live` when the API can ping HydraDB.
 - `hydra.status = offline` when a URI is configured but the ping fails.
+
+Seed the bundled fixture into live HydraDB with:
+
+```powershell
+Invoke-RestMethod -Method Post http://127.0.0.1:8000/api/v1/hydra/seed-fixture
+```
+
+When `XRAY_HYDRA_URI` is unset, the seed endpoint returns `status = fallback` and does not
+write anything.

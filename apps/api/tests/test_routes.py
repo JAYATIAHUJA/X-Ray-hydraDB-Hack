@@ -1,8 +1,14 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from fastapi.testclient import TestClient
 from xray_api import create_app
 from xray_api.config import settings_from_env
+from xray_api.dependencies import demo_bundle
+from xray_api.hydra import seed_bundle
+from xray_core.models import CanonicalBundle, LoadReport, SnapshotManifest, WriteBatchSpec
+from xray_hydra import HydraGateway
 
 
 def client() -> TestClient:
@@ -41,6 +47,37 @@ def test_settings_reads_hydradb_environment_contract() -> None:
     assert settings.hydra_database == "xray"
 
 
+def test_seed_fixture_endpoint_skips_without_hydradb_config() -> None:
+    response = client().post("/api/v1/hydra/seed-fixture")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["status"] == "fallback"
+    assert payload["hydra"]["configured"] is False
+    assert payload["report"] is None
+
+
+def test_seed_bundle_loads_fixture_with_gateway() -> None:
+    driver = RecordingDriver()
+    settings = settings_from_env({"XRAY_HYDRA_URI": "bolt://hydra.example:7687"})
+
+    result = seed_bundle(
+        settings,
+        demo_bundle(),
+        gateway=HydraGateway(driver),
+        loader_factory=lambda gateway: RecordingLoader(gateway),
+        snapshot_dir=Path(".cache") / "api-test-snapshots" / "seed-bundle-loads-fixture",
+        snapshot_writer=recording_snapshot_writer,
+    )
+
+    assert result.status == "complete"
+    assert result.report is not None
+    assert result.report.node_count == 17
+    assert result.report.edge_count == 29
+    assert result.report.failed_batches == ()
+    assert len(driver.statements) > 0
+
+
 def test_ghosts_endpoint_returns_complete_fixture_finding() -> None:
     response = client().get("/api/v1/snapshots/xray-demo-v1:fixture/ghosts")
 
@@ -49,6 +86,64 @@ def test_ghosts_endpoint_returns_complete_fixture_finding() -> None:
     assert payload["analysis_status"] == "complete"
     assert payload["findings"][0]["person_key"] == "person:maya-chen"
     assert "removal_impact" in payload["findings"][0]
+
+
+class RecordingDriver:
+    def __init__(self) -> None:
+        self.statements: list[str] = []
+
+    def execute_query(
+        self,
+        query_: str,
+        parameters_: dict[str, object] | None = None,
+    ) -> list[dict[str, int]]:
+        self.statements.append(query_)
+        rows = parameters_["rows"] if parameters_ is not None and "rows" in parameters_ else []
+        return [{"count": len(rows) if isinstance(rows, list) else 0}]
+
+
+class RecordingLoader:
+    def __init__(self, gateway: HydraGateway) -> None:
+        self.gateway = gateway
+
+    def load(
+        self,
+        snapshot_dir: object,
+        manifest: SnapshotManifest,
+    ) -> LoadReport:
+        self.gateway.run_batch(
+            WriteBatchSpec(
+                name="test_seed_batch",
+                statement="RETURN 1",
+                rows=(),
+            )
+        )
+        return LoadReport(
+            snapshot_id=manifest.snapshot_id,
+            node_count=17,
+            edge_count=29,
+            attempted_batches=3,
+            completed_batches=3,
+            resumed_batches=0,
+            failed_batches=(),
+            graph_fingerprint="abc123",
+            verification_queries=(),
+        )
+
+
+def recording_snapshot_writer(bundle: CanonicalBundle, snapshot_dir: object) -> SnapshotManifest:
+    return SnapshotManifest(
+        snapshot_id=f"{bundle.dataset_id}:test",
+        dataset_id=bundle.dataset_id,
+        schema_version="1.0.0",
+        content_sha256="0" * 64,
+        row_counts={
+            "nodes": len(bundle.nodes),
+            "edges": len(bundle.edges),
+            "evidence": len(bundle.evidence),
+        },
+        file_sha256={"nodes.parquet": "1" * 64},
+    )
 
 
 def test_graph_endpoint_projects_person_communication_graph() -> None:
