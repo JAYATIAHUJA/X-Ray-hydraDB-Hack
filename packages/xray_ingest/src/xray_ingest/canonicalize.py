@@ -23,6 +23,7 @@ NodeLabel = Literal["Person", "Team", "Artifact", "Module", "Phantom"]
 RelationType = Literal[
     "REPORTS_TO",
     "AUTHORED",
+    "REPLIES_TO",
     "MENTIONS",
     "COMMUNICATES",
     "ABOUT",
@@ -383,6 +384,33 @@ def _add_about_edge(builder: BundleBuilder, envelope: RecordEnvelope) -> None:
         )
 
 
+def _reply_target_key(record: CanonicalRecord) -> str | None:
+    parent_external_id = record.parent_external_id
+    if parent_external_id is None:
+        return None
+    if parent_external_id.startswith("artifact:"):
+        return parent_external_id
+    return f"artifact:{record.source}:{parent_external_id}"
+
+
+def _add_reply_edge(builder: BundleBuilder, envelope: RecordEnvelope) -> None:
+    record = envelope.record
+    source_key = _node_canonical_key(record, "Artifact")
+    target_key = _reply_target_key(record)
+    if target_key is None or target_key not in builder.nodes:
+        return
+    builder.add_edge(
+        canonical_key=f"replies_to:{_key_suffix(source_key)}:{_key_suffix(target_key)}",
+        source_key=source_key,
+        target_key=target_key,
+        rel_type="REPLIES_TO",
+        semantic_discriminator="thread_parent",
+        properties=_relationship_properties(record),
+        evidence_id=envelope.evidence.evidence_id,
+        evidence_class=envelope.evidence.evidence_class,
+    )
+
+
 def _add_observed_edges(builder: BundleBuilder, envelopes: tuple[RecordEnvelope, ...]) -> None:
     for envelope in envelopes:
         record = envelope.record
@@ -391,6 +419,7 @@ def _add_observed_edges(builder: BundleBuilder, envelopes: tuple[RecordEnvelope,
         elif record.kind == "artifact":
             _add_artifact_authorship_edge(builder, envelope)
             _add_about_edge(builder, envelope)
+            _add_reply_edge(builder, envelope)
         # Communication, ownership, dependency, co-change, and lineage remain evidence facts.
         # Task 3 derives their aggregate or inferred topology without fabricating edges here.
 
