@@ -118,16 +118,26 @@ def create_app() -> FastAPI:
         if hydra_rows is not None and hydra_rows.nodes:
             return GraphResponse(
                 snapshot_id=snapshot_id,
-                nodes=tuple(_hydra_graph_node(row, scores.get(row.key), selected_key) for row in hydra_rows.nodes),
+                nodes=tuple(
+                    _hydra_graph_node(row, scores.get(row.key), selected_key)
+                    for row in hydra_rows.nodes
+                ),
                 edges=tuple(_hydra_graph_edge(edge) for edge in hydra_rows.edges),
             )
 
-        people = tuple(sorted((node for node in bundle.nodes if node.label == "Person"), key=lambda node: node.canonical_key))
+        people = tuple(
+            sorted(
+                (node for node in bundle.nodes if node.label == "Person"),
+                key=lambda node: node.canonical_key,
+            )
+        )
         node_key_by_id = {node.id: node.canonical_key for node in people}
 
         return GraphResponse(
             snapshot_id=snapshot_id,
-            nodes=tuple(_graph_node(node, scores.get(node.canonical_key), selected_key) for node in people),
+            nodes=tuple(
+                _graph_node(node, scores.get(node.canonical_key), selected_key) for node in people
+            ),
             edges=tuple(
                 _graph_edge(edge, node_key_by_id)
                 for edge in sorted(bundle.edges, key=lambda item: item.canonical_key)
@@ -194,8 +204,11 @@ def create_app() -> FastAPI:
         findings = tuple(
             asdict(finding)
             for finding in all_findings
-            if request.target_artifact_key in finding.predecessor_keys
-            and request.source_artifact_key in finding.successor_keys
+            if (
+                request.target_artifact_key in finding.predecessor_keys
+                and request.source_artifact_key in finding.successor_keys
+            )
+            or finding.reason == "dangling_thread_parent"
         )
         return _lens_envelope(
             snapshot_id=snapshot_id,
@@ -307,7 +320,9 @@ def _graph_node(node: NodeRow, score: GhostScore | None, selected_key: str) -> G
     )
 
 
-def _hydra_graph_node(node: HydraGraphNode, score: GhostScore | None, selected_key: str) -> GraphNode:
+def _hydra_graph_node(
+    node: HydraGraphNode, score: GhostScore | None, selected_key: str
+) -> GraphNode:
     team = str(node.properties.get("team_id", "team:unknown")).removeprefix("team:")
     role_rank = int(node.properties.get("role_rank", 1))
     centrality = getattr(score, "sampled_centrality", 0.0)

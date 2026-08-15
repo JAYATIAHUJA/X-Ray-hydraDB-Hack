@@ -60,7 +60,9 @@ def _nodes_by_key(bundle: CanonicalBundle) -> dict[str, NodeRow]:
 
 
 def _person_nodes(bundle: CanonicalBundle) -> tuple[NodeRow, ...]:
-    return tuple(sorted((node for node in bundle.nodes if node.label == "Person"), key=lambda n: n.id))
+    return tuple(
+        sorted((node for node in bundle.nodes if node.label == "Person"), key=lambda n: n.id)
+    )
 
 
 def _display_name(node: NodeRow) -> str:
@@ -138,7 +140,9 @@ def ghost_scores(bundle: CanonicalBundle, *, max_len: int = 4) -> tuple[GhostSco
     return tuple(sorted(scores, key=lambda score: (-score.sampled_centrality, score.person_key)))
 
 
-def bus_factor_impact(bundle: CanonicalBundle, person_key: str, *, max_len: int = 4) -> BusFactorImpact:
+def bus_factor_impact(
+    bundle: CanonicalBundle, person_key: str, *, max_len: int = 4
+) -> BusFactorImpact:
     if max_len <= 0:
         raise ValueError("max_len must be positive")
 
@@ -225,12 +229,15 @@ def gap_findings(bundle: CanonicalBundle) -> tuple[GapFinding, ...]:
     predecessors: dict[str, list[str]] = defaultdict(list)
     successors: dict[str, list[str]] = defaultdict(list)
     for edge in bundle.edges:
-        if edge.rel_type != "PRECEDED_BY":
-            continue
         source = nodes[edge.source_id].canonical_key
         target = nodes[edge.target_id].canonical_key
-        predecessors[source].append(target)
-        successors[target].append(source)
+        if edge.rel_type == "PRECEDED_BY":
+            predecessors[source].append(target)
+            successors[target].append(source)
+        elif edge.rel_type == "REPLIES_TO" and nodes[edge.target_id].label == "Phantom":
+            # A reply points at the absent parent. For the display path, the
+            # replying artifact is the successor of the Phantom node.
+            successors[target].append(source)
 
     findings = []
     for node in bundle.nodes:
@@ -285,7 +292,9 @@ def _module_owners(
     }
 
 
-def _bounded_distance(graph: CommunicationGraph, source: str, target: str, max_len: int) -> int | None:
+def _bounded_distance(
+    graph: CommunicationGraph, source: str, target: str, max_len: int
+) -> int | None:
     if source not in graph or target not in graph:
         return None
     if source == target:
@@ -340,11 +349,7 @@ def _all_shortest_paths_within(
 
 def _without_node(graph: CommunicationGraph, removed: str) -> CommunicationGraph:
     return {
-        node: {
-            neighbor: weight
-            for neighbor, weight in neighbors.items()
-            if neighbor != removed
-        }
+        node: {neighbor: weight for neighbor, weight in neighbors.items() if neighbor != removed}
         for node, neighbors in graph.items()
         if node != removed
     }

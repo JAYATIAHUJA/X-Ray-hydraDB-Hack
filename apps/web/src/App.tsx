@@ -270,10 +270,13 @@ function toFaultlineRows(findings: FaultlineFinding[]) {
 function toGapRows(findings: GapFinding[]) {
   return findings.map((finding, index) => ({
     id: `G-${String(index + 1).padStart(3, "0")}`,
-    path: `${suffix(finding.successor_keys[0] ?? "artifact:unknown")} -> ${suffix(finding.phantom_key)} -> ${suffix(
-      finding.predecessor_keys[0] ?? "artifact:unknown"
-    )}`,
-    expected: finding.expected_kind,
+    path:
+      finding.reason === "dangling_thread_parent"
+        ? `${suffix(finding.successor_keys[0] ?? "artifact:unknown")} -> missing ${suffix(finding.phantom_key)}`
+        : `${suffix(finding.successor_keys[0] ?? "artifact:unknown")} -> ${suffix(finding.phantom_key)} -> ${suffix(
+            finding.predecessor_keys[0] ?? "artifact:unknown"
+          )}`,
+    expected: finding.reason === "dangling_thread_parent" ? "thread parent" : finding.expected_kind,
     inferred: finding.inferred_epoch === null ? "unknown" : String(finding.inferred_epoch),
     reason: finding.reason
   }));

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from xray_analytics import gap_findings
 from xray_core.models import CanonicalRecord, SequenceContractSet
 from xray_ingest.canonicalize import canonicalize
 from xray_ingest.derive import derive_edges
@@ -185,3 +186,14 @@ def test_dangling_thread_parent_becomes_phantom_and_reply_edge() -> None:
     assert gaps.phantoms[0].properties["reason"] == "dangling_thread_parent"
     assert [edge.rel_type for edge in gaps.edges] == ["REPLIES_TO"]
     assert "absence does not establish deletion" in " ".join(gaps.limitations)
+
+    derived = detect_gaps(base, SequenceContractSet())
+    enriched = base.model_copy(
+        update={
+            "nodes": (*base.nodes, *derived.phantoms),
+            "edges": (*base.edges, *derived.edges),
+        }
+    )
+    finding = gap_findings(enriched)[0]
+    assert finding.reason == "dangling_thread_parent"
+    assert finding.successor_keys == ("artifact:slack:child",)

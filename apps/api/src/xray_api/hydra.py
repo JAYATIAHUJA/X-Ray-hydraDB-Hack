@@ -158,7 +158,9 @@ def seed_bundle(
             report = loader_factory(resolved_gateway).load(snapshot_dir, manifest)
         elif snapshot_parent is not None:
             snapshot_parent.mkdir(parents=True, exist_ok=True)
-            with tempfile.TemporaryDirectory(prefix="xray-fixture-snapshot-", dir=snapshot_parent) as temp_dir:
+            with tempfile.TemporaryDirectory(
+                prefix="xray-fixture-snapshot-", dir=snapshot_parent
+            ) as temp_dir:
                 generated_snapshot_dir = Path(temp_dir)
                 manifest = snapshot_writer(bundle, generated_snapshot_dir)
                 report = loader_factory(resolved_gateway).load(generated_snapshot_dir, manifest)
@@ -225,7 +227,11 @@ def communication_distances(
     except Exception:
         return None
     finally:
-        if created_gateway and "resolved_gateway" in locals() and hasattr(resolved_gateway.driver, "close"):
+        if (
+            created_gateway
+            and "resolved_gateway" in locals()
+            and hasattr(resolved_gateway.driver, "close")
+        ):
             resolved_gateway.driver.close()
 
     return distances
@@ -274,7 +280,11 @@ def graph_rows(
     except Exception:
         return None
     finally:
-        if created_gateway and "resolved_gateway" in locals() and hasattr(resolved_gateway.driver, "close"):
+        if (
+            created_gateway
+            and "resolved_gateway" in locals()
+            and hasattr(resolved_gateway.driver, "close")
+        ):
             resolved_gateway.driver.close()
 
     return HydraGraphRows(
@@ -302,10 +312,12 @@ def gap_rows(
                     "MATCH (phantom:Phantom {dataset_id: $dataset_id}) "
                     "OPTIONAL MATCH (phantom)-[:PRECEDED_BY]->(predecessor) "
                     "OPTIONAL MATCH (successor)-[:PRECEDED_BY]->(phantom) "
+                    "OPTIONAL MATCH (reply)-[:REPLIES_TO]->(phantom) "
                     "RETURN phantom.canonical_key AS phantom_key, "
                     "phantom.properties AS properties, "
                     "collect(DISTINCT predecessor.canonical_key) AS predecessor_keys, "
-                    "collect(DISTINCT successor.canonical_key) AS successor_keys "
+                    "collect(DISTINCT successor.canonical_key) AS successor_keys, "
+                    "collect(DISTINCT reply.canonical_key) AS reply_keys "
                     "ORDER BY phantom.canonical_key"
                 ),
                 parameters={"dataset_id": dataset_id},
@@ -316,7 +328,11 @@ def gap_rows(
     except Exception:
         return None
     finally:
-        if created_gateway and "resolved_gateway" in locals() and hasattr(resolved_gateway.driver, "close"):
+        if (
+            created_gateway
+            and "resolved_gateway" in locals()
+            and hasattr(resolved_gateway.driver, "close")
+        ):
             resolved_gateway.driver.close()
 
     return tuple(_hydra_gap_row(row) for row in rows)
@@ -330,7 +346,14 @@ def _hydra_gap_row(row: dict[str, object]) -> HydraGapRow:
         phantom_key=phantom_key,
         properties=_properties(row.get("properties")),
         predecessor_keys=_string_tuple(row.get("predecessor_keys")),
-        successor_keys=_string_tuple(row.get("successor_keys")),
+        successor_keys=tuple(
+            sorted(
+                {
+                    *_string_tuple(row.get("successor_keys")),
+                    *_string_tuple(row.get("reply_keys")),
+                }
+            )
+        ),
     )
 
 
