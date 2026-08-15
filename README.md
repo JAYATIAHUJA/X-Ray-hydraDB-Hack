@@ -26,7 +26,7 @@ That makes three questions difficult to answer before something breaks:
 | --- | --- | --- |
 | **Ghost** | Who is structurally load-bearing? | People whose removal disconnects otherwise reachable collaboration paths. |
 | **Faultline** | Where does work depend on work without enough coordination? | Module dependencies whose likely owners have no, or only weak, communication path. |
-| **Gaps** | Where is an expected evidence step absent? | A `Phantom` node inserted only when an explicit sequence contract has a required missing step. |
+| **Gaps** | Where is an expected evidence step absent? | A `Phantom` node inserted for a required sequence gap or a dangling thread parent. |
 
 ## How it works
 

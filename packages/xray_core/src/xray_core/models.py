@@ -240,6 +240,7 @@ class EdgeRow(XrayModel):
     rel_type: Literal[
         "REPORTS_TO",
         "AUTHORED",
+        "REPLIES_TO",
         "MENTIONS",
         "COMMUNICATES",
         "ABOUT",

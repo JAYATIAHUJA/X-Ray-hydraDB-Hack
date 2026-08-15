@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from xray_core.models import CanonicalRecord
+from xray_core.models import CanonicalRecord, SequenceContractSet
 from xray_ingest.canonicalize import canonicalize
 from xray_ingest.derive import derive_edges
+from xray_ingest.gaps import detect_gaps
 from xray_ingest.sources import (
     SourceAdapterError,
     code_records,
@@ -122,3 +123,65 @@ def test_source_adapters_require_explicit_ids_and_module_lists() -> None:
         assert "mentions" in str(error)
     else:
         raise AssertionError("expected a source adapter validation error")
+
+
+def _person_record(person: str) -> CanonicalRecord:
+    return CanonicalRecord.model_validate(
+        {
+            "source": "directory",
+            "external_id": person,
+            "kind": "directory_person",
+            "occurred_at_epoch": 1,
+            "author_external_id": None,
+            "parent_external_id": None,
+            "subjects": [f"person:{person}"],
+            "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "content": None,
+            "metadata": {},
+        }
+    )
+
+
+def test_known_thread_parent_becomes_replies_to_edge() -> None:
+    records = (
+        _person_record("alex"),
+        _person_record("maya"),
+        *slack_records(
+            [
+                {"id": "parent", "occurred_at_epoch": 2, "author_id": "alex"},
+                {
+                    "id": "child",
+                    "occurred_at_epoch": 3,
+                    "author_id": "maya",
+                    "thread_parent_id": "parent",
+                },
+            ]
+        ),
+    )
+    bundle = canonicalize(records, "thread-test")
+
+    reply = next(edge for edge in bundle.edges if edge.rel_type == "REPLIES_TO")
+    assert reply.canonical_key == "replies_to:slack:child:slack:parent"
+
+
+def test_dangling_thread_parent_becomes_phantom_and_reply_edge() -> None:
+    records = (
+        _person_record("maya"),
+        *slack_records(
+            [
+                {
+                    "id": "child",
+                    "occurred_at_epoch": 3,
+                    "author_id": "maya",
+                    "thread_parent_id": "deleted-parent",
+                }
+            ]
+        ),
+    )
+    base = canonicalize(records, "dangling-thread-test")
+    gaps = detect_gaps(base, SequenceContractSet())
+
+    assert [node.canonical_key for node in gaps.phantoms] == ["artifact:slack:deleted-parent"]
+    assert gaps.phantoms[0].properties["reason"] == "dangling_thread_parent"
+    assert [edge.rel_type for edge in gaps.edges] == ["REPLIES_TO"]
+    assert "absence does not establish deletion" in " ".join(gaps.limitations)

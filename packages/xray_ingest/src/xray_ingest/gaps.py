@@ -20,7 +20,9 @@ from .ids import path_key, stable_edge_id, stable_id
 
 
 def _canonical_json(value: object) -> str:
-    return json.dumps(value, ensure_ascii=False, allow_nan=False, sort_keys=True, separators=(",", ":"))
+    return json.dumps(
+        value, ensure_ascii=False, allow_nan=False, sort_keys=True, separators=(",", ":")
+    )
 
 
 def _empty_sha256() -> str:
@@ -132,12 +134,136 @@ def _preceded_by_edge(
     )
 
 
+def _thread_parent_evidence(
+    bundle: CanonicalBundle,
+) -> tuple[tuple[NodeRow, str, EvidenceRecord], ...]:
+    nodes = {node.canonical_key: node for node in bundle.nodes}
+    missing: list[tuple[NodeRow, str, EvidenceRecord]] = []
+    for evidence in bundle.evidence:
+        metadata = json.loads(evidence.metadata_json)
+        parent_external_id = metadata.get("parent_external_id")
+        if not isinstance(parent_external_id, str) or not parent_external_id.strip():
+            continue
+        child = nodes.get(evidence.subject_key)
+        if child is None or child.label != "Artifact":
+            continue
+        parent_key = (
+            parent_external_id
+            if parent_external_id.startswith("artifact:")
+            else f"artifact:{evidence.source_type}:{parent_external_id}"
+        )
+        if parent_key not in nodes:
+            missing.append((child, parent_key, evidence))
+    return tuple(missing)
+
+
+def _dangling_parent_evidence(
+    bundle: CanonicalBundle,
+    child: NodeRow,
+    parent_key: str,
+    source_evidence: EvidenceRecord,
+) -> EvidenceRecord:
+    payload = _canonical_json(
+        {
+            "child_key": child.canonical_key,
+            "dataset_id": bundle.dataset_id,
+            "parent_key": parent_key,
+            "source_evidence_id": source_evidence.evidence_id,
+        }
+    )
+    digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    return EvidenceRecord(
+        evidence_id=f"evidence:{digest}",
+        run_id=f"gaps:{bundle.dataset_id}",
+        source_type="thread_lineage",
+        source_uri=f"derived://{bundle.dataset_id}/dangling-thread-parent/{digest}",
+        source_record_id=digest,
+        observed_epoch=source_evidence.observed_epoch,
+        subject_key=parent_key,
+        predicate="gap_phantom",
+        object_key=child.canonical_key,
+        evidence_class=EvidenceClass.INFERRED,
+        confidence=100,
+        extraction_method="dangling_thread_parent_detection",
+        content_sha256=source_evidence.content_sha256,
+        redacted_excerpt="",
+        metadata_json=_canonical_json(
+            {
+                "metadata": {
+                    "expected_kind": "thread_parent",
+                    "reason": "dangling_thread_parent",
+                    "source_evidence_id": source_evidence.evidence_id,
+                }
+            }
+        ),
+    )
+
+
+def _dangling_parent_node(
+    bundle: CanonicalBundle,
+    parent_key: str,
+    evidence: EvidenceRecord,
+) -> NodeRow:
+    node_id = stable_id(bundle.dataset_id, "Phantom", parent_key)
+    return NodeRow(
+        id=node_id,
+        canonical_key=parent_key,
+        path_key=path_key("Phantom", node_id),
+        label="Phantom",
+        evidence_class=EvidenceClass.INFERRED,
+        confidence=100,
+        properties={
+            "expected_kind": "thread_parent",
+            "reason": "dangling_thread_parent",
+            "inferred_epoch": evidence.observed_epoch,
+        },
+        evidence_ids=(evidence.evidence_id,),
+    )
+
+
+def _dangling_parent_edge(
+    bundle: CanonicalBundle,
+    child: NodeRow,
+    phantom: NodeRow,
+    evidence: EvidenceRecord,
+) -> EdgeRow:
+    discriminator = f"dangling_thread_parent:{child.canonical_key}:{phantom.canonical_key}"
+    edge_id = stable_edge_id(bundle.dataset_id, "REPLIES_TO", child.id, phantom.id, discriminator)
+    return EdgeRow(
+        id=edge_id,
+        canonical_key=(
+            f"replies_to:{child.canonical_key.split(':', maxsplit=1)[-1]}:"
+            f"{phantom.canonical_key.split(':', maxsplit=1)[-1]}"
+        ),
+        source_id=child.id,
+        target_id=phantom.id,
+        rel_type="REPLIES_TO",
+        evidence_class=EvidenceClass.INFERRED,
+        confidence=100,
+        properties={
+            "observed_epoch": evidence.observed_epoch,
+            "reason": "dangling_thread_parent",
+        },
+        evidence_ids=(evidence.evidence_id,),
+    )
+
+
 def detect_gaps(base: CanonicalBundle, contracts: SequenceContractSet) -> GapDerivation:
     node_by_key = {node.canonical_key: node for node in base.nodes}
-    phantoms: list[NodeRow] = []
+    phantoms: dict[str, NodeRow] = {}
     edges: list[EdgeRow] = []
     evidence_records: list[EvidenceRecord] = []
     limitations = set(contracts.limitations)
+
+    for child, parent_key, source_evidence in _thread_parent_evidence(base):
+        gap_evidence = _dangling_parent_evidence(base, child, parent_key, source_evidence)
+        phantom = _dangling_parent_node(base, parent_key, gap_evidence)
+        phantoms[parent_key] = phantom
+        evidence_records.append(gap_evidence)
+        edges.append(_dangling_parent_edge(base, child, phantom, gap_evidence))
+        limitations.add(
+            "A dangling thread parent is structurally absent; absence does not establish deletion."
+        )
 
     for contract in contracts.contracts:
         limitations.update(contract.limitations)
@@ -152,21 +278,21 @@ def detect_gaps(base: CanonicalBundle, contracts: SequenceContractSet) -> GapDer
                 continue
             gap_evidence = _gap_evidence(base, contract, step)
             phantom = _phantom_node(base, contract, step, gap_evidence)
-            phantoms.append(phantom)
+            phantoms[step.canonical_key] = phantom
             evidence_records.append(gap_evidence)
             sequence_nodes.append(phantom)
             contract_evidence_ids.append(gap_evidence.evidence_id)
 
         if contract_evidence_ids:
             for later, earlier in zip(sequence_nodes[1:], sequence_nodes, strict=False):
-                edges.append(_preceded_by_edge(base, later, earlier, contract, contract_evidence_ids[0]))
+                edges.append(
+                    _preceded_by_edge(base, later, earlier, contract, contract_evidence_ids[0])
+                )
 
     return GapDerivation(
-        phantoms=tuple(sorted(phantoms, key=lambda node: (node.id, node.canonical_key))),
+        phantoms=tuple(sorted(phantoms.values(), key=lambda node: (node.id, node.canonical_key))),
         edges=tuple(sorted(edges, key=lambda edge: (edge.id, edge.canonical_key))),
-        evidence=tuple(
-            sorted(evidence_records, key=lambda evidence: evidence.evidence_id)
-        ),
+        evidence=tuple(sorted(evidence_records, key=lambda evidence: evidence.evidence_id)),
         limitations=tuple(sorted(limitations)),
     )
 
