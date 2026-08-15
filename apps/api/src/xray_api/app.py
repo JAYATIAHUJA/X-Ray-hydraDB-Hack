@@ -16,7 +16,7 @@ from xray_analytics import (
 from xray_core.models import AnalysisStatus, EdgeRow, NodeRow
 
 from .config import get_settings
-from .dependencies import current_snapshot_id, demo_bundle
+from .dependencies import active_bundle, current_snapshot_id
 from .errors import not_found
 from .hydra import (
     HydraGapRow,
@@ -76,7 +76,7 @@ def create_app() -> FastAPI:
 
     @app.post("/api/v1/hydra/seed-fixture", response_model=HydraSeedResponse)
     def seed_fixture() -> HydraSeedResponse:
-        result = seed_bundle(get_settings(), demo_bundle())
+        result = seed_bundle(get_settings(), active_bundle())
         report = result.report
         return HydraSeedResponse(
             status=result.status,
@@ -98,7 +98,7 @@ def create_app() -> FastAPI:
 
     @app.get("/api/v1/snapshots/current", response_model=SnapshotResponse)
     def current_snapshot() -> SnapshotResponse:
-        bundle = demo_bundle()
+        bundle = active_bundle()
         return SnapshotResponse(
             snapshot_id=current_snapshot_id(),
             dataset_id=bundle.dataset_id,
@@ -111,7 +111,7 @@ def create_app() -> FastAPI:
     @app.get("/api/v1/snapshots/{snapshot_id}/graph", response_model=GraphResponse)
     def graph(snapshot_id: str) -> GraphResponse:
         _require_current_snapshot(snapshot_id)
-        bundle = demo_bundle()
+        bundle = active_bundle()
         scores = {score.person_key: score for score in ghost_scores(bundle)}
         selected_key = max(scores.values(), key=lambda score: score.rank_gap).person_key
         hydra_rows = graph_rows(get_settings(), bundle.dataset_id)
@@ -150,7 +150,7 @@ def create_app() -> FastAPI:
     @app.get("/api/v1/snapshots/{snapshot_id}/ghosts", response_model=LensEnvelope)
     def ghosts(snapshot_id: str) -> LensEnvelope:
         _require_current_snapshot(snapshot_id)
-        bundle = demo_bundle()
+        bundle = active_bundle()
         scores = ghost_scores(bundle)
         findings = []
         for score in scores:
@@ -170,7 +170,7 @@ def create_app() -> FastAPI:
     @app.get("/api/v1/snapshots/{snapshot_id}/faultlines", response_model=LensEnvelope)
     def faultline_results(snapshot_id: str) -> LensEnvelope:
         _require_current_snapshot(snapshot_id)
-        bundle = demo_bundle()
+        bundle = active_bundle()
         findings = faultlines(bundle)
         distances = communication_distances(
             get_settings(),
@@ -194,7 +194,7 @@ def create_app() -> FastAPI:
     @app.post("/api/v1/snapshots/{snapshot_id}/gap-paths", response_model=LensEnvelope)
     def gap_paths(snapshot_id: str, request: GapPathRequest) -> LensEnvelope:
         _require_current_snapshot(snapshot_id)
-        bundle = demo_bundle()
+        bundle = active_bundle()
         live_gaps = gap_rows(get_settings(), bundle.dataset_id)
         all_findings = (
             tuple(_gap_finding_from_hydra(row) for row in live_gaps)

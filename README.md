@@ -134,6 +134,12 @@ Without `XRAY_HYDRA_URI`, the API intentionally stays in fixture fallback mode. 
 endpoint reports `fallback`, `live`, or `offline` so the UI never implies that a live graph
 database is available when it is not.
 
+To run the mixed Slack/email/ticket/Git fixture, select it before starting the API:
+
+```powershell
+$env:XRAY_FIXTURE_VARIANT = "mixed"
+```
+
 ### Configure HydraDB
 
 Set these variables before starting the API:
