@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import asdict
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from xray_analytics import bus_factor_impact, faultlines, gap_findings, ghost_scores
 from xray_core.models import AnalysisStatus
 
@@ -13,6 +14,13 @@ from .schemas import GapPathRequest, HealthResponse, LensEnvelope, SnapshotRespo
 
 def create_app() -> FastAPI:
     app = FastAPI(title="X-Ray Evidence Platform API", version="0.1.0")
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"],
+        allow_credentials=True,
+        allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+        allow_headers=["content-type"],
+    )
 
     @app.get("/api/v1/health", response_model=HealthResponse)
     def health() -> HealthResponse:

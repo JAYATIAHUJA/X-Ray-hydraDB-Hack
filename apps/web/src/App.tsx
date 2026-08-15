@@ -1,16 +1,43 @@
+import type { CSSProperties } from "react";
 import { useMemo, useState } from "react";
-import { faultlineRows, gapRows, Lens, links, people, queryText } from "./data";
+import type { FaultlineFinding, GapFinding, GhostFinding } from "./api";
+import type { Lens } from "./data";
+import { links, people, queryText } from "./data";
+import { useXraySnapshot } from "./queries";
 
 const tabs: Array<{ id: Lens; label: string; sublabel: string; icon: string }> = [
-  { id: "org", label: "Org", sublabel: "People & Structure", icon: "M8 3v4m0 0H5v4h6V7H8Zm0 0h8m0-4v4m0 0h-3v4h6V7h-3ZM8 15v-2m8 2v-2m-8 2H5v4h6v-4H8Zm8 0h-3v4h6v-4h-3Z" },
-  { id: "faultlines", label: "Faultlines", sublabel: "Tension & Risk", icon: "M12 2 5 13h6l-1 9 7-12h-6l1-8Z" },
-  { id: "gaps", label: "Gaps", sublabel: "Missing Links", icon: "M4 8V4h4m8 0h4v4M4 16v4h4m8 0h4v-4M9 9h6v6H9z" }
+  {
+    id: "org",
+    label: "Org",
+    sublabel: "People & Structure",
+    icon: "M8 3v4m0 0H5v4h6V7H8Zm0 0h8m0-4v4m0 0h-3v4h6V7h-3ZM8 15v-2m8 2v-2m-8 2H5v4h6v-4H8Zm8 0h-3v4h6v-4h-3Z"
+  },
+  {
+    id: "faultlines",
+    label: "Faultlines",
+    sublabel: "Tension & Risk",
+    icon: "M12 2 5 13h6l-1 9 7-12h-6l1-8Z"
+  },
+  {
+    id: "gaps",
+    label: "Gaps",
+    sublabel: "Missing Links",
+    icon: "M4 8V4h4m8 0h4v4M4 16v4h4m8 0h4v-4M9 9h6v6H9z"
+  }
 ];
 
 export function App() {
   const [activeLens, setActiveLens] = useState<Lens>("org");
   const [mode, setMode] = useState<"actual" | "official">("actual");
+  const { faultlines, gapPath, ghosts, snapshot } = useXraySnapshot();
   const selected = people.find((person) => person.selected) ?? people[0];
+  const ghostFinding =
+    ghosts.data?.findings.find((finding) => finding.person_key === selected?.key) ??
+    ghosts.data?.findings[0];
+  const faultlineRows = toFaultlineRows(faultlines.data?.findings ?? []);
+  const gapRows = toGapRows(gapPath.data?.findings ?? []);
+  const hasError = snapshot.isError || ghosts.isError || faultlines.isError || gapPath.isError;
+  const isLoading = snapshot.isPending || ghosts.isPending || faultlines.isPending || gapPath.isPending;
   const graphLinks = useMemo(
     () =>
       links.map((link) => ({
@@ -28,15 +55,21 @@ export function App() {
   return (
     <main className="app-shell">
       <header className="topbar" aria-label="Application status">
-        <div className="brand-mark" aria-hidden="true">X</div>
+        <div className="brand-mark" aria-hidden="true">
+          X
+        </div>
         <div>
           <h1>X-Ray</h1>
           <p>X-Ray Evidence Platform</p>
         </div>
         <div className="status-pill">Local fixture</div>
-        <div className="topbar-metric healthy">Healthy</div>
-        <div className="topbar-metric">Graph: 17 nodes / 29 edges</div>
-        <div className="topbar-metric">HydraDB: fixture trace</div>
+        <div className={hasError ? "topbar-metric unhealthy" : "topbar-metric healthy"}>
+          {hasError ? "API offline" : isLoading ? "Loading" : "Healthy"}
+        </div>
+        <div className="topbar-metric">
+          Graph: {snapshot.data?.node_count ?? "--"} nodes / {snapshot.data?.edge_count ?? "--"} edges
+        </div>
+        <div className="topbar-metric">HydraDB: {ghosts.data?.analysis_status ?? "pending"}</div>
       </header>
 
       <div className="workspace">
@@ -75,8 +108,12 @@ export function App() {
                 <option value="official">Official rank</option>
               </select>
             </label>
-            <div className="scale">Low <span /> <span /> <span /> <span /> High</div>
-            <label className="check"><input defaultChecked type="checkbox" /> Log scale node sizes</label>
+            <div className="scale">
+              Low <span /> <span /> <span /> <span /> High
+            </div>
+            <label className="check">
+              <input defaultChecked type="checkbox" /> Log scale node sizes
+            </label>
             <input aria-label="Search nodes" placeholder="Search nodes (Ctrl+K)" />
           </div>
 
@@ -101,11 +138,13 @@ export function App() {
                 <button
                   className={person.selected ? "person-node selected" : "person-node"}
                   key={person.key}
-                  style={{
-                    "--node-size": `${size}px`,
-                    left: `${person.x}%`,
-                    top: `${person.y}%`
-                  } as React.CSSProperties}
+                  style={
+                    {
+                      "--node-size": `${size}px`,
+                      left: `${person.x}%`,
+                      top: `${person.y}%`
+                    } as CSSProperties
+                  }
                   type="button"
                 >
                   <span>{person.name}</span>
@@ -116,8 +155,16 @@ export function App() {
           </div>
 
           <div className="bottom-grid">
-            <DataTable title="Faultlines" rows={faultlineRows} />
-            <DataTable title="Gaps" rows={gapRows} />
+            <DataTable
+              emptyText={faultlines.isPending ? "Loading faultlines" : "No API faultlines"}
+              rows={faultlineRows}
+              title="Faultlines"
+            />
+            <DataTable
+              emptyText={gapPath.isPending ? "Loading gaps" : "No API gaps"}
+              rows={gapRows}
+              title="Gaps"
+            />
           </div>
         </section>
 
@@ -125,20 +172,38 @@ export function App() {
           <section className="selected-block">
             <span className="eyeline">Selected node</span>
             <h2>{selected.name}</h2>
-            <p>{selected.title} / {selected.team}</p>
+            <p>
+              {selected.title} / {selected.team}
+            </p>
             <code>{selected.key}</code>
           </section>
 
           <section className="finding-block">
             <h3>Ghost</h3>
-            <p>This person’s structural position is materially higher than formal rank.</p>
+            <p>{ghosts.data?.status_explanation ?? "Waiting for fixture Ghost analysis."}</p>
           </section>
 
           <section className="metric-grid">
-            <Metric label="Actual centrality" value="0.231" detail="1st structural rank" />
-            <Metric label="Rank gap" value="+8 places" detail="Formal rank: 10th" />
-            <Metric label="Removal impact" value="5 pairs" detail="Lost within 4 hops" />
-            <Metric label="Evidence limits" value="2 notes" detail="Synthetic fixture only" />
+            <Metric
+              detail={`${ghostFinding?.structural_rank ?? "--"} structural rank`}
+              label="Actual centrality"
+              value={formatCentrality(ghostFinding)}
+            />
+            <Metric
+              detail={`Formal rank: ${ghostFinding?.formal_rank ?? "--"}`}
+              label="Rank gap"
+              value={formatRankGap(ghostFinding)}
+            />
+            <Metric
+              detail={`Lost within ${ghostFinding?.removal_impact.max_len ?? 4} hops`}
+              label="Removal impact"
+              value={`${ghostFinding?.removal_impact.pairs_lost_without_person ?? "--"} pairs`}
+            />
+            <Metric
+              detail={snapshot.data?.dataset_id ?? "Waiting for snapshot"}
+              label="Evidence limits"
+              value={`${snapshot.data?.limitations.length ?? "--"} notes`}
+            />
           </section>
 
           <details className="query-card" open>
@@ -147,13 +212,51 @@ export function App() {
             <footer>
               <span>maxLen: 4</span>
               <span>resultLimit: 100</span>
-              <span>status: complete</span>
+              <span>status: {ghosts.data?.analysis_status ?? "pending"}</span>
             </footer>
           </details>
         </aside>
       </div>
     </main>
   );
+}
+
+function formatCentrality(finding: GhostFinding | undefined) {
+  return finding === undefined ? "--" : finding.sampled_centrality.toFixed(3);
+}
+
+function formatRankGap(finding: GhostFinding | undefined) {
+  if (finding === undefined) {
+    return "--";
+  }
+  return finding.rank_gap > 0 ? `+${finding.rank_gap} places` : `${finding.rank_gap} places`;
+}
+
+function toFaultlineRows(findings: FaultlineFinding[]) {
+  return findings.map((finding, index) => ({
+    id: `FL-${String(index + 1).padStart(3, "0")}`,
+    modules: `${suffix(finding.source_module_key)} -> ${suffix(finding.target_module_key)}`,
+    owners: `${suffix(finding.source_owner_key)} / ${suffix(finding.target_owner_key)}`,
+    distance: finding.communication_distance === null ? "none within 4" : String(finding.communication_distance),
+    severity: finding.severity.toFixed(1),
+    tier: finding.tier
+  }));
+}
+
+function toGapRows(findings: GapFinding[]) {
+  return findings.map((finding, index) => ({
+    id: `G-${String(index + 1).padStart(3, "0")}`,
+    path: `${suffix(finding.successor_keys[0] ?? "artifact:unknown")} -> ${suffix(finding.phantom_key)} -> ${suffix(
+      finding.predecessor_keys[0] ?? "artifact:unknown"
+    )}`,
+    expected: finding.expected_kind,
+    inferred: finding.inferred_epoch === null ? "unknown" : String(finding.inferred_epoch),
+    reason: finding.reason
+  }));
+}
+
+function suffix(value: string) {
+  return value.split(":").at(-1) ?? value;
 }
 
 function Icon({ path }: { path: string }) {
@@ -174,24 +277,40 @@ function Metric({ label, value, detail }: { label: string; value: string; detail
   );
 }
 
-function DataTable({ title, rows }: { title: string; rows: Array<Record<string, string>> }) {
+function DataTable({
+  emptyText,
+  title,
+  rows
+}: {
+  emptyText: string;
+  title: string;
+  rows: Array<Record<string, string>>;
+}) {
   const keys = Object.keys(rows[0] ?? {});
 
   return (
     <section className="table-panel">
       <h3>{title}</h3>
-      <table>
-        <thead>
-          <tr>{keys.map((key) => <th key={key}>{key}</th>)}</tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.id}>
-              {keys.map((key) => <td key={key}>{row[key]}</td>)}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {rows.length === 0 ? (
+        <p className="table-empty">{emptyText}</p>
+      ) : (
+        <table>
+          <thead>
+            <tr>{keys.map((key) => <th key={key}>{key}</th>)}</tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.id}>
+                {keys.map((key) => (
+                  <td data-label={key} key={key}>
+                    {row[key]}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </section>
   );
 }
