@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCurrentSnapshot, getFaultlines, getGapPath, getGhosts } from "./api";
+import { getCurrentSnapshot, getFaultlines, getGapPath, getGhosts, getGraph } from "./api";
 
 export function useXraySnapshot() {
   const snapshot = useQuery({
@@ -14,6 +14,12 @@ export function useXraySnapshot() {
     queryFn: () => getGhosts(snapshotId ?? "")
   });
 
+  const graph = useQuery({
+    enabled: snapshotId !== undefined,
+    queryKey: ["graph", snapshotId],
+    queryFn: () => getGraph(snapshotId ?? "")
+  });
+
   const faultlines = useQuery({
     enabled: snapshotId !== undefined,
     queryKey: ["faultlines", snapshotId],
@@ -26,5 +32,5 @@ export function useXraySnapshot() {
     queryFn: () => getGapPath(snapshotId ?? "")
   });
 
-  return { faultlines, gapPath, ghosts, snapshot };
+  return { faultlines, gapPath, ghosts, graph, snapshot };
 }

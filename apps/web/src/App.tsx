@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import { useMemo, useState } from "react";
 import type { FaultlineFinding, GapFinding, GhostFinding } from "./api";
 import type { Lens } from "./data";
-import { links, people, queryText } from "./data";
+import { queryText } from "./data";
 import { useXraySnapshot } from "./queries";
 
 const tabs: Array<{ id: Lens; label: string; sublabel: string; icon: string }> = [
@@ -29,28 +29,26 @@ const tabs: Array<{ id: Lens; label: string; sublabel: string; icon: string }> =
 export function App() {
   const [activeLens, setActiveLens] = useState<Lens>("org");
   const [mode, setMode] = useState<"actual" | "official">("actual");
-  const { faultlines, gapPath, ghosts, snapshot } = useXraySnapshot();
+  const { faultlines, gapPath, ghosts, graph, snapshot } = useXraySnapshot();
+  const people = graph.data?.nodes ?? [];
   const selected = people.find((person) => person.selected) ?? people[0];
   const ghostFinding =
     ghosts.data?.findings.find((finding) => finding.person_key === selected?.key) ??
     ghosts.data?.findings[0];
   const faultlineRows = toFaultlineRows(faultlines.data?.findings ?? []);
   const gapRows = toGapRows(gapPath.data?.findings ?? []);
-  const hasError = snapshot.isError || ghosts.isError || faultlines.isError || gapPath.isError;
-  const isLoading = snapshot.isPending || ghosts.isPending || faultlines.isPending || gapPath.isPending;
+  const hasError = snapshot.isError || graph.isError || ghosts.isError || faultlines.isError || gapPath.isError;
+  const isLoading =
+    snapshot.isPending || graph.isPending || ghosts.isPending || faultlines.isPending || gapPath.isPending;
   const graphLinks = useMemo(
     () =>
-      links.map((link) => ({
+      (graph.data?.edges ?? []).map((link) => ({
         ...link,
         source: people.find((person) => person.key === link.source),
         target: people.find((person) => person.key === link.target)
       })),
-    []
+    [graph.data?.edges, people]
   );
-
-  if (selected === undefined) {
-    throw new Error("Fixture people are missing");
-  }
 
   return (
     <main className="app-shell">
@@ -133,7 +131,7 @@ export function App() {
               )}
             </svg>
             {people.map((person) => {
-              const size = mode === "actual" ? person.actualSize : person.officialSize;
+              const size = mode === "actual" ? person.actual_size : person.official_size;
               return (
                 <button
                   className={person.selected ? "person-node selected" : "person-node"}
@@ -171,11 +169,11 @@ export function App() {
         <aside className="detail-panel" aria-label="Selected finding details">
           <section className="selected-block">
             <span className="eyeline">Selected node</span>
-            <h2>{selected.name}</h2>
+            <h2>{selected?.name ?? "Loading graph"}</h2>
             <p>
-              {selected.title} / {selected.team}
+              {selected?.title ?? "Waiting for graph"} / {selected?.team ?? "--"}
             </p>
-            <code>{selected.key}</code>
+            <code>{selected?.key ?? "--"}</code>
           </section>
 
           <section className="finding-block">

@@ -17,6 +17,30 @@ class SnapshotResponse(BaseModel):
     limitations: tuple[str, ...]
 
 
+class GraphNode(BaseModel):
+    key: str
+    name: str
+    title: str
+    team: str
+    x: float = Field(ge=0, le=100)
+    y: float = Field(ge=0, le=100)
+    official_size: int = Field(gt=0)
+    actual_size: int = Field(gt=0)
+    selected: bool = False
+
+
+class GraphEdge(BaseModel):
+    source: str
+    target: str
+    strength: str
+
+
+class GraphResponse(BaseModel):
+    snapshot_id: str
+    nodes: tuple[GraphNode, ...]
+    edges: tuple[GraphEdge, ...]
+
+
 class LensEnvelope(BaseModel):
     snapshot_id: str
     analysis_status: AnalysisStatus
@@ -41,6 +65,9 @@ class ProblemDetail(BaseModel):
 
 __all__ = [
     "GapPathRequest",
+    "GraphEdge",
+    "GraphNode",
+    "GraphResponse",
     "HealthResponse",
     "LensEnvelope",
     "ProblemDetail",
