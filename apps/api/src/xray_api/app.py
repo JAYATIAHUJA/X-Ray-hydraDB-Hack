@@ -10,7 +10,14 @@ from xray_core.models import AnalysisStatus, EdgeRow, NodeRow
 from .config import get_settings
 from .dependencies import current_snapshot_id, demo_bundle
 from .errors import not_found
-from .hydra import HydraHealth, hydra_health, seed_bundle
+from .hydra import (
+    HydraGraphEdge,
+    HydraGraphNode,
+    HydraHealth,
+    graph_rows,
+    hydra_health,
+    seed_bundle,
+)
 from .schemas import (
     GapPathRequest,
     GraphEdge,
@@ -96,6 +103,14 @@ def create_app() -> FastAPI:
         bundle = demo_bundle()
         scores = {score.person_key: score for score in ghost_scores(bundle)}
         selected_key = max(scores.values(), key=lambda score: score.rank_gap).person_key
+        hydra_rows = graph_rows(get_settings(), bundle.dataset_id)
+        if hydra_rows is not None and hydra_rows.nodes:
+            return GraphResponse(
+                snapshot_id=snapshot_id,
+                nodes=tuple(_hydra_graph_node(row, scores.get(row.key), selected_key) for row in hydra_rows.nodes),
+                edges=tuple(_hydra_graph_edge(edge) for edge in hydra_rows.edges),
+            )
+
         people = tuple(sorted((node for node in bundle.nodes if node.label == "Person"), key=lambda node: node.canonical_key))
         node_key_by_id = {node.id: node.canonical_key for node in people}
 
@@ -212,12 +227,39 @@ def _graph_node(node: NodeRow, score: GhostScore | None, selected_key: str) -> G
     )
 
 
+def _hydra_graph_node(node: HydraGraphNode, score: GhostScore | None, selected_key: str) -> GraphNode:
+    team = str(node.properties.get("team_id", "team:unknown")).removeprefix("team:")
+    role_rank = int(node.properties.get("role_rank", 1))
+    centrality = getattr(score, "sampled_centrality", 0.0)
+    degree = getattr(score, "communication_degree", 0)
+    x, y = PERSON_LAYOUT.get(node.key, (50, 50))
+    return GraphNode(
+        key=node.key,
+        name=str(node.properties.get("display_name", node.key)),
+        title=_person_title(team, role_rank),
+        team=team,
+        x=x,
+        y=y,
+        official_size=max(20, 78 - (role_rank * 10)),
+        actual_size=max(20, min(82, round(20 + (centrality * 250) + (degree * 3)))),
+        selected=node.key == selected_key,
+    )
+
+
 def _graph_edge(edge: EdgeRow, node_key_by_id: dict[int, str]) -> GraphEdge:
     weight = edge.properties.get("weight", 0)
     return GraphEdge(
         source=node_key_by_id[edge.source_id],
         target=node_key_by_id[edge.target_id],
         strength=_edge_strength(float(weight)),
+    )
+
+
+def _hydra_graph_edge(edge: HydraGraphEdge) -> GraphEdge:
+    return GraphEdge(
+        source=edge.source,
+        target=edge.target,
+        strength=_edge_strength(edge.weight),
     )
 
 

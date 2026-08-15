@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+import json
 import tempfile
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-from xray_core.models import CanonicalBundle, LoadReport, SnapshotManifest
+from xray_core.models import CanonicalBundle, LoadReport, QuerySpec, Scalar, SnapshotManifest
 from xray_hydra import HydraGateway, HydraLoader
 from xray_ingest.manifest import write_snapshot
 
@@ -31,6 +32,25 @@ class HydraSeedResult:
     hydra: HydraHealth
     report: LoadReport | None
     detail: str
+
+
+@dataclass(frozen=True, slots=True)
+class HydraGraphNode:
+    key: str
+    properties: dict[str, Scalar]
+
+
+@dataclass(frozen=True, slots=True)
+class HydraGraphEdge:
+    source: str
+    target: str
+    weight: float
+
+
+@dataclass(frozen=True, slots=True)
+class HydraGraphRows:
+    nodes: tuple[HydraGraphNode, ...]
+    edges: tuple[HydraGraphEdge, ...]
 
 
 def hydra_health(settings: XraySettings) -> HydraHealth:
@@ -162,6 +182,91 @@ def seed_bundle(
     )
 
 
+def graph_rows(
+    settings: XraySettings,
+    dataset_id: str,
+    *,
+    gateway: HydraGateway | None = None,
+) -> HydraGraphRows | None:
+    if not settings.hydra_configured:
+        return None
+
+    created_gateway = gateway is None
+    try:
+        resolved_gateway = gateway or _create_gateway(settings)
+        node_rows = resolved_gateway.run(
+            QuerySpec(
+                name="hydra_graph_people",
+                statement=(
+                    "MATCH (p:Person {dataset_id: $dataset_id}) "
+                    "RETURN p.canonical_key AS key, p.properties AS properties "
+                    "ORDER BY p.canonical_key"
+                ),
+                parameters={"dataset_id": dataset_id},
+                max_len=None,
+                result_limit=None,
+            )
+        )
+        edge_rows = resolved_gateway.run(
+            QuerySpec(
+                name="hydra_graph_communications",
+                statement=(
+                    "MATCH (s:Person {dataset_id: $dataset_id})-[r:COMMUNICATES]->"
+                    "(t:Person {dataset_id: $dataset_id}) "
+                    "RETURN s.canonical_key AS source, t.canonical_key AS target, "
+                    "r.properties AS properties "
+                    "ORDER BY r.canonical_key"
+                ),
+                parameters={"dataset_id": dataset_id},
+                max_len=None,
+                result_limit=None,
+            )
+        )
+    except Exception:
+        return None
+    finally:
+        if created_gateway and "resolved_gateway" in locals() and hasattr(resolved_gateway.driver, "close"):
+            resolved_gateway.driver.close()
+
+    return HydraGraphRows(
+        nodes=tuple(_hydra_graph_node(row) for row in node_rows),
+        edges=tuple(_hydra_graph_edge(row) for row in edge_rows),
+    )
+
+
+def _hydra_graph_node(row: dict[str, object]) -> HydraGraphNode:
+    key = row.get("key")
+    if not isinstance(key, str):
+        raise ValueError("Hydra graph node row is missing key")
+    return HydraGraphNode(key=key, properties=_properties(row.get("properties")))
+
+
+def _hydra_graph_edge(row: dict[str, object]) -> HydraGraphEdge:
+    source = row.get("source")
+    target = row.get("target")
+    if not isinstance(source, str) or not isinstance(target, str):
+        raise ValueError("Hydra graph edge row is missing endpoints")
+    properties = _properties(row.get("properties"))
+    weight = properties.get("weight", 0)
+    if type(weight) not in {int, float}:
+        weight = 0
+    return HydraGraphEdge(source=source, target=target, weight=float(weight))
+
+
+def _properties(value: object) -> dict[str, Scalar]:
+    if isinstance(value, str):
+        parsed = json.loads(value)
+    else:
+        parsed = value
+    if not isinstance(parsed, dict):
+        raise ValueError("Hydra properties must be an object")
+    properties: dict[str, Scalar] = {}
+    for key, item in parsed.items():
+        if isinstance(key, str) and type(item) in {int, float, bool, str}:
+            properties[key] = item
+    return properties
+
+
 def _create_gateway(settings: XraySettings) -> HydraGateway:
     hydra_uri = settings.hydra_uri
     if hydra_uri is None:
@@ -177,10 +282,14 @@ def _create_gateway(settings: XraySettings) -> HydraGateway:
 
 
 __all__ = [
+    "HydraGraphEdge",
+    "HydraGraphNode",
+    "HydraGraphRows",
     "HydraHealth",
     "HydraSeedResult",
     "HydraSeedStatus",
     "HydraStatus",
+    "graph_rows",
     "hydra_health",
     "seed_bundle",
 ]
