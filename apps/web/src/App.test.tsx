@@ -3,6 +3,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { App } from "./App";
 
+const gapRequests: unknown[] = [];
+
 const responses: Record<string, object> = {
   "/api/v1/health": {
     status: "ok",
@@ -151,8 +153,12 @@ const responses: Record<string, object> = {
 };
 
 beforeEach(() => {
-  globalThis.fetch = async (input) => {
+  gapRequests.length = 0;
+  globalThis.fetch = async (input, init) => {
     const url = new URL(input.toString());
+    if (url.pathname.endsWith("/gap-paths") && typeof init?.body === "string") {
+      gapRequests.push(JSON.parse(init.body) as unknown);
+    }
     const payload = responses[url.pathname];
     if (payload === undefined) {
       return new Response("not found", { status: 404 });
@@ -192,11 +198,25 @@ test("renders the three-lens shell from API responses", async () => {
   expect(await screen.findByText("0.231")).toBeInTheDocument();
   expect(await screen.findByText("payments-api → ledger-worker")).toBeInTheDocument();
   expect(await screen.findByText("missing-approval")).toBeInTheDocument();
+  expect(await screen.findByRole("combobox", { name: "Source artifact" })).toHaveValue("artifact:code-change");
+  expect(await screen.findByRole("combobox", { name: "Target artifact" })).toHaveValue("artifact:directive");
+  expect(gapRequests).toContainEqual({
+    source_artifact_key: "artifact:code-change",
+    target_artifact_key: "artifact:directive"
+  });
 
   await userEvent.click(screen.getByRole("button", { name: /Faultlines/ }));
 
   expect(screen.getByRole("button", { name: /Faultlines/ })).toHaveAttribute("aria-current", "page");
   expect(screen.getByText("CALL algo.MSpaths({sourceLabel: 'Person'})")).toBeInTheDocument();
+  await userEvent.click(screen.getByText("FL-001"));
+  expect(screen.getByText(/payments-api depends on ledger-worker/)).toBeInTheDocument();
+
+  await userEvent.click(screen.getByRole("button", { name: /Gaps/ }));
+
+  expect(screen.getByText("CALL algo.SPpaths({sourceNode: $source_id})")).toBeInTheDocument();
+  await userEvent.click(screen.getByRole("button", { name: /missing-approval/ }));
+  expect(screen.getByText(/missing-approval is a structurally missing approval/)).toBeInTheDocument();
 
   await userEvent.click(alexNode);
 

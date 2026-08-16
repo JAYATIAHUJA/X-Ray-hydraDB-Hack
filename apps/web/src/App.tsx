@@ -1,7 +1,16 @@
 import cytoscape from "cytoscape";
 import type { Core, ElementDefinition } from "cytoscape";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { FaultlineFinding, GapFinding, GhostFinding, GraphEdge, GraphNode, LensEnvelope } from "./api";
+import { DEFAULT_GAP_REQUEST } from "./api";
+import type {
+  FaultlineFinding,
+  GapFinding,
+  GapPathRequest,
+  GhostFinding,
+  GraphEdge,
+  GraphNode,
+  LensEnvelope
+} from "./api";
 import type { Lens } from "./data";
 import { useXraySnapshot } from "./queries";
 
@@ -30,7 +39,10 @@ export function App() {
   const [activeLens, setActiveLens] = useState<Lens>("org");
   const [mode, setMode] = useState<"actual" | "official">("actual");
   const [selectedNodeKey, setSelectedNodeKey] = useState<string | undefined>();
-  const { faultlines, gapPath, ghosts, graph, health, snapshot } = useXraySnapshot();
+  const [selectedFaultlineIndex, setSelectedFaultlineIndex] = useState(0);
+  const [selectedGapIndex, setSelectedGapIndex] = useState(0);
+  const [gapRequest, setGapRequest] = useState<GapPathRequest>(DEFAULT_GAP_REQUEST);
+  const { faultlines, gapPath, ghosts, graph, health, snapshot } = useXraySnapshot(gapRequest);
   const people = graph.data?.nodes ?? [];
   const defaultSelectedKey = people.find((person) => person.selected)?.key ?? people[0]?.key;
   const selectedKey = people.some((person) => person.key === selectedNodeKey) ? selectedNodeKey : defaultSelectedKey;
@@ -38,6 +50,8 @@ export function App() {
   const ghostFinding = ghosts.data?.findings.find((finding) => finding.person_key === selected?.key);
   const faultlineFindings = faultlines.data?.findings ?? [];
   const gapFindings = gapPath.data?.findings ?? [];
+  const selectedFaultline = faultlineFindings[selectedFaultlineIndex] ?? faultlineFindings[0];
+  const selectedGap = gapFindings[selectedGapIndex] ?? gapFindings[0];
   const activeEnvelope = envelopeForLens(activeLens, ghosts.data, faultlines.data, gapPath.data);
   const activeQuery = activeEnvelope?.executed_query;
   const queryErrors = [
@@ -57,8 +71,8 @@ export function App() {
     faultlines.isPending ||
     gapPath.isPending;
   const graphElements = useMemo(
-    () => graphElementsFor(people, graph.data?.edges ?? [], faultlineFindings, mode, selectedKey),
-    [faultlineFindings, graph.data?.edges, mode, people, selectedKey]
+    () => graphElementsFor(people, graph.data?.edges ?? [], faultlineFindings, selectedFaultline, mode, selectedKey),
+    [faultlineFindings, graph.data?.edges, mode, people, selectedFaultline, selectedKey]
   );
 
   useEffect(() => {
@@ -66,6 +80,18 @@ export function App() {
       setSelectedNodeKey(defaultSelectedKey);
     }
   }, [defaultSelectedKey, selectedNodeKey]);
+
+  useEffect(() => {
+    if (selectedFaultlineIndex >= faultlineFindings.length) {
+      setSelectedFaultlineIndex(0);
+    }
+  }, [faultlineFindings.length, selectedFaultlineIndex]);
+
+  useEffect(() => {
+    if (selectedGapIndex >= gapFindings.length) {
+      setSelectedGapIndex(0);
+    }
+  }, [gapFindings.length, selectedGapIndex]);
 
   return (
     <main className="app-shell">
@@ -137,17 +163,24 @@ export function App() {
           <div className="graph-stage" data-lens={activeLens}>
             {graph.isError ? <Notice text="Graph query failed. Other lens data can still render." tone="bad" /> : null}
             <CytoscapeGraph elements={graphElements} onSelect={setSelectedNodeKey} selectedKey={selectedKey} />
+            <GraphLegend />
           </div>
 
           <div className="bottom-grid">
             <DataTable
               emptyText={faultlines.isPending ? "Loading faultlines" : "No API faultlines"}
+              onRowSelect={setSelectedFaultlineIndex}
               rows={toFaultlineRows(faultlineFindings)}
+              selectedIndex={selectedFaultlineIndex}
               title="Faultlines"
             />
             <GapTimeline
               emptyText={gapPath.isPending ? "Loading gaps" : "No API gaps"}
               findings={gapFindings}
+              onRequestChange={setGapRequest}
+              onSelect={setSelectedGapIndex}
+              request={gapRequest}
+              selectedIndex={selectedGapIndex}
             />
           </div>
         </section>
@@ -216,8 +249,8 @@ export function App() {
 
           <section className="evidence-drawer">
             <h3>Evidence + action</h3>
-            <p>{evidenceSummary(activeLens, ghostFinding, faultlineFindings[0], gapFindings[0])}</p>
-            <strong>{recommendedAction(activeLens, ghostFinding, faultlineFindings[0], gapFindings[0])}</strong>
+            <p>{evidenceSummary(activeLens, ghostFinding, selectedFaultline, selectedGap)}</p>
+            <strong>{recommendedAction(activeLens, ghostFinding, selectedFaultline, selectedGap)}</strong>
           </section>
         </aside>
       </div>
@@ -302,6 +335,15 @@ function CytoscapeGraph({
             opacity: 1,
             width: 3
           }
+        },
+        {
+          selector: "edge.selected-faultline",
+          style: {
+            "line-color": "#ff8992",
+            "target-arrow-color": "#ff8992",
+            opacity: 1,
+            width: 5
+          }
         }
       ]
     });
@@ -384,6 +426,7 @@ function graphElementsFor(
   people: GraphNode[],
   edges: GraphEdge[],
   findings: FaultlineFinding[],
+  selectedFaultline: FaultlineFinding | undefined,
   mode: "actual" | "official",
   selectedKey: string | undefined
 ): ElementDefinition[] {
@@ -405,7 +448,7 @@ function graphElementsFor(
       source: finding.source_owner_key,
       target: finding.target_owner_key
     },
-    classes: "faultline"
+    classes: finding === selectedFaultline ? "faultline selected-faultline" : "faultline"
   }));
   return [...nodes, ...communicationEdges, ...faultlineEdges];
 }
@@ -545,12 +588,32 @@ function Metric({ label, value, detail }: { label: string; value: string; detail
   );
 }
 
+function GraphLegend() {
+  return (
+    <div className="graph-legend" aria-label="Graph legend">
+      <span>
+        <i className="legend-dot communication" /> communication
+      </span>
+      <span>
+        <i className="legend-dot faultline" /> faultline
+      </span>
+      <span>
+        <i className="legend-dot phantom" /> phantom
+      </span>
+    </div>
+  );
+}
+
 function DataTable({
   emptyText,
+  onRowSelect,
+  selectedIndex,
   title,
   rows
 }: {
   emptyText: string;
+  onRowSelect?: (index: number) => void;
+  selectedIndex?: number;
   title: string;
   rows: Array<Record<string, string>>;
 }) {
@@ -571,8 +634,19 @@ function DataTable({
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
-              <tr key={row.id}>
+            {rows.map((row, rowIndex) => (
+              <tr
+                className={rowIndex === selectedIndex ? "data-row selected" : "data-row"}
+                key={row.id}
+                onClick={() => onRowSelect?.(rowIndex)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    onRowSelect?.(rowIndex);
+                  }
+                }}
+                tabIndex={onRowSelect === undefined ? undefined : 0}
+              >
                 {keys.map((key) => (
                   <td data-label={key} key={key}>
                     {row[key]}
@@ -587,15 +661,71 @@ function DataTable({
   );
 }
 
-function GapTimeline({ emptyText, findings }: { emptyText: string; findings: GapFinding[] }) {
+function GapTimeline({
+  emptyText,
+  findings,
+  onRequestChange,
+  onSelect,
+  request,
+  selectedIndex
+}: {
+  emptyText: string;
+  findings: GapFinding[];
+  onRequestChange: (request: GapPathRequest) => void;
+  onSelect: (index: number) => void;
+  request: GapPathRequest;
+  selectedIndex: number;
+}) {
+  const artifactOptions = artifactOptionsFrom(findings, request);
+
   return (
     <section className="table-panel gap-timeline">
-      <h3>Gaps</h3>
+      <div className="panel-heading">
+        <h3>Gaps</h3>
+        <span>
+          {request.source_artifact_key} to {request.target_artifact_key}
+        </span>
+      </div>
+      <div className="gap-controls" aria-label="Gap path controls">
+        <label>
+          Source artifact
+          <select
+            aria-label="Source artifact"
+            onChange={(event) => onRequestChange({ ...request, source_artifact_key: event.target.value })}
+            value={request.source_artifact_key}
+          >
+            {artifactOptions.map((artifact) => (
+              <option key={`source-${artifact}`} value={artifact}>
+                {suffix(artifact)}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Target artifact
+          <select
+            aria-label="Target artifact"
+            onChange={(event) => onRequestChange({ ...request, target_artifact_key: event.target.value })}
+            value={request.target_artifact_key}
+          >
+            {artifactOptions.map((artifact) => (
+              <option key={`target-${artifact}`} value={artifact}>
+                {suffix(artifact)}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
       {findings.length === 0 ? (
         <p className="table-empty">{emptyText}</p>
       ) : (
         findings.map((finding, index) => (
-          <div className="timeline-row" key={finding.phantom_key}>
+          <button
+            className={index === selectedIndex ? "timeline-row selected" : "timeline-row"}
+            key={finding.phantom_key}
+            onClick={() => onSelect(index)}
+            type="button"
+          >
             <span>{`G-${String(index + 1).padStart(3, "0")}`}</span>
             <ol>
               <li>{suffix(finding.successor_keys[0] ?? "artifact:unknown")}</li>
@@ -605,11 +735,20 @@ function GapTimeline({ emptyText, findings }: { emptyText: string; findings: Gap
             <small>
               {finding.expected_kind} · {finding.reason}
             </small>
-          </div>
+          </button>
         ))
       )}
     </section>
   );
+}
+
+function artifactOptionsFrom(findings: GapFinding[], request: GapPathRequest) {
+  const artifacts = new Set([request.source_artifact_key, request.target_artifact_key]);
+  findings.forEach((finding) => {
+    finding.predecessor_keys.forEach((key) => artifacts.add(key));
+    finding.successor_keys.forEach((key) => artifacts.add(key));
+  });
+  return Array.from(artifacts).sort();
 }
 
 function Notice({ text, tone }: { text: string; tone: "bad" | "warn" }) {

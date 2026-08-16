@@ -96,6 +96,16 @@ export type GapFinding = {
   successor_keys: string[];
 };
 
+export type GapPathRequest = {
+  source_artifact_key: string;
+  target_artifact_key: string;
+};
+
+export const DEFAULT_GAP_REQUEST: GapPathRequest = {
+  source_artifact_key: "artifact:code-change",
+  target_artifact_key: "artifact:directive"
+};
+
 const apiBaseUrl = import.meta.env.VITE_XRAY_API_BASE_URL ?? "http://127.0.0.1:8000";
 
 async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
@@ -136,14 +146,11 @@ export function getFaultlines(snapshotId: string) {
   );
 }
 
-export function getGapPath(snapshotId: string) {
+export function getGapPath(snapshotId: string, request: GapPathRequest = DEFAULT_GAP_REQUEST) {
   return requestJson<LensEnvelope<GapFinding>>(
     `/api/v1/snapshots/${encodeURIComponent(snapshotId)}/gap-paths`,
     {
-      body: JSON.stringify({
-        source_artifact_key: "artifact:code-change",
-        target_artifact_key: "artifact:directive"
-      }),
+      body: JSON.stringify(request),
       method: "POST"
     }
   );
