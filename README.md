@@ -140,6 +140,13 @@ To run the mixed Slack/email/ticket/Git fixture, select it before starting the A
 $env:XRAY_FIXTURE_VARIANT = "mixed"
 ```
 
+To run the 500-person synthetic evaluation fixture:
+
+```powershell
+uv run python scripts/gen_synthetic_org.py
+$env:XRAY_FIXTURE_VARIANT = "synth500"
+```
+
 ### Configure HydraDB
 
 Set these variables before starting the API:

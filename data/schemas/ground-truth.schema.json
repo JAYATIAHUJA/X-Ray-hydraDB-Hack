@@ -1,31 +1,41 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://xray.local/schemas/ground-truth.schema.json",
-  "title": "X-Ray Demo Ground Truth",
+  "title": "X-Ray Ground Truth",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "ghost_person_key",
-    "faultline_module_keys",
-    "gap_path"
+    "ghost_person_key"
   ],
   "properties": {
+    "dataset_id": {
+      "type": "string",
+      "minLength": 1
+    },
     "ghost_person_key": {
-      "const": "person:maya-chen"
+      "type": "string",
+      "pattern": "^person:[a-zA-Z0-9._@+-]+$"
     },
     "faultline_module_keys": {
       "type": "array",
-      "prefixItems": [
-        {
-          "const": "module:payments-api"
-        },
-        {
-          "const": "module:ledger-worker"
-        }
-      ],
-      "items": false,
       "minItems": 2,
-      "maxItems": 2
+      "maxItems": 2,
+      "items": {
+        "type": "string",
+        "pattern": "^module:[a-zA-Z0-9._@+-]+$"
+      }
+    },
+    "faultline_module_pairs": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 2,
+        "items": {
+          "type": "string",
+          "pattern": "^module:[a-zA-Z0-9._@+-]+$"
+        }
+      }
     },
     "gap_path": {
       "type": "object",
@@ -37,13 +47,65 @@
       ],
       "properties": {
         "source_artifact_key": {
-          "const": "artifact:code-change"
+          "type": "string",
+          "pattern": "^artifact:[a-zA-Z0-9._@+-]+$"
         },
         "target_artifact_key": {
-          "const": "artifact:directive"
+          "type": "string",
+          "pattern": "^artifact:[a-zA-Z0-9._@+-]+$"
         },
         "phantom_key": {
-          "const": "artifact:missing-approval"
+          "type": "string",
+          "pattern": "^artifact:[a-zA-Z0-9._@+-]+$"
+        }
+      }
+    },
+    "gap_paths": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_artifact_key",
+          "target_artifact_key",
+          "phantom_key"
+        ],
+        "properties": {
+          "source_artifact_key": {
+            "type": "string",
+            "pattern": "^artifact:[a-zA-Z0-9._@+-]+$"
+          },
+          "target_artifact_key": {
+            "type": "string",
+            "pattern": "^artifact:[a-zA-Z0-9._@+-]+$"
+          },
+          "phantom_key": {
+            "type": "string",
+            "pattern": "^artifact:[a-zA-Z0-9._@+-]+$"
+          }
+        }
+      }
+    },
+    "planted_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "faultlines",
+        "gaps",
+        "ghosts"
+      ],
+      "properties": {
+        "faultlines": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gaps": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ghosts": {
+          "type": "integer",
+          "minimum": 0
         }
       }
     }

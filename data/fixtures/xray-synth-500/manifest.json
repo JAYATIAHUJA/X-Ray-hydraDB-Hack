@@ -1,0 +1,208 @@
+{
+  "acceptance_labels": {
+    "faultline_count": 3,
+    "gap_count": 5,
+    "ghost_broker_key": "person:p0000"
+  },
+  "created_at_epoch": 1735689600,
+  "dataset_id": "xray-synth-500",
+  "evidence_classes": [
+    "observed",
+    "inferred",
+    "demo_ground_truth"
+  ],
+  "fixture_version": 1,
+  "ground_truth_descriptor": {
+    "evidence_class": "demo_ground_truth",
+    "sha256": "cbca78c31d8eda1f42ab519c91e0701e69f8591ea8e3a10d5ceba5cb9d65d861"
+  },
+  "ground_truth_file": "ground_truth.json",
+  "limitations": [
+    "This is a labelled synthetic 500-person fixture, not a real-organization result.",
+    "Absence does not establish deletion. The corpus is structurally incomplete at planted gap points."
+  ],
+  "schema_version": "1.0.0",
+  "sequence_contracts": [
+    {
+      "content_sha256": "a36d8b1056eae1ee3d7e9a1d7b2276a4d8cfc174733c7702f12ce6d7bbd2bdab",
+      "contract_id": "contract:synth-gap-0:v1",
+      "contract_kind": "contiguous_sequence",
+      "limitations": [
+        "Export filtering is an alternative explanation."
+      ],
+      "sequence_key": "synth-gap-sequence-0",
+      "source_uri": "fixture://xray-synth-500/contracts/synth-gap-0",
+      "steps": [
+        {
+          "artifact_kind": "directive",
+          "canonical_key": "artifact:synth-gap-0-directive",
+          "ordinal": 0,
+          "required": true
+        },
+        {
+          "artifact_kind": "approval",
+          "canonical_key": "artifact:synth-gap-0-approval",
+          "earliest_epoch": 1735699850,
+          "ordinal": 1,
+          "required": true
+        },
+        {
+          "artifact_kind": "code_change",
+          "canonical_key": "artifact:synth-gap-0-change",
+          "ordinal": 2,
+          "required": true
+        }
+      ]
+    },
+    {
+      "content_sha256": "49f24b0000964c1aa62d0af1201af80687f139c1d02afe35e0427f03b809bc80",
+      "contract_id": "contract:synth-gap-1:v1",
+      "contract_kind": "contiguous_sequence",
+      "limitations": [
+        "Export filtering is an alternative explanation."
+      ],
+      "sequence_key": "synth-gap-sequence-1",
+      "source_uri": "fixture://xray-synth-500/contracts/synth-gap-1",
+      "steps": [
+        {
+          "artifact_kind": "directive",
+          "canonical_key": "artifact:synth-gap-1-directive",
+          "ordinal": 0,
+          "required": true
+        },
+        {
+          "artifact_kind": "approval",
+          "canonical_key": "artifact:synth-gap-1-approval",
+          "earliest_epoch": 1735700850,
+          "ordinal": 1,
+          "required": true
+        },
+        {
+          "artifact_kind": "code_change",
+          "canonical_key": "artifact:synth-gap-1-change",
+          "ordinal": 2,
+          "required": true
+        }
+      ]
+    },
+    {
+      "content_sha256": "8670eb869f645f5624c9b9159915dd34e69dde27fed815ae10f934904dbd43a8",
+      "contract_id": "contract:synth-gap-2:v1",
+      "contract_kind": "contiguous_sequence",
+      "limitations": [
+        "Export filtering is an alternative explanation."
+      ],
+      "sequence_key": "synth-gap-sequence-2",
+      "source_uri": "fixture://xray-synth-500/contracts/synth-gap-2",
+      "steps": [
+        {
+          "artifact_kind": "directive",
+          "canonical_key": "artifact:synth-gap-2-directive",
+          "ordinal": 0,
+          "required": true
+        },
+        {
+          "artifact_kind": "approval",
+          "canonical_key": "artifact:synth-gap-2-approval",
+          "earliest_epoch": 1735701850,
+          "ordinal": 1,
+          "required": true
+        },
+        {
+          "artifact_kind": "code_change",
+          "canonical_key": "artifact:synth-gap-2-change",
+          "ordinal": 2,
+          "required": true
+        }
+      ]
+    },
+    {
+      "content_sha256": "ea322b924ccee8dd3c767cf7867002909ca28e41971127c0ab3749717df88f3f",
+      "contract_id": "contract:synth-gap-3:v1",
+      "contract_kind": "contiguous_sequence",
+      "limitations": [
+        "Export filtering is an alternative explanation."
+      ],
+      "sequence_key": "synth-gap-sequence-3",
+      "source_uri": "fixture://xray-synth-500/contracts/synth-gap-3",
+      "steps": [
+        {
+          "artifact_kind": "directive",
+          "canonical_key": "artifact:synth-gap-3-directive",
+          "ordinal": 0,
+          "required": true
+        },
+        {
+          "artifact_kind": "approval",
+          "canonical_key": "artifact:synth-gap-3-approval",
+          "earliest_epoch": 1735702850,
+          "ordinal": 1,
+          "required": true
+        },
+        {
+          "artifact_kind": "code_change",
+          "canonical_key": "artifact:synth-gap-3-change",
+          "ordinal": 2,
+          "required": true
+        }
+      ]
+    },
+    {
+      "content_sha256": "e85e6e217815105040cf94d2eef6f782b2a6edcab9700d0ffba16853086ddd42",
+      "contract_id": "contract:synth-gap-4:v1",
+      "contract_kind": "contiguous_sequence",
+      "limitations": [
+        "Export filtering is an alternative explanation."
+      ],
+      "sequence_key": "synth-gap-sequence-4",
+      "source_uri": "fixture://xray-synth-500/contracts/synth-gap-4",
+      "steps": [
+        {
+          "artifact_kind": "directive",
+          "canonical_key": "artifact:synth-gap-4-directive",
+          "ordinal": 0,
+          "required": true
+        },
+        {
+          "artifact_kind": "approval",
+          "canonical_key": "artifact:synth-gap-4-approval",
+          "earliest_epoch": 1735703850,
+          "ordinal": 1,
+          "required": true
+        },
+        {
+          "artifact_kind": "code_change",
+          "canonical_key": "artifact:synth-gap-4-change",
+          "ordinal": 2,
+          "required": true
+        }
+      ]
+    }
+  ],
+  "source_files": [
+    {
+      "input_status": "complete",
+      "path": "directory.json",
+      "record_count": 510,
+      "sha256": "1aaeabadccce680528a532ad3cc60e63e059d12e90c6cb15f1ad2b37e4a5d998",
+      "source_type": "directory",
+      "source_uri": "fixture://xray-synth-500/directory.json"
+    },
+    {
+      "input_status": "complete",
+      "path": "events.json",
+      "record_count": 749,
+      "sha256": "f2ba679c68777a08d0d73c9546c093e0a0e77135ee2beb0b42f48589be794167",
+      "source_type": "events",
+      "source_uri": "fixture://xray-synth-500/events.json"
+    },
+    {
+      "input_status": "complete",
+      "path": "git_facts.json",
+      "record_count": 87,
+      "sha256": "09ae9b9d5e5a46041129cc01fb3a62eccd767f2c381121d0de54d14c138a2f92",
+      "source_type": "git_facts",
+      "source_uri": "fixture://xray-synth-500/git_facts.json"
+    }
+  ]
+}
