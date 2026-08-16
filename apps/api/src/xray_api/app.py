@@ -12,7 +12,7 @@ from xray_analytics import (
     gap_findings,
     ghost_scores,
 )
-from xray_core.models import AnalysisStatus, EdgeRow, NodeRow
+from xray_core.models import AnalysisStatus, CanonicalBundle, EdgeRow, EvidenceRecord, NodeRow
 
 from .config import get_settings
 from .dependencies import active_bundle, current_snapshot_id
@@ -142,7 +142,7 @@ def create_app() -> FastAPI:
             return _lens_envelope(
                 snapshot_id=snapshot_id,
                 limitations=bundle.limitations,
-                findings=live_result.findings,
+                findings=_with_ghost_evidence(bundle, live_result.findings),
                 explanation="HydraDB Ghost analysis completed with one bounded MSpaths sample call.",
                 source="hydradb",
                 executed_query=asdict(live_result.executed_query),
@@ -151,7 +151,7 @@ def create_app() -> FastAPI:
         return _lens_envelope(
             snapshot_id=snapshot_id,
             limitations=bundle.limitations,
-            findings=findings,
+            findings=_with_ghost_evidence(bundle, findings),
             explanation=(
                 "HydraDB Ghost query degraded; fixture Ghost analysis completed with bounded in-memory path scoring."
                 if live_result is not None
@@ -192,7 +192,7 @@ def create_app() -> FastAPI:
         return _lens_envelope(
             snapshot_id=snapshot_id,
             limitations=bundle.limitations,
-            findings=tuple(asdict(finding) for finding in findings),
+            findings=_with_faultline_evidence(bundle, findings),
             explanation=(
                 "HydraDB Faultline analysis completed with live owner communication distance queries."
                 if source == "hydradb" and degraded_reason is None
@@ -229,7 +229,7 @@ def create_app() -> FastAPI:
             else gap_findings(bundle)
         )
         findings = tuple(
-            asdict(finding)
+            finding
             for finding in all_findings
             if (
                 request.target_artifact_key in finding.predecessor_keys
@@ -239,7 +239,7 @@ def create_app() -> FastAPI:
         return _lens_envelope(
             snapshot_id=snapshot_id,
             limitations=bundle.limitations,
-            findings=findings,
+            findings=_with_gap_evidence(bundle, findings),
             explanation=(
                 (
                     "HydraDB Gap analysis completed from live SPpaths and phantom lineage rows. "
@@ -288,6 +288,119 @@ def _lens_envelope(
         source=source,
         degraded_reason=degraded_reason,
         executed_query=executed_query,
+    )
+
+
+def _with_ghost_evidence(
+    bundle: CanonicalBundle, findings: tuple[dict[str, object], ...]
+) -> tuple[dict[str, object], ...]:
+    nodes = _nodes_by_key(bundle)
+    evidence = _evidence_by_id(bundle)
+    enriched: list[dict[str, object]] = []
+    for finding in findings:
+        person_key = finding.get("person_key")
+        node = nodes.get(person_key) if isinstance(person_key, str) else None
+        evidence_records = _evidence_summaries(evidence, () if node is None else node.evidence_ids)
+        enriched.append({**finding, "evidence": evidence_records})
+    return tuple(enriched)
+
+
+def _with_faultline_evidence(
+    bundle: CanonicalBundle, findings: tuple[FaultlineFinding, ...]
+) -> tuple[dict[str, object], ...]:
+    nodes = _nodes_by_key(bundle)
+    edges = tuple(bundle.edges)
+    evidence = _evidence_by_id(bundle)
+    enriched: list[dict[str, object]] = []
+    for finding in findings:
+        dependency_evidence = _matching_edge_evidence_ids(
+            edges,
+            nodes,
+            source_key=finding.source_module_key,
+            target_key=finding.target_module_key,
+            rel_type="DEPENDS_ON",
+        )
+        source_owner_evidence = _matching_edge_evidence_ids(
+            edges,
+            nodes,
+            source_key=finding.source_owner_key,
+            target_key=finding.source_module_key,
+            rel_type="OWNS",
+        )
+        target_owner_evidence = _matching_edge_evidence_ids(
+            edges,
+            nodes,
+            source_key=finding.target_owner_key,
+            target_key=finding.target_module_key,
+            rel_type="OWNS",
+        )
+        evidence_ids = tuple(
+            dict.fromkeys((*dependency_evidence, *source_owner_evidence, *target_owner_evidence))
+        )
+        enriched.append({**asdict(finding), "evidence": _evidence_summaries(evidence, evidence_ids)})
+    return tuple(enriched)
+
+
+def _with_gap_evidence(
+    bundle: CanonicalBundle, findings: tuple[GapFinding, ...]
+) -> tuple[dict[str, object], ...]:
+    nodes = _nodes_by_key(bundle)
+    evidence = _evidence_by_id(bundle)
+    enriched: list[dict[str, object]] = []
+    for finding in findings:
+        phantom = nodes.get(finding.phantom_key)
+        evidence_records = _evidence_summaries(evidence, () if phantom is None else phantom.evidence_ids)
+        enriched.append({**asdict(finding), "evidence": evidence_records})
+    return tuple(enriched)
+
+
+def _nodes_by_key(bundle: CanonicalBundle) -> dict[str, NodeRow]:
+    return {node.canonical_key: node for node in bundle.nodes}
+
+
+def _evidence_by_id(bundle: CanonicalBundle) -> dict[str, EvidenceRecord]:
+    return {record.evidence_id: record for record in bundle.evidence}
+
+
+def _matching_edge_evidence_ids(
+    edges: tuple[EdgeRow, ...],
+    nodes: dict[str, NodeRow],
+    *,
+    source_key: str,
+    target_key: str,
+    rel_type: str,
+) -> tuple[str, ...]:
+    source = nodes.get(source_key)
+    target = nodes.get(target_key)
+    if source is None or target is None:
+        return ()
+    return tuple(
+        evidence_id
+        for edge in edges
+        if edge.rel_type == rel_type and edge.source_id == source.id and edge.target_id == target.id
+        for evidence_id in edge.evidence_ids
+    )
+
+
+def _evidence_summaries(
+    evidence: dict[str, EvidenceRecord], evidence_ids: tuple[str, ...], *, limit: int = 4
+) -> tuple[dict[str, object], ...]:
+    records = tuple(evidence[evidence_id] for evidence_id in evidence_ids if evidence_id in evidence)
+    return tuple(
+        {
+            "evidence_id": record.evidence_id,
+            "source_type": record.source_type,
+            "source_uri": record.source_uri,
+            "source_record_id": record.source_record_id,
+            "predicate": record.predicate,
+            "subject_key": record.subject_key,
+            "object_key": record.object_key,
+            "evidence_class": record.evidence_class.value,
+            "confidence": record.confidence,
+            "content_sha256": record.content_sha256,
+            "redacted_excerpt": record.redacted_excerpt,
+        }
+        for record in records[:limit]
     )
 
 
