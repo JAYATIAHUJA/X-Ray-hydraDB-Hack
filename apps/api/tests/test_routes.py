@@ -159,6 +159,7 @@ class GraphRowsDriver:
         if "MATCH (p:Person" in query_:
             return [
                 {
+                    "id": 5217034559407717516,
                     "key": "person:alex-rivera",
                     "properties": (
                         '{"display_name":"Alex Rivera","role_rank":4,'
@@ -168,6 +169,8 @@ class GraphRowsDriver:
             ]
         return [
             {
+                "source_id": 5217034559407717516,
+                "target_id": 8735786581004019202,
                 "source": "person:alex-rivera",
                 "target": "person:maya-chen",
                 "properties": '{"weight":5}',
@@ -183,9 +186,20 @@ class DistanceDriver:
         self,
         query_: str,
         parameters_: dict[str, object] | None = None,
-    ) -> list[dict[str, int]]:
+    ) -> list[dict[str, object]]:
         self.parameters.append(parameters_)
-        return [{"distance": 2}]
+        return [
+            {
+                "path": {
+                    "nodes": [
+                        {"canonical_key": "person:alex-rivera"},
+                        {"canonical_key": "person:maya-chen"},
+                    ]
+                },
+                "pathWeight": 1,
+                "pathCost": 1,
+            }
+        ]
 
 
 class GapRowsDriver:
@@ -197,6 +211,7 @@ class GapRowsDriver:
         return [
             {
                 "phantom_key": "artifact:missing-approval",
+                "phantom_id": 6766613005167498529,
                 "properties": (
                     '{"expected_kind":"approval","reason":"required_sequence_step_missing",'
                     '"inferred_epoch":1736003600}'
@@ -225,7 +240,7 @@ def test_graph_rows_reads_live_hydradb_projection() -> None:
     settings = settings_from_env({"XRAY_HYDRA_URI": "bolt://hydra.example:7687"})
     driver = GraphRowsDriver()
 
-    rows = graph_rows(settings, "xray-demo-v1", gateway=HydraGateway(driver))
+    rows = graph_rows(settings, demo_bundle(), gateway=HydraGateway(driver))
 
     assert rows is not None
     assert rows.nodes[0].key == "person:alex-rivera"
@@ -233,34 +248,33 @@ def test_graph_rows_reads_live_hydradb_projection() -> None:
     assert rows.edges[0].source == "person:alex-rivera"
     assert rows.edges[0].target == "person:maya-chen"
     assert rows.edges[0].weight == 5.0
-    assert driver.parameters == [{"dataset_id": "xray-demo-v1"}, {"dataset_id": "xray-demo-v1"}]
+    assert driver.parameters == [{}, {}]
 
 
 def test_communication_distances_reads_live_hydradb_paths() -> None:
     settings = settings_from_env({"XRAY_HYDRA_URI": "bolt://hydra.example:7687"})
     driver = DistanceDriver()
 
-    distances = communication_distances(
+    result = communication_distances(
         settings,
-        "xray-demo-v1",
+        demo_bundle(),
         (("person:alex-rivera", "person:maya-chen"),),
         gateway=HydraGateway(driver),
     )
 
-    assert distances == {("person:alex-rivera", "person:maya-chen"): 2}
-    assert driver.parameters == [
-        {
-            "dataset_id": "xray-demo-v1",
-            "source": "person:alex-rivera",
-            "target": "person:maya-chen",
-        }
-    ]
+    assert result is not None
+    assert result.error is None
+    assert result.distances == {("person:alex-rivera", "person:maya-chen"): 1}
+    assert result.query.name == "communication_paths_by_id"
+    assert "sourceProperty: 'id'" in result.query.statement
+    assert "canonical_key" not in result.query.statement
+    assert driver.parameters == [{}]
 
 
 def test_gap_rows_reads_live_hydradb_lineage() -> None:
     settings = settings_from_env({"XRAY_HYDRA_URI": "bolt://hydra.example:7687"})
 
-    rows = gap_rows(settings, "xray-demo-v1", gateway=HydraGateway(GapRowsDriver()))
+    rows = gap_rows(settings, demo_bundle(), gateway=HydraGateway(GapRowsDriver()))
 
     assert rows is not None
     assert rows[0].phantom_key == "artifact:missing-approval"

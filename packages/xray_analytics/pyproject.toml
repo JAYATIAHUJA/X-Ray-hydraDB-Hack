@@ -5,7 +5,6 @@ description = "Ghost, Faultline, and Gap analytics for X-Ray"
 requires-python = ">=3.13,<3.14"
 dependencies = [
     "networkx>=3.4.0",
-    "scipy>=1.15.0",
     "xray-core",
 ]
 

@@ -18,10 +18,14 @@ RELATION_TYPES = frozenset(
         "OWNS",
         "DEPENDS_ON",
         "PRECEDED_BY",
+        "REPLIES_TO",
+        "EXPECTED_BEFORE",
     }
 )
 PEOPLE_MAX_LEN = 4
 CHAIN_MAX_LEN = 8
+REL_DIRECTION_BOTH = "BOTH"
+REL_DIRECTION_OUT = "OUTGOING"
 
 
 class CypherCompileError(ValueError):
@@ -42,6 +46,16 @@ def _literal_list(values: Sequence[str]) -> str:
         if PATH_KEY.fullmatch(value) is None:
             raise CypherCompileError("path selectors must be non-empty canonical path keys")
         rendered.append(f"'{value}'")
+    return "[" + ", ".join(rendered) + "]"
+
+
+def _literal_int_list(values: Sequence[int]) -> str:
+    if not values:
+        raise CypherCompileError("integer selectors must be non-empty")
+    rendered: list[str] = []
+    for value in values:
+        _require_positive(value, "selector")
+        rendered.append(str(value))
     return "[" + ", ".join(rendered) + "]"
 
 
@@ -89,7 +103,7 @@ def communication_paths_query(
         "targetProperty: 'path_key', "
         f"targetValues: {_literal_list(targets)}, "
         "relTypes: ['COMMUNICATES'], "
-        "relDirection: 'both', "
+        f"relDirection: '{REL_DIRECTION_BOTH}', "
         f"maxLen: {max_len}, "
         f"pathCount: {path_count}, "
         f"resultLimit: {result_limit}, "
@@ -99,6 +113,46 @@ def communication_paths_query(
     )
     return QuerySpec(
         name="communication_paths",
+        statement=statement,
+        parameters={},
+        max_len=max_len,
+        result_limit=result_limit,
+    )
+
+
+def communication_paths_by_id_query(
+    sources: Sequence[int],
+    targets: Sequence[int],
+    *,
+    max_len: int,
+    path_count: int,
+    result_limit: int,
+    pairwise: bool,
+) -> QuerySpec:
+    if pairwise and tuple(sources) != tuple(targets):
+        raise CypherCompileError("pairwise communication paths require equal selector sets")
+    if _require_positive(max_len, "max_len") > PEOPLE_MAX_LEN:
+        raise CypherCompileError("communication max_len cannot exceed 4")
+    _require_positive(path_count, "path_count")
+    _require_positive(result_limit, "result_limit")
+    pairwise_literal = "true" if pairwise else "false"
+    statement = _one_statement(
+        "CALL algo.MSpaths({"
+        "sourceProperty: 'id', "
+        f"sourceValues: {_literal_int_list(sources)}, "
+        "targetProperty: 'id', "
+        f"targetValues: {_literal_int_list(targets)}, "
+        "relTypes: ['COMMUNICATES'], "
+        f"relDirection: '{REL_DIRECTION_BOTH}', "
+        f"maxLen: {max_len}, "
+        f"pathCount: {path_count}, "
+        f"resultLimit: {result_limit}, "
+        f"pairwise: {pairwise_literal}"
+        "}) YIELD path, pathWeight, pathCost "
+        "RETURN path, pathWeight, pathCost"
+    )
+    return QuerySpec(
+        name="communication_paths_by_id",
         statement=statement,
         parameters={},
         max_len=max_len,
@@ -119,7 +173,7 @@ def sp_chain_query(source_id: int, target_id: int, *, max_len: int = 8, result_l
         "targetProperty: 'id', "
         "targetValue: $target_id, "
         "relTypes: ['PRECEDED_BY'], "
-        "relDirection: 'out', "
+        f"relDirection: '{REL_DIRECTION_OUT}', "
         f"maxLen: {max_len}, "
         f"resultLimit: {result_limit}"
         "}) YIELD path, pathWeight, pathCost "
@@ -196,6 +250,7 @@ def edge_upsert_batch(rel_type: str, rows: Sequence[dict[str, Scalar]]) -> Write
 
 __all__ = [
     "CypherCompileError",
+    "communication_paths_by_id_query",
     "communication_paths_query",
     "edge_upsert_batch",
     "node_upsert_batch",

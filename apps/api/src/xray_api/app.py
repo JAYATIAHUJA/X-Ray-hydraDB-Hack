@@ -114,7 +114,7 @@ def create_app() -> FastAPI:
         bundle = active_bundle()
         scores = {score.person_key: score for score in ghost_scores(bundle)}
         selected_key = max(scores.values(), key=lambda score: score.rank_gap).person_key
-        hydra_rows = graph_rows(get_settings(), bundle.dataset_id)
+        hydra_rows = graph_rows(get_settings(), bundle)
         if hydra_rows is not None and hydra_rows.nodes:
             return GraphResponse(
                 snapshot_id=snapshot_id,
@@ -162,9 +162,11 @@ def create_app() -> FastAPI:
             findings=tuple(findings),
             explanation=(
                 "HydraDB graph rows were available; Ghost scoring completed with bounded fallback path scoring."
-                if graph_rows(get_settings(), bundle.dataset_id) is not None
+                if graph_rows(get_settings(), bundle) is not None
                 else "Fixture Ghost analysis completed with bounded in-memory path scoring."
             ),
+            source="fixture",
+            degraded_reason="Ghost live centrality is not implemented yet; using bounded fixture scoring.",
         )
 
     @app.get("/api/v1/snapshots/{snapshot_id}/faultlines", response_model=LensEnvelope)
@@ -172,30 +174,55 @@ def create_app() -> FastAPI:
         _require_current_snapshot(snapshot_id)
         bundle = active_bundle()
         findings = faultlines(bundle)
-        distances = communication_distances(
+        distance_result = communication_distances(
             get_settings(),
-            bundle.dataset_id,
+            bundle,
             tuple((finding.source_owner_key, finding.target_owner_key) for finding in findings),
         )
-        if distances is not None:
-            live_findings = tuple(_with_live_distance(finding, distances) for finding in findings)
+        if distance_result is not None and distance_result.error is None:
+            live_findings = tuple(
+                _with_live_distance(finding, distance_result.distances) for finding in findings
+            )
             findings = tuple(finding for finding in live_findings if finding.severity > 0)
+            source = "hydradb"
+            status = AnalysisStatus.COMPLETE
+            degraded_reason = None
+        elif distance_result is not None:
+            source = "hydradb"
+            status = AnalysisStatus.PARTIAL
+            degraded_reason = distance_result.error
+        else:
+            source = "fixture"
+            status = AnalysisStatus.COMPLETE
+            degraded_reason = None
         return _lens_envelope(
             snapshot_id=snapshot_id,
             limitations=bundle.limitations,
             findings=tuple(asdict(finding) for finding in findings),
             explanation=(
                 "HydraDB Faultline analysis completed with live owner communication distance queries."
-                if distances is not None
+                if source == "hydradb" and degraded_reason is None
                 else "Fixture Faultline analysis completed over derived ownership and dependencies."
             ),
+            status=status,
+            source=source,
+            degraded_reason=degraded_reason,
+            executed_query=None
+            if distance_result is None
+            else {
+                "text": distance_result.query.statement,
+                "params": distance_result.query.parameters,
+                "max_len": distance_result.query.max_len,
+                "round_trips": 1,
+                "engine_ms": distance_result.duration_ms,
+            },
         )
 
     @app.post("/api/v1/snapshots/{snapshot_id}/gap-paths", response_model=LensEnvelope)
     def gap_paths(snapshot_id: str, request: GapPathRequest) -> LensEnvelope:
         _require_current_snapshot(snapshot_id)
         bundle = active_bundle()
-        live_gaps = gap_rows(get_settings(), bundle.dataset_id)
+        live_gaps = gap_rows(get_settings(), bundle)
         all_findings = (
             tuple(_gap_finding_from_hydra(row) for row in live_gaps)
             if live_gaps is not None
@@ -208,7 +235,6 @@ def create_app() -> FastAPI:
                 request.target_artifact_key in finding.predecessor_keys
                 and request.source_artifact_key in finding.successor_keys
             )
-            or finding.reason == "dangling_thread_parent"
         )
         return _lens_envelope(
             snapshot_id=snapshot_id,
@@ -222,6 +248,7 @@ def create_app() -> FastAPI:
                 )
                 + "Absence does not establish deletion."
             ),
+            source="hydradb" if live_gaps is not None else "fixture",
         )
 
     return app
@@ -238,13 +265,20 @@ def _lens_envelope(
     limitations: tuple[str, ...],
     findings: tuple[dict[str, object], ...],
     explanation: str,
+    status: AnalysisStatus = AnalysisStatus.COMPLETE,
+    source: str = "fixture",
+    degraded_reason: str | None = None,
+    executed_query: dict[str, object] | None = None,
 ) -> LensEnvelope:
     return LensEnvelope(
         snapshot_id=snapshot_id,
-        analysis_status=AnalysisStatus.COMPLETE,
+        analysis_status=status,
         status_explanation=explanation,
         limitations=limitations,
         findings=findings,
+        source=source,
+        degraded_reason=degraded_reason,
+        executed_query=executed_query,
     )
 
 
@@ -255,6 +289,9 @@ def _hydra_health_response(hydra: HydraHealth) -> HydraHealthResponse:
         database=hydra.database,
         uri=hydra.uri,
         detail=hydra.detail,
+        graph_loaded=hydra.graph_loaded,
+        node_count=hydra.node_count,
+        edge_count=hydra.edge_count,
     )
 
 

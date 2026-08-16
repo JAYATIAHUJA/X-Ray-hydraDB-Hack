@@ -158,8 +158,9 @@ Invoke-RestMethod -Method Post http://127.0.0.1:8000/api/v1/hydra/seed-fixture
 ```
 
 The pinned HydraDB container image and local MinIO topology live in
-[compose.yaml](compose.yaml). For the engine stack, set `RUST_MIN_STACK=33554432`; the compose
-configuration already applies this value.
+[infra/runtime-images.lock](infra/runtime-images.lock) and [compose.yaml](compose.yaml). The
+current HydraDB source commit is `02a40025d2d57e97ab2754c8256219cdbfeab379`. For the engine
+stack, set `RUST_MIN_STACK=33554432`; the compose configuration already applies this value.
 
 ## Validation philosophy
 
@@ -177,8 +178,6 @@ X-Ray will report negative results as plainly as positive ones. In particular:
   dataset; its data is not included in this repository.
 - Built for HackHydra by Jayati.
 
-## Project notice
+## License
 
-This repository is a **public hackathon build**, shared for HackHydra judging and building in
-public. It is not an open-source project and no license is granted for copying, modifying,
-distributing, or using this code beyond applicable platform terms and rights held by the author.
+This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE).

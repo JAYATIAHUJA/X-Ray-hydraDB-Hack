@@ -5,6 +5,7 @@ from pydantic import ValidationError
 from xray_core.models import EndpointExpectation
 from xray_hydra.cypher import (
     CypherCompileError,
+    communication_paths_by_id_query,
     communication_paths_query,
     edge_upsert_batch,
     node_upsert_batch,
@@ -41,7 +42,7 @@ def test_communication_paths_use_equal_pairwise_sets_and_only_communication() ->
     assert "sourceValues: ['person:00000000000000000001', 'person:00000000000000000002']" in spec.statement
     assert "targetValues: ['person:00000000000000000001', 'person:00000000000000000002']" in spec.statement
     assert "relTypes: ['COMMUNICATES']" in spec.statement
-    assert "relDirection: 'both'" in spec.statement
+    assert "relDirection: 'BOTH'" in spec.statement
     assert "resultLimit: 100" in spec.statement
     assert "RETURN path, pathWeight, pathCost" in spec.statement
     assert "collect(" not in spec.statement
@@ -62,6 +63,23 @@ def test_cross_set_communication_paths_disable_pairwise() -> None:
 
     assert "pairwise: false" in spec.statement
     assert "relTypes: ['COMMUNICATES']" in spec.statement
+
+
+def test_communication_paths_by_id_uses_integer_selectors() -> None:
+    spec = communication_paths_by_id_query(
+        [1, 2],
+        [3, 4],
+        max_len=4,
+        path_count=1,
+        result_limit=10,
+        pairwise=False,
+    )
+
+    assert "sourceProperty: 'id'" in spec.statement
+    assert "sourceValues: [1, 2]" in spec.statement
+    assert "targetValues: [3, 4]" in spec.statement
+    assert "canonical_key" not in spec.statement
+    assert "dataset_id" not in spec.statement
 
 
 def test_pairwise_rejects_unequal_selector_sets() -> None:
@@ -199,3 +217,22 @@ def test_edge_batch_renders_allow_listed_relationship() -> None:
 
     assert "MERGE (s)-[r:COMMUNICATES {id: row.id}]->(t)" in spec.statement
     assert "$rows" in spec.statement
+
+
+@pytest.mark.parametrize("rel_type", ["REPLIES_TO", "EXPECTED_BEFORE"])
+def test_edge_batch_accepts_gap_relationships_emitted_by_ingest(rel_type: str) -> None:
+    spec = edge_upsert_batch(
+        rel_type,
+        (
+            {
+                "id": 7,
+                "source_id": 1,
+                "target_id": 2,
+                "canonical_key": f"{rel_type.lower()}:a:b",
+                "dataset_id": "xray-demo-v1",
+                "properties": "{}",
+            },
+        ),
+    )
+
+    assert f"MERGE (s)-[r:{rel_type} {{id: row.id}}]->(t)" in spec.statement

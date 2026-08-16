@@ -1,53 +1,80 @@
 #!/usr/bin/env sh
 set -eu
 
+STARTED_AT=$(python -c "import time; print(time.time())")
+RUNTIME_ID="runtime-demo"
+PROJECT="xray-runtime-demo"
+API_PORT="8000"
+WEB_PORT="5173"
 CORE_ONLY=0
-RUNTIME_ID=""
-PROJECT=""
-OBJECT_PREFIX="demo/xray-demo"
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --core-only) CORE_ONLY=1 ;;
     --runtime-id) shift; RUNTIME_ID="$1" ;;
     --project) shift; PROJECT="$1" ;;
-    --object-prefix) shift; OBJECT_PREFIX="$1" ;;
+    --api-port) shift; API_PORT="$1" ;;
+    --web-port) shift; WEB_PORT="$1" ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
   shift
 done
 
-if [ -z "$RUNTIME_ID" ] || [ -z "$PROJECT" ]; then
-  echo "--runtime-id and --project are required" >&2
-  exit 2
-fi
+RUNTIME_DIR="infra/runtime/$RUNTIME_ID"
+ENV_FILE="$RUNTIME_DIR/compose.env"
 
-uv run python - "$RUNTIME_ID" "$PROJECT" "$OBJECT_PREFIX" <<'PY'
-import sys
-from pathlib import Path
-from xray_runtime import GraphRuntimeManager, GraphRuntimeSpec
+uv run python -m xray_runtime.manager start \
+  --runtime-id "$RUNTIME_ID" \
+  --compose-project "$PROJECT"
 
-runtime_id, project, object_prefix = sys.argv[1:4]
-spec = GraphRuntimeSpec(
-    runtime_id=runtime_id,
-    tenant_id="demo",
-    bucket_name="xray-demo",
-    graph_namespace="xray",
-    graph_id="xray-demo",
-    graph_database="xray",
-    object_prefix=object_prefix,
-    compose_project=project,
-    bolt_port=17687,
-    http_port=18443,
-    admin_port=19090,
-    indexer_admin_port=19091,
-    minio_api_port=19000,
-    minio_console_port=19001,
-)
-handle = GraphRuntimeManager(runtime_root=Path("infra/runtime")).prepare(spec)
-print(handle.env_file)
-PY
+uv sync
 
 if [ "$CORE_ONLY" -eq 1 ]; then
-  echo "Runtime prepared for core profile: $RUNTIME_ID"
+  echo "HydraDB runtime is live. Env file: $ENV_FILE"
+  exit 0
 fi
+
+XRAY_HYDRA_URI="bolt://127.0.0.1:17687"
+XRAY_HYDRA_DATABASE="xray"
+export XRAY_HYDRA_URI XRAY_HYDRA_DATABASE
+export VITE_XRAY_API_BASE_URL="http://127.0.0.1:$API_PORT"
+
+uv run uvicorn xray_api.app:app --host 127.0.0.1 --port "$API_PORT" > "$RUNTIME_DIR/api.log" 2>&1 &
+echo "$!" > "$RUNTIME_DIR/api.pid"
+
+python - <<PY
+import time
+import urllib.request
+
+deadline = time.time() + 90
+url = "http://127.0.0.1:$API_PORT/api/v1/health"
+while time.time() < deadline:
+    try:
+        with urllib.request.urlopen(url, timeout=2) as response:
+            if response.status == 200:
+                raise SystemExit(0)
+    except OSError:
+        time.sleep(1)
+raise SystemExit(f"timed out waiting for {url}")
+PY
+
+python - <<PY
+import urllib.request
+
+request = urllib.request.Request(
+    "http://127.0.0.1:$API_PORT/api/v1/hydra/seed-fixture",
+    method="POST",
+)
+with urllib.request.urlopen(request, timeout=60) as response:
+    print(response.read().decode("utf-8"))
+PY
+
+npm install
+npm run dev -- --port "$WEB_PORT" > "$RUNTIME_DIR/web.log" 2>&1 &
+echo "$!" > "$RUNTIME_DIR/web.pid"
+
+ELAPSED=$(python -c "import time; print(round(time.time() - $STARTED_AT, 1))")
+echo "X-Ray is running in ${ELAPSED}s"
+echo "API: http://127.0.0.1:$API_PORT/api/v1/health"
+echo "Web: http://127.0.0.1:$WEB_PORT"
+echo "Teardown: scripts/teardown.sh --runtime-id $RUNTIME_ID"
