@@ -9,6 +9,14 @@ the **work graph** (code, modules, tickets, and dependencies) and the **human gr
 (who communicates, collaborates, and carries context). Comparing those graphs makes risks
 visible that a document search or an org chart cannot show on its own.
 
+## Thesis
+
+Enterprise context is not just text retrieval. The important signal is often graph structure:
+who sits between teams, which module dependencies have no matching communication path, and where
+an expected evidence chain has a missing step. X-Ray keeps those questions explicit and bounded:
+HydraDB evaluates paths over typed edges and integer node IDs; the API reports degraded fallback
+states instead of pretending fixture analysis is live graph execution.
+
 ## The problem
 
 The most important parts of an engineering organization are rarely written down in one place.
@@ -57,16 +65,26 @@ This distinction matters: **a missing record is not proof that somebody deleted 
 the available corpus is structurally incomplete at that point; export filtering and missing
 sources remain possible explanations.
 
-## HydraDB in X-Ray
+## How HydraDB is used
 
-HydraDB is the graph layer behind the project. It is used for loading a canonical evidence
-snapshot, reading the live people/communication graph, evaluating owner-to-owner communication
-distances for Faultlines, and reading Phantom lineage for Gaps when a live instance is
-configured.
+HydraDB is the graph layer behind the project. It does real query work in the live path:
+
+- The loader writes canonical nodes and edges with `UNWIND` batches.
+- Ghost uses one bounded `algo.MSpaths` call over `COMMUNICATES` paths to score sampled
+  intermediates.
+- Faultlines use bounded owner-to-owner communication distances instead of an unbounded client
+  traversal loop.
+- Gaps use `algo.SPpaths` over `PRECEDED_BY` to show the chain around a `Phantom` evidence hop.
 
 The architecture keeps graph work graph-native and bounded rather than turning the API into a
 large client-side traversal loop. A local in-memory fixture fallback remains available for
 development when HydraDB is not configured.
+
+The live HydraDB dialect is pinned and documented in
+[docs/cypher-compat-verified.md](docs/cypher-compat-verified.md). The verified rules matter:
+writes use auto-commit sessions, node resolution is by integer `id` or canonical `path_key`
+depending on the HydraDB procedure, relationship traversals are bounded, and unsupported generic
+scans/counts are avoided.
 
 ## Current build
 
@@ -105,7 +123,7 @@ full `canonicalize → derive → detect gaps` pipeline in one deterministic bui
 canonical exports can also be passed through the same boundary while a source is being migrated.
 Git rows may declare `dependency_keys` to create explicit `DEPENDS_ON` evidence.
 
-## Run locally
+## Setup
 
 ### Requirements
 
@@ -146,6 +164,24 @@ To run the 500-person synthetic evaluation fixture:
 uv run python scripts/gen_synthetic_org.py
 $env:XRAY_FIXTURE_VARIANT = "synth500"
 ```
+
+### One-command local stack
+
+On Windows:
+
+```powershell
+scripts\setup.ps1
+```
+
+On macOS/Linux:
+
+```sh
+./scripts/setup.sh
+```
+
+The setup script prepares the local HydraDB + MinIO runtime, syncs Python dependencies, starts
+the API, seeds the fixture, installs web dependencies, starts the Vite UI, and prints API/web
+URLs. Use `-CoreOnly` / `--core-only` to start only the database runtime.
 
 ### Configure HydraDB
 
@@ -218,7 +254,7 @@ The faultline result is intentionally reported as precision/recall against plant
 as proof of incidents. The four non-planted returned pairs are coordination-debt findings in the
 synthetic graph, but they are counted as false positives for planted-truth scoring.
 
-## Validation philosophy
+## Scale and limitations
 
 X-Ray will report negative results as plainly as positive ones. In particular:
 
@@ -226,6 +262,11 @@ X-Ray will report negative results as plainly as positive ones. In particular:
   supports that stronger conclusion.
 - Ghost scores use bounded path analysis and should be compared with simpler degree baselines.
 - Gaps represent structural incompleteness, never automatic evidence of deletion.
+- Sampling keeps Ghost queries bounded on larger graphs; `maxLen=4` is a product choice, not a
+  universal organization-science claim.
+- The current measured corpus is synthetic. Public export adapters exist for mbox, JIRA CSV,
+  git log, and Slack export JSON, but live OAuth connectors are intentionally out of scope.
+- HERB evaluation remains planned if time allows; it is not included in the repository.
 
 ## Attribution
 
