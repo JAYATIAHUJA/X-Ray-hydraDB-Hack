@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 from collections.abc import Iterable, Mapping
+from itertools import combinations
 from typing import Literal
 
 from xray_core.models import CanonicalRecord
@@ -150,6 +151,35 @@ def _dependency(
     )
 
 
+def _cochange(
+    *,
+    source: str,
+    external_id: str,
+    epoch: int,
+    source_module: str,
+    target_module: str,
+) -> CanonicalRecord:
+    source_key = f"module:{source_module.removeprefix('module:')}"
+    target_key = f"module:{target_module.removeprefix('module:')}"
+    return CanonicalRecord(
+        source=source,
+        external_id=f"{source}:{external_id}:cochange:{source_key}:{target_key}",
+        kind="cochange",
+        occurred_at_epoch=epoch,
+        author_external_id=None,
+        parent_external_id=None,
+        subjects=(source_key, target_key),
+        content_sha256=_content_hash(source, external_id, source_key, target_key),
+        content=None,
+        metadata={
+            "cochange_count": 1,
+            "relationship_class": "inferred_coupling",
+            "source_module_external_id": source_key.removeprefix("module:"),
+            "target_module_external_id": target_key.removeprefix("module:"),
+        },
+    )
+
+
 def slack_records(rows: Iterable[RawRecord]) -> tuple[CanonicalRecord, ...]:
     """Normalize Slack messages with explicit mentions or a resolved reply author.
 
@@ -283,6 +313,16 @@ def code_records(rows: Iterable[RawRecord]) -> tuple[CanonicalRecord, ...]:
             )
         )
         source_modules = _string_list(row, "module_keys")
+        for source_module, target_module in combinations(source_modules, 2):
+            records.append(
+                _cochange(
+                    source="git",
+                    external_id=external_id,
+                    epoch=epoch,
+                    source_module=source_module,
+                    target_module=target_module,
+                )
+            )
         dependency_keys = _string_list(row, "dependency_keys")
         for source_module in source_modules:
             for target_module in dependency_keys:

@@ -253,8 +253,86 @@ def _dependency_edges(bundle: CanonicalBundle) -> tuple[EdgeRow, ...]:
     return tuple(edges)
 
 
+@dataclass(frozen=True, slots=True)
+class CochangeAggregate:
+    source_key: str
+    target_key: str
+    weight: int = 0
+    evidence_ids: tuple[str, ...] = ()
+    evidence_class: EvidenceClass = EvidenceClass.INFERRED
+
+    def add(
+        self,
+        *,
+        weight: int,
+        evidence_id: str,
+        evidence_class: EvidenceClass,
+    ) -> CochangeAggregate:
+        return CochangeAggregate(
+            source_key=self.source_key,
+            target_key=self.target_key,
+            weight=self.weight + weight,
+            evidence_ids=tuple(sorted((*self.evidence_ids, evidence_id))),
+            evidence_class=(
+                EvidenceClass.INFERRED
+                if self.evidence_class == EvidenceClass.INFERRED
+                or evidence_class == EvidenceClass.INFERRED
+                else evidence_class
+            ),
+        )
+
+
+def _cochange_dependency_edges(bundle: CanonicalBundle) -> tuple[EdgeRow, ...]:
+    aggregates: dict[tuple[str, str], CochangeAggregate] = {}
+    for evidence in bundle.evidence:
+        if evidence.predicate != "cochange":
+            continue
+        metadata = _evidence_metadata(evidence)
+        source_key = (
+            f"module:{_str_metadata(metadata, 'source_module_external_id', evidence.evidence_id)}"
+        )
+        target_key = (
+            f"module:{_str_metadata(metadata, 'target_module_external_id', evidence.evidence_id)}"
+        )
+        if source_key == target_key:
+            raise DerivationError(f"{evidence.evidence_id} cochange references the same module")
+        if target_key < source_key:
+            source_key, target_key = target_key, source_key
+        weight = metadata.get("cochange_count", metadata.get("weight", 1))
+        if type(weight) is not int or weight <= 0:
+            raise DerivationError(f"{evidence.evidence_id} cochange weight must be positive")
+        key = (source_key, target_key)
+        current = aggregates.get(key) or CochangeAggregate(source_key, target_key)
+        aggregates[key] = current.add(
+            weight=weight,
+            evidence_id=evidence.evidence_id,
+            evidence_class=evidence.evidence_class,
+        )
+
+    edges = []
+    for aggregate in aggregates.values():
+        edges.append(
+            _add_edge(
+                bundle,
+                source_key=aggregate.source_key,
+                target_key=aggregate.target_key,
+                rel_type="DEPENDS_ON",
+                discriminator="cochange",
+                properties={"dependency_kind": "cochange", "weight": aggregate.weight},
+                evidence_ids=aggregate.evidence_ids,
+                evidence_class=aggregate.evidence_class,
+            )
+        )
+    return tuple(edges)
+
+
 def derive_edges(base: CanonicalBundle) -> tuple[EdgeRow, ...]:
-    edges = (*_communication_edges(base), *_ownership_edges(base), *_dependency_edges(base))
+    edges = (
+        *_communication_edges(base),
+        *_ownership_edges(base),
+        *_dependency_edges(base),
+        *_cochange_dependency_edges(base),
+    )
     return tuple(sorted(edges, key=lambda edge: (edge.id, edge.canonical_key)))
 
 
