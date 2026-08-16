@@ -52,8 +52,6 @@ class GraphNode(BaseModel):
     name: str
     title: str
     team: str
-    x: float = Field(ge=0, le=100)
-    y: float = Field(ge=0, le=100)
     official_size: int = Field(gt=0)
     actual_size: int = Field(gt=0)
     selected: bool = False

@@ -42,20 +42,6 @@ from .schemas import (
     SnapshotResponse,
 )
 
-PERSON_LAYOUT = {
-    "person:maya-chen": (50, 49),
-    "person:alex-rivera": (50, 16),
-    "person:priya-shah": (32, 24),
-    "person:omar-haddad": (65, 55),
-    "person:lena-park": (38, 64),
-    "person:theo-brooks": (48, 82),
-    "person:nina-okafor": (18, 56),
-    "person:sam-wu": (78, 30),
-    "person:ines-costa": (82, 52),
-    "person:jon-bell": (73, 72),
-}
-
-
 def create_app() -> FastAPI:
     app = FastAPI(title="X-Ray Evidence Platform API", version="0.1.0")
     app.add_middleware(
@@ -366,14 +352,11 @@ def _graph_node(node: NodeRow, score: GhostScore | None, selected_key: str) -> G
     role_rank = int(properties.get("role_rank", 1))
     centrality = getattr(score, "sampled_centrality", 0.0)
     degree = getattr(score, "communication_degree", 0)
-    x, y = PERSON_LAYOUT.get(node.canonical_key, (50, 50))
     return GraphNode(
         key=node.canonical_key,
         name=str(properties.get("display_name", node.canonical_key)),
         title=_person_title(team, role_rank),
         team=team,
-        x=x,
-        y=y,
         official_size=max(20, 78 - (role_rank * 10)),
         actual_size=max(20, min(82, round(20 + (centrality * 250) + (degree * 3)))),
         selected=node.canonical_key == selected_key,
@@ -387,14 +370,11 @@ def _hydra_graph_node(
     role_rank = int(node.properties.get("role_rank", 1))
     centrality = getattr(score, "sampled_centrality", 0.0)
     degree = getattr(score, "communication_degree", 0)
-    x, y = PERSON_LAYOUT.get(node.key, (50, 50))
     return GraphNode(
         key=node.key,
         name=str(node.properties.get("display_name", node.key)),
         title=_person_title(team, role_rank),
         team=team,
-        x=x,
-        y=y,
         official_size=max(20, 78 - (role_rank * 10)),
         actual_size=max(20, min(82, round(20 + (centrality * 250) + (degree * 3)))),
         selected=node.key == selected_key,
