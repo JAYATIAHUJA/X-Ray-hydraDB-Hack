@@ -187,6 +187,13 @@ select {
   gap: 10px;
 }
 
+.toolbar label:first-child {
+  background: rgba(14, 27, 36, 0.78);
+  border: 1px solid rgba(30, 202, 208, 0.28);
+  border-radius: 6px;
+  padding: 4px 6px 4px 10px;
+}
+
 .toolbar select,
 .toolbar input[type="text"],
 .toolbar input:not([type]) {
@@ -264,6 +271,51 @@ select {
   justify-content: center;
   padding: 28px;
   position: absolute;
+}
+
+.graph-legend {
+  align-items: center;
+  background: rgba(7, 16, 20, 0.82);
+  border: 1px solid rgba(32, 49, 61, 0.9);
+  border-radius: 999px;
+  bottom: 16px;
+  color: #8ea0ad;
+  display: flex;
+  flex-wrap: wrap;
+  font: 700 11px/1 "JetBrains Mono Variable", monospace;
+  gap: 12px;
+  left: 16px;
+  padding: 9px 12px;
+  position: absolute;
+  text-transform: uppercase;
+  z-index: 2;
+}
+
+.graph-legend span {
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+}
+
+.legend-dot {
+  border-radius: 999px;
+  display: inline-block;
+  height: 8px;
+  width: 18px;
+}
+
+.legend-dot.communication {
+  background: var(--teal);
+}
+
+.legend-dot.faultline {
+  background: repeating-linear-gradient(90deg, var(--danger) 0 5px, transparent 5px 8px);
+  border: 1px solid rgba(240, 95, 107, 0.78);
+}
+
+.legend-dot.phantom {
+  background: #ffc6cc;
+  box-shadow: 0 0 0 5px rgba(240, 95, 107, 0.14);
 }
 
 .fallback-node {
@@ -426,6 +478,21 @@ th {
   color: #a9bac6;
   font: 700 11px/1 "JetBrains Mono Variable", monospace;
   text-transform: uppercase;
+}
+
+.data-row {
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    outline-color 160ms ease;
+}
+
+.data-row:hover,
+.data-row:focus-visible,
+.data-row.selected {
+  background: rgba(30, 202, 208, 0.07);
+  outline: 1px solid rgba(30, 202, 208, 0.28);
+  outline-offset: -1px;
 }
 
 .detail-panel {
@@ -597,11 +664,71 @@ code {
   gap: 10px;
 }
 
+.panel-heading {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.panel-heading span {
+  color: var(--muted);
+  font: 700 10px/1.2 "JetBrains Mono Variable", monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gap-controls {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.gap-controls label {
+  color: var(--muted);
+  display: grid;
+  font: 700 10px/1.2 "JetBrains Mono Variable", monospace;
+  gap: 6px;
+  text-transform: uppercase;
+}
+
+.gap-controls select {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: #c8d6df;
+  min-width: 0;
+  padding: 8px 10px;
+}
+
 .timeline-row {
+  background: transparent;
   border-top: 1px solid rgba(32, 49, 61, 0.72);
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  color: inherit;
+  cursor: pointer;
   display: grid;
   gap: 8px;
   padding: 10px 0 6px;
+  text-align: left;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    padding-left 160ms ease;
+  width: 100%;
+}
+
+.timeline-row:hover,
+.timeline-row:focus-visible,
+.timeline-row.selected {
+  background: rgba(240, 95, 107, 0.07);
+  border-color: rgba(240, 95, 107, 0.58);
+  outline: 0;
+  padding-left: 8px;
 }
 
 .timeline-row > span,
