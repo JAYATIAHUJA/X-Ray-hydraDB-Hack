@@ -9,8 +9,13 @@ param(
 $ErrorActionPreference = "Stop"
 $startedAt = Get-Date
 $runtimeDir = "infra/runtime/$RuntimeId"
+$envFile = "$runtimeDir/compose.env"
 
-uv run python -m xray_runtime.manager start --runtime-id $RuntimeId --compose-project $Project
+if (Test-Path $envFile) {
+    docker compose --env-file $envFile -p $Project -f compose.yaml -f compose.test.yaml --profile core up -d --wait
+} else {
+    uv run python -m xray_runtime.manager start --runtime-id $RuntimeId --compose-project $Project
+}
 uv sync
 
 if ($CoreOnly) {
@@ -19,6 +24,8 @@ if ($CoreOnly) {
 }
 
 $env:XRAY_HYDRA_URI = "bolt://127.0.0.1:17687"
+$env:XRAY_HYDRA_USER = "neo4j"
+$env:XRAY_HYDRA_PASSWORD = (Get-Content -Raw "$runtimeDir/hydra-auth-token").Trim()
 $env:XRAY_HYDRA_DATABASE = "xray"
 $env:VITE_XRAY_API_BASE_URL = "http://127.0.0.1:$ApiPort"
 

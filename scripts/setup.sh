@@ -23,9 +23,13 @@ done
 RUNTIME_DIR="infra/runtime/$RUNTIME_ID"
 ENV_FILE="$RUNTIME_DIR/compose.env"
 
-uv run python -m xray_runtime.manager start \
-  --runtime-id "$RUNTIME_ID" \
-  --compose-project "$PROJECT"
+if [ -f "$ENV_FILE" ]; then
+  docker compose --env-file "$ENV_FILE" -p "$PROJECT" -f compose.yaml -f compose.test.yaml --profile core up -d --wait
+else
+  uv run python -m xray_runtime.manager start \
+    --runtime-id "$RUNTIME_ID" \
+    --compose-project "$PROJECT"
+fi
 
 uv sync
 
@@ -35,8 +39,10 @@ if [ "$CORE_ONLY" -eq 1 ]; then
 fi
 
 XRAY_HYDRA_URI="bolt://127.0.0.1:17687"
+XRAY_HYDRA_USER="neo4j"
+XRAY_HYDRA_PASSWORD="$(tr -d '\r\n' < "$RUNTIME_DIR/hydra-auth-token")"
 XRAY_HYDRA_DATABASE="xray"
-export XRAY_HYDRA_URI XRAY_HYDRA_DATABASE
+export XRAY_HYDRA_URI XRAY_HYDRA_USER XRAY_HYDRA_PASSWORD XRAY_HYDRA_DATABASE
 export VITE_XRAY_API_BASE_URL="http://127.0.0.1:$API_PORT"
 
 uv run uvicorn xray_api.app:app --host 127.0.0.1 --port "$API_PORT" > "$RUNTIME_DIR/api.log" 2>&1 &
