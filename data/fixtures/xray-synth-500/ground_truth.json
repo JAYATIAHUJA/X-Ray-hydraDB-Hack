@@ -1,0 +1,50 @@
+{
+  "dataset_id": "xray-synth-500",
+  "faultline_module_pairs": [
+    [
+      "module:module-00",
+      "module:module-09"
+    ],
+    [
+      "module:module-11",
+      "module:module-28"
+    ],
+    [
+      "module:module-22",
+      "module:module-35"
+    ]
+  ],
+  "gap_paths": [
+    {
+      "phantom_key": "artifact:synth-gap-0-approval",
+      "source_artifact_key": "artifact:synth-gap-0-change",
+      "target_artifact_key": "artifact:synth-gap-0-directive"
+    },
+    {
+      "phantom_key": "artifact:synth-gap-1-approval",
+      "source_artifact_key": "artifact:synth-gap-1-change",
+      "target_artifact_key": "artifact:synth-gap-1-directive"
+    },
+    {
+      "phantom_key": "artifact:synth-gap-2-approval",
+      "source_artifact_key": "artifact:synth-gap-2-change",
+      "target_artifact_key": "artifact:synth-gap-2-directive"
+    },
+    {
+      "phantom_key": "artifact:synth-gap-3-approval",
+      "source_artifact_key": "artifact:synth-gap-3-change",
+      "target_artifact_key": "artifact:synth-gap-3-directive"
+    },
+    {
+      "phantom_key": "artifact:synth-gap-4-approval",
+      "source_artifact_key": "artifact:synth-gap-4-change",
+      "target_artifact_key": "artifact:synth-gap-4-directive"
+    }
+  ],
+  "ghost_person_key": "person:p0000",
+  "planted_counts": {
+    "faultlines": 3,
+    "gaps": 5,
+    "ghosts": 1
+  }
+}

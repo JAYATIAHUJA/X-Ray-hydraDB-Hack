@@ -1,0 +1,1662 @@
+[
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-00",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-00",
+      "criticality": 1.0,
+      "module_name": "module-00",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-00"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-01",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-01",
+      "criticality": 0.99,
+      "module_name": "module-01",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-01"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-02",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-02",
+      "criticality": 0.98,
+      "module_name": "module-02",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-02"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-03",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-03",
+      "criticality": 0.97,
+      "module_name": "module-03",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-03"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-04",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-04",
+      "criticality": 0.96,
+      "module_name": "module-04",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-04"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-05",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-05",
+      "criticality": 0.95,
+      "module_name": "module-05",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-05"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-06",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-06",
+      "criticality": 0.94,
+      "module_name": "module-06",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-06"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-07",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-07",
+      "criticality": 0.93,
+      "module_name": "module-07",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-07"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-08",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-08",
+      "criticality": 0.92,
+      "module_name": "module-08",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-08"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-09",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-09",
+      "criticality": 0.91,
+      "module_name": "module-09",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-09"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-10",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-10",
+      "criticality": 0.9,
+      "module_name": "module-10",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-10"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-11",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-11",
+      "criticality": 0.89,
+      "module_name": "module-11",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-11"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-12",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-12",
+      "criticality": 0.88,
+      "module_name": "module-12",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-12"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-13",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-13",
+      "criticality": 0.87,
+      "module_name": "module-13",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-13"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-14",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-14",
+      "criticality": 0.86,
+      "module_name": "module-14",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-14"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-15",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-15",
+      "criticality": 0.85,
+      "module_name": "module-15",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-15"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-16",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-16",
+      "criticality": 0.84,
+      "module_name": "module-16",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-16"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-17",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-17",
+      "criticality": 0.83,
+      "module_name": "module-17",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-17"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-18",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-18",
+      "criticality": 0.82,
+      "module_name": "module-18",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-18"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-19",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-19",
+      "criticality": 0.81,
+      "module_name": "module-19",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-19"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-20",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-20",
+      "criticality": 0.8,
+      "module_name": "module-20",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-20"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-21",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-21",
+      "criticality": 0.79,
+      "module_name": "module-21",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-21"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-22",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-22",
+      "criticality": 0.78,
+      "module_name": "module-22",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-22"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-23",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-23",
+      "criticality": 0.77,
+      "module_name": "module-23",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-23"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-24",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-24",
+      "criticality": 0.76,
+      "module_name": "module-24",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-24"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-25",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-25",
+      "criticality": 0.75,
+      "module_name": "module-25",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-25"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-26",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-26",
+      "criticality": 0.74,
+      "module_name": "module-26",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-26"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-27",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-27",
+      "criticality": 0.73,
+      "module_name": "module-27",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-27"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-28",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-28",
+      "criticality": 0.72,
+      "module_name": "module-28",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-28"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-29",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-29",
+      "criticality": 0.71,
+      "module_name": "module-29",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-29"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-30",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-30",
+      "criticality": 0.7,
+      "module_name": "module-30",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-30"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-31",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-31",
+      "criticality": 0.69,
+      "module_name": "module-31",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-31"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-32",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-32",
+      "criticality": 0.68,
+      "module_name": "module-32",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-32"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-33",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-33",
+      "criticality": 0.67,
+      "module_name": "module-33",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-33"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-34",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-34",
+      "criticality": 0.66,
+      "module_name": "module-34",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-34"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-35",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-35",
+      "criticality": 0.65,
+      "module_name": "module-35",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-35"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-36",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-36",
+      "criticality": 0.64,
+      "module_name": "module-36",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-36"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-37",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-37",
+      "criticality": 0.63,
+      "module_name": "module-37",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-37"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-38",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-38",
+      "criticality": 0.62,
+      "module_name": "module-38",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-38"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "module-module-39",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:module-39",
+      "criticality": 0.61,
+      "module_name": "module-39",
+      "repo": "synth-monorepo"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-39"
+    ]
+  },
+  {
+    "author_external_id": "p0010",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0010-module-00",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 30,
+      "module_external_id": "module-00",
+      "total_attributed_count": 34
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0010",
+      "module:module-00"
+    ]
+  },
+  {
+    "author_external_id": "p0061",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0061-module-01",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 31,
+      "module_external_id": "module-01",
+      "total_attributed_count": 35
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0061",
+      "module:module-01"
+    ]
+  },
+  {
+    "author_external_id": "p0112",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0112-module-02",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 32,
+      "module_external_id": "module-02",
+      "total_attributed_count": 36
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0112",
+      "module:module-02"
+    ]
+  },
+  {
+    "author_external_id": "p0163",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0163-module-03",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 33,
+      "module_external_id": "module-03",
+      "total_attributed_count": 37
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0163",
+      "module:module-03"
+    ]
+  },
+  {
+    "author_external_id": "p0214",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0214-module-04",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 34,
+      "module_external_id": "module-04",
+      "total_attributed_count": 38
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0214",
+      "module:module-04"
+    ]
+  },
+  {
+    "author_external_id": "p0265",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0265-module-05",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 35,
+      "module_external_id": "module-05",
+      "total_attributed_count": 39
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0265",
+      "module:module-05"
+    ]
+  },
+  {
+    "author_external_id": "p0316",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0316-module-06",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 36,
+      "module_external_id": "module-06",
+      "total_attributed_count": 40
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0316",
+      "module:module-06"
+    ]
+  },
+  {
+    "author_external_id": "p0367",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0367-module-07",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 37,
+      "module_external_id": "module-07",
+      "total_attributed_count": 41
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0367",
+      "module:module-07"
+    ]
+  },
+  {
+    "author_external_id": "p0418",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0418-module-08",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 38,
+      "module_external_id": "module-08",
+      "total_attributed_count": 42
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0418",
+      "module:module-08"
+    ]
+  },
+  {
+    "author_external_id": "p0469",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0469-module-09",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 39,
+      "module_external_id": "module-09",
+      "total_attributed_count": 43
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0469",
+      "module:module-09"
+    ]
+  },
+  {
+    "author_external_id": "p0020",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0020-module-10",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 40,
+      "module_external_id": "module-10",
+      "total_attributed_count": 44
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0020",
+      "module:module-10"
+    ]
+  },
+  {
+    "author_external_id": "p0071",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0071-module-11",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 41,
+      "module_external_id": "module-11",
+      "total_attributed_count": 45
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0071",
+      "module:module-11"
+    ]
+  },
+  {
+    "author_external_id": "p0122",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0122-module-12",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 42,
+      "module_external_id": "module-12",
+      "total_attributed_count": 46
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0122",
+      "module:module-12"
+    ]
+  },
+  {
+    "author_external_id": "p0173",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0173-module-13",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 43,
+      "module_external_id": "module-13",
+      "total_attributed_count": 47
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0173",
+      "module:module-13"
+    ]
+  },
+  {
+    "author_external_id": "p0224",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0224-module-14",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 44,
+      "module_external_id": "module-14",
+      "total_attributed_count": 48
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0224",
+      "module:module-14"
+    ]
+  },
+  {
+    "author_external_id": "p0275",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0275-module-15",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 45,
+      "module_external_id": "module-15",
+      "total_attributed_count": 49
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0275",
+      "module:module-15"
+    ]
+  },
+  {
+    "author_external_id": "p0326",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0326-module-16",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 46,
+      "module_external_id": "module-16",
+      "total_attributed_count": 50
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0326",
+      "module:module-16"
+    ]
+  },
+  {
+    "author_external_id": "p0377",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0377-module-17",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 30,
+      "module_external_id": "module-17",
+      "total_attributed_count": 34
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0377",
+      "module:module-17"
+    ]
+  },
+  {
+    "author_external_id": "p0428",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0428-module-18",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 31,
+      "module_external_id": "module-18",
+      "total_attributed_count": 35
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0428",
+      "module:module-18"
+    ]
+  },
+  {
+    "author_external_id": "p0479",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0479-module-19",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 32,
+      "module_external_id": "module-19",
+      "total_attributed_count": 36
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0479",
+      "module:module-19"
+    ]
+  },
+  {
+    "author_external_id": "p0010",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0010-module-20",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 33,
+      "module_external_id": "module-20",
+      "total_attributed_count": 37
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0010",
+      "module:module-20"
+    ]
+  },
+  {
+    "author_external_id": "p0061",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0061-module-21",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 34,
+      "module_external_id": "module-21",
+      "total_attributed_count": 38
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0061",
+      "module:module-21"
+    ]
+  },
+  {
+    "author_external_id": "p0112",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0112-module-22",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 35,
+      "module_external_id": "module-22",
+      "total_attributed_count": 39
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0112",
+      "module:module-22"
+    ]
+  },
+  {
+    "author_external_id": "p0163",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0163-module-23",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 36,
+      "module_external_id": "module-23",
+      "total_attributed_count": 40
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0163",
+      "module:module-23"
+    ]
+  },
+  {
+    "author_external_id": "p0214",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0214-module-24",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 37,
+      "module_external_id": "module-24",
+      "total_attributed_count": 41
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0214",
+      "module:module-24"
+    ]
+  },
+  {
+    "author_external_id": "p0265",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0265-module-25",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 38,
+      "module_external_id": "module-25",
+      "total_attributed_count": 42
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0265",
+      "module:module-25"
+    ]
+  },
+  {
+    "author_external_id": "p0316",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0316-module-26",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 39,
+      "module_external_id": "module-26",
+      "total_attributed_count": 43
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0316",
+      "module:module-26"
+    ]
+  },
+  {
+    "author_external_id": "p0367",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0367-module-27",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 40,
+      "module_external_id": "module-27",
+      "total_attributed_count": 44
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0367",
+      "module:module-27"
+    ]
+  },
+  {
+    "author_external_id": "p0418",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0418-module-28",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 41,
+      "module_external_id": "module-28",
+      "total_attributed_count": 45
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0418",
+      "module:module-28"
+    ]
+  },
+  {
+    "author_external_id": "p0469",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0469-module-29",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 42,
+      "module_external_id": "module-29",
+      "total_attributed_count": 46
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0469",
+      "module:module-29"
+    ]
+  },
+  {
+    "author_external_id": "p0020",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0020-module-30",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 43,
+      "module_external_id": "module-30",
+      "total_attributed_count": 47
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0020",
+      "module:module-30"
+    ]
+  },
+  {
+    "author_external_id": "p0071",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0071-module-31",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 44,
+      "module_external_id": "module-31",
+      "total_attributed_count": 48
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0071",
+      "module:module-31"
+    ]
+  },
+  {
+    "author_external_id": "p0122",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0122-module-32",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 45,
+      "module_external_id": "module-32",
+      "total_attributed_count": 49
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0122",
+      "module:module-32"
+    ]
+  },
+  {
+    "author_external_id": "p0173",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0173-module-33",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 46,
+      "module_external_id": "module-33",
+      "total_attributed_count": 50
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0173",
+      "module:module-33"
+    ]
+  },
+  {
+    "author_external_id": "p0224",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0224-module-34",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 30,
+      "module_external_id": "module-34",
+      "total_attributed_count": 34
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0224",
+      "module:module-34"
+    ]
+  },
+  {
+    "author_external_id": "p0275",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0275-module-35",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 31,
+      "module_external_id": "module-35",
+      "total_attributed_count": 35
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0275",
+      "module:module-35"
+    ]
+  },
+  {
+    "author_external_id": "p0326",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0326-module-36",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 32,
+      "module_external_id": "module-36",
+      "total_attributed_count": 36
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0326",
+      "module:module-36"
+    ]
+  },
+  {
+    "author_external_id": "p0377",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0377-module-37",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 33,
+      "module_external_id": "module-37",
+      "total_attributed_count": 37
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0377",
+      "module:module-37"
+    ]
+  },
+  {
+    "author_external_id": "p0428",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0428-module-38",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 34,
+      "module_external_id": "module-38",
+      "total_attributed_count": 38
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0428",
+      "module:module-38"
+    ]
+  },
+  {
+    "author_external_id": "p0479",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "authorship-p0479-module-39",
+    "kind": "authorship_aggregate",
+    "metadata": {
+      "attributed_count": 35,
+      "module_external_id": "module-39",
+      "total_attributed_count": 39
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "person:p0479",
+      "module:module-39"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "dependency-module-00-module-09-planted",
+    "kind": "dependency",
+    "metadata": {
+      "dependency_kind": "explicit_reference",
+      "source_module_external_id": "module-00",
+      "target_module_external_id": "module-09",
+      "weight": 41
+    },
+    "occurred_at_epoch": 1735709641,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-00",
+      "module:module-09"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "dependency-module-11-module-28-planted",
+    "kind": "dependency",
+    "metadata": {
+      "dependency_kind": "explicit_reference",
+      "source_module_external_id": "module-11",
+      "target_module_external_id": "module-28",
+      "weight": 37
+    },
+    "occurred_at_epoch": 1735709637,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-11",
+      "module:module-28"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "dependency-module-22-module-35-planted",
+    "kind": "dependency",
+    "metadata": {
+      "dependency_kind": "explicit_reference",
+      "source_module_external_id": "module-22",
+      "target_module_external_id": "module-35",
+      "weight": 31
+    },
+    "occurred_at_epoch": 1735709631,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-22",
+      "module:module-35"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "dependency-module-01-module-02-background",
+    "kind": "dependency",
+    "metadata": {
+      "dependency_kind": "explicit_reference",
+      "source_module_external_id": "module-01",
+      "target_module_external_id": "module-02",
+      "weight": 9
+    },
+    "occurred_at_epoch": 1735709609,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-01",
+      "module:module-02"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "dependency-module-12-module-13-background",
+    "kind": "dependency",
+    "metadata": {
+      "dependency_kind": "explicit_reference",
+      "source_module_external_id": "module-12",
+      "target_module_external_id": "module-13",
+      "weight": 8
+    },
+    "occurred_at_epoch": 1735709608,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-12",
+      "module:module-13"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "dependency-module-23-module-24-background",
+    "kind": "dependency",
+    "metadata": {
+      "dependency_kind": "explicit_reference",
+      "source_module_external_id": "module-23",
+      "target_module_external_id": "module-24",
+      "weight": 7
+    },
+    "occurred_at_epoch": 1735709607,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-23",
+      "module:module-24"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "dependency-module-34-module-36-background",
+    "kind": "dependency",
+    "metadata": {
+      "dependency_kind": "explicit_reference",
+      "source_module_external_id": "module-34",
+      "target_module_external_id": "module-36",
+      "weight": 6
+    },
+    "occurred_at_epoch": 1735709606,
+    "parent_external_id": null,
+    "source": "synth-git-facts",
+    "subjects": [
+      "module:module-34",
+      "module:module-36"
+    ]
+  }
+]
