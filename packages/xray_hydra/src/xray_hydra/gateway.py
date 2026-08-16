@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import math
 import time
-from collections.abc import Mapping
-from typing import Protocol
+from collections.abc import Iterable, Mapping
+from contextlib import AbstractContextManager
+from typing import Protocol, runtime_checkable
 
 from xray_core.models import ExecutionStatus, QuerySpec, WriteBatchSpec
 from xray_core.ports import (
@@ -25,6 +26,15 @@ class DriverLike(Protocol):
     ) -> object: ...
 
 
+class SessionLike(Protocol):
+    def run(self, query: str, parameters: dict[str, object]) -> Iterable[object]: ...
+
+
+@runtime_checkable
+class SessionDriverLike(Protocol):
+    def session(self) -> AbstractContextManager[SessionLike]: ...
+
+
 class GatewayError(RuntimeError):
     """Raised when a HydraDB response cannot be normalized safely."""
 
@@ -34,14 +44,13 @@ class HydraGateway:
         self.driver = driver
 
     def run(self, query: QuerySpec) -> list[dict[str, object]]:
-        return _records(self.driver.execute_query(query.statement, parameters_=dict(query.parameters)))
+        return _execute(self.driver, query.statement, dict(query.parameters))
 
     def run_batch(self, batch: WriteBatchSpec) -> list[dict[str, object]]:
-        return _records(
-            self.driver.execute_query(
-                batch.statement,
-                parameters_={"rows": [dict(row) for row in batch.rows]},
-            )
+        return _execute(
+            self.driver,
+            batch.statement,
+            {"rows": [dict(row) for row in batch.rows]},
         )
 
     def paths(
@@ -174,6 +183,18 @@ def _records(result: object) -> list[dict[str, object]]:
     return rows
 
 
+def _execute(
+    driver: DriverLike,
+    statement: str,
+    parameters: dict[str, object],
+) -> list[dict[str, object]]:
+    if isinstance(driver, SessionDriverLike):
+        with driver.session() as session:
+            result = session.run(statement, parameters)
+            return _records(list(result))
+    return _records(driver.execute_query(statement, parameters_=parameters))
+
+
 def _path_record(row: Mapping[str, object]) -> PathRecord | None:
     path = row.get("path")
     if path is None:
@@ -196,6 +217,12 @@ def _path_record(row: Mapping[str, object]) -> PathRecord | None:
 
 
 def _path_nodes(path: object) -> tuple[object, ...]:
+    if isinstance(path, (list, tuple)):
+        return tuple(
+            item
+            for item in path
+            if isinstance(item, Mapping) or (not isinstance(item, str) and hasattr(item, "__getitem__"))
+        )
     if isinstance(path, Mapping):
         nodes = path.get("nodes")
     else:

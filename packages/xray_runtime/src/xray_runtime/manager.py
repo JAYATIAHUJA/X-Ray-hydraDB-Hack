@@ -118,6 +118,7 @@ class GraphRuntimeManager:
     def _write_env(self, rendered: RenderedRuntime, access_key: str, secret_key: str) -> None:
         spec = rendered.spec
         hydra_image = _locked_hydra_image()
+        minio_image = _locked_image("minio")
         values = {
             "XRAY_RUNTIME_ID": spec.runtime_id,
             "XRAY_TENANT_ID": spec.tenant_id,
@@ -126,6 +127,7 @@ class GraphRuntimeManager:
             "XRAY_GRAPH_ID": spec.graph_id,
             "XRAY_GRAPH_DATABASE": spec.graph_database,
             "XRAY_OBJECT_PREFIX": spec.object_prefix,
+            "XRAY_GRAPH_DATA_PATH": rendered.graph_data_path,
             "XRAY_COMPOSE_PROJECT": spec.compose_project,
             "XRAY_BOLT_PORT": str(spec.bolt_port),
             "XRAY_HTTP_PORT": str(spec.http_port),
@@ -135,6 +137,7 @@ class GraphRuntimeManager:
             "XRAY_MINIO_CONSOLE_PORT": str(spec.minio_console_port),
             "XRAY_RUNTIME_DIR": rendered.runtime_dir.as_posix(),
             "XRAY_HYDRA_IMAGE": hydra_image,
+            "XRAY_MINIO_IMAGE": minio_image,
             "AWS_ACCESS_KEY_ID": access_key,
             "AWS_SECRET_ACCESS_KEY": secret_key,
         }
@@ -147,7 +150,7 @@ class GraphRuntimeManager:
 
     def _write_manifest(self, rendered: RenderedRuntime) -> GraphRuntimeHandle:
         spec = rendered.spec
-        image_digests = {"hydradb": _locked_hydra_image()}
+        image_digests = {"hydradb": _locked_hydra_image(), "minio": _locked_image("minio")}
         payload: dict[str, object] = {
             "runtime_id": spec.runtime_id,
             "tenant_id": spec.tenant_id,
@@ -175,9 +178,13 @@ def _load_handle(runtime_root: Path, runtime_id: str) -> GraphRuntimeHandle:
 
 
 def _locked_hydra_image(lock_path: Path = Path("infra/runtime-images.lock")) -> str:
+    return _locked_image("hydradb", lock_path)
+
+
+def _locked_image(name: str, lock_path: Path = Path("infra/runtime-images.lock")) -> str:
     payload = json.loads(lock_path.read_text(encoding="utf-8"))
-    hydra = payload["images"]["hydradb"]
-    return f"{hydra['repository']}@{hydra['digest']}"
+    image = payload["images"][name]
+    return f"{image['repository']}@{image['digest']}"
 
 
 def _default_spec(runtime_id: str) -> GraphRuntimeSpec:

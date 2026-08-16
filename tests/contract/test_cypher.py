@@ -5,7 +5,6 @@ from pydantic import ValidationError
 from xray_core.models import EndpointExpectation
 from xray_hydra.cypher import (
     CypherCompileError,
-    communication_paths_by_id_query,
     communication_paths_query,
     edge_upsert_batch,
     node_upsert_batch,
@@ -38,8 +37,10 @@ def test_communication_paths_use_equal_pairwise_sets_and_only_communication() ->
         pairwise=True,
     )
 
+    assert "sourceLabel: 'Person'" in spec.statement
     assert "sourceProperty: 'path_key'" in spec.statement
     assert "sourceValues: ['person:00000000000000000001', 'person:00000000000000000002']" in spec.statement
+    assert "targetLabel: 'Person'" in spec.statement
     assert "targetValues: ['person:00000000000000000001', 'person:00000000000000000002']" in spec.statement
     assert "relTypes: ['COMMUNICATES']" in spec.statement
     assert "relDirection: 'BOTH'" in spec.statement
@@ -63,23 +64,6 @@ def test_cross_set_communication_paths_disable_pairwise() -> None:
 
     assert "pairwise: false" in spec.statement
     assert "relTypes: ['COMMUNICATES']" in spec.statement
-
-
-def test_communication_paths_by_id_uses_integer_selectors() -> None:
-    spec = communication_paths_by_id_query(
-        [1, 2],
-        [3, 4],
-        max_len=4,
-        path_count=1,
-        result_limit=10,
-        pairwise=False,
-    )
-
-    assert "sourceProperty: 'id'" in spec.statement
-    assert "sourceValues: [1, 2]" in spec.statement
-    assert "targetValues: [3, 4]" in spec.statement
-    assert "canonical_key" not in spec.statement
-    assert "dataset_id" not in spec.statement
 
 
 def test_pairwise_rejects_unequal_selector_sets() -> None:
@@ -126,8 +110,8 @@ def test_sp_chain_hard_codes_preceded_by_and_binds_ids() -> None:
     spec = sp_chain_query(1, 2, max_len=8, result_limit=20)
 
     assert "relTypes: ['PRECEDED_BY']" in spec.statement
-    assert "sourceValue: $source_id" in spec.statement
-    assert "targetValue: $target_id" in spec.statement
+    assert "sourceNode: $source_id" in spec.statement
+    assert "targetNode: $target_id" in spec.statement
     assert spec.parameters == {"source_id": 1, "target_id": 2}
     assert spec.max_len == 8
     assert spec.result_limit == 20
@@ -195,7 +179,9 @@ def test_write_batches_reject_unknown_labels_rel_types_and_nonprimitive_values()
     with pytest.raises(CypherCompileError):
         node_upsert_batch("BadLabel", ())
     with pytest.raises(CypherCompileError):
-        edge_upsert_batch("BAD_REL", ())
+        edge_upsert_batch("BAD_REL", (), source_label="Person", target_label="Person")
+    with pytest.raises(CypherCompileError):
+        edge_upsert_batch("COMMUNICATES", (), source_label="BadLabel", target_label="Person")
     with pytest.raises(ValueError, match="int, float, bool, or string"):
         node_upsert_batch("Person", ({"id": 1, "nested": {"bad": "value"}},))
 
@@ -213,8 +199,11 @@ def test_edge_batch_renders_allow_listed_relationship() -> None:
                 "properties": "{}",
             },
         ),
+        source_label="Person",
+        target_label="Person",
     )
 
+    assert "MATCH (s:Person {id: row.source_id}), (t:Person {id: row.target_id})" in spec.statement
     assert "MERGE (s)-[r:COMMUNICATES {id: row.id}]->(t)" in spec.statement
     assert "$rows" in spec.statement
 
@@ -233,6 +222,10 @@ def test_edge_batch_accepts_gap_relationships_emitted_by_ingest(rel_type: str) -
                 "properties": "{}",
             },
         ),
+        source_label="Artifact",
+        target_label="Phantom",
     )
 
     assert f"MERGE (s)-[r:{rel_type} {{id: row.id}}]->(t)" in spec.statement
+    assert "s:Artifact" in spec.statement
+    assert "t:Phantom" in spec.statement

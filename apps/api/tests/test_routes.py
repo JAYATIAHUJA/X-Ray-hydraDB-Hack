@@ -209,6 +209,22 @@ class GapRowsDriver:
         query_: str,
         parameters_: dict[str, object] | None = None,
     ) -> list[dict[str, object]]:
+        if "AS artifact_key" in query_:
+            if "REPLIES_TO" in query_:
+                return []
+            if "(phantom:Phantom)-[r:PRECEDED_BY]->" in query_:
+                return [
+                    {
+                        "phantom_key": "artifact:missing-approval",
+                        "artifact_key": "artifact:directive",
+                    }
+                ]
+            return [
+                {
+                    "phantom_key": "artifact:missing-approval",
+                    "artifact_key": "artifact:code-change",
+                }
+            ]
         return [
             {
                 "phantom_key": "artifact:missing-approval",
@@ -320,8 +336,9 @@ def test_communication_distances_reads_live_hydradb_paths() -> None:
     assert result is not None
     assert result.error is None
     assert result.distances == {("person:alex-rivera", "person:maya-chen"): 1}
-    assert result.query.name == "communication_paths_by_id"
-    assert "sourceProperty: 'id'" in result.query.statement
+    assert result.query.name == "communication_paths"
+    assert "sourceProperty: 'path_key'" in result.query.statement
+    assert "sourceLabel: 'Person'" in result.query.statement
     assert "canonical_key" not in result.query.statement
     assert driver.parameters == [{}]
 
@@ -347,7 +364,8 @@ def test_live_ghost_findings_use_single_integer_id_mspaths_call() -> None:
     assert result is not None
     assert result.error is None
     assert result.executed_query.round_trips == 1
-    assert "sourceProperty: 'id'" in result.executed_query.text
+    assert "sourceProperty: 'path_key'" in result.executed_query.text
+    assert "sourceLabel: 'Person'" in result.executed_query.text
     assert "canonical_key" not in result.executed_query.text
     assert "pairwise: false" in result.executed_query.text
     assert driver.parameters == [{}]
@@ -374,8 +392,8 @@ def test_live_gap_chain_uses_integer_id_sppaths_call() -> None:
         "artifact:missing-approval",
         "artifact:directive",
     )
-    assert "sourceValue: $source_id" in result.executed_query.text
-    assert "targetValue: $target_id" in result.executed_query.text
+    assert "sourceNode: $source_id" in result.executed_query.text
+    assert "targetNode: $target_id" in result.executed_query.text
     assert result.executed_query.params == {
         "source_id": 5711979473372363488,
         "target_id": 9197572505128004661,

@@ -57,6 +57,7 @@ def test_prepare_writes_manifest_env_and_secret_files(tmp_path: Path) -> None:
     env_text = handle.env_file.read_text(encoding="utf-8")
     assert "XRAY_RUNTIME_ID=runtime-demo" in env_text
     assert "XRAY_COMPOSE_PROJECT=xray-runtime-demo" in env_text
+    assert "XRAY_GRAPH_DATA_PATH=xray-demo/tenant-a/runtime-demo/xray/graph-demo" in env_text
     manager.verify(handle)
 
 

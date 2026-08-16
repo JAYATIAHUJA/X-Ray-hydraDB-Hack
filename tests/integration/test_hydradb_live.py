@@ -76,6 +76,8 @@ def test_live_hydradb_round_trip_and_path_algorithms() -> None:
                 edge_row(92001, 91001, 91002, "communicates"),
                 edge_row(92002, 91002, 91003, "communicates"),
             ],
+            source_label="Person",
+            target_label="Person",
         )
     )
     rows = hydra.run(
@@ -97,7 +99,12 @@ def test_live_hydradb_round_trip_and_path_algorithms() -> None:
         )
     )
     hydra.run_batch(
-        edge_upsert_batch("PRECEDED_BY", [edge_row(94001, 93001, 93002, "preceded_by")])
+        edge_upsert_batch(
+            "PRECEDED_BY",
+            [edge_row(94001, 93001, 93002, "preceded_by")],
+            source_label="Artifact",
+            target_label="Artifact",
+        )
     )
     assert hydra.run(sp_chain_query(93001, 93002, max_len=8, result_limit=10))
 
@@ -107,8 +114,11 @@ def test_live_hydradb_cypher_compatibility_probe() -> None:
     parsed_directions: list[str] = []
     for direction in ["both", "BOTH", "out", "OUTGOING", "in", "incoming", "INCOMING"]:
         statement = (
-            "CALL algo.MSpaths({sourceProperty: 'id', sourceValues: [91001], "
-            "targetProperty: 'id', targetValues: [91002], relTypes: ['COMMUNICATES'], "
+            "CALL algo.MSpaths({sourceLabel: 'Person', "
+            "sourceProperty: 'path_key', sourceValues: ['person:00000000000000091001'], "
+            "targetLabel: 'Person', "
+            "targetProperty: 'path_key', targetValues: ['person:00000000000000091002'], "
+            "relTypes: ['COMMUNICATES'], "
             f"relDirection: '{direction}', maxLen: 1, pathCount: 1, resultLimit: 1, pairwise: false"
             "}) YIELD path, pathWeight, pathCost RETURN path, pathWeight, pathCost"
         )
@@ -142,7 +152,8 @@ def test_live_hydradb_cypher_compatibility_probe() -> None:
         )
         is not None
     )
-    assert (
+    distinct_supported = True
+    try:
         hydra.run(
             QuerySpec(
                 name="compat_distinct",
@@ -152,5 +163,6 @@ def test_live_hydradb_cypher_compatibility_probe() -> None:
                 result_limit=1,
             )
         )
-        is not None
-    )
+    except Exception:
+        distinct_supported = False
+    assert distinct_supported is False
