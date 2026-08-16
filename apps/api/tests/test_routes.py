@@ -27,7 +27,7 @@ def test_health_and_current_snapshot() -> None:
 
     assert snapshot["snapshot_id"] == "xray-demo-v1:fixture"
     assert snapshot["node_count"] == 17
-    assert snapshot["edge_count"] == 29
+    assert snapshot["edge_count"] == 30
     assert snapshot["evidence_count"] == 34
 
 
