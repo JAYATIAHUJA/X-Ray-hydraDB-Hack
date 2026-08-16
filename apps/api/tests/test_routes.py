@@ -87,6 +87,8 @@ def test_ghosts_endpoint_returns_complete_fixture_finding() -> None:
     assert payload["analysis_status"] == "complete"
     assert payload["findings"][0]["person_key"] == "person:maya-chen"
     assert "removal_impact" in payload["findings"][0]
+    assert payload["findings"][0]["evidence"][0]["content_sha256"]
+    assert payload["findings"][0]["evidence"][0]["confidence"] == 100
 
 
 class RecordingDriver:
@@ -407,6 +409,10 @@ def test_faultlines_endpoint_returns_no_path_coordination_debt() -> None:
     assert payload["analysis_status"] == "complete"
     assert payload["findings"][0]["source_module_key"] == "module:payments-api"
     assert payload["findings"][0]["tier"] == "no_path"
+    assert {record["predicate"] for record in payload["findings"][0]["evidence"]} >= {
+        "authorship_aggregate",
+        "dependency",
+    }
 
 
 def test_gap_paths_endpoint_filters_requested_lineage() -> None:
@@ -422,6 +428,7 @@ def test_gap_paths_endpoint_filters_requested_lineage() -> None:
     payload = response.json()
     assert payload["analysis_status"] == "complete"
     assert payload["findings"][0]["phantom_key"] == "artifact:missing-approval"
+    assert payload["findings"][0]["evidence"][0]["predicate"] == "gap_phantom"
     assert "Absence does not establish deletion" in payload["status_explanation"]
 
 

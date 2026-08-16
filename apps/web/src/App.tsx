@@ -3,6 +3,7 @@ import type { Core, ElementDefinition } from "cytoscape";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DEFAULT_GAP_REQUEST } from "./api";
 import type {
+  EvidenceSummary,
   FaultlineFinding,
   GapFinding,
   GapPathRequest,
@@ -251,6 +252,19 @@ export function App() {
             <h3>Evidence + action</h3>
             <p>{evidenceSummary(activeLens, ghostFinding, selectedFaultline, selectedGap)}</p>
             <strong>{recommendedAction(activeLens, ghostFinding, selectedFaultline, selectedGap)}</strong>
+            <EvidenceList evidence={selectedEvidence(activeLens, ghostFinding, selectedFaultline, selectedGap)} />
+            <div className="limitations-list">
+              <span>Limitations</span>
+              {activeEnvelope?.limitations.length ? (
+                <ul>
+                  {activeEnvelope.limitations.map((limitation) => (
+                    <li key={limitation}>{limitation}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No additional limitations reported.</p>
+              )}
+            </div>
           </section>
         </aside>
       </div>
@@ -564,6 +578,63 @@ function recommendedAction(
   return gap
     ? `Action: request the missing ${gap.expected_kind} record or mark the source export incomplete.`
     : "Action: no missing step selected.";
+}
+
+function selectedEvidence(
+  lens: Lens,
+  ghost: GhostFinding | undefined,
+  faultline: FaultlineFinding | undefined,
+  gap: GapFinding | undefined
+) {
+  if (lens === "org") {
+    return ghost?.evidence ?? [];
+  }
+  if (lens === "faultlines") {
+    return faultline?.evidence ?? [];
+  }
+  return gap?.evidence ?? [];
+}
+
+function EvidenceList({ evidence }: { evidence: EvidenceSummary[] }) {
+  if (evidence.length === 0) {
+    return <p className="evidence-empty">No source evidence is attached to this finding.</p>;
+  }
+  return (
+    <div className="evidence-list">
+      {evidence.map((record) => (
+        <article className="evidence-record" key={record.evidence_id}>
+          <div>
+            <span>{record.source_type}</span>
+            <strong>{record.predicate}</strong>
+          </div>
+          <p>{record.redacted_excerpt || "No redacted excerpt available."}</p>
+          <dl>
+            <div>
+              <dt>record</dt>
+              <dd>{record.source_record_id}</dd>
+            </div>
+            <div>
+              <dt>confidence</dt>
+              <dd>{record.confidence}%</dd>
+            </div>
+            <div>
+              <dt>class</dt>
+              <dd>{record.evidence_class}</dd>
+            </div>
+            <div>
+              <dt>sha</dt>
+              <dd title={record.content_sha256}>{shortSha(record.content_sha256)}</dd>
+            </div>
+          </dl>
+          <code>{record.evidence_id}</code>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function shortSha(value: string) {
+  return value.length > 12 ? `${value.slice(0, 12)}…` : value;
 }
 
 function suffix(value: string) {

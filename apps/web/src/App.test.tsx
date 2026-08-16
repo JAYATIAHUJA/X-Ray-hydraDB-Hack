@@ -4,6 +4,19 @@ import userEvent from "@testing-library/user-event";
 import { App } from "./App";
 
 const gapRequests: unknown[] = [];
+const evidence = {
+  evidence_id: "evidence:demo",
+  source_type: "git",
+  source_uri: "fixture://demo",
+  source_record_id: "commit-123",
+  predicate: "dependency",
+  subject_key: "module:payments-api",
+  object_key: "module:ledger-worker",
+  evidence_class: "observed",
+  confidence: 100,
+  content_sha256: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  redacted_excerpt: "payments-api and ledger-worker changed together"
+};
 
 const responses: Record<string, object> = {
   "/api/v1/health": {
@@ -49,7 +62,8 @@ const responses: Record<string, object> = {
           reachable_pairs_before: 15,
           pairs_lost_without_person: 5,
           max_len: 4
-        }
+        },
+        evidence: [{ ...evidence, predicate: "person_profile", source_record_id: "person-maya" }]
       },
       {
         person_key: "person:alex-rivera",
@@ -64,7 +78,8 @@ const responses: Record<string, object> = {
           reachable_pairs_before: 15,
           pairs_lost_without_person: 1,
           max_len: 4
-        }
+        },
+        evidence: [{ ...evidence, predicate: "person_profile", source_record_id: "person-alex" }]
       }
     ]
   },
@@ -121,7 +136,8 @@ const responses: Record<string, object> = {
         dependency_weight: 12,
         communication_distance: null,
         tier: "no_path",
-        severity: 12
+        severity: 12,
+        evidence: [evidence]
       }
     ]
   },
@@ -129,7 +145,7 @@ const responses: Record<string, object> = {
     snapshot_id: "xray-demo-v1:fixture",
     analysis_status: "complete",
     status_explanation: "Fixture Gap analysis completed.",
-    limitations: [],
+    limitations: ["Absence does not establish deletion."],
     source: "hydradb",
     degraded_reason: null,
     executed_query: {
@@ -146,7 +162,8 @@ const responses: Record<string, object> = {
         reason: "required_sequence_step_missing",
         inferred_epoch: 1736003600,
         predecessor_keys: ["artifact:directive"],
-        successor_keys: ["artifact:code-change"]
+        successor_keys: ["artifact:code-change"],
+        evidence: [{ ...evidence, predicate: "gap_phantom", source_record_id: "contract-approval" }]
       }
     ]
   }
@@ -211,12 +228,16 @@ test("renders the three-lens shell from API responses", async () => {
   expect(screen.getByText("CALL algo.MSpaths({sourceLabel: 'Person'})")).toBeInTheDocument();
   await userEvent.click(screen.getByText("FL-001"));
   expect(screen.getByText(/payments-api depends on ledger-worker/)).toBeInTheDocument();
+  expect(screen.getByText("payments-api and ledger-worker changed together")).toBeInTheDocument();
+  expect(screen.getByText("100%")).toBeInTheDocument();
+  expect(screen.getByText("0123456789ab…")).toBeInTheDocument();
 
   await userEvent.click(screen.getByRole("button", { name: /Gaps/ }));
 
   expect(screen.getByText("CALL algo.SPpaths({sourceNode: $source_id})")).toBeInTheDocument();
   await userEvent.click(screen.getByRole("button", { name: /missing-approval/ }));
   expect(screen.getByText(/missing-approval is a structurally missing approval/)).toBeInTheDocument();
+  expect(screen.getByText("Absence does not establish deletion.")).toBeInTheDocument();
 
   await userEvent.click(alexNode);
 

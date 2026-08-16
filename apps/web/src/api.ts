@@ -60,6 +60,20 @@ export type GraphResponse = {
   edges: GraphEdge[];
 };
 
+export type EvidenceSummary = {
+  evidence_id: string;
+  source_type: string;
+  source_uri: string;
+  source_record_id: string;
+  predicate: string;
+  subject_key: string;
+  object_key: string;
+  evidence_class: string;
+  confidence: number;
+  content_sha256: string;
+  redacted_excerpt: string;
+};
+
 export type GhostFinding = {
   person_key: string;
   display_name: string;
@@ -74,6 +88,7 @@ export type GhostFinding = {
     pairs_lost_without_person: number;
     max_len: number;
   };
+  evidence: EvidenceSummary[];
 };
 
 export type FaultlineFinding = {
@@ -85,6 +100,7 @@ export type FaultlineFinding = {
   communication_distance: number | null;
   tier: string;
   severity: number;
+  evidence: EvidenceSummary[];
 };
 
 export type GapFinding = {
@@ -94,6 +110,7 @@ export type GapFinding = {
   inferred_epoch: number | null;
   predecessor_keys: string[];
   successor_keys: string[];
+  evidence: EvidenceSummary[];
 };
 
 export type GapPathRequest = {
