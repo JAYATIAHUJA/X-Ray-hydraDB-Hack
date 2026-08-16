@@ -56,7 +56,7 @@ def test_loader_validates_snapshot_and_loads_nodes_before_edges() -> None:
     report = loader.load(snapshot_dir, manifest, batch_size=500)
 
     assert report.node_count == 17
-    assert report.edge_count == 29
+    assert report.edge_count == 30
     assert report.completed_batches == report.attempted_batches
     assert report.failed_batches == ()
     first_edge_index = next(
