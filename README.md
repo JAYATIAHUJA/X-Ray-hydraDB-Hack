@@ -192,6 +192,32 @@ Measured on the local HydraDB + MinIO runtime on 16 Aug 2026:
 Loader default: `batch_size=500`. Larger batches are not automatically better here; this
 runtime rejects query batches above 1024 items.
 
+## Evaluation
+
+Synthetic evaluation is reproducible with:
+
+```powershell
+uv run python scripts/eval_synth.py
+```
+
+Measured on `xray-synth-500` on 17 Aug 2026:
+
+| Metric | Value |
+| --- | ---: |
+| Nodes / edges | 565 / 1,315 |
+| Faultline precision | 0.429 |
+| Faultline recall | 1.000 |
+| Faultlines planted / returned | 3 / 7 |
+| Gap precision | 1.000 |
+| Gap recall | 1.000 |
+| Gaps planted / returned | 5 / 5 |
+| Ghost top-1 hit rate across seeds | 1.000 |
+| Ghost mean top-10 overlap vs exact betweenness | 1.000 |
+
+The faultline result is intentionally reported as precision/recall against planted labels, not
+as proof of incidents. The four non-planted returned pairs are coordination-debt findings in the
+synthetic graph, but they are counted as false positives for planted-truth scoring.
+
 ## Validation philosophy
 
 X-Ray will report negative results as plainly as positive ones. In particular:
