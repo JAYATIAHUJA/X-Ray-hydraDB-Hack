@@ -6,14 +6,15 @@ import pytest
 import yaml
 from xray_runtime import GraphRuntimeManager, GraphRuntimeSpec, RuntimeCollisionError
 
-HYDRA_IMAGE = (
-    "ghcr.io/hydra-db/hydradb@sha256:"
-    "db78309a233be54662db29744047e985a39b51c45a270d1a1f47c31a62cdb709"
-)
-
 
 def load_compose() -> dict[str, object]:
     return yaml.safe_load(Path("compose.yaml").read_text(encoding="utf-8"))
+
+
+def locked_hydra_image() -> str:
+    lock = yaml.safe_load(Path("infra/runtime-images.lock").read_text(encoding="utf-8"))
+    hydra = lock["images"]["hydradb"]
+    return f"{hydra['repository']}@{hydra['digest']}"
 
 
 def runtime_spec(
@@ -46,14 +47,14 @@ def test_hydradb_is_immutable_and_stack_safe() -> None:
     services = compose["services"]
     hydra = services["hydradb"]
 
-    assert hydra["image"] == HYDRA_IMAGE
+    assert hydra["image"] == "${XRAY_HYDRA_IMAGE}"
+    assert services["hydradb-indexer"]["image"] == "${XRAY_HYDRA_IMAGE}"
+    assert locked_hydra_image().startswith("ghcr.io/hydra-db/hydradb@sha256:")
     assert hydra["environment"]["RUST_MIN_STACK"] == "33554432"
     assert {"minio", "minio-init", "hydradb", "hydradb-indexer"} <= set(services)
-    assert all(
-        "@sha256:" in service["image"]
-        for service in services.values()
-        if "image" in service and "build" not in service
-    )
+    assert "${XRAY_HYDRA_IMAGE}" in {
+        service["image"] for service in services.values() if "image" in service
+    }
     assert services["hydradb-indexer"]["entrypoint"] == ["/usr/local/bin/graph-indexer"]
     for published in hydra["ports"]:
         assert published.startswith("127.0.0.1:")

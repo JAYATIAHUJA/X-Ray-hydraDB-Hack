@@ -117,6 +117,7 @@ class GraphRuntimeManager:
 
     def _write_env(self, rendered: RenderedRuntime, access_key: str, secret_key: str) -> None:
         spec = rendered.spec
+        hydra_image = _locked_hydra_image()
         values = {
             "XRAY_RUNTIME_ID": spec.runtime_id,
             "XRAY_TENANT_ID": spec.tenant_id,
@@ -133,6 +134,7 @@ class GraphRuntimeManager:
             "XRAY_MINIO_API_PORT": str(spec.minio_api_port),
             "XRAY_MINIO_CONSOLE_PORT": str(spec.minio_console_port),
             "XRAY_RUNTIME_DIR": rendered.runtime_dir.as_posix(),
+            "XRAY_HYDRA_IMAGE": hydra_image,
             "AWS_ACCESS_KEY_ID": access_key,
             "AWS_SECRET_ACCESS_KEY": secret_key,
         }
@@ -145,12 +147,7 @@ class GraphRuntimeManager:
 
     def _write_manifest(self, rendered: RenderedRuntime) -> GraphRuntimeHandle:
         spec = rendered.spec
-        image_digests = {
-            "hydradb": (
-                "ghcr.io/hydra-db/hydradb@sha256:"
-                "db78309a233be54662db29744047e985a39b51c45a270d1a1f47c31a62cdb709"
-            )
-        }
+        image_digests = {"hydradb": _locked_hydra_image()}
         payload: dict[str, object] = {
             "runtime_id": spec.runtime_id,
             "tenant_id": spec.tenant_id,
@@ -177,9 +174,50 @@ def _load_handle(runtime_root: Path, runtime_id: str) -> GraphRuntimeHandle:
     return GraphRuntimeHandle.from_manifest(runtime_root / runtime_id / "runtime-manifest.json")
 
 
+def _locked_hydra_image(lock_path: Path = Path("infra/runtime-images.lock")) -> str:
+    payload = json.loads(lock_path.read_text(encoding="utf-8"))
+    hydra = payload["images"]["hydradb"]
+    return f"{hydra['repository']}@{hydra['digest']}"
+
+
+def _default_spec(runtime_id: str) -> GraphRuntimeSpec:
+    return GraphRuntimeSpec(
+        runtime_id=runtime_id,
+        tenant_id="tenant-a",
+        bucket_name="xray-demo",
+        graph_namespace="xray",
+        graph_id=runtime_id,
+        graph_database="xray",
+        object_prefix=f"tenant-a/{runtime_id}",
+        compose_project=f"xray-{runtime_id}",
+        bolt_port=17687,
+        http_port=18443,
+        admin_port=19090,
+        indexer_admin_port=19091,
+        minio_api_port=19000,
+        minio_console_port=19001,
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     subcommands = parser.add_subparsers(dest="command", required=True)
+    start = subcommands.add_parser("start")
+    start.add_argument("--runtime-id", required=True)
+    start.add_argument("--runtime-root", default="infra/runtime")
+    start.add_argument("--tenant-id", default="tenant-a")
+    start.add_argument("--bucket-name", default="xray-demo")
+    start.add_argument("--graph-namespace", default="xray")
+    start.add_argument("--graph-id")
+    start.add_argument("--graph-database", default="xray")
+    start.add_argument("--object-prefix")
+    start.add_argument("--compose-project")
+    start.add_argument("--bolt-port", type=int, default=17687)
+    start.add_argument("--http-port", type=int, default=18443)
+    start.add_argument("--admin-port", type=int, default=19090)
+    start.add_argument("--indexer-admin-port", type=int, default=19091)
+    start.add_argument("--minio-api-port", type=int, default=19000)
+    start.add_argument("--minio-console-port", type=int, default=19001)
     stop = subcommands.add_parser("stop")
     stop.add_argument("--runtime-id", required=True)
     stop.add_argument("--runtime-root", default="infra/runtime")
@@ -187,7 +225,28 @@ def main() -> None:
     stop.add_argument("--purge-local", action="store_true")
     args = parser.parse_args()
 
-    if args.command == "stop":
+    if args.command == "start":
+        runtime_root = Path(args.runtime_root)
+        defaults = _default_spec(args.runtime_id)
+        spec = GraphRuntimeSpec(
+            runtime_id=args.runtime_id,
+            tenant_id=args.tenant_id,
+            bucket_name=args.bucket_name,
+            graph_namespace=args.graph_namespace,
+            graph_id=args.graph_id or defaults.graph_id,
+            graph_database=args.graph_database,
+            object_prefix=args.object_prefix or defaults.object_prefix,
+            compose_project=args.compose_project or defaults.compose_project,
+            bolt_port=args.bolt_port,
+            http_port=args.http_port,
+            admin_port=args.admin_port,
+            indexer_admin_port=args.indexer_admin_port,
+            minio_api_port=args.minio_api_port,
+            minio_console_port=args.minio_console_port,
+        )
+        handle = GraphRuntimeManager(runtime_root=runtime_root).start(spec)
+        print(handle.model_dump_json(indent=2))
+    elif args.command == "stop":
         runtime_root = Path(args.runtime_root)
         handle = _load_handle(runtime_root, args.runtime_id)
         manager = GraphRuntimeManager(runtime_root=runtime_root)

@@ -10,6 +10,9 @@ class HydraHealthResponse(BaseModel):
     database: str | None
     uri: str | None
     detail: str
+    graph_loaded: bool = False
+    node_count: int | None = None
+    edge_count: int | None = None
 
 
 class HealthResponse(BaseModel):
@@ -74,6 +77,9 @@ class LensEnvelope(BaseModel):
     status_explanation: str
     limitations: tuple[str, ...]
     findings: tuple[dict[str, object], ...]
+    source: str = "fixture"
+    degraded_reason: str | None = None
+    executed_query: dict[str, object] | None = None
 
 
 class GapPathRequest(BaseModel):

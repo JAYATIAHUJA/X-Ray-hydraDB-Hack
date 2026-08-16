@@ -41,7 +41,7 @@ services:
         condition: service_healthy
 
   hydradb:
-    image: ghcr.io/hydra-db/hydradb@sha256:db78309a233be54662db29744047e985a39b51c45a270d1a1f47c31a62cdb709
+    image: ${XRAY_HYDRA_IMAGE}
     profiles: ["core"]
     environment: &hydra-env
       RUST_MIN_STACK: "33554432"
@@ -79,7 +79,7 @@ services:
       - hydra-cache:/var/cache/slatedb
 
   hydradb-indexer:
-    image: ghcr.io/hydra-db/hydradb@sha256:db78309a233be54662db29744047e985a39b51c45a270d1a1f47c31a62cdb709
+    image: ${XRAY_HYDRA_IMAGE}
     profiles: ["core"]
     entrypoint: ["/usr/local/bin/graph-indexer"]
     environment:

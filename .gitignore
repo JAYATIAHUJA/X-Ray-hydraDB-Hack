@@ -9,7 +9,9 @@
 __pycache__/
 *.py[cod]
 coverage.xml
-docs/
+docs/*
+!docs/
+!docs/cypher-compat-verified.md
 htmlcov/
 node_modules/
 playwright-report/

@@ -4,8 +4,6 @@ version = "0.1.0"
 description = "Versioned HTTP API for the X-Ray evidence platform"
 requires-python = ">=3.13,<3.14"
 dependencies = [
-    "cryptography>=44.0.0",
-    "duckdb>=1.2.0",
     "fastapi>=0.115.0",
     "huggingface-hub>=0.28.0",
     "neo4j>=5.28.0",
