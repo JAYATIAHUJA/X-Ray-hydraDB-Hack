@@ -116,6 +116,52 @@ def test_email_relationship_is_derived_as_communication_weight() -> None:
     assert edge.properties["weight"] == 1
 
 
+def test_multimodule_commits_derive_weighted_cochange_dependency() -> None:
+    modules = tuple(
+        CanonicalRecord.model_validate(
+            {
+                "source": "directory",
+                "external_id": module,
+                "kind": "module",
+                "occurred_at_epoch": 1,
+                "author_external_id": None,
+                "parent_external_id": None,
+                "subjects": [f"module:{module}"],
+                "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                "content": None,
+                "metadata": {"canonical_key": f"module:{module}"},
+            }
+        )
+        for module in ("api", "worker")
+    )
+    records = (
+        _person_record("alex"),
+        *modules,
+        *code_records(
+            [
+                {
+                    "sha": "commit-1",
+                    "occurred_at_epoch": 2,
+                    "author_id": "alex",
+                    "module_keys": ["api", "worker"],
+                },
+                {
+                    "sha": "commit-2",
+                    "occurred_at_epoch": 3,
+                    "author_id": "alex",
+                    "module_keys": ["worker", "api"],
+                },
+            ]
+        ),
+    )
+
+    bundle = canonicalize(records, "cochange-source-test")
+    dependency = next(edge for edge in derive_edges(bundle) if edge.rel_type == "DEPENDS_ON")
+
+    assert dependency.canonical_key == "depends_on:api:worker:cochange"
+    assert dependency.properties == {"dependency_kind": "cochange", "weight": 2}
+
+
 def test_source_adapters_require_explicit_ids_and_module_lists() -> None:
     try:
         slack_records(
@@ -264,6 +310,4 @@ def test_mixed_source_runner_builds_one_evidence_graph() -> None:
         "DEPENDS_ON",
         "REPLIES_TO",
     }
-    assert any(
-        node.properties.get("reason") == "dangling_thread_parent" for node in bundle.nodes
-    )
+    assert any(node.properties.get("reason") == "dangling_thread_parent" for node in bundle.nodes)

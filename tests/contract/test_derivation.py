@@ -34,24 +34,31 @@ def sequence_contracts() -> SequenceContractSet:
     )
 
 
-def test_derived_edges_materialize_fixture_topology_without_cochange_dependency() -> None:
+def test_derived_edges_materialize_fixture_topology_with_weighted_cochange_dependency() -> None:
     base = canonicalize(source_records(), "xray-demo-v1")
     edges = derive_edges(base)
 
     assert Counter(edge.rel_type for edge in edges) == {
         "COMMUNICATES": 12,
-        "DEPENDS_ON": 1,
+        "DEPENDS_ON": 2,
         "OWNS": 3,
     }
     communication = next(
-        edge for edge in edges if edge.canonical_key == "communicates:maya-chen:omar-haddad:aggregate"
+        edge
+        for edge in edges
+        if edge.canonical_key == "communicates:maya-chen:omar-haddad:aggregate"
     )
     assert communication.properties["mention_weight"] == 5
     assert communication.properties["reply_weight"] == 0
     dependency = next(edge for edge in edges if edge.rel_type == "DEPENDS_ON")
     assert dependency.canonical_key == "depends_on:payments-api:ledger-worker:import"
     assert dependency.properties == {"dependency_kind": "import", "weight": 12}
-    assert not any("identity-api:audit-sink" in edge.canonical_key for edge in edges)
+    cochange = next(
+        edge
+        for edge in edges
+        if edge.canonical_key == "depends_on:audit-sink:identity-api:cochange"
+    )
+    assert cochange.properties == {"dependency_kind": "cochange", "weight": 3}
 
 
 def test_gap_requires_an_explicit_source_contract() -> None:
@@ -60,15 +67,11 @@ def test_gap_requires_an_explicit_source_contract() -> None:
     contracted = detect_gaps(base, sequence_contracts())
     uncontracted = detect_gaps(base, SequenceContractSet())
 
-    assert [node.canonical_key for node in contracted.phantoms] == [
-        "artifact:missing-approval"
-    ]
+    assert [node.canonical_key for node in contracted.phantoms] == ["artifact:missing-approval"]
     assert uncontracted.phantoms == ()
     assert uncontracted.edges == ()
     assert Counter(edge.rel_type for edge in contracted.edges) == {"PRECEDED_BY": 2}
-    assert {
-        edge.canonical_key for edge in contracted.edges
-    } == {
+    assert {edge.canonical_key for edge in contracted.edges} == {
         "preceded_by:code-change:missing-approval:approval-sequence:v1",
         "preceded_by:missing-approval:directive:approval-sequence:v1",
     }
@@ -79,7 +82,7 @@ def test_build_bundle_matches_labelled_fixture_contracts() -> None:
     truth = json.loads((FIXTURE_ROOT / "ground_truth.json").read_text(encoding="utf-8"))
 
     assert len(bundle.nodes) == 17
-    assert len(bundle.edges) == 29
+    assert len(bundle.edges) == 30
     assert len(bundle.evidence) == 34
     assert truth["ghost_person_key"] in {node.canonical_key for node in bundle.nodes}
     assert truth["gap_path"]["phantom_key"] in {node.canonical_key for node in bundle.nodes}
@@ -87,13 +90,16 @@ def test_build_bundle_matches_labelled_fixture_contracts() -> None:
         "ABOUT": 2,
         "AUTHORED": 2,
         "COMMUNICATES": 12,
-        "DEPENDS_ON": 1,
+        "DEPENDS_ON": 2,
         "OWNS": 3,
         "PRECEDED_BY": 2,
         "REPORTS_TO": 7,
     }
     assert "Export filtering is an alternative explanation." in bundle.limitations
-    assert "Absence does not establish deletion. The corpus is structurally incomplete at this point." in bundle.limitations
+    assert (
+        "Absence does not establish deletion. The corpus is structurally incomplete at this point."
+        in bundle.limitations
+    )
 
 
 def test_snapshot_hash_is_reproducible(tmp_path: Path) -> None:
