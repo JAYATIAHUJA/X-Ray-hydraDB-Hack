@@ -49,7 +49,7 @@ class HydraLoader:
         snapshot_dir: Path,
         manifest: SnapshotManifest,
         *,
-        batch_size: int = 1000,
+        batch_size: int = 500,
     ) -> LoadReport:
         if batch_size <= 0:
             raise LoaderError("batch_size must be positive")
@@ -58,7 +58,9 @@ class HydraLoader:
 
         node_rows = _read_node_rows(resolved_dir / "nodes.parquet", manifest.dataset_id)
         node_labels = {int(row["id"]): str(row["label"]) for row in node_rows}
-        edge_rows = _read_edge_rows(resolved_dir / "edges.parquet", manifest.dataset_id, node_labels)
+        edge_rows = _read_edge_rows(
+            resolved_dir / "edges.parquet", manifest.dataset_id, node_labels
+        )
         batches = (
             *_node_batches(node_rows, batch_size),
             *_edge_batches(edge_rows, batch_size),
@@ -156,10 +158,14 @@ def _read_edge_rows(
     return tuple(rows)
 
 
-def _node_batches(rows: tuple[dict[str, Scalar], ...], batch_size: int) -> tuple[WriteBatchSpec, ...]:
+def _node_batches(
+    rows: tuple[dict[str, Scalar], ...], batch_size: int
+) -> tuple[WriteBatchSpec, ...]:
     by_label: dict[str, list[dict[str, Scalar]]] = defaultdict(list)
     for row in rows:
-        by_label[str(row["label"])].append({key: value for key, value in row.items() if key != "label"})
+        by_label[str(row["label"])].append(
+            {key: value for key, value in row.items() if key != "label"}
+        )
     return tuple(
         node_upsert_batch(label, batch)
         for label in sorted(by_label)
@@ -167,7 +173,9 @@ def _node_batches(rows: tuple[dict[str, Scalar], ...], batch_size: int) -> tuple
     )
 
 
-def _edge_batches(rows: tuple[dict[str, Scalar], ...], batch_size: int) -> tuple[WriteBatchSpec, ...]:
+def _edge_batches(
+    rows: tuple[dict[str, Scalar], ...], batch_size: int
+) -> tuple[WriteBatchSpec, ...]:
     by_shape: dict[tuple[str, str, str], list[dict[str, Scalar]]] = defaultdict(list)
     for row in rows:
         shape = (str(row["rel_type"]), str(row["source_label"]), str(row["target_label"]))

@@ -162,6 +162,29 @@ The pinned HydraDB container image and local MinIO topology live in
 current HydraDB source commit is `02a40025d2d57e97ab2754c8256219cdbfeab379`. For the engine
 stack, set `RUST_MIN_STACK=33554432`; the compose configuration already applies this value.
 
+### Measured ingest throughput
+
+The live local benchmark writes 10,000 synthetic `COMMUNICATES` relationships through the same
+`UNWIND` batch path used by the loader. Node setup is excluded from the timing.
+
+Command:
+
+```powershell
+uv run python scripts/bench_ingest.py --edges 10000 --people 500
+```
+
+Measured on the local HydraDB + MinIO runtime on 16 Aug 2026:
+
+| Batch size | Edges | Seconds | Edges/sec | Status |
+| ---: | ---: | ---: | ---: | --- |
+| 500 | 10,000 | 2.302 | 4,344 | ok |
+| 1,000 | 10,000 | 2.460 | 4,065 | ok |
+| 2,000 | 10,000 | - | - | failed: HydraDB admission control limit |
+| 5,000 | 10,000 | - | - | failed: HydraDB admission control limit |
+
+Loader default: `batch_size=500`. Larger batches are not automatically better here; this
+runtime rejects query batches above 1024 items.
+
 ## Validation philosophy
 
 X-Ray will report negative results as plainly as positive ones. In particular:
