@@ -36,6 +36,10 @@ That makes three questions difficult to answer before something breaks:
 | **Faultline** | Where does work depend on work without enough coordination? | Module dependencies whose likely owners have no, or only weak, communication path. |
 | **Gaps** | Where is an expected evidence step absent? | A `Phantom` node inserted for a required sequence gap or a dangling thread parent. |
 
+Every finding keeps the source evidence visible in the UI: record IDs, source type, confidence,
+evidence class, `content_sha256`, redacted excerpt, limitations, executed HydraDB query, and one
+recommended action.
+
 ## How it works
 
 ```text
@@ -71,10 +75,15 @@ HydraDB is the graph layer behind the project. It does real query work in the li
 
 - The loader writes canonical nodes and edges with `UNWIND` batches.
 - Ghost uses one bounded `algo.MSpaths` call over `COMMUNICATES` paths to score sampled
-  intermediates.
-- Faultlines use bounded owner-to-owner communication distances instead of an unbounded client
-  traversal loop.
-- Gaps use `algo.SPpaths` over `PRECEDED_BY` to show the chain around a `Phantom` evidence hop.
+  intermediates. The API exposes the exact query text, parameters, max length, round trips, and
+  engine time.
+- Faultlines use one bounded owner-to-owner path query for the candidate pairs instead of an
+  unbounded client traversal loop or a per-pair query storm.
+- Gaps use `algo.SPpaths` over `PRECEDED_BY` between the selected artifact endpoints to show the
+  chain around a `Phantom` evidence hop.
+- Live graph lookup avoids string matching in query predicates for the analysis path. Canonical
+  keys are resolved to deterministic 63-bit integer IDs or procedure-safe `path_key` values before
+  HydraDB executes path procedures.
 
 The architecture keeps graph work graph-native and bounded rather than turning the API into a
 large client-side traversal loop. A local in-memory fixture fallback remains available for
@@ -94,9 +103,10 @@ scans/counts are avoided.
 | Derived communication, ownership, dependency, and gap relationships | Built |
 | Slack, email, ticket, and Git export adapters | Built for explicit exported facts |
 | HydraDB gateway, loader, health check, and fixture seeding | Built |
-| API and three-lens web interface | Built against the labelled demo fixture |
-| Live source connectors and production data validation | In progress |
-| HERB evaluation and incident-based validation | Planned |
+| API and three-lens web interface | Built with live/fallback status, graph layout, evidence drawer, and query card |
+| Synthetic 500-person fixture and planted-truth evaluation | Built |
+| Live source connectors | Out of scope for this hackathon; export adapters are the supported path |
+| HERB evaluation and incident-based validation | Planned, not included |
 
 The current demo data is synthetic and labelled. It demonstrates the product model; it is **not**
 a measured claim about a real organization.
@@ -183,6 +193,10 @@ The setup script prepares the local HydraDB + MinIO runtime, syncs Python depend
 the API, seeds the fixture, installs web dependencies, starts the Vite UI, and prints API/web
 URLs. Use `-CoreOnly` / `--core-only` to start only the database runtime.
 
+Expected result after setup: the web header shows `HydraDB: live` with node and edge counts.
+If HydraDB is not configured or unavailable, the header shows `fallback` or `offline` and the
+API labels lens responses accordingly.
+
 ### Configure HydraDB
 
 Set these variables before starting the API:
@@ -267,6 +281,37 @@ X-Ray will report negative results as plainly as positive ones. In particular:
 - The current measured corpus is synthetic. Public export adapters exist for mbox, JIRA CSV,
   git log, and Slack export JSON, but live OAuth connectors are intentionally out of scope.
 - HERB evaluation remains planned if time allows; it is not included in the repository.
+
+## Demo path
+
+The intended demo sequence is under three minutes:
+
+1. Start on the org graph and toggle `Official rank` to `Actual normalized` to show the
+   load-bearing person become visually larger.
+2. Open the Ghost evidence drawer and show the sampled centrality, bus-factor impact, source
+   evidence, and recommended backup-owner action.
+3. Switch to Faultlines and show the red highlighted dependency where module owners lack a short
+   communication path.
+4. Switch to Gaps, choose the source/target artifacts, and show the phantom hop in the timeline.
+5. Open the HydraDB query card and point to `algo.MSpaths` / `algo.SPpaths`, bounded `maxLen`,
+   one round trip, and measured engine time.
+6. End on this README's throughput and evaluation tables.
+
+## Verification
+
+Commands used before submission-oriented commits:
+
+```powershell
+uv run pytest
+uv run mypy
+npm --prefix apps/web run typecheck
+npm --prefix apps/web test
+npm --prefix apps/web run lint
+npm --prefix apps/web run build
+```
+
+The Vite/Vitest commands may need normal Windows process-spawn permission; in restricted
+sandboxes they can fail with `spawn EPERM` even when the code is valid.
 
 ## Attribution
 
