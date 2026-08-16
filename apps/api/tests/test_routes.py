@@ -7,6 +7,7 @@ from xray_api import create_app
 from xray_api.config import settings_from_env
 from xray_api.dependencies import demo_bundle
 from xray_api.hydra import communication_distances, gap_rows, graph_rows, seed_bundle
+from xray_api.lenses import live_gap_chain, live_ghost_findings
 from xray_core.models import CanonicalBundle, LoadReport, SnapshotManifest, WriteBatchSpec
 from xray_hydra import HydraGateway
 
@@ -222,6 +223,60 @@ class GapRowsDriver:
         ]
 
 
+class GhostPathsDriver:
+    def __init__(self) -> None:
+        self.statements: list[str] = []
+        self.parameters: list[dict[str, object] | None] = []
+
+    def execute_query(
+        self,
+        query_: str,
+        parameters_: dict[str, object] | None = None,
+    ) -> list[dict[str, object]]:
+        self.statements.append(query_)
+        self.parameters.append(parameters_)
+        return [
+            {
+                "path": {
+                    "nodes": [
+                        {"canonical_key": "person:alex-rivera"},
+                        {"canonical_key": "person:maya-chen"},
+                        {"canonical_key": "person:sam-wu"},
+                    ]
+                },
+                "pathWeight": 1,
+                "pathCost": 1,
+            }
+        ]
+
+
+class GapChainDriver:
+    def __init__(self) -> None:
+        self.statements: list[str] = []
+        self.parameters: list[dict[str, object] | None] = []
+
+    def execute_query(
+        self,
+        query_: str,
+        parameters_: dict[str, object] | None = None,
+    ) -> list[dict[str, object]]:
+        self.statements.append(query_)
+        self.parameters.append(parameters_)
+        return [
+            {
+                "path": {
+                    "nodes": [
+                        {"canonical_key": "artifact:code-change"},
+                        {"canonical_key": "artifact:missing-approval"},
+                        {"canonical_key": "artifact:directive"},
+                    ]
+                },
+                "pathWeight": 1,
+                "pathCost": 1,
+            }
+        ]
+
+
 def test_graph_endpoint_projects_person_communication_graph() -> None:
     response = client().get("/api/v1/snapshots/xray-demo-v1:fixture/graph")
 
@@ -281,6 +336,51 @@ def test_gap_rows_reads_live_hydradb_lineage() -> None:
     assert rows[0].properties["expected_kind"] == "approval"
     assert rows[0].predecessor_keys == ("artifact:directive",)
     assert rows[0].successor_keys == ("artifact:code-change",)
+
+
+def test_live_ghost_findings_use_single_integer_id_mspaths_call() -> None:
+    settings = settings_from_env({"XRAY_HYDRA_URI": "bolt://hydra.example:7687"})
+    driver = GhostPathsDriver()
+
+    result = live_ghost_findings(settings, demo_bundle(), gateway=HydraGateway(driver))
+
+    assert result is not None
+    assert result.error is None
+    assert result.executed_query.round_trips == 1
+    assert "sourceProperty: 'id'" in result.executed_query.text
+    assert "canonical_key" not in result.executed_query.text
+    assert "pairwise: false" in result.executed_query.text
+    assert driver.parameters == [{}]
+    maya = next(finding for finding in result.findings if finding["person_key"] == "person:maya-chen")
+    assert maya["sampled_centrality"] > 0
+
+
+def test_live_gap_chain_uses_integer_id_sppaths_call() -> None:
+    settings = settings_from_env({"XRAY_HYDRA_URI": "bolt://hydra.example:7687"})
+    driver = GapChainDriver()
+
+    result = live_gap_chain(
+        settings,
+        demo_bundle(),
+        source_artifact_key="artifact:code-change",
+        target_artifact_key="artifact:directive",
+        gateway=HydraGateway(driver),
+    )
+
+    assert result is not None
+    assert result.error is None
+    assert result.node_keys == (
+        "artifact:code-change",
+        "artifact:missing-approval",
+        "artifact:directive",
+    )
+    assert "sourceValue: $source_id" in result.executed_query.text
+    assert "targetValue: $target_id" in result.executed_query.text
+    assert result.executed_query.params == {
+        "source_id": 5711979473372363488,
+        "target_id": 9197572505128004661,
+    }
+    assert driver.parameters == [result.executed_query.params]
 
 
 def test_faultlines_endpoint_returns_no_path_coordination_debt() -> None:

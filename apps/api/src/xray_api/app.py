@@ -8,7 +8,6 @@ from xray_analytics import (
     FaultlineFinding,
     GapFinding,
     GhostScore,
-    bus_factor_impact,
     faultlines,
     gap_findings,
     ghost_scores,
@@ -29,6 +28,7 @@ from .hydra import (
     hydra_health,
     seed_bundle,
 )
+from .lenses import fixture_ghost_findings, live_gap_chain, live_ghost_findings
 from .schemas import (
     GapPathRequest,
     GraphEdge,
@@ -151,22 +151,30 @@ def create_app() -> FastAPI:
     def ghosts(snapshot_id: str) -> LensEnvelope:
         _require_current_snapshot(snapshot_id)
         bundle = active_bundle()
-        scores = ghost_scores(bundle)
-        findings = []
-        for score in scores:
-            impact = bus_factor_impact(bundle, score.person_key)
-            findings.append({**asdict(score), "removal_impact": asdict(impact)})
+        live_result = live_ghost_findings(get_settings(), bundle)
+        if live_result is not None and live_result.error is None:
+            return _lens_envelope(
+                snapshot_id=snapshot_id,
+                limitations=bundle.limitations,
+                findings=live_result.findings,
+                explanation="HydraDB Ghost analysis completed with one bounded MSpaths sample call.",
+                source="hydradb",
+                executed_query=asdict(live_result.executed_query),
+            )
+        findings = fixture_ghost_findings(bundle)
         return _lens_envelope(
             snapshot_id=snapshot_id,
             limitations=bundle.limitations,
-            findings=tuple(findings),
+            findings=findings,
             explanation=(
-                "HydraDB graph rows were available; Ghost scoring completed with bounded fallback path scoring."
-                if graph_rows(get_settings(), bundle) is not None
+                "HydraDB Ghost query degraded; fixture Ghost analysis completed with bounded in-memory path scoring."
+                if live_result is not None
                 else "Fixture Ghost analysis completed with bounded in-memory path scoring."
             ),
-            source="fixture",
-            degraded_reason="Ghost live centrality is not implemented yet; using bounded fixture scoring.",
+            status=AnalysisStatus.PARTIAL if live_result is not None else AnalysisStatus.COMPLETE,
+            source="fixture" if live_result is None else "hydradb",
+            degraded_reason=None if live_result is None else live_result.error,
+            executed_query=None if live_result is None else asdict(live_result.executed_query),
         )
 
     @app.get("/api/v1/snapshots/{snapshot_id}/faultlines", response_model=LensEnvelope)
@@ -222,6 +230,12 @@ def create_app() -> FastAPI:
     def gap_paths(snapshot_id: str, request: GapPathRequest) -> LensEnvelope:
         _require_current_snapshot(snapshot_id)
         bundle = active_bundle()
+        live_chain = live_gap_chain(
+            get_settings(),
+            bundle,
+            source_artifact_key=request.source_artifact_key,
+            target_artifact_key=request.target_artifact_key,
+        )
         live_gaps = gap_rows(get_settings(), bundle)
         all_findings = (
             tuple(_gap_finding_from_hydra(row) for row in live_gaps)
@@ -242,13 +256,22 @@ def create_app() -> FastAPI:
             findings=findings,
             explanation=(
                 (
-                    "HydraDB Gap analysis completed from live phantom lineage rows. "
-                    if live_gaps is not None
+                    "HydraDB Gap analysis completed from live SPpaths and phantom lineage rows. "
+                    if live_chain is not None and live_chain.error is None and live_gaps is not None
+                    else "HydraDB Gap SPpaths query degraded; fixture gap filtering completed. "
+                    if live_chain is not None and live_chain.error is not None
                     else "Fixture Gap analysis completed under explicit sequence contracts. "
                 )
                 + "Absence does not establish deletion."
             ),
-            source="hydradb" if live_gaps is not None else "fixture",
+            status=(
+                AnalysisStatus.PARTIAL
+                if live_chain is not None and live_chain.error is not None
+                else AnalysisStatus.COMPLETE
+            ),
+            source="hydradb" if live_chain is not None or live_gaps is not None else "fixture",
+            degraded_reason=None if live_chain is None else live_chain.error,
+            executed_query=None if live_chain is None else asdict(live_chain.executed_query),
         )
 
     return app
