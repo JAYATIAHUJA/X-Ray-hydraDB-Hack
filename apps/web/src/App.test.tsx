@@ -11,14 +11,17 @@ const responses: Record<string, object> = {
       configured: false,
       database: null,
       uri: null,
-      detail: "XRAY_HYDRA_URI is not configured; using in-memory fixture analytics."
+      detail: "XRAY_HYDRA_URI is not configured; using in-memory fixture analytics.",
+      graph_loaded: false,
+      node_count: null,
+      edge_count: null
     }
   },
   "/api/v1/snapshots/current": {
     snapshot_id: "xray-demo-v1:fixture",
     dataset_id: "xray-demo-v1",
     node_count: 17,
-    edge_count: 29,
+    edge_count: 30,
     evidence_count: 34,
     limitations: ["Synthetic fixture only", "Absence does not establish deletion."]
   },
@@ -27,6 +30,9 @@ const responses: Record<string, object> = {
     analysis_status: "complete",
     status_explanation: "Fixture Ghost analysis completed with bounded path scoring.",
     limitations: [],
+    source: "fixture",
+    degraded_reason: null,
+    executed_query: null,
     findings: [
       {
         person_key: "person:maya-chen",
@@ -68,8 +74,6 @@ const responses: Record<string, object> = {
         name: "Maya Chen",
         title: "Operations specialist",
         team: "operations",
-        x: 50,
-        y: 49,
         official_size: 68,
         actual_size: 82,
         selected: true
@@ -79,8 +83,6 @@ const responses: Record<string, object> = {
         name: "Alex Rivera",
         title: "Payments director",
         team: "payments",
-        x: 50,
-        y: 16,
         official_size: 38,
         actual_size: 26,
         selected: false
@@ -99,6 +101,15 @@ const responses: Record<string, object> = {
     analysis_status: "complete",
     status_explanation: "Fixture Faultline analysis completed.",
     limitations: [],
+    source: "hydradb",
+    degraded_reason: null,
+    executed_query: {
+      text: "CALL algo.MSpaths({sourceLabel: 'Person'})",
+      params: {},
+      max_len: 4,
+      round_trips: 1,
+      engine_ms: 8.2
+    },
     findings: [
       {
         source_module_key: "module:payments-api",
@@ -117,6 +128,15 @@ const responses: Record<string, object> = {
     analysis_status: "complete",
     status_explanation: "Fixture Gap analysis completed.",
     limitations: [],
+    source: "hydradb",
+    degraded_reason: null,
+    executed_query: {
+      text: "CALL algo.SPpaths({sourceNode: $source_id})",
+      params: { source_id: 1 },
+      max_len: 8,
+      round_trips: 1,
+      engine_ms: 4.1
+    },
     findings: [
       {
         phantom_key: "artifact:missing-approval",
@@ -162,7 +182,7 @@ test("renders the three-lens shell from API responses", async () => {
 
   expect(screen.getByRole("heading", { name: "X-Ray" })).toBeInTheDocument();
   expect(screen.getByText("Loading")).toBeInTheDocument();
-  expect(await screen.findByText("Graph: 17 nodes / 29 edges")).toBeInTheDocument();
+  expect(await screen.findByText("Graph: 17 nodes / 30 edges")).toBeInTheDocument();
   expect(await screen.findByText("HydraDB: fallback")).toBeInTheDocument();
   expect(await screen.findAllByText("Maya Chen")).toHaveLength(2);
   expect(await screen.findByText("Operations specialist / operations")).toBeInTheDocument();
@@ -170,12 +190,13 @@ test("renders the three-lens shell from API responses", async () => {
   expect(alexNode).toBeInTheDocument();
   expect(alexNode).toHaveAttribute("aria-pressed", "false");
   expect(await screen.findByText("0.231")).toBeInTheDocument();
-  expect(await screen.findByText("payments-api -> ledger-worker")).toBeInTheDocument();
-  expect(await screen.findByText("code-change -> missing-approval -> directive")).toBeInTheDocument();
+  expect(await screen.findByText("payments-api → ledger-worker")).toBeInTheDocument();
+  expect(await screen.findByText("missing-approval")).toBeInTheDocument();
 
   await userEvent.click(screen.getByRole("button", { name: /Faultlines/ }));
 
   expect(screen.getByRole("button", { name: /Faultlines/ })).toHaveAttribute("aria-current", "page");
+  expect(screen.getByText("CALL algo.MSpaths({sourceLabel: 'Person'})")).toBeInTheDocument();
 
   await userEvent.click(alexNode);
 

@@ -15,6 +15,9 @@ export type HealthResponse = {
     database: string | null;
     uri: string | null;
     detail: string;
+    graph_loaded: boolean;
+    node_count: number | null;
+    edge_count: number | null;
   };
 };
 
@@ -24,6 +27,15 @@ export type LensEnvelope<TFinding> = {
   status_explanation: string;
   limitations: string[];
   findings: TFinding[];
+  source: "fixture" | "hydradb";
+  degraded_reason: string | null;
+  executed_query: {
+    text: string;
+    params: Record<string, unknown>;
+    max_len: number | null;
+    round_trips: number;
+    engine_ms: number;
+  } | null;
 };
 
 export type GraphNode = {
@@ -31,8 +43,6 @@ export type GraphNode = {
   name: string;
   title: string;
   team: string;
-  x: number;
-  y: number;
   official_size: number;
   actual_size: number;
   selected: boolean;

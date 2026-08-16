@@ -1,8 +1,8 @@
-import type { CSSProperties } from "react";
-import { useEffect, useMemo, useState } from "react";
-import type { FaultlineFinding, GapFinding, GhostFinding } from "./api";
+import cytoscape from "cytoscape";
+import type { Core, ElementDefinition } from "cytoscape";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { FaultlineFinding, GapFinding, GhostFinding, GraphEdge, GraphNode, LensEnvelope } from "./api";
 import type { Lens } from "./data";
-import { queryTextByLens } from "./data";
 import { useXraySnapshot } from "./queries";
 
 const tabs: Array<{ id: Lens; label: string; sublabel: string; icon: string }> = [
@@ -35,20 +35,20 @@ export function App() {
   const defaultSelectedKey = people.find((person) => person.selected)?.key ?? people[0]?.key;
   const selectedKey = people.some((person) => person.key === selectedNodeKey) ? selectedNodeKey : defaultSelectedKey;
   const selected = people.find((person) => person.key === selectedKey);
-  const ghostFinding =
-    ghosts.data?.findings.find((finding) => finding.person_key === selected?.key) ??
-    ghosts.data?.findings[0];
-  const faultlineRows = toFaultlineRows(faultlines.data?.findings ?? []);
-  const gapRows = toGapRows(gapPath.data?.findings ?? []);
-  const activeQuery = queryTextByLens[activeLens];
-  const activeAnalysisStatus =
-    activeLens === "org"
-      ? ghosts.data?.analysis_status
-      : activeLens === "faultlines"
-        ? faultlines.data?.analysis_status
-        : gapPath.data?.analysis_status;
-  const hasError =
-    health.isError || snapshot.isError || graph.isError || ghosts.isError || faultlines.isError || gapPath.isError;
+  const ghostFinding = ghosts.data?.findings.find((finding) => finding.person_key === selected?.key);
+  const faultlineFindings = faultlines.data?.findings ?? [];
+  const gapFindings = gapPath.data?.findings ?? [];
+  const activeEnvelope = envelopeForLens(activeLens, ghosts.data, faultlines.data, gapPath.data);
+  const activeQuery = activeEnvelope?.executed_query;
+  const queryErrors = [
+    ["health", health.isError],
+    ["snapshot", snapshot.isError],
+    ["graph", graph.isError],
+    ["ghost", ghosts.isError],
+    ["faultlines", faultlines.isError],
+    ["gaps", gapPath.isError]
+  ].filter(([, failed]) => failed);
+  const hasError = queryErrors.length > 0;
   const isLoading =
     health.isPending ||
     snapshot.isPending ||
@@ -56,14 +56,9 @@ export function App() {
     ghosts.isPending ||
     faultlines.isPending ||
     gapPath.isPending;
-  const graphLinks = useMemo(
-    () =>
-      (graph.data?.edges ?? []).map((link) => ({
-        ...link,
-        source: people.find((person) => person.key === link.source),
-        target: people.find((person) => person.key === link.target)
-      })),
-    [graph.data?.edges, people]
+  const graphElements = useMemo(
+    () => graphElementsFor(people, graph.data?.edges ?? [], faultlineFindings, mode, selectedKey),
+    [faultlineFindings, graph.data?.edges, mode, people, selectedKey]
   );
 
   useEffect(() => {
@@ -84,14 +79,16 @@ export function App() {
         </div>
         <div className="status-pill">{snapshot.data?.dataset_id ?? "fixture"}</div>
         <div className={hasError ? "topbar-metric unhealthy" : "topbar-metric healthy"}>
-          {hasError ? "API offline" : isLoading ? "Loading" : "Healthy"}
+          {hasError ? `${queryErrors.map(([name]) => name).join(", ")} error` : isLoading ? "Loading" : "Healthy"}
         </div>
         <div className="topbar-metric">
           Graph: {snapshot.data?.node_count ?? "--"} nodes / {snapshot.data?.edge_count ?? "--"} edges
         </div>
-        <div className="topbar-metric">Sources: Slack · Email · Tickets · Git</div>
-        <div className={health.data?.hydra.status === "offline" ? "topbar-metric unhealthy" : "topbar-metric"}>
+        <div className={hydraStatusClass(health.data?.hydra.status)}>
           HydraDB: {formatHydraStatus(health.data?.hydra.status)}
+          {health.data?.hydra.node_count !== null && health.data?.hydra.node_count !== undefined
+            ? ` · ${health.data.hydra.node_count} nodes · ${health.data.hydra.edge_count ?? "--"} edges`
+            : ""}
         </div>
       </header>
 
@@ -113,8 +110,8 @@ export function App() {
             ))}
           </nav>
           <div className="rail-footer">
-            <span>Data</span>
-            <strong>Local</strong>
+            <span>Mode</span>
+            <strong>{activeEnvelope?.source ?? "fixture"}</strong>
           </div>
         </aside>
 
@@ -124,71 +121,33 @@ export function App() {
               Centrality
               <select
                 aria-label="Centrality mode"
-                value={mode}
                 onChange={(event) => setMode(event.target.value as "actual" | "official")}
+                value={mode}
               >
                 <option value="actual">Actual normalized</option>
                 <option value="official">Official rank</option>
               </select>
             </label>
-            <div className="scale">
-              Low <span /> <span /> <span /> <span /> High
+            <div className="scale">Official → Actual sizes animate on the graph</div>
+            <div className="query-source">
+              {activeEnvelope?.source ?? "fixture"} · {activeEnvelope?.analysis_status ?? "pending"}
             </div>
-            <label className="check">
-              <input defaultChecked type="checkbox" /> Log scale node sizes
-            </label>
-            <input aria-label="Search nodes" placeholder="Search nodes (Ctrl+K)" />
           </div>
 
-          <div className="graph-stage">
-            <svg aria-hidden="true" className="graph-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
-              {graphLinks.map((link) =>
-                link.source && link.target ? (
-                  <line
-                    className={`edge ${link.strength}`}
-                    key={`${link.source.key}-${link.target.key}`}
-                    x1={link.source.x}
-                    x2={link.target.x}
-                    y1={link.source.y}
-                    y2={link.target.y}
-                  />
-                ) : null
-              )}
-            </svg>
-            {people.map((person) => {
-              const size = mode === "actual" ? person.actual_size : person.official_size;
-              return (
-                <button
-                  aria-pressed={person.key === selectedKey}
-                  className={person.key === selectedKey ? "person-node selected" : "person-node"}
-                  key={person.key}
-                  onClick={() => setSelectedNodeKey(person.key)}
-                  style={
-                    {
-                      "--node-size": `${size}px`,
-                      left: `${person.x}%`,
-                      top: `${person.y}%`
-                    } as CSSProperties
-                  }
-                  type="button"
-                >
-                  <span>{person.name}</span>
-                  <small>{person.title}</small>
-                </button>
-              );
-            })}
+          <div className="graph-stage" data-lens={activeLens}>
+            {graph.isError ? <Notice text="Graph query failed. Other lens data can still render." tone="bad" /> : null}
+            <CytoscapeGraph elements={graphElements} onSelect={setSelectedNodeKey} selectedKey={selectedKey} />
           </div>
 
           <div className="bottom-grid">
             <DataTable
               emptyText={faultlines.isPending ? "Loading faultlines" : "No API faultlines"}
-              rows={faultlineRows}
+              rows={toFaultlineRows(faultlineFindings)}
               title="Faultlines"
             />
-            <DataTable
+            <GapTimeline
               emptyText={gapPath.isPending ? "Loading gaps" : "No API gaps"}
-              rows={gapRows}
-              title="Gaps"
+              findings={gapFindings}
             />
           </div>
         </section>
@@ -206,6 +165,10 @@ export function App() {
           <section className="finding-block">
             <h3>Ghost</h3>
             <p>{ghosts.data?.status_explanation ?? "Waiting for fixture Ghost analysis."}</p>
+            {ghostFinding === undefined && selected !== undefined ? (
+              <p className="inline-warning">No ghost score for the selected person.</p>
+            ) : null}
+            {activeEnvelope?.degraded_reason ? <p className="inline-warning">{activeEnvelope.degraded_reason}</p> : null}
           </section>
 
           <section className="metric-grid">
@@ -233,17 +196,218 @@ export function App() {
 
           <details className="query-card" open>
             <summary>How HydraDB answered {activeLens}</summary>
-            <pre>{activeQuery}</pre>
+            {activeQuery ? (
+              <>
+                <pre>{activeQuery.text}</pre>
+                <pre className="params">{JSON.stringify(activeQuery.params, null, 2)}</pre>
+              </>
+            ) : (
+              <p className="query-empty">
+                No live HydraDB query for this response. Current source: {activeEnvelope?.source ?? "pending"}.
+              </p>
+            )}
             <footer>
-              <span>maxLen: {activeLens === "gaps" ? 8 : 4}</span>
-              <span>source: {snapshot.data?.dataset_id ?? "pending"}</span>
-              <span>status: {activeAnalysisStatus ?? "pending"}</span>
+              <span>maxLen: {activeQuery?.max_len ?? "--"}</span>
+              <span>round trips: {activeQuery?.round_trips ?? "--"}</span>
+              <span>engine: {activeQuery ? `${activeQuery.engine_ms.toFixed(1)}ms` : "--"}</span>
+              <span>status: {activeEnvelope?.analysis_status ?? "pending"}</span>
             </footer>
           </details>
+
+          <section className="evidence-drawer">
+            <h3>Evidence + action</h3>
+            <p>{evidenceSummary(activeLens, ghostFinding, faultlineFindings[0], gapFindings[0])}</p>
+            <strong>{recommendedAction(activeLens, ghostFinding, faultlineFindings[0], gapFindings[0])}</strong>
+          </section>
         </aside>
       </div>
     </main>
   );
+}
+
+function CytoscapeGraph({
+  elements,
+  selectedKey,
+  onSelect
+}: {
+  elements: ElementDefinition[];
+  selectedKey: string | undefined;
+  onSelect: (key: string) => void;
+}) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const cyRef = useRef<Core | null>(null);
+  const hasCanvas = canRenderCanvas();
+
+  useEffect(() => {
+    if (!hasCanvas || containerRef.current === null || cyRef.current !== null) {
+      return;
+    }
+    const cy = cytoscape({
+      container: containerRef.current,
+      elements: [],
+      layout: { name: "cose", animate: false, padding: 38 },
+      style: [
+        {
+          selector: "node",
+          style: {
+            "background-color": "#1ecad0",
+            "background-gradient-direction": "to-bottom-right",
+            "background-gradient-stop-colors": ["#5ee4df", "#158994"],
+            "border-color": "#7a8ea1",
+            "border-width": 1,
+            color: "#c5d3df",
+            "font-family": "Inter, system-ui, sans-serif",
+            "font-size": 9,
+            height: "data(size)",
+            label: "data(label)",
+            "overlay-opacity": 0,
+            "text-margin-y": 8,
+            "text-valign": "bottom",
+            "text-wrap": "wrap",
+            "transition-duration": 260,
+            "transition-property": "width height background-color border-color",
+            width: "data(size)"
+          }
+        },
+        {
+          selector: "node:selected, node.selected",
+          style: {
+            "border-color": "#1ecad0",
+            "border-width": 3,
+            color: "#1ecad0"
+          }
+        },
+        {
+          selector: "edge",
+          style: {
+            "curve-style": "bezier",
+            "line-color": "rgba(124, 149, 164, 0.32)",
+            opacity: 0.82,
+            width: 1.2
+          }
+        },
+        {
+          selector: "edge.strong",
+          style: { "line-color": "rgba(30, 202, 208, 0.75)", width: 2 }
+        },
+        {
+          selector: "edge.medium",
+          style: { "line-color": "rgba(135, 155, 169, 0.48)", width: 1.5 }
+        },
+        {
+          selector: "edge.faultline",
+          style: {
+            "line-color": "#f05f6b",
+            "line-style": "dashed",
+            opacity: 1,
+            width: 3
+          }
+        }
+      ]
+    });
+    cy.on("tap", "node", (event) => onSelect(String(event.target.id())));
+    cyRef.current = cy;
+    return () => {
+      cy.destroy();
+      cyRef.current = null;
+    };
+  }, [hasCanvas, onSelect]);
+
+  useEffect(() => {
+    const cy = cyRef.current;
+    if (!hasCanvas || cy === null) {
+      return;
+    }
+    cy.elements().remove();
+    cy.add(elements);
+    cy.nodes().removeClass("selected");
+    if (selectedKey !== undefined) {
+      cy.getElementById(selectedKey).addClass("selected");
+    }
+    cy.layout({ name: "cose", animate: true, animationDuration: 260, padding: 38 }).run();
+  }, [elements, hasCanvas, selectedKey]);
+
+  useEffect(() => {
+    const cy = cyRef.current;
+    if (!hasCanvas || cy === null || globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+    let pulsed = false;
+    const timer = globalThis.setInterval(() => {
+      pulsed = !pulsed;
+      cy.edges(".faultline").style({
+        opacity: pulsed ? 0.42 : 1,
+        width: pulsed ? 5 : 3
+      });
+    }, 650);
+    return () => globalThis.clearInterval(timer);
+  }, [elements, hasCanvas]);
+
+  if (!hasCanvas) {
+    return (
+      <div className="graph-fallback" role="list">
+        {elements
+          .filter((element) => !("source" in element.data))
+          .map((element) => (
+            <button
+              aria-pressed={element.data.id === selectedKey}
+              className={element.data.id === selectedKey ? "fallback-node selected" : "fallback-node"}
+              key={String(element.data.id)}
+              onClick={() => onSelect(String(element.data.id))}
+              type="button"
+            >
+              {String(element.data.label)}
+            </button>
+          ))}
+      </div>
+    );
+  }
+  return <div className="cy-graph" ref={containerRef} />;
+}
+
+function canRenderCanvas() {
+  if (typeof document === "undefined") {
+    return false;
+  }
+  if (typeof navigator !== "undefined" && navigator.userAgent.includes("jsdom")) {
+    return false;
+  }
+  try {
+    const canvas = document.createElement("canvas");
+    return canvas.getContext("2d") !== null;
+  } catch {
+    return false;
+  }
+}
+
+function graphElementsFor(
+  people: GraphNode[],
+  edges: GraphEdge[],
+  findings: FaultlineFinding[],
+  mode: "actual" | "official",
+  selectedKey: string | undefined
+): ElementDefinition[] {
+  const nodes = people.map((person) => ({
+    data: {
+      id: person.key,
+      label: person.name,
+      size: mode === "actual" ? person.actual_size : person.official_size
+    },
+    classes: person.key === selectedKey ? "selected" : ""
+  }));
+  const communicationEdges = edges.map((edge, index) => ({
+    data: { id: `edge-${index}`, source: edge.source, target: edge.target },
+    classes: edge.strength
+  }));
+  const faultlineEdges = findings.map((finding, index) => ({
+    data: {
+      id: `faultline-${index}`,
+      source: finding.source_owner_key,
+      target: finding.target_owner_key
+    },
+    classes: "faultline"
+  }));
+  return [...nodes, ...communicationEdges, ...faultlineEdges];
 }
 
 function formatCentrality(finding: GhostFinding | undefined) {
@@ -264,10 +428,35 @@ function formatHydraStatus(status: "fallback" | "live" | "offline" | undefined) 
   return status;
 }
 
+function hydraStatusClass(status: "fallback" | "live" | "offline" | undefined) {
+  if (status === "live") {
+    return "topbar-metric healthy";
+  }
+  if (status === "offline") {
+    return "topbar-metric unhealthy";
+  }
+  return "topbar-metric warning";
+}
+
+function envelopeForLens(
+  lens: Lens,
+  ghosts: LensEnvelope<GhostFinding> | undefined,
+  faultlines: LensEnvelope<FaultlineFinding> | undefined,
+  gaps: LensEnvelope<GapFinding> | undefined
+) {
+  if (lens === "org") {
+    return ghosts;
+  }
+  if (lens === "faultlines") {
+    return faultlines;
+  }
+  return gaps;
+}
+
 function toFaultlineRows(findings: FaultlineFinding[]) {
   return findings.map((finding, index) => ({
     id: `FL-${String(index + 1).padStart(3, "0")}`,
-    modules: `${suffix(finding.source_module_key)} -> ${suffix(finding.target_module_key)}`,
+    modules: `${suffix(finding.source_module_key)} → ${suffix(finding.target_module_key)}`,
     owners: `${suffix(finding.source_owner_key)} / ${suffix(finding.target_owner_key)}`,
     distance: finding.communication_distance === null ? "none within 4" : String(finding.communication_distance),
     severity: finding.severity.toFixed(1),
@@ -280,14 +469,58 @@ function toGapRows(findings: GapFinding[]) {
     id: `G-${String(index + 1).padStart(3, "0")}`,
     path:
       finding.reason === "dangling_thread_parent"
-        ? `${suffix(finding.successor_keys[0] ?? "artifact:unknown")} -> missing ${suffix(finding.phantom_key)}`
-        : `${suffix(finding.successor_keys[0] ?? "artifact:unknown")} -> ${suffix(finding.phantom_key)} -> ${suffix(
+        ? `${suffix(finding.successor_keys[0] ?? "artifact:unknown")} → missing ${suffix(finding.phantom_key)}`
+        : `${suffix(finding.successor_keys[0] ?? "artifact:unknown")} → ${suffix(finding.phantom_key)} → ${suffix(
             finding.predecessor_keys[0] ?? "artifact:unknown"
           )}`,
     expected: finding.reason === "dangling_thread_parent" ? "thread parent" : finding.expected_kind,
     inferred: finding.inferred_epoch === null ? "unknown" : String(finding.inferred_epoch),
     reason: finding.reason
   }));
+}
+
+function evidenceSummary(
+  lens: Lens,
+  ghost: GhostFinding | undefined,
+  faultline: FaultlineFinding | undefined,
+  gap: GapFinding | undefined
+) {
+  if (lens === "org") {
+    return ghost
+      ? `${ghost.display_name} appears on sampled communication paths; centrality ${ghost.sampled_centrality.toFixed(3)} with degree ${ghost.communication_degree}.`
+      : "Select a scored person to inspect Ghost evidence.";
+  }
+  if (lens === "faultlines") {
+    return faultline
+      ? `${suffix(faultline.source_module_key)} depends on ${suffix(faultline.target_module_key)}; owners are ${suffix(
+          faultline.source_owner_key
+        )} and ${suffix(faultline.target_owner_key)}.`
+      : "No faultline evidence is currently selected.";
+  }
+  return gap
+    ? `${suffix(gap.phantom_key)} is a structurally missing ${gap.expected_kind}; absence does not establish deletion.`
+    : "No gap evidence is currently selected.";
+}
+
+function recommendedAction(
+  lens: Lens,
+  ghost: GhostFinding | undefined,
+  faultline: FaultlineFinding | undefined,
+  gap: GapFinding | undefined
+) {
+  if (lens === "org") {
+    return ghost
+      ? `Action: document ${ghost.display_name}'s handoff paths and add a backup owner.`
+      : "Action: select a person with a Ghost score.";
+  }
+  if (lens === "faultlines") {
+    return faultline
+      ? `Action: introduce ${suffix(faultline.source_owner_key)} ↔ ${suffix(faultline.target_owner_key)} for this dependency.`
+      : "Action: no introduction needed.";
+  }
+  return gap
+    ? `Action: request the missing ${gap.expected_kind} record or mark the source export incomplete.`
+    : "Action: no missing step selected.";
 }
 
 function suffix(value: string) {
@@ -331,7 +564,11 @@ function DataTable({
       ) : (
         <table>
           <thead>
-            <tr>{keys.map((key) => <th key={key}>{key}</th>)}</tr>
+            <tr>
+              {keys.map((key) => (
+                <th key={key}>{key}</th>
+              ))}
+            </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
@@ -348,4 +585,33 @@ function DataTable({
       )}
     </section>
   );
+}
+
+function GapTimeline({ emptyText, findings }: { emptyText: string; findings: GapFinding[] }) {
+  return (
+    <section className="table-panel gap-timeline">
+      <h3>Gaps</h3>
+      {findings.length === 0 ? (
+        <p className="table-empty">{emptyText}</p>
+      ) : (
+        findings.map((finding, index) => (
+          <div className="timeline-row" key={finding.phantom_key}>
+            <span>{`G-${String(index + 1).padStart(3, "0")}`}</span>
+            <ol>
+              <li>{suffix(finding.successor_keys[0] ?? "artifact:unknown")}</li>
+              <li className="phantom">{suffix(finding.phantom_key)}</li>
+              <li>{suffix(finding.predecessor_keys[0] ?? "artifact:unknown")}</li>
+            </ol>
+            <small>
+              {finding.expected_kind} · {finding.reason}
+            </small>
+          </div>
+        ))
+      )}
+    </section>
+  );
+}
+
+function Notice({ text, tone }: { text: string; tone: "bad" | "warn" }) {
+  return <div className={`notice ${tone}`}>{text}</div>;
 }
