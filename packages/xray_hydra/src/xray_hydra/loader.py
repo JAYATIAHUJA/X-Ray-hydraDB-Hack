@@ -57,7 +57,8 @@ class HydraLoader:
         self._verify_snapshot_files(resolved_dir, manifest)
 
         node_rows = _read_node_rows(resolved_dir / "nodes.parquet", manifest.dataset_id)
-        edge_rows = _read_edge_rows(resolved_dir / "edges.parquet", manifest.dataset_id)
+        node_labels = {int(row["id"]): str(row["label"]) for row in node_rows}
+        edge_rows = _read_edge_rows(resolved_dir / "edges.parquet", manifest.dataset_id, node_labels)
         batches = (
             *_node_batches(node_rows, batch_size),
             *_edge_batches(edge_rows, batch_size),
@@ -127,17 +128,25 @@ def _read_node_rows(path: Path, dataset_id: str) -> tuple[dict[str, Scalar], ...
     return tuple(rows)
 
 
-def _read_edge_rows(path: Path, dataset_id: str) -> tuple[dict[str, Scalar], ...]:
+def _read_edge_rows(
+    path: Path, dataset_id: str, node_labels: dict[int, str]
+) -> tuple[dict[str, Scalar], ...]:
     rows: list[dict[str, Scalar]] = []
     for row in pl.read_parquet(path).to_dicts():
         properties = _properties(row)
         properties["evidence_class"] = _required_str(row, "evidence_class")
         properties["confidence"] = _required_int(row, "confidence")
+        source_id = _required_int(row, "source_id")
+        target_id = _required_int(row, "target_id")
+        if source_id not in node_labels or target_id not in node_labels:
+            raise LoaderError("edge endpoint id is missing from node rows")
         rows.append(
             {
                 "id": _required_int(row, "id"),
-                "source_id": _required_int(row, "source_id"),
-                "target_id": _required_int(row, "target_id"),
+                "source_id": source_id,
+                "target_id": target_id,
+                "source_label": node_labels[source_id],
+                "target_label": node_labels[target_id],
                 "canonical_key": _required_str(row, "canonical_key"),
                 "dataset_id": dataset_id,
                 "rel_type": _required_str(row, "rel_type"),
@@ -159,15 +168,20 @@ def _node_batches(rows: tuple[dict[str, Scalar], ...], batch_size: int) -> tuple
 
 
 def _edge_batches(rows: tuple[dict[str, Scalar], ...], batch_size: int) -> tuple[WriteBatchSpec, ...]:
-    by_rel_type: dict[str, list[dict[str, Scalar]]] = defaultdict(list)
+    by_shape: dict[tuple[str, str, str], list[dict[str, Scalar]]] = defaultdict(list)
     for row in rows:
-        by_rel_type[str(row["rel_type"])].append(
-            {key: value for key, value in row.items() if key != "rel_type"}
+        shape = (str(row["rel_type"]), str(row["source_label"]), str(row["target_label"]))
+        by_shape[shape].append(
+            {
+                key: value
+                for key, value in row.items()
+                if key not in {"rel_type", "source_label", "target_label"}
+            }
         )
     return tuple(
-        edge_upsert_batch(rel_type, batch)
-        for rel_type in sorted(by_rel_type)
-        for batch in _chunks(tuple(by_rel_type[rel_type]), batch_size)
+        edge_upsert_batch(rel_type, batch, source_label=source_label, target_label=target_label)
+        for rel_type, source_label, target_label in sorted(by_shape)
+        for batch in _chunks(tuple(by_shape[(rel_type, source_label, target_label)]), batch_size)
     )
 
 

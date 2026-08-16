@@ -68,7 +68,7 @@ def create_app() -> FastAPI:
 
     @app.get("/api/v1/health", response_model=HealthResponse)
     def health() -> HealthResponse:
-        hydra = hydra_health(get_settings())
+        hydra = hydra_health(get_settings(), active_bundle().dataset_id)
         return HealthResponse(
             status="ok",
             hydra=_hydra_health_response(hydra),

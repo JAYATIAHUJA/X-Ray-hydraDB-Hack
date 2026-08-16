@@ -7,11 +7,11 @@ import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal
+from typing import Literal, Protocol
 
 from xray_core.models import CanonicalBundle, LoadReport, QuerySpec, Scalar, SnapshotManifest
 from xray_hydra import HydraGateway, HydraLoader
-from xray_hydra.cypher import communication_paths_by_id_query
+from xray_hydra.cypher import communication_paths_query
 from xray_ingest.manifest import write_snapshot
 
 from .config import XraySettings
@@ -76,7 +76,15 @@ class HydraDistanceResult:
     error: str | None = None
 
 
-def hydra_health(settings: XraySettings) -> HydraHealth:
+class QueryResultData(Protocol):
+    def data(self) -> list[dict[str, object]]: ...
+
+
+class SessionRun(Protocol):
+    def run(self, query: str, parameters: dict[str, object] | None = None) -> QueryResultData: ...
+
+
+def hydra_health(settings: XraySettings, dataset_id: str | None = None) -> HydraHealth:
     if not settings.hydra_configured:
         return HydraHealth(
             status="fallback",
@@ -108,9 +116,14 @@ def hydra_health(settings: XraySettings) -> HydraHealth:
         driver = GraphDatabase.driver(hydra_uri, auth=auth)
         try:
             with driver.session(database=settings.hydra_database) as session:
-                session.run("RETURN 1 AS ok").consume()
-                node_count = _single_count(session.run("MATCH (n) RETURN count(n) AS count").data())
-                edge_count = _single_count(session.run("MATCH ()-[r]->() RETURN count(r) AS count").data())
+                if dataset_id is None:
+                    graph_loaded = bool(session.run("MATCH (n:Person) RETURN n.id AS id LIMIT 1").data())
+                    node_count = None
+                    edge_count = None
+                else:
+                    node_count = _bounded_node_count(session, dataset_id)
+                    edge_count = _bounded_edge_count(session, dataset_id)
+                    graph_loaded = bool(node_count or edge_count)
         finally:
             driver.close()
     except Exception as exc:
@@ -128,7 +141,7 @@ def hydra_health(settings: XraySettings) -> HydraHealth:
         database=settings.hydra_database,
         uri=hydra_uri,
         detail="HydraDB ping succeeded.",
-        graph_loaded=bool(node_count or edge_count),
+        graph_loaded=graph_loaded,
         node_count=node_count,
         edge_count=edge_count,
     )
@@ -229,13 +242,13 @@ def communication_distances(
     resolved_pairs = tuple(
         pair for pair in normalized_pairs if pair[0] in people_by_key and pair[1] in people_by_key
     )
-    sources = tuple(people_by_key[pair[0]].id for pair in resolved_pairs)
-    targets = tuple(people_by_key[pair[1]].id for pair in resolved_pairs)
+    sources = tuple(people_by_key[pair[0]].path_key for pair in resolved_pairs)
+    targets = tuple(people_by_key[pair[1]].path_key for pair in resolved_pairs)
     if not resolved_pairs:
         return HydraDistanceResult(
             distances=dict.fromkeys(normalized_pairs),
             query=QuerySpec(
-                name="communication_paths_by_id",
+                name="communication_paths",
                 statement="RETURN 1 AS skipped",
                 parameters={},
                 max_len=max_len,
@@ -245,7 +258,7 @@ def communication_distances(
             error="No requested owner pair could be resolved to integer node ids.",
         )
     result_limit = max(1, len(normalized_pairs))
-    query = communication_paths_by_id_query(
+    query = communication_paths_query(
         sources,
         targets,
         max_len=max_len,
@@ -360,19 +373,13 @@ def gap_rows(
     try:
         resolved_gateway = gateway or _create_gateway(settings)
         phantom_ids = {node.id for node in bundle.nodes if node.label == "Phantom"}
-        rows = resolved_gateway.run(
+        phantom_rows = resolved_gateway.run(
             QuerySpec(
-                name="hydra_gap_rows",
+                name="hydra_gap_phantoms",
                 statement=(
                     "MATCH (phantom:Phantom) "
-                    "OPTIONAL MATCH (phantom)-[:PRECEDED_BY]->(predecessor) "
-                    "OPTIONAL MATCH (successor)-[:PRECEDED_BY]->(phantom) "
-                    "OPTIONAL MATCH (reply)-[:REPLIES_TO]->(phantom) "
                     "RETURN phantom.id AS phantom_id, phantom.canonical_key AS phantom_key, "
-                    "phantom.properties AS properties, "
-                    "collect(DISTINCT predecessor.canonical_key) AS predecessor_keys, "
-                    "collect(DISTINCT successor.canonical_key) AS successor_keys, "
-                    "collect(DISTINCT reply.canonical_key) AS reply_keys "
+                    "phantom.properties AS properties "
                     "ORDER BY phantom.canonical_key"
                 ),
                 parameters={},
@@ -380,7 +387,10 @@ def gap_rows(
                 result_limit=None,
             )
         )
-        rows = [row for row in rows if row.get("phantom_id") in phantom_ids]
+        phantom_rows = [row for row in phantom_rows if row.get("phantom_id") in phantom_ids]
+        predecessor_rows = resolved_gateway.run(_gap_lineage_query("predecessors"))
+        successor_rows = resolved_gateway.run(_gap_lineage_query("successors"))
+        reply_rows = resolved_gateway.run(_gap_lineage_query("replies"))
     except Exception:
         logger.exception("HydraDB gap rows query failed")
         return None
@@ -392,25 +402,77 @@ def gap_rows(
         ):
             resolved_gateway.driver.close()
 
-    return tuple(_hydra_gap_row(row) for row in rows)
+    predecessor_keys = _lineage_by_phantom(predecessor_rows)
+    successor_keys = _lineage_by_phantom(successor_rows)
+    reply_keys = _lineage_by_phantom(reply_rows)
+    return tuple(
+        _hydra_gap_row(
+            row,
+            predecessor_keys=predecessor_keys.get(str(row["phantom_key"]), ()),
+            successor_keys=tuple(
+                sorted(
+                    {
+                        *successor_keys.get(str(row["phantom_key"]), ()),
+                        *reply_keys.get(str(row["phantom_key"]), ()),
+                    }
+                )
+            ),
+        )
+        for row in phantom_rows
+    )
 
 
-def _hydra_gap_row(row: dict[str, object]) -> HydraGapRow:
+def _gap_lineage_query(kind: str) -> QuerySpec:
+    if kind == "predecessors":
+        statement = (
+            "MATCH (phantom:Phantom)-[r:PRECEDED_BY]->(artifact:Artifact) "
+            "RETURN phantom.canonical_key AS phantom_key, artifact.canonical_key AS artifact_key"
+        )
+    elif kind == "successors":
+        statement = (
+            "MATCH (artifact:Artifact)-[r:PRECEDED_BY]->(phantom:Phantom) "
+            "RETURN phantom.canonical_key AS phantom_key, artifact.canonical_key AS artifact_key"
+        )
+    elif kind == "replies":
+        statement = (
+            "MATCH (artifact:Artifact)-[r:REPLIES_TO]->(phantom:Phantom) "
+            "RETURN phantom.canonical_key AS phantom_key, artifact.canonical_key AS artifact_key"
+        )
+    else:
+        raise ValueError(f"unknown gap lineage query kind {kind!r}")
+    return QuerySpec(
+        name=f"hydra_gap_{kind}",
+        statement=statement,
+        parameters={},
+        max_len=None,
+        result_limit=None,
+    )
+
+
+def _lineage_by_phantom(rows: list[dict[str, object]]) -> dict[str, tuple[str, ...]]:
+    grouped: dict[str, set[str]] = {}
+    for row in rows:
+        phantom_key = row.get("phantom_key")
+        artifact_key = row.get("artifact_key")
+        if isinstance(phantom_key, str) and isinstance(artifact_key, str):
+            grouped.setdefault(phantom_key, set()).add(artifact_key)
+    return {key: tuple(sorted(values)) for key, values in grouped.items()}
+
+
+def _hydra_gap_row(
+    row: dict[str, object],
+    *,
+    predecessor_keys: tuple[str, ...],
+    successor_keys: tuple[str, ...],
+) -> HydraGapRow:
     phantom_key = row.get("phantom_key")
     if not isinstance(phantom_key, str):
         raise ValueError("Hydra gap row is missing phantom_key")
     return HydraGapRow(
         phantom_key=phantom_key,
         properties=_properties(row.get("properties")),
-        predecessor_keys=_string_tuple(row.get("predecessor_keys")),
-        successor_keys=tuple(
-            sorted(
-                {
-                    *_string_tuple(row.get("successor_keys")),
-                    *_string_tuple(row.get("reply_keys")),
-                }
-            )
-        ),
+        predecessor_keys=predecessor_keys,
+        successor_keys=successor_keys,
     )
 
 
@@ -460,6 +522,46 @@ def _single_count(rows: list[dict[str, object]]) -> int | None:
     return count if type(count) is int else None
 
 
+def _bounded_node_count(session: SessionRun, dataset_id: str) -> int:
+    total = 0
+    for label in ["Person", "Team", "Artifact", "Module", "Phantom"]:
+        rows = session.run(
+            f"MATCH (n:{label} {{dataset_id: $dataset_id}}) RETURN n.id AS id LIMIT 100000",
+            {"dataset_id": dataset_id},
+        ).data()
+        total += len(rows)
+    return total
+
+
+def _bounded_edge_count(session: SessionRun, dataset_id: str) -> int:
+    shapes = [
+        ("Person", "REPORTS_TO", "Person"),
+        ("Person", "AUTHORED", "Artifact"),
+        ("Artifact", "MENTIONS", "Person"),
+        ("Person", "COMMUNICATES", "Person"),
+        ("Artifact", "ABOUT", "Module"),
+        ("Person", "OWNS", "Module"),
+        ("Module", "DEPENDS_ON", "Module"),
+        ("Artifact", "PRECEDED_BY", "Artifact"),
+        ("Artifact", "PRECEDED_BY", "Phantom"),
+        ("Phantom", "PRECEDED_BY", "Artifact"),
+        ("Artifact", "REPLIES_TO", "Phantom"),
+        ("Artifact", "EXPECTED_BEFORE", "Artifact"),
+    ]
+    total = 0
+    for source_label, rel_type, target_label in shapes:
+        rows = session.run(
+            (
+                f"MATCH (s:{source_label} {{dataset_id: $dataset_id}})-"
+                f"[r:{rel_type}]->(t:{target_label} {{dataset_id: $dataset_id}}) "
+                "RETURN s.id AS source_id LIMIT 100000"
+            ),
+            {"dataset_id": dataset_id},
+        ).data()
+        total += len(rows)
+    return total
+
+
 def _normalize_pair(left: str, right: str) -> tuple[str, str]:
     return (left, right) if left <= right else (right, left)
 
@@ -467,18 +569,23 @@ def _normalize_pair(left: str, right: str) -> tuple[str, str]:
 def _path_key_tuple(path: object) -> tuple[str, ...]:
     if path is None:
         return ()
-    nodes = path.get("nodes") if isinstance(path, dict) else getattr(path, "nodes", None)
-    if not isinstance(nodes, (list, tuple)):
-        return ()
+    if isinstance(path, (list, tuple)):
+        nodes: tuple[object, ...] = tuple(
+            item
+            for item in path
+            if isinstance(item, dict) or (not isinstance(item, str) and hasattr(item, "__getitem__"))
+        )
+    else:
+        raw_nodes = path.get("nodes") if isinstance(path, dict) else getattr(path, "nodes", None)
+        if not isinstance(raw_nodes, (list, tuple)):
+            return ()
+        nodes = tuple(raw_nodes)
     keys: list[str] = []
     for node in nodes:
         if isinstance(node, dict):
             value = node.get("canonical_key")
         else:
-            try:
-                value = node["canonical_key"]
-            except Exception:
-                value = None
+            value = None
         if not isinstance(value, str):
             return ()
         keys.append(value)

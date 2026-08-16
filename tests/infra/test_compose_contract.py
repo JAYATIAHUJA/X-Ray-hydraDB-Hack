@@ -17,6 +17,12 @@ def locked_hydra_image() -> str:
     return f"{hydra['repository']}@{hydra['digest']}"
 
 
+def locked_image(name: str) -> str:
+    lock = yaml.safe_load(Path("infra/runtime-images.lock").read_text(encoding="utf-8"))
+    image = lock["images"][name]
+    return f"{image['repository']}@{image['digest']}"
+
+
 def runtime_spec(
     runtime_id: str,
     *,
@@ -47,9 +53,11 @@ def test_hydradb_is_immutable_and_stack_safe() -> None:
     services = compose["services"]
     hydra = services["hydradb"]
 
+    assert services["minio"]["image"] == "${XRAY_MINIO_IMAGE}"
     assert hydra["image"] == "${XRAY_HYDRA_IMAGE}"
     assert services["hydradb-indexer"]["image"] == "${XRAY_HYDRA_IMAGE}"
     assert locked_hydra_image().startswith("ghcr.io/hydra-db/hydradb@sha256:")
+    assert locked_image("minio").startswith("minio/minio@sha256:")
     assert hydra["environment"]["RUST_MIN_STACK"] == "33554432"
     assert {"minio", "minio-init", "hydradb", "hydradb-indexer"} <= set(services)
     assert "${XRAY_HYDRA_IMAGE}" in {

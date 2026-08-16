@@ -2,8 +2,7 @@ name: ${XRAY_COMPOSE_PROJECT}
 
 services:
   minio:
-    build:
-      context: ./infra/minio
+    image: ${XRAY_MINIO_IMAGE}
     profiles: ["core"]
     command: ["server", "/data", "--console-address", ":9001"]
     environment:
@@ -47,6 +46,9 @@ services:
       RUST_MIN_STACK: "33554432"
       CLOUD_PROVIDER: aws
       AWS_DEFAULT_REGION: us-east-1
+      AWS_REGION: us-east-1
+      AWS_BUCKET_NAME: ${XRAY_BUCKET_NAME}
+      AWS_BUCKET: ${XRAY_BUCKET_NAME}
       AWS_ALLOW_HTTP: "true"
       AWS_ENDPOINT: http://minio:9000
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
@@ -54,7 +56,7 @@ services:
       GRAPH_NAMESPACE: ${XRAY_GRAPH_NAMESPACE}
       GRAPH_ID: ${XRAY_GRAPH_ID}
       GRAPH_DATABASE: ${XRAY_GRAPH_DATABASE}
-      GRAPH_OBJECT_PREFIX: ${XRAY_OBJECT_PREFIX}
+      GRAPH_DATA_PATH: ${XRAY_GRAPH_DATA_PATH}
       GRAPH_CELL_ID: cell-0
       GRAPH_CELLS: cell-0
       GRAPH_DATA_CACHE_DIR: /var/cache/slatedb/data

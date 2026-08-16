@@ -60,6 +60,8 @@ def test_run_batch_sends_rows_as_one_parameter() -> None:
                 "properties": "{}",
             },
         ),
+        source_label="Person",
+        target_label="Person",
     )
 
     assert gateway.run_batch(batch) == [{"count": 2}]

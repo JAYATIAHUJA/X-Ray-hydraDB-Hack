@@ -62,7 +62,8 @@ def test_loader_validates_snapshot_and_loads_nodes_before_edges() -> None:
     first_edge_index = next(
         index for index, call in enumerate(driver.calls) if "MERGE (s)-[r:" in call[0]
     )
-    assert all("MERGE (n:" in call[0] for call in driver.calls[:first_edge_index])
+    assert all("MERGE (n {id: row.id})" in call[0] for call in driver.calls[:first_edge_index])
+    assert any("MATCH (s:Person {id: row.source_id})" in call[0] for call in driver.calls)
 
 
 def test_loader_resumes_previously_completed_batches() -> None:

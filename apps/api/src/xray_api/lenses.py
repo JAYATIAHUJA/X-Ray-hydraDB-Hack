@@ -8,7 +8,7 @@ from dataclasses import asdict, dataclass
 from xray_analytics import GhostScore, bus_factor_impact, communication_graph, ghost_scores
 from xray_core.models import CanonicalBundle, NodeRow, QuerySpec
 from xray_hydra import HydraGateway
-from xray_hydra.cypher import communication_paths_by_id_query, sp_chain_query
+from xray_hydra.cypher import communication_paths_query, sp_chain_query
 
 from .config import XraySettings
 
@@ -55,11 +55,11 @@ def live_ghost_findings(
         return None
 
     sampled = people[: min(len(people), sample_size)]
-    sampled_ids = tuple(node.id for node in sampled)
-    result_limit = max(1, len(sampled_ids) * len(sampled_ids) * path_count)
-    query = communication_paths_by_id_query(
-        sampled_ids,
-        sampled_ids,
+    sampled_path_keys = tuple(node.path_key for node in sampled)
+    result_limit = max(1, len(sampled_path_keys) * len(sampled_path_keys) * path_count)
+    query = communication_paths_query(
+        sampled_path_keys,
+        sampled_path_keys,
         max_len=max_len,
         path_count=path_count,
         result_limit=result_limit,
@@ -202,9 +202,17 @@ def _role_rank(node: NodeRow) -> int:
 def _path_key_tuple(path: object) -> tuple[str, ...]:
     if path is None:
         return ()
-    nodes = path.get("nodes") if isinstance(path, dict) else getattr(path, "nodes", None)
-    if not isinstance(nodes, (list, tuple)):
-        return ()
+    if isinstance(path, (list, tuple)):
+        nodes: tuple[object, ...] = tuple(
+            item
+            for item in path
+            if isinstance(item, dict) or (not isinstance(item, str) and hasattr(item, "__getitem__"))
+        )
+    else:
+        raw_nodes = path.get("nodes") if isinstance(path, dict) else getattr(path, "nodes", None)
+        if not isinstance(raw_nodes, (list, tuple)):
+            return ()
+        nodes = tuple(raw_nodes)
     keys: list[str] = []
     for node in nodes:
         value = _node_value(node, "canonical_key")
