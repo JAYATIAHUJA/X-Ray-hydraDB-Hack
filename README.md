@@ -241,10 +241,12 @@ runtime rejects query batches above 1024 items.
 Synthetic evaluation is reproducible with:
 
 ```powershell
-uv run python scripts/eval_synth.py
+uv run python scripts/eval_synth.py --json docs/results/synth500.json
 ```
 
-Measured on `xray-synth-500` on 17 Aug 2026:
+Every number below traces to [docs/results/synth500.json](docs/results/synth500.json), which is
+stamped with the pinned HydraDB digest and source commit. Measured on `xray-synth-500` on
+17 Aug 2026:
 
 | Metric | Value |
 | --- | ---: |
@@ -257,12 +259,19 @@ Measured on `xray-synth-500` on 17 Aug 2026:
 | Gaps planted / returned | 5 / 5 |
 | Ghost top-1 hit rate across seeds | 1.000 |
 | Ghost mean top-10 overlap vs exact betweenness | 0.933 |
+| What-if: remove the planted Ghost | 110,883 of 124,251 reachable pairs lose their ≤4-hop path |
+| Client baseline (bounded all-pairs BFS, 500 people) | ≈400 ms ≈ 124,750 per-pair shortest-path calls |
 
 The faultline result is intentionally reported as precision/recall against planted labels, not
 as proof of incidents. The fixture includes a negative control: four coordinated dependencies whose
 owners communicate directly. Those must *not* be flagged, and are not. The planted Ghost is
 `Priya Nair`, a senior engineer who ranks structurally #1 and formally #33 (rank gap +32); she is
 not the top of the reporting chain, which is the point of the lens.
+
+The API exposes the same numbers live: `GET /api/v1/snapshots/{id}/ghosts?exclude=person:...`
+returns a `what_if` block (pairs lost without that person) and a `comparison` block (engine
+round trip vs the in-process BFS baseline, and the number of per-pair calls one pairwise
+`algo.MSpaths` call replaces).
 
 ## Scale and limitations
 

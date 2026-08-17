@@ -505,3 +505,25 @@ def test_unknown_snapshot_returns_problem_detail() -> None:
 
     assert response.status_code == 404
     assert response.json()["detail"]["code"] == "snapshot_not_found"
+
+
+def test_ghosts_endpoint_fixture_what_if_reports_pairs_lost_and_comparison() -> None:
+    payload = (
+        client()
+        .get(
+            "/api/v1/snapshots/xray-demo-v1:fixture/ghosts",
+            params={"exclude": ["person:maya-chen"]},
+        )
+        .json()
+    )
+
+    assert payload["source"] == "fixture"
+    what_if = payload["what_if"]
+    assert what_if["excluded_person_keys"] == ["person:maya-chen"]
+    assert what_if["pairs_lost"] > 0
+    assert what_if["sampled_pairs_before"] > what_if["sampled_pairs_after"]
+    assert all(f["person_key"] != "person:maya-chen" for f in payload["findings"])
+    comparison = payload["comparison"]
+    assert comparison["engine_ms"] is None
+    assert comparison["client_equivalent_round_trips"] == 45
+    assert comparison["client_method"] == "python_bounded_bfs_all_pairs"

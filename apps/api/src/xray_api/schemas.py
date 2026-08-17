@@ -69,6 +69,27 @@ class GraphResponse(BaseModel):
     edges: tuple[GraphEdge, ...]
 
 
+class WhatIfSummary(BaseModel):
+    """Result of re-scoring the Ghost sample with the given people removed."""
+
+    excluded_person_keys: tuple[str, ...]
+    sampled_pairs_before: int
+    sampled_pairs_after: int
+    pairs_lost: int
+    max_len: int
+
+
+class EngineComparison(BaseModel):
+    """Engine round trip vs the in-process bounded-BFS baseline for the same question."""
+
+    engine_ms: float | None
+    client_ms: float
+    client_method: str
+    sampled_people: int
+    engine_round_trips: int
+    client_equivalent_round_trips: int
+
+
 class LensEnvelope(BaseModel):
     snapshot_id: str
     analysis_status: AnalysisStatus
@@ -78,6 +99,8 @@ class LensEnvelope(BaseModel):
     source: str = "fixture"
     degraded_reason: str | None = None
     executed_query: dict[str, object] | None = None
+    what_if: WhatIfSummary | None = None
+    comparison: EngineComparison | None = None
 
 
 class GapPathRequest(BaseModel):
@@ -95,6 +118,7 @@ class ProblemDetail(BaseModel):
 
 
 __all__ = [
+    "EngineComparison",
     "GapPathRequest",
     "GraphEdge",
     "GraphNode",
@@ -106,4 +130,5 @@ __all__ = [
     "LoadReportResponse",
     "ProblemDetail",
     "SnapshotResponse",
+    "WhatIfSummary",
 ]

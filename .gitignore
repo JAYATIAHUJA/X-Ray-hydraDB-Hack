@@ -14,6 +14,8 @@ coverage.xml
 docs/*
 !docs/
 !docs/cypher-compat-verified.md
+!docs/results/
+!docs/results/**
 htmlcov/
 node_modules/
 playwright-report/

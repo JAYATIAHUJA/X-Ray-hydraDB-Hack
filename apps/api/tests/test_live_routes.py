@@ -257,3 +257,49 @@ def test_graph_route_scopes_live_reads_by_dataset_and_limit() -> None:
     scoped = [p for p in driver.parameters if p and "dataset_id" in p]
     assert scoped and all(p["dataset_id"] == "xray-demo-v1" and "limit" in p for p in scoped)
     assert all("LIMIT $limit" in s for s in driver.statements if "MATCH (p:Person" in s)
+
+
+def test_ghosts_route_what_if_excludes_paths_through_removed_person() -> None:
+    driver = ScriptedDriver(
+        [
+            (
+                "algo.MSpaths",
+                [
+                    _path("person:alex-rivera", "person:maya-chen", "person:sam-wu"),
+                    _path("person:priya-shah", "person:maya-chen", "person:omar-haddad"),
+                    _path("person:alex-rivera", "person:priya-shah"),
+                ],
+            )
+        ]
+    )
+
+    payload = (
+        _client(driver)
+        .get(f"/api/v1/snapshots/{SNAPSHOT}/ghosts", params={"exclude": ["person:maya-chen"]})
+        .json()
+    )
+
+    assert payload["source"] == "hydradb"
+    what_if = payload["what_if"]
+    assert what_if["excluded_person_keys"] == ["person:maya-chen"]
+    assert what_if["sampled_pairs_before"] == 3
+    assert what_if["sampled_pairs_after"] == 1
+    assert what_if["pairs_lost"] == 2
+    assert what_if["max_len"] == 4
+    comparison = payload["comparison"]
+    assert comparison["engine_round_trips"] == 1
+    assert comparison["client_equivalent_round_trips"] == 45  # 10 people -> C(10, 2)
+    assert comparison["client_ms"] >= 0
+    assert comparison["engine_ms"] is not None
+    # Removed person no longer earns centrality from paths she is excluded from.
+    maya = next(f for f in payload["findings"] if f["person_key"] == "person:maya-chen")
+    assert maya["sampled_centrality"] == 0
+
+
+def test_ghosts_route_rejects_unknown_exclusion() -> None:
+    response = _client(ScriptedDriver([])).get(
+        f"/api/v1/snapshots/{SNAPSHOT}/ghosts", params={"exclude": ["person:nobody"]}
+    )
+
+    assert response.status_code == 404
+    assert response.json()["detail"]["code"] == "person_not_found"
