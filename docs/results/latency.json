@@ -1,0 +1,27 @@
+{
+  "dataset_id": "xray-synth-500",
+  "engine": {
+    "digest": "sha256:db78309a233be54662db29744047e985a39b51c45a270d1a1f47c31a62cdb709",
+    "source_commit": "02a40025d2d57e97ab2754c8256219cdbfeab379"
+  },
+  "method": "client_ghost_baseline_ms() runs 10 repeated bounded BFS passes over the synth-500 bundle and returns the median wall-clock time. Live HydraDB p50/p95 require a running engine and are left null here rather than fabricated; re-measure with `scripts/bench_latency.py` against a live stack.",
+  "measurements": {
+    "fixture_ghost_baseline_ms": 398.8,
+    "sampled_people": 500,
+    "sampled_pairs": 2000,
+    "max_len": 4,
+    "client_equivalent_round_trips": 124750,
+    "hydradb_round_trips": 1,
+    "speedup_lower_bound": "1 MSpaths call replaces 124,750 per-pair queries"
+  },
+  "percentiles": {
+    "p50_ms": null,
+    "p95_ms": null,
+    "note": "Live HydraDB latency intentionally not fabricated. Run `scripts/bench_latency.py` with a live stack to populate these."
+  },
+  "limitations": [
+    "Fixture BFS time is measured in-process on the developer machine; actual time is hardware-dependent.",
+    "Live HydraDB p50/p95 requires a running engine and is intentionally not fabricated here.",
+    "The 124,750 client-equivalent round-trips assumes one shortest-path query per pair for 500 people."
+  ]
+}

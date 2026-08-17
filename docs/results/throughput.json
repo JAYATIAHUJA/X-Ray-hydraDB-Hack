@@ -1,0 +1,14 @@
+{
+  "dataset_id": "xray-synth-500",
+  "engine": {
+    "digest": "sha256:db78309a233be54662db29744047e985a39b51c45a270d1a1f47c31a62cdb709",
+    "source_commit": "02a40025d2d57e97ab2754c8256219cdbfeab379"
+  },
+  "method": "Existing deterministic ingest benchmark; rerun scripts/bench_ingest.py for a new machine.",
+  "edges_per_second": 4300,
+  "batch_size": 500,
+  "admission_cap": 1024,
+  "limitations": [
+    "The benchmark is an ingest throughput measurement, not lens latency."
+  ]
+}
