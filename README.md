@@ -79,6 +79,65 @@ Every finding keeps the source evidence visible in the UI: record IDs, source ty
 evidence class, `content_sha256`, redacted excerpt, limitations, executed HydraDB query, and one
 recommended action.
 
+## Enterprise ontology
+
+X-Ray's type system is intentionally small: five node types and eight relationship types. Every
+element has a deterministic integer ID and retains its source evidence.
+
+| Node type | Meaning | Example canonical key |
+|---|---|---|
+| `Person` | Named individual in the corpus | `person:alice` |
+| `Team` | Org unit (from directory) | `team:platform` |
+| `Artifact` | Discrete communication or work output | `artifact:email:msg-1234` |
+| `Module` | Logical code or document scope | `module:payments-api` |
+| `Phantom` | Structurally required but absent record | `artifact:missing-approval` |
+
+| Relationship | Between | Derived from |
+|---|---|---|
+| `COMMUNICATES` | Person → Person | email reply, Slack thread reply, mention |
+| `OWNS` | Person → Module | authorship density over git commits; explicit ownership |
+| `DEPENDS_ON` | Module → Module | co-change in commits, explicit `Depends-On:` trailers, Confluence page links |
+| `AUTHORED` | Person → Artifact | email From, git author, Slack user, ticket reporter |
+| `ABOUT` | Artifact → Module | explicit module reference in export |
+| `REPLIES_TO` | Artifact → Artifact | `In-Reply-To` header, Slack `thread_ts`, Confluence comment → page |
+| `PRECEDED_BY` | Artifact → Artifact | sequence contract: step B must follow step A |
+| `REPORTS_TO` | Person → Person | `manager_external_id` in directory record |
+
+This schema is not a bag of text embeddings. Every node has a deterministic integer ID (63-bit
+BLAKE2b over source+external_id), every edge retains its source evidence, and every path query
+runs over typed relationships with bounded hop counts. A vector database can retrieve documents
+similar to a query; it cannot express "is there a communication path of length ≤4 between the
+owners of two co-changing modules."
+
+## Entity resolution
+
+X-Ray resolves all identities **before** graph ingestion, never inside the graph engine. An
+identity map (`identity.json`) maps raw source IDs — email addresses, Slack user IDs, GitHub
+usernames, JIRA account IDs — to canonical person handles.
+
+A person can appear under a different identifier in every source. The identity map coalesces all
+of these into one `Person` node:
+
+```json
+{
+  "alice@company.com": "alice",
+  "U0123ABC": "alice",
+  "alice": "alice",
+  "alice_jira": "alice"
+}
+```
+
+IDs that are not in the map are kept as visible `unresolved-<hash>` handles with a bundle
+limitation note — no silent merging. The limitation is reported in the UI and the risk report so
+a partial map degrades honestly rather than failing silently.
+
+Once a person has a canonical handle, their integer node ID is derived deterministically from that
+handle (63-bit BLAKE2b), so the graph is bit-for-bit reproducible across runs.
+
+Resolving identities inside the graph engine — for example by matching on email domain similarity
+— risks merging distinct people or splitting the same person across separate nodes. X-Ray treats
+this as a pre-ingestion step so the graph contains only explicit facts.
+
 ## How it works
 
 ```text
