@@ -1,5 +1,115 @@
 [
   {
+    "author_external_id": "p0061",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "comm-coordinated-p0061-p0112",
+    "kind": "communication_aggregate",
+    "metadata": {
+      "first_epoch": 1735689600,
+      "interaction_count": 9,
+      "interaction_kind": "mention",
+      "last_epoch": 1735689609,
+      "recipient_external_id": "p0112",
+      "sender_external_id": "p0061"
+    },
+    "occurred_at_epoch": 1735689609,
+    "parent_external_id": null,
+    "source": "synth-events",
+    "subjects": [
+      "person:p0061",
+      "person:p0112"
+    ]
+  },
+  {
+    "author_external_id": "p0122",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "comm-coordinated-p0122-p0173",
+    "kind": "communication_aggregate",
+    "metadata": {
+      "first_epoch": 1735689600,
+      "interaction_count": 8,
+      "interaction_kind": "mention",
+      "last_epoch": 1735689608,
+      "recipient_external_id": "p0173",
+      "sender_external_id": "p0122"
+    },
+    "occurred_at_epoch": 1735689608,
+    "parent_external_id": null,
+    "source": "synth-events",
+    "subjects": [
+      "person:p0122",
+      "person:p0173"
+    ]
+  },
+  {
+    "author_external_id": "p0163",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "comm-coordinated-p0163-p0214",
+    "kind": "communication_aggregate",
+    "metadata": {
+      "first_epoch": 1735689600,
+      "interaction_count": 7,
+      "interaction_kind": "mention",
+      "last_epoch": 1735689607,
+      "recipient_external_id": "p0214",
+      "sender_external_id": "p0163"
+    },
+    "occurred_at_epoch": 1735689607,
+    "parent_external_id": null,
+    "source": "synth-events",
+    "subjects": [
+      "person:p0163",
+      "person:p0214"
+    ]
+  },
+  {
+    "author_external_id": "p0224",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "comm-coordinated-p0224-p0326",
+    "kind": "communication_aggregate",
+    "metadata": {
+      "first_epoch": 1735689600,
+      "interaction_count": 6,
+      "interaction_kind": "mention",
+      "last_epoch": 1735689606,
+      "recipient_external_id": "p0326",
+      "sender_external_id": "p0224"
+    },
+    "occurred_at_epoch": 1735689606,
+    "parent_external_id": null,
+    "source": "synth-events",
+    "subjects": [
+      "person:p0224",
+      "person:p0326"
+    ]
+  },
+  {
+    "author_external_id": "p0000",
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "comm-bridge-p0000-p0007",
+    "kind": "communication_aggregate",
+    "metadata": {
+      "first_epoch": 1735689600,
+      "interaction_count": 12,
+      "interaction_kind": "mention",
+      "last_epoch": 1735689612,
+      "recipient_external_id": "p0007",
+      "sender_external_id": "p0000"
+    },
+    "occurred_at_epoch": 1735689612,
+    "parent_external_id": null,
+    "source": "synth-events",
+    "subjects": [
+      "person:p0000",
+      "person:p0007"
+    ]
+  },
+  {
     "author_external_id": "p0000",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -1609,14 +1719,14 @@
     "author_external_id": "p0050",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "comm-bridge-p0050-p0000",
+    "external_id": "comm-bridge-p0050-p0007",
     "kind": "communication_aggregate",
     "metadata": {
       "first_epoch": 1735689600,
       "interaction_count": 12,
       "interaction_kind": "mention",
       "last_epoch": 1735689612,
-      "recipient_external_id": "p0000",
+      "recipient_external_id": "p0007",
       "sender_external_id": "p0050"
     },
     "occurred_at_epoch": 1735689612,
@@ -1624,7 +1734,7 @@
     "source": "synth-events",
     "subjects": [
       "person:p0050",
-      "person:p0000"
+      "person:p0007"
     ]
   },
   {
@@ -3237,14 +3347,14 @@
     "author_external_id": "p0100",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "comm-bridge-p0100-p0000",
+    "external_id": "comm-bridge-p0100-p0007",
     "kind": "communication_aggregate",
     "metadata": {
       "first_epoch": 1735689600,
       "interaction_count": 12,
       "interaction_kind": "mention",
       "last_epoch": 1735689612,
-      "recipient_external_id": "p0000",
+      "recipient_external_id": "p0007",
       "sender_external_id": "p0100"
     },
     "occurred_at_epoch": 1735689612,
@@ -3252,7 +3362,7 @@
     "source": "synth-events",
     "subjects": [
       "person:p0100",
-      "person:p0000"
+      "person:p0007"
     ]
   },
   {
@@ -4865,14 +4975,14 @@
     "author_external_id": "p0150",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "comm-bridge-p0150-p0000",
+    "external_id": "comm-bridge-p0150-p0007",
     "kind": "communication_aggregate",
     "metadata": {
       "first_epoch": 1735689600,
       "interaction_count": 12,
       "interaction_kind": "mention",
       "last_epoch": 1735689612,
-      "recipient_external_id": "p0000",
+      "recipient_external_id": "p0007",
       "sender_external_id": "p0150"
     },
     "occurred_at_epoch": 1735689612,
@@ -4880,7 +4990,7 @@
     "source": "synth-events",
     "subjects": [
       "person:p0150",
-      "person:p0000"
+      "person:p0007"
     ]
   },
   {
@@ -6493,14 +6603,14 @@
     "author_external_id": "p0200",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "comm-bridge-p0200-p0000",
+    "external_id": "comm-bridge-p0200-p0007",
     "kind": "communication_aggregate",
     "metadata": {
       "first_epoch": 1735689600,
       "interaction_count": 12,
       "interaction_kind": "mention",
       "last_epoch": 1735689612,
-      "recipient_external_id": "p0000",
+      "recipient_external_id": "p0007",
       "sender_external_id": "p0200"
     },
     "occurred_at_epoch": 1735689612,
@@ -6508,7 +6618,7 @@
     "source": "synth-events",
     "subjects": [
       "person:p0200",
-      "person:p0000"
+      "person:p0007"
     ]
   },
   {
@@ -8121,14 +8231,14 @@
     "author_external_id": "p0250",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "comm-bridge-p0250-p0000",
+    "external_id": "comm-bridge-p0250-p0007",
     "kind": "communication_aggregate",
     "metadata": {
       "first_epoch": 1735689600,
       "interaction_count": 12,
       "interaction_kind": "mention",
       "last_epoch": 1735689612,
-      "recipient_external_id": "p0000",
+      "recipient_external_id": "p0007",
       "sender_external_id": "p0250"
     },
     "occurred_at_epoch": 1735689612,
@@ -8136,7 +8246,7 @@
     "source": "synth-events",
     "subjects": [
       "person:p0250",
-      "person:p0000"
+      "person:p0007"
     ]
   },
   {
@@ -9749,14 +9859,14 @@
     "author_external_id": "p0300",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "comm-bridge-p0300-p0000",
+    "external_id": "comm-bridge-p0300-p0007",
     "kind": "communication_aggregate",
     "metadata": {
       "first_epoch": 1735689600,
       "interaction_count": 12,
       "interaction_kind": "mention",
       "last_epoch": 1735689612,
-      "recipient_external_id": "p0000",
+      "recipient_external_id": "p0007",
       "sender_external_id": "p0300"
     },
     "occurred_at_epoch": 1735689612,
@@ -9764,7 +9874,7 @@
     "source": "synth-events",
     "subjects": [
       "person:p0300",
-      "person:p0000"
+      "person:p0007"
     ]
   },
   {
@@ -11377,14 +11487,14 @@
     "author_external_id": "p0350",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "comm-bridge-p0350-p0000",
+    "external_id": "comm-bridge-p0350-p0007",
     "kind": "communication_aggregate",
     "metadata": {
       "first_epoch": 1735689600,
       "interaction_count": 12,
       "interaction_kind": "mention",
       "last_epoch": 1735689612,
-      "recipient_external_id": "p0000",
+      "recipient_external_id": "p0007",
       "sender_external_id": "p0350"
     },
     "occurred_at_epoch": 1735689612,
@@ -11392,7 +11502,7 @@
     "source": "synth-events",
     "subjects": [
       "person:p0350",
-      "person:p0000"
+      "person:p0007"
     ]
   },
   {
@@ -13005,14 +13115,14 @@
     "author_external_id": "p0400",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "comm-bridge-p0400-p0000",
+    "external_id": "comm-bridge-p0400-p0007",
     "kind": "communication_aggregate",
     "metadata": {
       "first_epoch": 1735689600,
       "interaction_count": 12,
       "interaction_kind": "mention",
       "last_epoch": 1735689612,
-      "recipient_external_id": "p0000",
+      "recipient_external_id": "p0007",
       "sender_external_id": "p0400"
     },
     "occurred_at_epoch": 1735689612,
@@ -13020,7 +13130,7 @@
     "source": "synth-events",
     "subjects": [
       "person:p0400",
-      "person:p0000"
+      "person:p0007"
     ]
   },
   {
@@ -14633,14 +14743,14 @@
     "author_external_id": "p0450",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "comm-bridge-p0450-p0000",
+    "external_id": "comm-bridge-p0450-p0007",
     "kind": "communication_aggregate",
     "metadata": {
       "first_epoch": 1735689600,
       "interaction_count": 12,
       "interaction_kind": "mention",
       "last_epoch": 1735689612,
-      "recipient_external_id": "p0000",
+      "recipient_external_id": "p0007",
       "sender_external_id": "p0450"
     },
     "occurred_at_epoch": 1735689612,
@@ -14648,7 +14758,7 @@
     "source": "synth-events",
     "subjects": [
       "person:p0450",
-      "person:p0000"
+      "person:p0007"
     ]
   },
   {
@@ -16274,7 +16384,7 @@
     "source": "synth-events",
     "subjects": [
       "artifact:synth-gap-0-directive",
-      "module:module-00"
+      "module:payments-api"
     ]
   },
   {
@@ -16294,7 +16404,7 @@
     "source": "synth-events",
     "subjects": [
       "artifact:synth-gap-0-change",
-      "module:module-00"
+      "module:payments-api"
     ]
   },
   {
@@ -16314,7 +16424,7 @@
     "source": "synth-events",
     "subjects": [
       "artifact:synth-gap-1-directive",
-      "module:module-01"
+      "module:checkout-web"
     ]
   },
   {
@@ -16334,7 +16444,7 @@
     "source": "synth-events",
     "subjects": [
       "artifact:synth-gap-1-change",
-      "module:module-01"
+      "module:checkout-web"
     ]
   },
   {
@@ -16354,7 +16464,7 @@
     "source": "synth-events",
     "subjects": [
       "artifact:synth-gap-2-directive",
-      "module:module-02"
+      "module:refunds-worker"
     ]
   },
   {
@@ -16374,7 +16484,7 @@
     "source": "synth-events",
     "subjects": [
       "artifact:synth-gap-2-change",
-      "module:module-02"
+      "module:refunds-worker"
     ]
   },
   {
@@ -16394,7 +16504,7 @@
     "source": "synth-events",
     "subjects": [
       "artifact:synth-gap-3-directive",
-      "module:module-03"
+      "module:invoice-service"
     ]
   },
   {
@@ -16414,7 +16524,7 @@
     "source": "synth-events",
     "subjects": [
       "artifact:synth-gap-3-change",
-      "module:module-03"
+      "module:invoice-service"
     ]
   },
   {
@@ -16434,7 +16544,7 @@
     "source": "synth-events",
     "subjects": [
       "artifact:synth-gap-4-directive",
-      "module:module-04"
+      "module:ledger-core"
     ]
   },
   {
@@ -16454,7 +16564,7 @@
     "source": "synth-events",
     "subjects": [
       "artifact:synth-gap-4-change",
-      "module:module-04"
+      "module:ledger-core"
     ]
   }
 ]

@@ -162,12 +162,6 @@ Without `XRAY_HYDRA_URI`, the API intentionally stays in fixture fallback mode. 
 endpoint reports `fallback`, `live`, or `offline` so the UI never implies that a live graph
 database is available when it is not.
 
-To run the mixed Slack/email/ticket/Git fixture, select it before starting the API:
-
-```powershell
-$env:XRAY_FIXTURE_VARIANT = "mixed"
-```
-
 To run the 500-person synthetic evaluation fixture:
 
 ```powershell
@@ -254,19 +248,21 @@ Measured on `xray-synth-500` on 17 Aug 2026:
 
 | Metric | Value |
 | --- | ---: |
-| Nodes / edges | 565 / 1,315 |
-| Faultline precision | 0.429 |
+| Nodes / edges | 565 / 1,319 |
+| Faultline precision | 1.000 |
 | Faultline recall | 1.000 |
-| Faultlines planted / returned | 3 / 7 |
+| Faultlines planted / returned | 3 / 3 |
 | Gap precision | 1.000 |
 | Gap recall | 1.000 |
 | Gaps planted / returned | 5 / 5 |
 | Ghost top-1 hit rate across seeds | 1.000 |
-| Ghost mean top-10 overlap vs exact betweenness | 1.000 |
+| Ghost mean top-10 overlap vs exact betweenness | 0.933 |
 
 The faultline result is intentionally reported as precision/recall against planted labels, not
-as proof of incidents. The four non-planted returned pairs are coordination-debt findings in the
-synthetic graph, but they are counted as false positives for planted-truth scoring.
+as proof of incidents. The fixture includes a negative control: four coordinated dependencies whose
+owners communicate directly. Those must *not* be flagged, and are not. The planted Ghost is
+`Priya Nair`, a senior engineer who ranks structurally #1 and formally #33 (rank gap +32); she is
+not the top of the reporting chain, which is the point of the lens.
 
 ## Scale and limitations
 

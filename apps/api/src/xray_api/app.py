@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import asdict
 
 from fastapi import FastAPI
@@ -489,39 +490,47 @@ def _gap_finding_from_hydra(row: HydraGapRow) -> GapFinding:
     )
 
 
+MIN_NODE_SIZE = 20
+MAX_NODE_SIZE = 82
+
+
 def _graph_node(node: NodeRow, score: GhostScore | None, selected_key: str | None) -> GraphNode:
-    properties = node.properties
-    team = str(properties.get("team_id", "team:unknown")).removeprefix("team:")
-    role_rank = int(properties.get("role_rank", 1))
-    centrality = getattr(score, "sampled_centrality", 0.0)
-    degree = getattr(score, "communication_degree", 0)
-    return GraphNode(
-        key=node.canonical_key,
-        name=str(properties.get("display_name", node.canonical_key)),
-        title=_person_title(team, role_rank),
-        team=team,
-        official_size=max(20, 78 - (role_rank * 10)),
-        actual_size=max(20, min(82, round(20 + (centrality * 250) + (degree * 3)))),
-        selected=node.canonical_key == selected_key,
-    )
+    return _build_graph_node(node.canonical_key, node.properties, score, selected_key)
 
 
 def _hydra_graph_node(
     node: HydraGraphNode, score: GhostScore | None, selected_key: str | None
 ) -> GraphNode:
-    team = str(node.properties.get("team_id", "team:unknown")).removeprefix("team:")
-    role_rank = int(node.properties.get("role_rank", 1))
+    return _build_graph_node(node.key, node.properties, score, selected_key)
+
+
+def _build_graph_node(
+    key: str,
+    properties: Mapping[str, object],
+    score: GhostScore | None,
+    selected_key: str | None,
+) -> GraphNode:
+    team = str(properties.get("team_id", "team:unknown")).removeprefix("team:")
+    role_rank = _role_rank_value(properties.get("role_rank"))
     centrality = getattr(score, "sampled_centrality", 0.0)
     degree = getattr(score, "communication_degree", 0)
     return GraphNode(
-        key=node.key,
-        name=str(node.properties.get("display_name", node.key)),
+        key=key,
+        name=str(properties.get("display_name", key)),
         title=_person_title(team, role_rank),
         team=team,
-        official_size=max(20, 78 - (role_rank * 10)),
-        actual_size=max(20, min(82, round(20 + (centrality * 250) + (degree * 3)))),
-        selected=node.key == selected_key,
+        # Official size grows with formal seniority (spec §3.1: 1=IC … 6=VP+).
+        official_size=max(MIN_NODE_SIZE, min(MAX_NODE_SIZE, 22 + (role_rank * 10))),
+        actual_size=max(
+            MIN_NODE_SIZE,
+            min(MAX_NODE_SIZE, round(MIN_NODE_SIZE + (centrality * 250) + (degree * 3))),
+        ),
+        selected=key == selected_key,
     )
+
+
+def _role_rank_value(value: object) -> int:
+    return value if type(value) is int and value >= 0 else 0
 
 
 def _graph_edge(edge: EdgeRow, node_key_by_id: dict[int, str]) -> GraphEdge:
@@ -553,15 +562,22 @@ def _normalize_pair(left: str, right: str) -> tuple[str, str]:
     return (left, right) if left <= right else (right, left)
 
 
+ROLE_TITLES = {
+    0: "member",
+    1: "engineer",
+    2: "senior engineer",
+    3: "lead",
+    4: "manager",
+    5: "director",
+}
+
+
 def _person_title(team: str, role_rank: int) -> str:
+    """Render a display title from the spec §3.1 role_rank scale (higher = more senior)."""
     team_name = team.replace("-", " ").capitalize()
-    if role_rank >= 4:
-        return f"{team_name} director"
-    if role_rank == 3:
-        return f"{team_name} lead"
-    if role_rank == 2:
-        return f"{team_name} partner"
-    return f"{team_name} specialist"
+    if role_rank >= 6:
+        return f"VP, {team_name}"
+    return f"{team_name} {ROLE_TITLES.get(role_rank, 'member')}"
 
 
 app = create_app()

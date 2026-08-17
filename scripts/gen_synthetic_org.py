@@ -10,6 +10,178 @@ EMPTY_SHA256 = hashlib.sha256(b"").hexdigest()
 DATASET_ID = "xray-synth-500"
 START_EPOCH = 1_735_689_600
 
+# Index of the planted Ghost: a senior IC in the first team, deliberately *not*
+# the top of the reporting chain, so structural rank and formal rank diverge.
+BROKER_INDEX = 7
+
+# role_rank follows the build spec §3.1: 0=unknown, 1=IC, 2=senior, 3=lead,
+# 4=manager, 5=director, 6=VP+. Higher is more senior.
+ROLE_VP = 6
+ROLE_MANAGER = 4
+ROLE_LEAD = 3
+ROLE_SENIOR = 2
+ROLE_IC = 1
+
+TEAM_NAMES = [
+    "payments",
+    "ledger",
+    "identity",
+    "platform",
+    "data",
+    "mobile",
+    "growth",
+    "infra",
+    "security",
+    "support-tools",
+]
+
+MODULE_NAMES = [
+    "payments-api",
+    "checkout-web",
+    "refunds-worker",
+    "invoice-service",
+    "ledger-core",
+    "ledger-worker",
+    "reconciliation",
+    "tax-engine",
+    "identity-api",
+    "auth-gateway",
+    "session-store",
+    "user-profile",
+    "platform-sdk",
+    "event-bus",
+    "job-scheduler",
+    "config-service",
+    "data-pipeline",
+    "warehouse-sync",
+    "metrics-collector",
+    "report-builder",
+    "mobile-ios",
+    "mobile-android",
+    "push-service",
+    "deeplink-router",
+    "growth-experiments",
+    "referral-service",
+    "email-campaigns",
+    "onboarding-flow",
+    "infra-terraform",
+    "k8s-operators",
+    "ci-runners",
+    "artifact-registry",
+    "secrets-manager",
+    "audit-sink",
+    "policy-engine",
+    "vuln-scanner",
+    "support-console",
+    "ticket-router",
+    "kb-search",
+    "macro-engine",
+]
+
+FIRST_NAMES = [
+    "Jon",
+    "Omar",
+    "Lena",
+    "Theo",
+    "Nina",
+    "Sam",
+    "Ines",
+    "Priya",
+    "Maya",
+    "Alex",
+    "Ravi",
+    "Zoe",
+    "Kwame",
+    "Hana",
+    "Luca",
+    "Aisha",
+    "Mateo",
+    "Yuki",
+    "Tariq",
+    "Elena",
+    "Femi",
+    "Sofia",
+    "Daniel",
+    "Amara",
+    "Noah",
+    "Ingrid",
+    "Arjun",
+    "Chloe",
+    "Diego",
+    "Mei",
+    "Kofi",
+    "Sara",
+    "Ivan",
+    "Leila",
+    "Ben",
+    "Rosa",
+    "Kenji",
+    "Nadia",
+    "Tom",
+    "Anika",
+]
+
+LAST_NAMES = [
+    "Bell",
+    "Haddad",
+    "Park",
+    "Brooks",
+    "Okafor",
+    "Wu",
+    "Costa",
+    "Nair",
+    "Chen",
+    "Rivera",
+    "Shah",
+    "Meyer",
+    "Mensah",
+    "Sato",
+    "Ricci",
+    "Khan",
+    "Alvarez",
+    "Tanaka",
+    "Rahman",
+    "Petrov",
+    "Adeyemi",
+    "Moreau",
+    "Kim",
+    "Nwosu",
+    "Fischer",
+    "Larsen",
+    "Iyer",
+    "Dubois",
+    "Silva",
+    "Lin",
+    "Boateng",
+    "Haddadi",
+    "Volkov",
+    "Farah",
+    "Novak",
+    "Rossi",
+    "Ito",
+    "Osman",
+    "Walsh",
+    "Bose",
+]
+
+
+def _display_name(index: int) -> str:
+    first = FIRST_NAMES[index % len(FIRST_NAMES)]
+    last = LAST_NAMES[(index // len(FIRST_NAMES) + index) % len(LAST_NAMES)]
+    return f"{first} {last}"
+
+
+def _role_rank(index: int) -> int:
+    if index == 0:
+        return ROLE_VP
+    if index % 50 == 0:
+        return ROLE_MANAGER
+    if index == BROKER_INDEX:
+        return ROLE_SENIOR
+    if index % 25 == 12:
+        return ROLE_LEAD
+    return ROLE_SENIOR if index % 3 == 0 else ROLE_IC
+
 
 def main() -> int:
     args = _parse_args()
@@ -17,21 +189,27 @@ def main() -> int:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     people = [f"p{index:04d}" for index in range(args.people)]
-    modules = [f"module-{index:02d}" for index in range(args.modules)]
-    teams = [f"team-{index:02d}" for index in range(args.teams)]
-    broker = people[0]
+    modules = [
+        MODULE_NAMES[index] if index < len(MODULE_NAMES) else f"module-{index:02d}"
+        for index in range(args.modules)
+    ]
+    teams = [
+        TEAM_NAMES[index] if index < len(TEAM_NAMES) else f"team-{index:02d}"
+        for index in range(args.teams)
+    ]
+    broker = people[min(BROKER_INDEX, len(people) - 1)]
 
     directory = _directory_records(people, teams)
     events = [
         *_communication_records(people, teams, broker),
-        *_gap_artifacts(),
+        *_gap_artifacts(modules),
     ]
     git_facts = [
         *_module_records(modules),
         *_ownership_records(modules, people, args.teams),
-        *_dependency_records(),
+        *_dependency_records(modules),
     ]
-    ground_truth = _ground_truth(broker)
+    ground_truth = _ground_truth(broker, modules)
     manifest = _manifest(
         output_dir=output_dir,
         directory=directory,
@@ -70,7 +248,10 @@ def _directory_records(
                 external_id=team,
                 kind="directory_team",
                 subjects=[f"team:{team}"],
-                metadata={"canonical_key": f"team:{team}", "display_name": team},
+                metadata={
+                    "canonical_key": f"team:{team}",
+                    "display_name": team.replace("-", " ").title(),
+                },
             )
         )
 
@@ -82,7 +263,7 @@ def _directory_records(
             manager = people[0]
         else:
             manager = people[(index // 50) * 50]
-        role_rank = 2 if index == 0 else 5 + (index % 4)
+        role_rank = _role_rank(index)
         records.append(
             _record(
                 source="synth-directory",
@@ -91,7 +272,7 @@ def _directory_records(
                 subjects=[f"person:{person}"],
                 metadata=_without_none(
                     {
-                        "display_name": f"Synth Person {index:04d}",
+                        "display_name": _display_name(index),
                         "manager_external_id": manager,
                         "role_rank": role_rank,
                         "team_key": f"team:{team}",
@@ -102,12 +283,23 @@ def _directory_records(
     return records
 
 
+def _module_owner(people: list[str], module_index: int, team_count: int) -> str:
+    team_index = module_index % team_count
+    return people[(team_index * 50) + 10 + (module_index % 20)]
+
+
 def _communication_records(
     people: list[str],
     teams: list[str],
     broker: str,
 ) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
+    # Negative control: owners of *coordinated* dependencies talk to each other
+    # directly, so only the planted faultlines lack a short communication path.
+    for source, target, weight in COORDINATED_DEPENDENCY_INDICES:
+        owner_a = _module_owner(people, source, len(teams))
+        owner_b = _module_owner(people, target, len(teams))
+        records.append(_communication(owner_a, owner_b, weight, f"coordinated-{owner_a}-{owner_b}"))
     for team_index, _team in enumerate(teams):
         start = team_index * 50
         team_people = people[start : start + 50]
@@ -148,8 +340,7 @@ def _ownership_records(
 ) -> list[dict[str, Any]]:
     records = []
     for index, module in enumerate(modules):
-        team_index = index % team_count
-        owner = people[(team_index * 50) + 10 + (index % 20)]
+        owner = _module_owner(people, index, team_count)
         records.append(
             _record(
                 source="synth-git-facts",
@@ -167,17 +358,18 @@ def _ownership_records(
     return records
 
 
-def _dependency_records() -> list[dict[str, Any]]:
+PLANTED_FAULTLINE_INDICES = [(0, 9, 41), (11, 28, 37), (22, 35, 31)]
+COORDINATED_DEPENDENCY_INDICES = [(1, 2, 9), (12, 13, 8), (23, 24, 7), (34, 36, 6)]
+
+
+def _dependency_records(modules: list[str]) -> list[dict[str, Any]]:
     planted = [
-        ("module-00", "module-09", 41),
-        ("module-11", "module-28", 37),
-        ("module-22", "module-35", 31),
+        (modules[source], modules[target], weight)
+        for source, target, weight in PLANTED_FAULTLINE_INDICES
     ]
     coordinated = [
-        ("module-01", "module-02", 9),
-        ("module-12", "module-13", 8),
-        ("module-23", "module-24", 7),
-        ("module-34", "module-36", 6),
+        (modules[source], modules[target], weight)
+        for source, target, weight in COORDINATED_DEPENDENCY_INDICES
     ]
     return [
         _dependency(
@@ -190,11 +382,11 @@ def _dependency_records() -> list[dict[str, Any]]:
     ]
 
 
-def _gap_artifacts() -> list[dict[str, Any]]:
+def _gap_artifacts(modules: list[str]) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
     for index in range(5):
         owner = f"p{(index * 73) % 500:04d}"
-        module = f"module-{index:02d}"
+        module = modules[index]
         records.append(
             _record(
                 source="synth-events",
@@ -230,14 +422,13 @@ def _gap_artifacts() -> list[dict[str, Any]]:
     return records
 
 
-def _ground_truth(broker: str) -> dict[str, Any]:
+def _ground_truth(broker: str, modules: list[str]) -> dict[str, Any]:
     return {
         "dataset_id": DATASET_ID,
         "ghost_person_key": f"person:{broker}",
         "faultline_module_pairs": [
-            ["module:module-00", "module:module-09"],
-            ["module:module-11", "module:module-28"],
-            ["module:module-22", "module:module-35"],
+            [f"module:{modules[source]}", f"module:{modules[target]}"]
+            for source, target, _weight in PLANTED_FAULTLINE_INDICES
         ],
         "gap_paths": [
             {

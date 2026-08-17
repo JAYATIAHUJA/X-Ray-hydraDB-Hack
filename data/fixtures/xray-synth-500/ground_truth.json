@@ -2,16 +2,16 @@
   "dataset_id": "xray-synth-500",
   "faultline_module_pairs": [
     [
-      "module:module-00",
-      "module:module-09"
+      "module:payments-api",
+      "module:auth-gateway"
     ],
     [
-      "module:module-11",
-      "module:module-28"
+      "module:user-profile",
+      "module:infra-terraform"
     ],
     [
-      "module:module-22",
-      "module:module-35"
+      "module:push-service",
+      "module:vuln-scanner"
     ]
   ],
   "gap_paths": [
@@ -41,7 +41,7 @@
       "target_artifact_key": "artifact:synth-gap-4-directive"
     }
   ],
-  "ghost_person_key": "person:p0000",
+  "ghost_person_key": "person:p0007",
   "planted_counts": {
     "faultlines": 3,
     "gaps": 5,

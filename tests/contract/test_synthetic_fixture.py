@@ -26,7 +26,7 @@ def test_synth500_fixture_sources_match_manifest_hashes_and_schema() -> None:
     assert manifest["acceptance_labels"] == {
         "faultline_count": 3,
         "gap_count": 5,
-        "ghost_broker_key": "person:p0000",
+        "ghost_broker_key": "person:p0007",
     }
 
     for descriptor in manifest["source_files"]:
