@@ -8,6 +8,7 @@ from .analysis import (
     FaultlineFinding,
     GapFinding,
     GhostScore,
+    bounded_shortest_path_tallies,
     bus_factor_impact,
     communication_graph,
     display_name,
@@ -16,7 +17,9 @@ from .analysis import (
     formal_ranks,
     gap_findings,
     ghost_scores,
+    reachable_pair_count,
     role_rank,
+    without_people,
 )
 
 __all__ = [
@@ -27,6 +30,7 @@ __all__ = [
     "FaultlineFinding",
     "GapFinding",
     "GhostScore",
+    "bounded_shortest_path_tallies",
     "bus_factor_impact",
     "communication_graph",
     "display_name",
@@ -35,5 +39,7 @@ __all__ = [
     "formal_ranks",
     "gap_findings",
     "ghost_scores",
+    "reachable_pair_count",
     "role_rank",
+    "without_people",
 ]

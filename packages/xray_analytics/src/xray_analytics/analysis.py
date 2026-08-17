@@ -136,7 +136,7 @@ def ghost_scores(bundle: CanonicalBundle, *, max_len: int = 4) -> tuple[GhostSco
     graph = communication_graph(bundle)
     people = _person_nodes(bundle)
     person_keys = [person.canonical_key for person in people]
-    tallies, sampled_pairs = _bounded_shortest_path_tallies(graph, person_keys, max_len)
+    tallies, sampled_pairs = bounded_shortest_path_tallies(graph, person_keys, max_len)
 
     denominator = float(sampled_pairs or 1)
     centrality = {key: tallies[key] / denominator for key in person_keys}
@@ -338,6 +338,36 @@ def _has_path_within(graph: CommunicationGraph, source: str, target: str, max_le
     return distance is not None
 
 
+def reachable_pair_count(
+    graph: CommunicationGraph,
+    *,
+    max_len: int,
+    excluding: tuple[str, ...] = (),
+) -> int:
+    """Number of unordered person pairs (outside ``excluding``) joined by a path of <= max_len."""
+    skip = set(excluding)
+    people = tuple(key for key in graph if key not in skip)
+    return _reachable_pair_count(graph, people, max_len, use_cache=False)
+
+
+def without_people(bundle: CanonicalBundle, person_keys: tuple[str, ...]) -> CanonicalBundle:
+    """Return a bundle with the given people and their incident edges removed."""
+    keys = set(person_keys)
+    removed_ids = {node.id for node in bundle.nodes if node.canonical_key in keys}
+    if not removed_ids:
+        return bundle
+    return bundle.model_copy(
+        update={
+            "nodes": tuple(node for node in bundle.nodes if node.id not in removed_ids),
+            "edges": tuple(
+                edge
+                for edge in bundle.edges
+                if edge.source_id not in removed_ids and edge.target_id not in removed_ids
+            ),
+        }
+    )
+
+
 def _reachable_pair_count(
     graph: CommunicationGraph,
     person_keys: tuple[str, ...],
@@ -452,7 +482,7 @@ def _without_node(graph: CommunicationGraph, removed: str) -> CommunicationGraph
     }
 
 
-def _bounded_shortest_path_tallies(
+def bounded_shortest_path_tallies(
     graph: CommunicationGraph,
     person_keys: list[str],
     max_len: int,
@@ -532,6 +562,7 @@ __all__ = [
     "FaultlineFinding",
     "GapFinding",
     "GhostScore",
+    "bounded_shortest_path_tallies",
     "bus_factor_impact",
     "communication_graph",
     "display_name",
@@ -540,5 +571,7 @@ __all__ = [
     "formal_ranks",
     "gap_findings",
     "ghost_scores",
+    "reachable_pair_count",
     "role_rank",
+    "without_people",
 ]

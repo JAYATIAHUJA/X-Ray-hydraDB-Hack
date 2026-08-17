@@ -1,0 +1,87 @@
+{
+  "client_baseline": {
+    "equivalent_round_trips": 124750,
+    "method": "python_bounded_bfs_all_pairs",
+    "ms": 398.76490004826337,
+    "people": 500
+  },
+  "dataset_id": "xray-synth-500",
+  "engine": {
+    "digest": "sha256:db78309a233be54662db29744047e985a39b51c45a270d1a1f47c31a62cdb709",
+    "license": "AGPL-3.0",
+    "note": "Synthetic evaluation runs in-process; the engine stamp records the pinned build the same numbers are demoed against.",
+    "repository": "ghcr.io/hydra-db/hydradb",
+    "source_commit": "02a40025d2d57e97ab2754c8256219cdbfeab379"
+  },
+  "faultline": {
+    "planted": 3,
+    "precision": 1.0,
+    "recall": 1.0,
+    "returned": 3,
+    "true_positive": 3
+  },
+  "gap": {
+    "planted": 5,
+    "precision": 1.0,
+    "recall": 1.0,
+    "returned": 5,
+    "true_positive": 5
+  },
+  "generated_at_utc": "2026-08-17T07:19:28+00:00",
+  "ghost": {
+    "mean_top10_overlap_vs_exact": 0.9333333333333332,
+    "planted": "person:p0007",
+    "runs": [
+      {
+        "planted_rank": 1,
+        "seed": 11,
+        "top1": "person:p0007",
+        "top10_overlap": 0.9
+      },
+      {
+        "planted_rank": 1,
+        "seed": 29,
+        "top1": "person:p0007",
+        "top10_overlap": 0.9
+      },
+      {
+        "planted_rank": 1,
+        "seed": 47,
+        "top1": "person:p0007",
+        "top10_overlap": 1.0
+      }
+    ],
+    "top1_hit_rate": 1.0,
+    "what_if_remove_planted": {
+      "pairs_lost": 110883,
+      "reachable_pairs_after": 13368,
+      "reachable_pairs_before": 124251,
+      "removed": "person:p0007",
+      "top_structural": {
+        "display_name": "Priya Nair",
+        "formal_rank": 33,
+        "person_key": "person:p0007",
+        "rank_gap": 32,
+        "structural_rank": 1
+      }
+    }
+  },
+  "graph": {
+    "edges": 1319,
+    "nodes": 565
+  },
+  "notes": [
+    "Planted-truth scoring on a labelled synthetic corpus; not a real-organization result.",
+    "The four coordinated dependencies are a negative control whose owners talk directly.",
+    "Absence in the corpus does not establish deletion."
+  ],
+  "parameters": {
+    "max_len": 4,
+    "sample_pairs": 2000,
+    "seeds": [
+      11,
+      29,
+      47
+    ]
+  }
+}

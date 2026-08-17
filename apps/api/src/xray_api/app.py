@@ -4,7 +4,7 @@ from collections.abc import Mapping
 from dataclasses import asdict
 from typing import Annotated
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from xray_analytics import (
     FaultlineFinding,
@@ -33,8 +33,15 @@ from .hydra import (
     hydra_health,
     seed_bundle,
 )
-from .lenses import fixture_ghost_findings, live_gap_chain, live_ghost_findings
+from .lenses import (
+    client_ghost_baseline_ms,
+    fixture_ghost_findings,
+    fixture_what_if,
+    live_gap_chain,
+    live_ghost_findings,
+)
 from .schemas import (
+    EngineComparison,
     GapPathRequest,
     GraphEdge,
     GraphNode,
@@ -45,6 +52,7 @@ from .schemas import (
     LensEnvelope,
     LoadReportResponse,
     SnapshotResponse,
+    WhatIfSummary,
 )
 
 SettingsDep = Annotated[XraySettings, Depends(get_settings)]
@@ -155,11 +163,25 @@ def create_app() -> FastAPI:
         snapshot_id: str,
         settings: SettingsDep,
         gateway: GatewayDep,
+        exclude: Annotated[list[str] | None, Query()] = None,
     ) -> LensEnvelope:
+        """Ghost lens. Pass ``?exclude=person:...`` (repeatable) for a what-if removal."""
         _require_current_snapshot(snapshot_id)
         bundle = active_bundle()
-        live_result = live_ghost_findings(settings, bundle, gateway=gateway)
+        excluded = _validated_person_keys(bundle, exclude or [])
+        client_ms = client_ghost_baseline_ms(bundle)
+        live_result = live_ghost_findings(
+            settings, bundle, gateway=gateway, exclude_person_keys=excluded
+        )
         if live_result is not None and live_result.error is None:
+            comparison = EngineComparison(
+                engine_ms=live_result.executed_query.engine_ms,
+                client_ms=client_ms,
+                client_method="python_bounded_bfs_all_pairs",
+                sampled_people=live_result.sampled_people,
+                engine_round_trips=live_result.executed_query.round_trips,
+                client_equivalent_round_trips=_pairwise_round_trips(live_result.sampled_people),
+            )
             return _lens_envelope(
                 snapshot_id=snapshot_id,
                 limitations=bundle.limitations,
@@ -167,8 +189,11 @@ def create_app() -> FastAPI:
                 explanation="HydraDB Ghost analysis completed with one bounded MSpaths sample call.",
                 source="hydradb",
                 executed_query=asdict(live_result.executed_query),
+                what_if=None if live_result.what_if is None else asdict(live_result.what_if),
+                comparison=comparison,
             )
-        findings = fixture_ghost_findings(bundle)
+        findings = fixture_ghost_findings(bundle, exclude_person_keys=excluded)
+        people_count = sum(1 for node in bundle.nodes if node.label == "Person")
         return _lens_envelope(
             snapshot_id=snapshot_id,
             limitations=bundle.limitations,
@@ -182,6 +207,15 @@ def create_app() -> FastAPI:
             source="fixture" if live_result is None else "hydradb",
             degraded_reason=None if live_result is None else live_result.error,
             executed_query=None if live_result is None else asdict(live_result.executed_query),
+            what_if=None if not excluded else asdict(fixture_what_if(bundle, excluded)),
+            comparison=EngineComparison(
+                engine_ms=None,
+                client_ms=client_ms,
+                client_method="python_bounded_bfs_all_pairs",
+                sampled_people=people_count,
+                engine_round_trips=0,
+                client_equivalent_round_trips=_pairwise_round_trips(people_count),
+            ),
         )
 
     @app.get("/api/v1/snapshots/{snapshot_id}/faultlines", response_model=LensEnvelope)
@@ -326,6 +360,8 @@ def _lens_envelope(
     source: str = "fixture",
     degraded_reason: str | None = None,
     executed_query: dict[str, object] | None = None,
+    what_if: dict[str, object] | None = None,
+    comparison: EngineComparison | None = None,
 ) -> LensEnvelope:
     return LensEnvelope(
         snapshot_id=snapshot_id,
@@ -336,7 +372,23 @@ def _lens_envelope(
         source=source,
         degraded_reason=degraded_reason,
         executed_query=executed_query,
+        what_if=None if what_if is None else WhatIfSummary.model_validate(what_if),
+        comparison=comparison,
     )
+
+
+def _validated_person_keys(bundle: CanonicalBundle, keys: list[str]) -> tuple[str, ...]:
+    """Keep only keys that name people in the bundle; unknown keys are a 404, not a silent no-op."""
+    people = {node.canonical_key for node in bundle.nodes if node.label == "Person"}
+    unknown = sorted(key for key in keys if key not in people)
+    if unknown:
+        raise not_found(f"Unknown person keys: {', '.join(unknown)}", code="person_not_found")
+    return tuple(sorted(set(keys)))
+
+
+def _pairwise_round_trips(people: int) -> int:
+    """Client-side equivalent of one pairwise MSpaths call: one shortest-path query per pair."""
+    return people * (people - 1) // 2
 
 
 def _with_ghost_evidence(
