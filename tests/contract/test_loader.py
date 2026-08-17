@@ -24,6 +24,22 @@ class RecordingDriver:
         return [{"count": len((parameters_ or {}).get("rows", []))}]
 
 
+class FailOnceDriver(RecordingDriver):
+    def __init__(self) -> None:
+        super().__init__()
+        self.failed = False
+
+    def execute_query(
+        self,
+        query_: str,
+        parameters_: dict[str, object] | None = None,
+    ) -> list[dict[str, object]]:
+        if not self.failed and "MERGE (s)-[r:" in query_:
+            self.failed = True
+            raise RuntimeError("injected batch failure")
+        return super().execute_query(query_, parameters_)
+
+
 def demo_snapshot(work_root: Path) -> tuple[Path, object]:
     records: list[CanonicalRecord] = []
     for name in ("directory.json", "events.json", "git_facts.json"):
@@ -71,4 +87,18 @@ def test_loader_resumes_previously_completed_batches(tmp_path: Path) -> None:
 
     assert second.graph_fingerprint == first.graph_fingerprint
     assert second.resumed_batches == first.attempted_batches
-    assert len(driver.calls) == first.attempted_batches
+    assert len(driver.calls) == first.attempted_batches + (2 * len(first.verification_queries))
+
+
+def test_loader_records_failure_and_resumes_after_transient_batch_error(tmp_path: Path) -> None:
+    snapshot_dir, manifest = demo_snapshot(tmp_path)
+    driver = FailOnceDriver()
+    loader = HydraLoader(HydraGateway(driver))
+
+    first = loader.load(snapshot_dir, manifest, batch_size=500)
+    assert first.failed_batches
+    assert "injected batch failure" in first.failed_batches[0]
+
+    second = loader.load(snapshot_dir, manifest, batch_size=500)
+    assert second.failed_batches == ()
+    assert second.resumed_batches == second.attempted_batches - 1

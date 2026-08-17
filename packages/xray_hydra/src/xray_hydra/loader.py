@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Protocol
 
 import polars as pl
-from xray_core.models import LoadReport, Scalar, SnapshotManifest, WriteBatchSpec
+from xray_core.models import LoadReport, QuerySpec, Scalar, SnapshotManifest, WriteBatchSpec
 
 from .cypher import edge_upsert_batch, node_upsert_batch
 from .gateway import HydraGateway
@@ -90,6 +90,25 @@ class HydraLoader:
             self.checkpoint_store.put(manifest.snapshot_id, batch.name, index, row_hash)
             completed += 1
 
+        verification_queries = (
+            QuerySpec(
+                name="verify_snapshot_nodes",
+                statement="MATCH (n {dataset_id: $dataset_id}) RETURN count(n) AS count",
+                parameters={"dataset_id": manifest.dataset_id},
+                max_len=None,
+                result_limit=1,
+            ),
+            QuerySpec(
+                name="verify_snapshot_edges",
+                statement="MATCH ()-[r {dataset_id: $dataset_id}]->() RETURN count(r) AS count",
+                parameters={"dataset_id": manifest.dataset_id},
+                max_len=None,
+                result_limit=1,
+            ),
+        )
+        for query in verification_queries:
+            self.gateway.run(query)
+
         return LoadReport(
             snapshot_id=manifest.snapshot_id,
             node_count=manifest.row_counts["nodes"],
@@ -99,7 +118,7 @@ class HydraLoader:
             resumed_batches=resumed,
             failed_batches=tuple(failed),
             graph_fingerprint=_graph_fingerprint(node_rows, edge_rows),
-            verification_queries=(),
+            verification_queries=verification_queries,
         )
 
     @staticmethod
