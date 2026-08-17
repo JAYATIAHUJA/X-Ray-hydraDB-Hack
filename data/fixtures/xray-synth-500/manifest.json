@@ -2,7 +2,7 @@
   "acceptance_labels": {
     "faultline_count": 3,
     "gap_count": 5,
-    "ghost_broker_key": "person:p0000"
+    "ghost_broker_key": "person:p0007"
   },
   "created_at_epoch": 1735689600,
   "dataset_id": "xray-synth-500",
@@ -14,7 +14,7 @@
   "fixture_version": 1,
   "ground_truth_descriptor": {
     "evidence_class": "demo_ground_truth",
-    "sha256": "cbca78c31d8eda1f42ab519c91e0701e69f8591ea8e3a10d5ceba5cb9d65d861"
+    "sha256": "c4748a584531d3eb99fa16758304f8c68130b445c0af04a9d748a8f822b9465c"
   },
   "ground_truth_file": "ground_truth.json",
   "limitations": [
@@ -184,15 +184,15 @@
       "input_status": "complete",
       "path": "directory.json",
       "record_count": 510,
-      "sha256": "1aaeabadccce680528a532ad3cc60e63e059d12e90c6cb15f1ad2b37e4a5d998",
+      "sha256": "f760ef791a497711cbade6bf7599175a1fbf87b6bdabca9534f827cdc0846952",
       "source_type": "directory",
       "source_uri": "fixture://xray-synth-500/directory.json"
     },
     {
       "input_status": "complete",
       "path": "events.json",
-      "record_count": 749,
-      "sha256": "f2ba679c68777a08d0d73c9546c093e0a0e77135ee2beb0b42f48589be794167",
+      "record_count": 754,
+      "sha256": "2b2b5b7fcabde0ca3eb0d82e631f2def1bde473bcb1afe96d5d2b45f2fa197e8",
       "source_type": "events",
       "source_uri": "fixture://xray-synth-500/events.json"
     },
@@ -200,7 +200,7 @@
       "input_status": "complete",
       "path": "git_facts.json",
       "record_count": 87,
-      "sha256": "09ae9b9d5e5a46041129cc01fb3a62eccd767f2c381121d0de54d14c138a2f92",
+      "sha256": "0bd0a0225fac64c23f40c4b87f6bdde7218443de3cdd28e77950e5063110cc2f",
       "source_type": "git_facts",
       "source_uri": "fixture://xray-synth-500/git_facts.json"
     }

@@ -3,771 +3,771 @@
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-00",
+    "external_id": "module-payments-api",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-00",
+      "canonical_key": "module:payments-api",
       "criticality": 1.0,
-      "module_name": "module-00",
+      "module_name": "payments-api",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-00"
+      "module:payments-api"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-01",
+    "external_id": "module-checkout-web",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-01",
+      "canonical_key": "module:checkout-web",
       "criticality": 0.99,
-      "module_name": "module-01",
+      "module_name": "checkout-web",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-01"
+      "module:checkout-web"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-02",
+    "external_id": "module-refunds-worker",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-02",
+      "canonical_key": "module:refunds-worker",
       "criticality": 0.98,
-      "module_name": "module-02",
+      "module_name": "refunds-worker",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-02"
+      "module:refunds-worker"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-03",
+    "external_id": "module-invoice-service",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-03",
+      "canonical_key": "module:invoice-service",
       "criticality": 0.97,
-      "module_name": "module-03",
+      "module_name": "invoice-service",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-03"
+      "module:invoice-service"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-04",
+    "external_id": "module-ledger-core",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-04",
+      "canonical_key": "module:ledger-core",
       "criticality": 0.96,
-      "module_name": "module-04",
+      "module_name": "ledger-core",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-04"
+      "module:ledger-core"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-05",
+    "external_id": "module-ledger-worker",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-05",
+      "canonical_key": "module:ledger-worker",
       "criticality": 0.95,
-      "module_name": "module-05",
+      "module_name": "ledger-worker",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-05"
+      "module:ledger-worker"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-06",
+    "external_id": "module-reconciliation",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-06",
+      "canonical_key": "module:reconciliation",
       "criticality": 0.94,
-      "module_name": "module-06",
+      "module_name": "reconciliation",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-06"
+      "module:reconciliation"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-07",
+    "external_id": "module-tax-engine",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-07",
+      "canonical_key": "module:tax-engine",
       "criticality": 0.93,
-      "module_name": "module-07",
+      "module_name": "tax-engine",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-07"
+      "module:tax-engine"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-08",
+    "external_id": "module-identity-api",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-08",
+      "canonical_key": "module:identity-api",
       "criticality": 0.92,
-      "module_name": "module-08",
+      "module_name": "identity-api",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-08"
+      "module:identity-api"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-09",
+    "external_id": "module-auth-gateway",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-09",
+      "canonical_key": "module:auth-gateway",
       "criticality": 0.91,
-      "module_name": "module-09",
+      "module_name": "auth-gateway",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-09"
+      "module:auth-gateway"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-10",
+    "external_id": "module-session-store",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-10",
+      "canonical_key": "module:session-store",
       "criticality": 0.9,
-      "module_name": "module-10",
+      "module_name": "session-store",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-10"
+      "module:session-store"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-11",
+    "external_id": "module-user-profile",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-11",
+      "canonical_key": "module:user-profile",
       "criticality": 0.89,
-      "module_name": "module-11",
+      "module_name": "user-profile",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-11"
+      "module:user-profile"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-12",
+    "external_id": "module-platform-sdk",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-12",
+      "canonical_key": "module:platform-sdk",
       "criticality": 0.88,
-      "module_name": "module-12",
+      "module_name": "platform-sdk",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-12"
+      "module:platform-sdk"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-13",
+    "external_id": "module-event-bus",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-13",
+      "canonical_key": "module:event-bus",
       "criticality": 0.87,
-      "module_name": "module-13",
+      "module_name": "event-bus",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-13"
+      "module:event-bus"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-14",
+    "external_id": "module-job-scheduler",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-14",
+      "canonical_key": "module:job-scheduler",
       "criticality": 0.86,
-      "module_name": "module-14",
+      "module_name": "job-scheduler",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-14"
+      "module:job-scheduler"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-15",
+    "external_id": "module-config-service",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-15",
+      "canonical_key": "module:config-service",
       "criticality": 0.85,
-      "module_name": "module-15",
+      "module_name": "config-service",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-15"
+      "module:config-service"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-16",
+    "external_id": "module-data-pipeline",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-16",
+      "canonical_key": "module:data-pipeline",
       "criticality": 0.84,
-      "module_name": "module-16",
+      "module_name": "data-pipeline",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-16"
+      "module:data-pipeline"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-17",
+    "external_id": "module-warehouse-sync",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-17",
+      "canonical_key": "module:warehouse-sync",
       "criticality": 0.83,
-      "module_name": "module-17",
+      "module_name": "warehouse-sync",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-17"
+      "module:warehouse-sync"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-18",
+    "external_id": "module-metrics-collector",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-18",
+      "canonical_key": "module:metrics-collector",
       "criticality": 0.82,
-      "module_name": "module-18",
+      "module_name": "metrics-collector",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-18"
+      "module:metrics-collector"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-19",
+    "external_id": "module-report-builder",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-19",
+      "canonical_key": "module:report-builder",
       "criticality": 0.81,
-      "module_name": "module-19",
+      "module_name": "report-builder",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-19"
+      "module:report-builder"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-20",
+    "external_id": "module-mobile-ios",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-20",
+      "canonical_key": "module:mobile-ios",
       "criticality": 0.8,
-      "module_name": "module-20",
+      "module_name": "mobile-ios",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-20"
+      "module:mobile-ios"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-21",
+    "external_id": "module-mobile-android",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-21",
+      "canonical_key": "module:mobile-android",
       "criticality": 0.79,
-      "module_name": "module-21",
+      "module_name": "mobile-android",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-21"
+      "module:mobile-android"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-22",
+    "external_id": "module-push-service",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-22",
+      "canonical_key": "module:push-service",
       "criticality": 0.78,
-      "module_name": "module-22",
+      "module_name": "push-service",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-22"
+      "module:push-service"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-23",
+    "external_id": "module-deeplink-router",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-23",
+      "canonical_key": "module:deeplink-router",
       "criticality": 0.77,
-      "module_name": "module-23",
+      "module_name": "deeplink-router",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-23"
+      "module:deeplink-router"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-24",
+    "external_id": "module-growth-experiments",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-24",
+      "canonical_key": "module:growth-experiments",
       "criticality": 0.76,
-      "module_name": "module-24",
+      "module_name": "growth-experiments",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-24"
+      "module:growth-experiments"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-25",
+    "external_id": "module-referral-service",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-25",
+      "canonical_key": "module:referral-service",
       "criticality": 0.75,
-      "module_name": "module-25",
+      "module_name": "referral-service",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-25"
+      "module:referral-service"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-26",
+    "external_id": "module-email-campaigns",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-26",
+      "canonical_key": "module:email-campaigns",
       "criticality": 0.74,
-      "module_name": "module-26",
+      "module_name": "email-campaigns",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-26"
+      "module:email-campaigns"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-27",
+    "external_id": "module-onboarding-flow",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-27",
+      "canonical_key": "module:onboarding-flow",
       "criticality": 0.73,
-      "module_name": "module-27",
+      "module_name": "onboarding-flow",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-27"
+      "module:onboarding-flow"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-28",
+    "external_id": "module-infra-terraform",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-28",
+      "canonical_key": "module:infra-terraform",
       "criticality": 0.72,
-      "module_name": "module-28",
+      "module_name": "infra-terraform",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-28"
+      "module:infra-terraform"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-29",
+    "external_id": "module-k8s-operators",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-29",
+      "canonical_key": "module:k8s-operators",
       "criticality": 0.71,
-      "module_name": "module-29",
+      "module_name": "k8s-operators",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-29"
+      "module:k8s-operators"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-30",
+    "external_id": "module-ci-runners",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-30",
+      "canonical_key": "module:ci-runners",
       "criticality": 0.7,
-      "module_name": "module-30",
+      "module_name": "ci-runners",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-30"
+      "module:ci-runners"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-31",
+    "external_id": "module-artifact-registry",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-31",
+      "canonical_key": "module:artifact-registry",
       "criticality": 0.69,
-      "module_name": "module-31",
+      "module_name": "artifact-registry",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-31"
+      "module:artifact-registry"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-32",
+    "external_id": "module-secrets-manager",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-32",
+      "canonical_key": "module:secrets-manager",
       "criticality": 0.68,
-      "module_name": "module-32",
+      "module_name": "secrets-manager",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-32"
+      "module:secrets-manager"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-33",
+    "external_id": "module-audit-sink",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-33",
+      "canonical_key": "module:audit-sink",
       "criticality": 0.67,
-      "module_name": "module-33",
+      "module_name": "audit-sink",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-33"
+      "module:audit-sink"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-34",
+    "external_id": "module-policy-engine",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-34",
+      "canonical_key": "module:policy-engine",
       "criticality": 0.66,
-      "module_name": "module-34",
+      "module_name": "policy-engine",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-34"
+      "module:policy-engine"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-35",
+    "external_id": "module-vuln-scanner",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-35",
+      "canonical_key": "module:vuln-scanner",
       "criticality": 0.65,
-      "module_name": "module-35",
+      "module_name": "vuln-scanner",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-35"
+      "module:vuln-scanner"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-36",
+    "external_id": "module-support-console",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-36",
+      "canonical_key": "module:support-console",
       "criticality": 0.64,
-      "module_name": "module-36",
+      "module_name": "support-console",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-36"
+      "module:support-console"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-37",
+    "external_id": "module-ticket-router",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-37",
+      "canonical_key": "module:ticket-router",
       "criticality": 0.63,
-      "module_name": "module-37",
+      "module_name": "ticket-router",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-37"
+      "module:ticket-router"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-38",
+    "external_id": "module-kb-search",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-38",
+      "canonical_key": "module:kb-search",
       "criticality": 0.62,
-      "module_name": "module-38",
+      "module_name": "kb-search",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-38"
+      "module:kb-search"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "module-module-39",
+    "external_id": "module-macro-engine",
     "kind": "module",
     "metadata": {
-      "canonical_key": "module:module-39",
+      "canonical_key": "module:macro-engine",
       "criticality": 0.61,
-      "module_name": "module-39",
+      "module_name": "macro-engine",
       "repo": "synth-monorepo"
     },
     "occurred_at_epoch": 1735689600,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-39"
+      "module:macro-engine"
     ]
   },
   {
     "author_external_id": "p0010",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0010-module-00",
+    "external_id": "authorship-p0010-payments-api",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 30,
-      "module_external_id": "module-00",
+      "module_external_id": "payments-api",
       "total_attributed_count": 34
     },
     "occurred_at_epoch": 1735689600,
@@ -775,18 +775,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0010",
-      "module:module-00"
+      "module:payments-api"
     ]
   },
   {
     "author_external_id": "p0061",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0061-module-01",
+    "external_id": "authorship-p0061-checkout-web",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 31,
-      "module_external_id": "module-01",
+      "module_external_id": "checkout-web",
       "total_attributed_count": 35
     },
     "occurred_at_epoch": 1735689600,
@@ -794,18 +794,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0061",
-      "module:module-01"
+      "module:checkout-web"
     ]
   },
   {
     "author_external_id": "p0112",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0112-module-02",
+    "external_id": "authorship-p0112-refunds-worker",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 32,
-      "module_external_id": "module-02",
+      "module_external_id": "refunds-worker",
       "total_attributed_count": 36
     },
     "occurred_at_epoch": 1735689600,
@@ -813,18 +813,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0112",
-      "module:module-02"
+      "module:refunds-worker"
     ]
   },
   {
     "author_external_id": "p0163",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0163-module-03",
+    "external_id": "authorship-p0163-invoice-service",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 33,
-      "module_external_id": "module-03",
+      "module_external_id": "invoice-service",
       "total_attributed_count": 37
     },
     "occurred_at_epoch": 1735689600,
@@ -832,18 +832,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0163",
-      "module:module-03"
+      "module:invoice-service"
     ]
   },
   {
     "author_external_id": "p0214",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0214-module-04",
+    "external_id": "authorship-p0214-ledger-core",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 34,
-      "module_external_id": "module-04",
+      "module_external_id": "ledger-core",
       "total_attributed_count": 38
     },
     "occurred_at_epoch": 1735689600,
@@ -851,18 +851,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0214",
-      "module:module-04"
+      "module:ledger-core"
     ]
   },
   {
     "author_external_id": "p0265",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0265-module-05",
+    "external_id": "authorship-p0265-ledger-worker",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 35,
-      "module_external_id": "module-05",
+      "module_external_id": "ledger-worker",
       "total_attributed_count": 39
     },
     "occurred_at_epoch": 1735689600,
@@ -870,18 +870,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0265",
-      "module:module-05"
+      "module:ledger-worker"
     ]
   },
   {
     "author_external_id": "p0316",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0316-module-06",
+    "external_id": "authorship-p0316-reconciliation",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 36,
-      "module_external_id": "module-06",
+      "module_external_id": "reconciliation",
       "total_attributed_count": 40
     },
     "occurred_at_epoch": 1735689600,
@@ -889,18 +889,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0316",
-      "module:module-06"
+      "module:reconciliation"
     ]
   },
   {
     "author_external_id": "p0367",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0367-module-07",
+    "external_id": "authorship-p0367-tax-engine",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 37,
-      "module_external_id": "module-07",
+      "module_external_id": "tax-engine",
       "total_attributed_count": 41
     },
     "occurred_at_epoch": 1735689600,
@@ -908,18 +908,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0367",
-      "module:module-07"
+      "module:tax-engine"
     ]
   },
   {
     "author_external_id": "p0418",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0418-module-08",
+    "external_id": "authorship-p0418-identity-api",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 38,
-      "module_external_id": "module-08",
+      "module_external_id": "identity-api",
       "total_attributed_count": 42
     },
     "occurred_at_epoch": 1735689600,
@@ -927,18 +927,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0418",
-      "module:module-08"
+      "module:identity-api"
     ]
   },
   {
     "author_external_id": "p0469",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0469-module-09",
+    "external_id": "authorship-p0469-auth-gateway",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 39,
-      "module_external_id": "module-09",
+      "module_external_id": "auth-gateway",
       "total_attributed_count": 43
     },
     "occurred_at_epoch": 1735689600,
@@ -946,18 +946,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0469",
-      "module:module-09"
+      "module:auth-gateway"
     ]
   },
   {
     "author_external_id": "p0020",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0020-module-10",
+    "external_id": "authorship-p0020-session-store",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 40,
-      "module_external_id": "module-10",
+      "module_external_id": "session-store",
       "total_attributed_count": 44
     },
     "occurred_at_epoch": 1735689600,
@@ -965,18 +965,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0020",
-      "module:module-10"
+      "module:session-store"
     ]
   },
   {
     "author_external_id": "p0071",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0071-module-11",
+    "external_id": "authorship-p0071-user-profile",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 41,
-      "module_external_id": "module-11",
+      "module_external_id": "user-profile",
       "total_attributed_count": 45
     },
     "occurred_at_epoch": 1735689600,
@@ -984,18 +984,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0071",
-      "module:module-11"
+      "module:user-profile"
     ]
   },
   {
     "author_external_id": "p0122",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0122-module-12",
+    "external_id": "authorship-p0122-platform-sdk",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 42,
-      "module_external_id": "module-12",
+      "module_external_id": "platform-sdk",
       "total_attributed_count": 46
     },
     "occurred_at_epoch": 1735689600,
@@ -1003,18 +1003,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0122",
-      "module:module-12"
+      "module:platform-sdk"
     ]
   },
   {
     "author_external_id": "p0173",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0173-module-13",
+    "external_id": "authorship-p0173-event-bus",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 43,
-      "module_external_id": "module-13",
+      "module_external_id": "event-bus",
       "total_attributed_count": 47
     },
     "occurred_at_epoch": 1735689600,
@@ -1022,18 +1022,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0173",
-      "module:module-13"
+      "module:event-bus"
     ]
   },
   {
     "author_external_id": "p0224",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0224-module-14",
+    "external_id": "authorship-p0224-job-scheduler",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 44,
-      "module_external_id": "module-14",
+      "module_external_id": "job-scheduler",
       "total_attributed_count": 48
     },
     "occurred_at_epoch": 1735689600,
@@ -1041,18 +1041,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0224",
-      "module:module-14"
+      "module:job-scheduler"
     ]
   },
   {
     "author_external_id": "p0275",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0275-module-15",
+    "external_id": "authorship-p0275-config-service",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 45,
-      "module_external_id": "module-15",
+      "module_external_id": "config-service",
       "total_attributed_count": 49
     },
     "occurred_at_epoch": 1735689600,
@@ -1060,18 +1060,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0275",
-      "module:module-15"
+      "module:config-service"
     ]
   },
   {
     "author_external_id": "p0326",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0326-module-16",
+    "external_id": "authorship-p0326-data-pipeline",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 46,
-      "module_external_id": "module-16",
+      "module_external_id": "data-pipeline",
       "total_attributed_count": 50
     },
     "occurred_at_epoch": 1735689600,
@@ -1079,18 +1079,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0326",
-      "module:module-16"
+      "module:data-pipeline"
     ]
   },
   {
     "author_external_id": "p0377",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0377-module-17",
+    "external_id": "authorship-p0377-warehouse-sync",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 30,
-      "module_external_id": "module-17",
+      "module_external_id": "warehouse-sync",
       "total_attributed_count": 34
     },
     "occurred_at_epoch": 1735689600,
@@ -1098,18 +1098,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0377",
-      "module:module-17"
+      "module:warehouse-sync"
     ]
   },
   {
     "author_external_id": "p0428",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0428-module-18",
+    "external_id": "authorship-p0428-metrics-collector",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 31,
-      "module_external_id": "module-18",
+      "module_external_id": "metrics-collector",
       "total_attributed_count": 35
     },
     "occurred_at_epoch": 1735689600,
@@ -1117,18 +1117,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0428",
-      "module:module-18"
+      "module:metrics-collector"
     ]
   },
   {
     "author_external_id": "p0479",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0479-module-19",
+    "external_id": "authorship-p0479-report-builder",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 32,
-      "module_external_id": "module-19",
+      "module_external_id": "report-builder",
       "total_attributed_count": 36
     },
     "occurred_at_epoch": 1735689600,
@@ -1136,18 +1136,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0479",
-      "module:module-19"
+      "module:report-builder"
     ]
   },
   {
     "author_external_id": "p0010",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0010-module-20",
+    "external_id": "authorship-p0010-mobile-ios",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 33,
-      "module_external_id": "module-20",
+      "module_external_id": "mobile-ios",
       "total_attributed_count": 37
     },
     "occurred_at_epoch": 1735689600,
@@ -1155,18 +1155,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0010",
-      "module:module-20"
+      "module:mobile-ios"
     ]
   },
   {
     "author_external_id": "p0061",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0061-module-21",
+    "external_id": "authorship-p0061-mobile-android",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 34,
-      "module_external_id": "module-21",
+      "module_external_id": "mobile-android",
       "total_attributed_count": 38
     },
     "occurred_at_epoch": 1735689600,
@@ -1174,18 +1174,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0061",
-      "module:module-21"
+      "module:mobile-android"
     ]
   },
   {
     "author_external_id": "p0112",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0112-module-22",
+    "external_id": "authorship-p0112-push-service",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 35,
-      "module_external_id": "module-22",
+      "module_external_id": "push-service",
       "total_attributed_count": 39
     },
     "occurred_at_epoch": 1735689600,
@@ -1193,18 +1193,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0112",
-      "module:module-22"
+      "module:push-service"
     ]
   },
   {
     "author_external_id": "p0163",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0163-module-23",
+    "external_id": "authorship-p0163-deeplink-router",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 36,
-      "module_external_id": "module-23",
+      "module_external_id": "deeplink-router",
       "total_attributed_count": 40
     },
     "occurred_at_epoch": 1735689600,
@@ -1212,18 +1212,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0163",
-      "module:module-23"
+      "module:deeplink-router"
     ]
   },
   {
     "author_external_id": "p0214",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0214-module-24",
+    "external_id": "authorship-p0214-growth-experiments",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 37,
-      "module_external_id": "module-24",
+      "module_external_id": "growth-experiments",
       "total_attributed_count": 41
     },
     "occurred_at_epoch": 1735689600,
@@ -1231,18 +1231,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0214",
-      "module:module-24"
+      "module:growth-experiments"
     ]
   },
   {
     "author_external_id": "p0265",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0265-module-25",
+    "external_id": "authorship-p0265-referral-service",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 38,
-      "module_external_id": "module-25",
+      "module_external_id": "referral-service",
       "total_attributed_count": 42
     },
     "occurred_at_epoch": 1735689600,
@@ -1250,18 +1250,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0265",
-      "module:module-25"
+      "module:referral-service"
     ]
   },
   {
     "author_external_id": "p0316",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0316-module-26",
+    "external_id": "authorship-p0316-email-campaigns",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 39,
-      "module_external_id": "module-26",
+      "module_external_id": "email-campaigns",
       "total_attributed_count": 43
     },
     "occurred_at_epoch": 1735689600,
@@ -1269,18 +1269,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0316",
-      "module:module-26"
+      "module:email-campaigns"
     ]
   },
   {
     "author_external_id": "p0367",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0367-module-27",
+    "external_id": "authorship-p0367-onboarding-flow",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 40,
-      "module_external_id": "module-27",
+      "module_external_id": "onboarding-flow",
       "total_attributed_count": 44
     },
     "occurred_at_epoch": 1735689600,
@@ -1288,18 +1288,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0367",
-      "module:module-27"
+      "module:onboarding-flow"
     ]
   },
   {
     "author_external_id": "p0418",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0418-module-28",
+    "external_id": "authorship-p0418-infra-terraform",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 41,
-      "module_external_id": "module-28",
+      "module_external_id": "infra-terraform",
       "total_attributed_count": 45
     },
     "occurred_at_epoch": 1735689600,
@@ -1307,18 +1307,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0418",
-      "module:module-28"
+      "module:infra-terraform"
     ]
   },
   {
     "author_external_id": "p0469",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0469-module-29",
+    "external_id": "authorship-p0469-k8s-operators",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 42,
-      "module_external_id": "module-29",
+      "module_external_id": "k8s-operators",
       "total_attributed_count": 46
     },
     "occurred_at_epoch": 1735689600,
@@ -1326,18 +1326,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0469",
-      "module:module-29"
+      "module:k8s-operators"
     ]
   },
   {
     "author_external_id": "p0020",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0020-module-30",
+    "external_id": "authorship-p0020-ci-runners",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 43,
-      "module_external_id": "module-30",
+      "module_external_id": "ci-runners",
       "total_attributed_count": 47
     },
     "occurred_at_epoch": 1735689600,
@@ -1345,18 +1345,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0020",
-      "module:module-30"
+      "module:ci-runners"
     ]
   },
   {
     "author_external_id": "p0071",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0071-module-31",
+    "external_id": "authorship-p0071-artifact-registry",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 44,
-      "module_external_id": "module-31",
+      "module_external_id": "artifact-registry",
       "total_attributed_count": 48
     },
     "occurred_at_epoch": 1735689600,
@@ -1364,18 +1364,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0071",
-      "module:module-31"
+      "module:artifact-registry"
     ]
   },
   {
     "author_external_id": "p0122",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0122-module-32",
+    "external_id": "authorship-p0122-secrets-manager",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 45,
-      "module_external_id": "module-32",
+      "module_external_id": "secrets-manager",
       "total_attributed_count": 49
     },
     "occurred_at_epoch": 1735689600,
@@ -1383,18 +1383,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0122",
-      "module:module-32"
+      "module:secrets-manager"
     ]
   },
   {
     "author_external_id": "p0173",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0173-module-33",
+    "external_id": "authorship-p0173-audit-sink",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 46,
-      "module_external_id": "module-33",
+      "module_external_id": "audit-sink",
       "total_attributed_count": 50
     },
     "occurred_at_epoch": 1735689600,
@@ -1402,18 +1402,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0173",
-      "module:module-33"
+      "module:audit-sink"
     ]
   },
   {
     "author_external_id": "p0224",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0224-module-34",
+    "external_id": "authorship-p0224-policy-engine",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 30,
-      "module_external_id": "module-34",
+      "module_external_id": "policy-engine",
       "total_attributed_count": 34
     },
     "occurred_at_epoch": 1735689600,
@@ -1421,18 +1421,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0224",
-      "module:module-34"
+      "module:policy-engine"
     ]
   },
   {
     "author_external_id": "p0275",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0275-module-35",
+    "external_id": "authorship-p0275-vuln-scanner",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 31,
-      "module_external_id": "module-35",
+      "module_external_id": "vuln-scanner",
       "total_attributed_count": 35
     },
     "occurred_at_epoch": 1735689600,
@@ -1440,18 +1440,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0275",
-      "module:module-35"
+      "module:vuln-scanner"
     ]
   },
   {
     "author_external_id": "p0326",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0326-module-36",
+    "external_id": "authorship-p0326-support-console",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 32,
-      "module_external_id": "module-36",
+      "module_external_id": "support-console",
       "total_attributed_count": 36
     },
     "occurred_at_epoch": 1735689600,
@@ -1459,18 +1459,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0326",
-      "module:module-36"
+      "module:support-console"
     ]
   },
   {
     "author_external_id": "p0377",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0377-module-37",
+    "external_id": "authorship-p0377-ticket-router",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 33,
-      "module_external_id": "module-37",
+      "module_external_id": "ticket-router",
       "total_attributed_count": 37
     },
     "occurred_at_epoch": 1735689600,
@@ -1478,18 +1478,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0377",
-      "module:module-37"
+      "module:ticket-router"
     ]
   },
   {
     "author_external_id": "p0428",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0428-module-38",
+    "external_id": "authorship-p0428-kb-search",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 34,
-      "module_external_id": "module-38",
+      "module_external_id": "kb-search",
       "total_attributed_count": 38
     },
     "occurred_at_epoch": 1735689600,
@@ -1497,18 +1497,18 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0428",
-      "module:module-38"
+      "module:kb-search"
     ]
   },
   {
     "author_external_id": "p0479",
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "authorship-p0479-module-39",
+    "external_id": "authorship-p0479-macro-engine",
     "kind": "authorship_aggregate",
     "metadata": {
       "attributed_count": 35,
-      "module_external_id": "module-39",
+      "module_external_id": "macro-engine",
       "total_attributed_count": 39
     },
     "occurred_at_epoch": 1735689600,
@@ -1516,147 +1516,147 @@
     "source": "synth-git-facts",
     "subjects": [
       "person:p0479",
-      "module:module-39"
+      "module:macro-engine"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "dependency-module-00-module-09-planted",
+    "external_id": "dependency-payments-api-auth-gateway-planted",
     "kind": "dependency",
     "metadata": {
       "dependency_kind": "explicit_reference",
-      "source_module_external_id": "module-00",
-      "target_module_external_id": "module-09",
+      "source_module_external_id": "payments-api",
+      "target_module_external_id": "auth-gateway",
       "weight": 41
     },
     "occurred_at_epoch": 1735709641,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-00",
-      "module:module-09"
+      "module:payments-api",
+      "module:auth-gateway"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "dependency-module-11-module-28-planted",
+    "external_id": "dependency-user-profile-infra-terraform-planted",
     "kind": "dependency",
     "metadata": {
       "dependency_kind": "explicit_reference",
-      "source_module_external_id": "module-11",
-      "target_module_external_id": "module-28",
+      "source_module_external_id": "user-profile",
+      "target_module_external_id": "infra-terraform",
       "weight": 37
     },
     "occurred_at_epoch": 1735709637,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-11",
-      "module:module-28"
+      "module:user-profile",
+      "module:infra-terraform"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "dependency-module-22-module-35-planted",
+    "external_id": "dependency-push-service-vuln-scanner-planted",
     "kind": "dependency",
     "metadata": {
       "dependency_kind": "explicit_reference",
-      "source_module_external_id": "module-22",
-      "target_module_external_id": "module-35",
+      "source_module_external_id": "push-service",
+      "target_module_external_id": "vuln-scanner",
       "weight": 31
     },
     "occurred_at_epoch": 1735709631,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-22",
-      "module:module-35"
+      "module:push-service",
+      "module:vuln-scanner"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "dependency-module-01-module-02-background",
+    "external_id": "dependency-checkout-web-refunds-worker-background",
     "kind": "dependency",
     "metadata": {
       "dependency_kind": "explicit_reference",
-      "source_module_external_id": "module-01",
-      "target_module_external_id": "module-02",
+      "source_module_external_id": "checkout-web",
+      "target_module_external_id": "refunds-worker",
       "weight": 9
     },
     "occurred_at_epoch": 1735709609,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-01",
-      "module:module-02"
+      "module:checkout-web",
+      "module:refunds-worker"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "dependency-module-12-module-13-background",
+    "external_id": "dependency-platform-sdk-event-bus-background",
     "kind": "dependency",
     "metadata": {
       "dependency_kind": "explicit_reference",
-      "source_module_external_id": "module-12",
-      "target_module_external_id": "module-13",
+      "source_module_external_id": "platform-sdk",
+      "target_module_external_id": "event-bus",
       "weight": 8
     },
     "occurred_at_epoch": 1735709608,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-12",
-      "module:module-13"
+      "module:platform-sdk",
+      "module:event-bus"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "dependency-module-23-module-24-background",
+    "external_id": "dependency-deeplink-router-growth-experiments-background",
     "kind": "dependency",
     "metadata": {
       "dependency_kind": "explicit_reference",
-      "source_module_external_id": "module-23",
-      "target_module_external_id": "module-24",
+      "source_module_external_id": "deeplink-router",
+      "target_module_external_id": "growth-experiments",
       "weight": 7
     },
     "occurred_at_epoch": 1735709607,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-23",
-      "module:module-24"
+      "module:deeplink-router",
+      "module:growth-experiments"
     ]
   },
   {
     "author_external_id": null,
     "content": null,
     "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "external_id": "dependency-module-34-module-36-background",
+    "external_id": "dependency-policy-engine-support-console-background",
     "kind": "dependency",
     "metadata": {
       "dependency_kind": "explicit_reference",
-      "source_module_external_id": "module-34",
-      "target_module_external_id": "module-36",
+      "source_module_external_id": "policy-engine",
+      "target_module_external_id": "support-console",
       "weight": 6
     },
     "occurred_at_epoch": 1735709606,
     "parent_external_id": null,
     "source": "synth-git-facts",
     "subjects": [
-      "module:module-34",
-      "module:module-36"
+      "module:policy-engine",
+      "module:support-console"
     ]
   }
 ]
