@@ -64,7 +64,7 @@ def _person_nodes(bundle: CanonicalBundle) -> tuple[NodeRow, ...]:
     )
 
 
-def _display_name(node: NodeRow) -> str:
+def display_name(node: NodeRow) -> str:
     value = node.properties.get("display_name") or node.properties.get("handle")
     return value if isinstance(value, str) else node.canonical_key
 
@@ -75,6 +75,35 @@ def _int_property(edge: EdgeRow, key: str, default: int) -> int:
 
 
 type CommunicationGraph = dict[str, dict[str, int]]
+
+# Faultline tiers. Owners with no bounded communication path carry full risk;
+# owners linked only through intermediaries (distance >= WEAK_DISTANCE) carry
+# half; a direct or 2-hop link is coordinated and is not a finding.
+TIER_NO_PATH = "no_path"
+TIER_WEAK = "weak_coordination"
+TIER_COORDINATED = "coordinated"
+WEAK_DISTANCE = 3
+TIER_RISK = {TIER_NO_PATH: 1.0, TIER_WEAK: 0.5, TIER_COORDINATED: 0.0}
+
+
+def faultline_tier(distance: int | None) -> tuple[str, float]:
+    """Return the (tier, risk) for an owner-to-owner communication distance.
+
+    This is the single source of truth for tiering; both the in-memory analysis
+    and the live HydraDB distance path call it.
+    """
+    if distance is None:
+        return TIER_NO_PATH, TIER_RISK[TIER_NO_PATH]
+    if distance >= WEAK_DISTANCE:
+        return TIER_WEAK, TIER_RISK[TIER_WEAK]
+    return TIER_COORDINATED, TIER_RISK[TIER_COORDINATED]
+
+
+def formal_ranks(people: tuple[NodeRow, ...]) -> dict[str, int]:
+    """Rank people by formal seniority (higher role_rank first, then key)."""
+    ordered = sorted(people, key=lambda node: (-role_rank(node), node.canonical_key))
+    return {node.canonical_key: index for index, node in enumerate(ordered, start=1)}
+
 
 _REACHABLE_WITHIN_CACHE: dict[tuple[int, str, int], frozenset[str]] = {}
 _GHOST_SCORE_CACHE: dict[tuple[int, int], tuple[GhostScore, ...]] = {}
@@ -113,17 +142,13 @@ def ghost_scores(bundle: CanonicalBundle, *, max_len: int = 4) -> tuple[GhostSco
     centrality = {key: tallies[key] / denominator for key in person_keys}
     structural_order = sorted(person_keys, key=lambda key: (-centrality[key], key))
     structural_rank = {key: index for index, key in enumerate(structural_order, start=1)}
-    formal_order = sorted(
-        people,
-        key=lambda node: (-_role_rank(node), node.canonical_key),
-    )
-    formal_rank = {node.canonical_key: index for index, node in enumerate(formal_order, start=1)}
+    formal_rank = formal_ranks(people)
 
     scores = [
         GhostScore(
             person_key=node.canonical_key,
-            display_name=_display_name(node),
-            role_rank=_role_rank(node),
+            display_name=display_name(node),
+            role_rank=role_rank(node),
             structural_rank=structural_rank[node.canonical_key],
             formal_rank=formal_rank[node.canonical_key],
             rank_gap=formal_rank[node.canonical_key] - structural_rank[node.canonical_key],
@@ -189,13 +214,8 @@ def faultlines(
         for source_owner_key, source_confidence in source_owners:
             for target_owner_key, target_confidence in target_owners:
                 distance = _bounded_distance(graph, source_owner_key, target_owner_key, max_len)
-                if distance is None:
-                    tier = "no_path"
-                    risk = 1.0
-                elif distance >= 3:
-                    tier = "weak_coordination"
-                    risk = 0.5
-                else:
+                tier, risk = faultline_tier(distance)
+                if risk == 0.0:
                     continue
                 dependency_weight = _int_property(edge, "weight", 1)
                 findings.append(
@@ -261,7 +281,7 @@ def gap_findings(bundle: CanonicalBundle) -> tuple[GapFinding, ...]:
     return tuple(sorted(findings, key=lambda finding: finding.phantom_key))
 
 
-def _role_rank(node: NodeRow) -> int:
+def role_rank(node: NodeRow) -> int:
     value = node.properties.get("role_rank")
     return value if type(value) is int else 0
 
@@ -505,13 +525,20 @@ def _interpolated_gap_epoch(
 
 
 __all__ = [
+    "TIER_COORDINATED",
+    "TIER_NO_PATH",
+    "TIER_WEAK",
     "BusFactorImpact",
     "FaultlineFinding",
     "GapFinding",
     "GhostScore",
     "bus_factor_impact",
     "communication_graph",
+    "display_name",
+    "faultline_tier",
     "faultlines",
+    "formal_ranks",
     "gap_findings",
     "ghost_scores",
+    "role_rank",
 ]

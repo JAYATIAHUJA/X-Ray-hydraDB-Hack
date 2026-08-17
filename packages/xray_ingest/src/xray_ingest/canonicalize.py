@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import hashlib
-import json
 from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Literal
 from urllib.parse import quote
 
+from xray_core.jsonutil import canonical_json
 from xray_core.models import (
     CanonicalBundle,
     CanonicalRecord,
@@ -44,18 +44,8 @@ class RecordEnvelope:
     evidence: EvidenceRecord
 
 
-def _canonical_json(value: object) -> str:
-    return json.dumps(
-        value,
-        ensure_ascii=False,
-        allow_nan=False,
-        sort_keys=True,
-        separators=(",", ":"),
-    )
-
-
 def _record_payload(record: CanonicalRecord) -> str:
-    return _canonical_json(record.model_dump(mode="json"))
+    return canonical_json(record.model_dump(mode="json"))
 
 
 def _record_evidence(
@@ -67,7 +57,7 @@ def _record_evidence(
     fallback_key = f"record:{record.source}:{record.external_id}"
     subject_key = record.subjects[0] if record.subjects else fallback_key
     object_key = record.subjects[1] if len(record.subjects) > 1 else subject_key
-    metadata_json = _canonical_json(
+    metadata_json = canonical_json(
         {
             "author_external_id": record.author_external_id,
             "metadata": record.metadata,

@@ -4,6 +4,7 @@ import hashlib
 import json
 from dataclasses import dataclass
 
+from xray_core.jsonutil import canonical_json
 from xray_core.models import CanonicalBundle, EdgeRow, EvidenceClass, EvidenceRecord, Scalar
 
 from .ids import stable_edge_id
@@ -11,12 +12,6 @@ from .ids import stable_edge_id
 
 class DerivationError(ValueError):
     """Raised when deterministic graph derivation cannot resolve source evidence."""
-
-
-def _canonical_json(value: object) -> str:
-    return json.dumps(
-        value, ensure_ascii=False, allow_nan=False, sort_keys=True, separators=(",", ":")
-    )
 
 
 def _evidence_metadata(record: EvidenceRecord) -> dict[str, object]:
@@ -57,7 +52,7 @@ def _derived_evidence(
     metadata: dict[str, Scalar],
     observed_epoch: int,
 ) -> EvidenceRecord:
-    payload = _canonical_json(
+    payload = canonical_json(
         {
             "dataset_id": bundle.dataset_id,
             "metadata": metadata,
@@ -83,7 +78,7 @@ def _derived_evidence(
         extraction_method="deterministic_derivation",
         content_sha256=hashlib.sha256(b"").hexdigest(),
         redacted_excerpt="",
-        metadata_json=_canonical_json({"metadata": metadata}),
+        metadata_json=canonical_json({"metadata": metadata}),
     )
 
 

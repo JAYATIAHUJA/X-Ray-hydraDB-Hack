@@ -4,12 +4,14 @@ import json
 import logging
 import tempfile
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, Protocol
 
 from xray_core.models import CanonicalBundle, LoadReport, QuerySpec, Scalar, SnapshotManifest
+from xray_core.paths import normalize_pair, path_key_tuple
 from xray_hydra import HydraGateway, HydraLoader
 from xray_hydra.cypher import communication_paths_query
 from xray_ingest.manifest import write_snapshot
@@ -167,9 +169,9 @@ def seed_bundle(
             detail="HydraDB is not configured; fixture seed was skipped.",
         )
 
-    created_gateway = gateway is None
     try:
-        resolved_gateway = gateway or _create_gateway(settings)
+        gateway_context = open_gateway(settings, gateway)
+        resolved_gateway = gateway_context.__enter__()
     except Exception as exc:
         hydra_uri = settings.hydra_uri or ""
         return HydraSeedResult(
@@ -204,8 +206,7 @@ def seed_bundle(
                 manifest = snapshot_writer(bundle, generated_snapshot_dir)
                 report = loader_factory(resolved_gateway).load(generated_snapshot_dir, manifest)
     finally:
-        if created_gateway and hasattr(resolved_gateway.driver, "close"):
-            resolved_gateway.driver.close()
+        gateway_context.__exit__(None, None, None)
 
     status: HydraSeedStatus = "partial" if report.failed_batches else "complete"
     return HydraSeedResult(
@@ -237,9 +238,8 @@ def communication_distances(
     if not settings.hydra_configured or not pairs:
         return None
 
-    created_gateway = gateway is None
     people_by_key = {node.canonical_key: node for node in bundle.nodes if node.label == "Person"}
-    normalized_pairs = tuple(sorted({_normalize_pair(*pair) for pair in pairs}))
+    normalized_pairs = tuple(sorted({normalize_pair(*pair) for pair in pairs}))
     resolved_pairs = tuple(
         pair for pair in normalized_pairs if pair[0] in people_by_key and pair[1] in people_by_key
     )
@@ -269,15 +269,15 @@ def communication_distances(
     )
     started = time.perf_counter()
     try:
-        resolved_gateway = gateway or _create_gateway(settings)
-        distances: dict[tuple[str, str], int | None] = dict.fromkeys(normalized_pairs)
-        for row in resolved_gateway.run(query):
-            path_keys = _path_key_tuple(row.get("path"))
-            if len(path_keys) < 2:
-                continue
-            pair = tuple(sorted((path_keys[0], path_keys[-1])))
-            if pair in distances:
-                distances[pair] = len(path_keys) - 1
+        with open_gateway(settings, gateway) as resolved_gateway:
+            distances: dict[tuple[str, str], int | None] = dict.fromkeys(normalized_pairs)
+            for row in resolved_gateway.run(query):
+                path_keys = path_key_tuple(row.get("path"))
+                if len(path_keys) < 2:
+                    continue
+                pair = normalize_pair(path_keys[0], path_keys[-1])
+                if pair in distances:
+                    distances[pair] = len(path_keys) - 1
     except Exception as exc:
         logger.exception("HydraDB communication distance query failed")
         return HydraDistanceResult(
@@ -286,13 +286,6 @@ def communication_distances(
             duration_ms=_elapsed_ms(started),
             error=str(exc),
         )
-    finally:
-        if (
-            created_gateway
-            and "resolved_gateway" in locals()
-            and hasattr(resolved_gateway.driver, "close")
-        ):
-            resolved_gateway.driver.close()
 
     return HydraDistanceResult(distances=distances, query=query, duration_ms=_elapsed_ms(started))
 
@@ -306,57 +299,49 @@ def graph_rows(
     if not settings.hydra_configured:
         return None
 
-    created_gateway = gateway is None
     try:
-        resolved_gateway = gateway or _create_gateway(settings)
-        people_ids = {node.id for node in bundle.nodes if node.label == "Person"}
-        node_limit = max(1, len(people_ids))
-        edge_limit = max(1, len(bundle.edges))
-        node_rows = resolved_gateway.run(
-            QuerySpec(
-                name="hydra_graph_people",
-                statement=(
-                    "MATCH (p:Person {dataset_id: $dataset_id}) "
-                    "RETURN p.id AS id, p.canonical_key AS key, p.properties AS properties "
-                    "ORDER BY p.canonical_key LIMIT $limit"
-                ),
-                parameters={"dataset_id": bundle.dataset_id, "limit": node_limit},
-                max_len=None,
-                result_limit=node_limit,
+        with open_gateway(settings, gateway) as resolved_gateway:
+            people_ids = {node.id for node in bundle.nodes if node.label == "Person"}
+            node_limit = max(1, len(people_ids))
+            edge_limit = max(1, len(bundle.edges))
+            node_rows = resolved_gateway.run(
+                QuerySpec(
+                    name="hydra_graph_people",
+                    statement=(
+                        "MATCH (p:Person {dataset_id: $dataset_id}) "
+                        "RETURN p.id AS id, p.canonical_key AS key, p.properties AS properties "
+                        "ORDER BY p.canonical_key LIMIT $limit"
+                    ),
+                    parameters={"dataset_id": bundle.dataset_id, "limit": node_limit},
+                    max_len=None,
+                    result_limit=node_limit,
+                )
             )
-        )
-        edge_rows = resolved_gateway.run(
-            QuerySpec(
-                name="hydra_graph_communications",
-                statement=(
-                    "MATCH (s:Person {dataset_id: $dataset_id})-"
-                    "[r:COMMUNICATES]->(t:Person {dataset_id: $dataset_id}) "
-                    "RETURN s.id AS source_id, t.id AS target_id, "
-                    "s.canonical_key AS source, t.canonical_key AS target, "
-                    "r.properties AS properties "
-                    "ORDER BY r.canonical_key LIMIT $limit"
-                ),
-                parameters={"dataset_id": bundle.dataset_id, "limit": edge_limit},
-                max_len=None,
-                result_limit=edge_limit,
+            edge_rows = resolved_gateway.run(
+                QuerySpec(
+                    name="hydra_graph_communications",
+                    statement=(
+                        "MATCH (s:Person {dataset_id: $dataset_id})-"
+                        "[r:COMMUNICATES]->(t:Person {dataset_id: $dataset_id}) "
+                        "RETURN s.id AS source_id, t.id AS target_id, "
+                        "s.canonical_key AS source, t.canonical_key AS target, "
+                        "r.properties AS properties "
+                        "ORDER BY r.canonical_key LIMIT $limit"
+                    ),
+                    parameters={"dataset_id": bundle.dataset_id, "limit": edge_limit},
+                    max_len=None,
+                    result_limit=edge_limit,
+                )
             )
-        )
-        node_rows = [row for row in node_rows if row.get("id") in people_ids]
-        edge_rows = [
-            row
-            for row in edge_rows
-            if row.get("source_id") in people_ids and row.get("target_id") in people_ids
-        ]
+            node_rows = [row for row in node_rows if row.get("id") in people_ids]
+            edge_rows = [
+                row
+                for row in edge_rows
+                if row.get("source_id") in people_ids and row.get("target_id") in people_ids
+            ]
     except Exception:
         logger.exception("HydraDB graph rows query failed")
         return None
-    finally:
-        if (
-            created_gateway
-            and "resolved_gateway" in locals()
-            and hasattr(resolved_gateway.driver, "close")
-        ):
-            resolved_gateway.driver.close()
 
     return HydraGraphRows(
         nodes=tuple(_hydra_graph_node(row) for row in node_rows),
@@ -373,38 +358,30 @@ def gap_rows(
     if not settings.hydra_configured:
         return None
 
-    created_gateway = gateway is None
     try:
-        resolved_gateway = gateway or _create_gateway(settings)
-        phantom_ids = {node.id for node in bundle.nodes if node.label == "Phantom"}
-        phantom_rows = resolved_gateway.run(
-            QuerySpec(
-                name="hydra_gap_phantoms",
-                statement=(
-                    "MATCH (phantom:Phantom {dataset_id: $dataset_id}) "
-                    "RETURN phantom.id AS phantom_id, phantom.canonical_key AS phantom_key, "
-                    "phantom.properties AS properties "
-                    "ORDER BY phantom.canonical_key LIMIT $limit"
-                ),
-                parameters={"dataset_id": bundle.dataset_id, "limit": max(1, len(phantom_ids))},
-                max_len=None,
-                result_limit=max(1, len(phantom_ids)),
+        with open_gateway(settings, gateway) as resolved_gateway:
+            phantom_ids = {node.id for node in bundle.nodes if node.label == "Phantom"}
+            phantom_rows = resolved_gateway.run(
+                QuerySpec(
+                    name="hydra_gap_phantoms",
+                    statement=(
+                        "MATCH (phantom:Phantom {dataset_id: $dataset_id}) "
+                        "RETURN phantom.id AS phantom_id, phantom.canonical_key AS phantom_key, "
+                        "phantom.properties AS properties "
+                        "ORDER BY phantom.canonical_key LIMIT $limit"
+                    ),
+                    parameters={"dataset_id": bundle.dataset_id, "limit": max(1, len(phantom_ids))},
+                    max_len=None,
+                    result_limit=max(1, len(phantom_ids)),
+                )
             )
-        )
-        phantom_rows = [row for row in phantom_rows if row.get("phantom_id") in phantom_ids]
-        predecessor_rows = resolved_gateway.run(_gap_lineage_query("predecessors", bundle))
-        successor_rows = resolved_gateway.run(_gap_lineage_query("successors", bundle))
-        reply_rows = resolved_gateway.run(_gap_lineage_query("replies", bundle))
+            phantom_rows = [row for row in phantom_rows if row.get("phantom_id") in phantom_ids]
+            predecessor_rows = resolved_gateway.run(_gap_lineage_query("predecessors", bundle))
+            successor_rows = resolved_gateway.run(_gap_lineage_query("successors", bundle))
+            reply_rows = resolved_gateway.run(_gap_lineage_query("replies", bundle))
     except Exception:
         logger.exception("HydraDB gap rows query failed")
         return None
-    finally:
-        if (
-            created_gateway
-            and "resolved_gateway" in locals()
-            and hasattr(resolved_gateway.driver, "close")
-        ):
-            resolved_gateway.driver.close()
 
     predecessor_keys = _lineage_by_phantom(predecessor_rows)
     successor_keys = _lineage_by_phantom(successor_rows)
@@ -520,12 +497,6 @@ def _properties(value: object) -> dict[str, Scalar]:
     return properties
 
 
-def _string_tuple(value: object) -> tuple[str, ...]:
-    if not isinstance(value, list):
-        return ()
-    return tuple(sorted(item for item in value if isinstance(item, str)))
-
-
 def _single_count(rows: list[dict[str, object]]) -> int | None:
     if not rows:
         return None
@@ -573,42 +544,26 @@ def _bounded_edge_count(session: SessionRun, dataset_id: str) -> int:
     return total
 
 
-def _normalize_pair(left: str, right: str) -> tuple[str, str]:
-    return (left, right) if left <= right else (right, left)
-
-
-def _path_key_tuple(path: object) -> tuple[str, ...]:
-    if path is None:
-        return ()
-    if isinstance(path, (list, tuple)):
-        nodes: tuple[object, ...] = tuple(
-            item
-            for item in path
-            if isinstance(item, dict)
-            or (not isinstance(item, str) and hasattr(item, "__getitem__"))
-        )
-    else:
-        raw_nodes = path.get("nodes") if isinstance(path, dict) else getattr(path, "nodes", None)
-        if not isinstance(raw_nodes, (list, tuple)):
-            return ()
-        nodes = tuple(raw_nodes)
-    keys: list[str] = []
-    for node in nodes:
-        if isinstance(node, dict):
-            value = node.get("canonical_key")
-        else:
-            value = None
-        if not isinstance(value, str):
-            return ()
-        keys.append(value)
-    return tuple(keys)
-
-
 def _elapsed_ms(started: float) -> float:
     return (time.perf_counter() - started) * 1000
 
 
-def _create_gateway(settings: XraySettings) -> HydraGateway:
+@contextmanager
+def open_gateway(
+    settings: XraySettings, gateway: HydraGateway | None = None
+) -> Iterator[HydraGateway]:
+    """Yield a gateway, creating and closing one only when the caller did not supply it."""
+    if gateway is not None:
+        yield gateway
+        return
+    created = create_gateway(settings)
+    try:
+        yield created
+    finally:
+        created.close()
+
+
+def create_gateway(settings: XraySettings) -> HydraGateway:
     hydra_uri = settings.hydra_uri
     if hydra_uri is None:
         raise AssertionError("hydra_configured must imply hydra_uri is set")

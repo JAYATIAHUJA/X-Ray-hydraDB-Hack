@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 
+from xray_core.jsonutil import canonical_json
 from xray_core.models import (
     CanonicalBundle,
     EdgeRow,
@@ -19,12 +20,6 @@ from xray_core.models import (
 from .ids import path_key, stable_edge_id, stable_id
 
 
-def _canonical_json(value: object) -> str:
-    return json.dumps(
-        value, ensure_ascii=False, allow_nan=False, sort_keys=True, separators=(",", ":")
-    )
-
-
 def _empty_sha256() -> str:
     return hashlib.sha256(b"").hexdigest()
 
@@ -34,7 +29,7 @@ def _gap_evidence(
     contract: SequenceContract,
     missing_step: SequenceStep,
 ) -> EvidenceRecord:
-    payload = _canonical_json(
+    payload = canonical_json(
         {
             "contract_id": contract.contract_id,
             "dataset_id": bundle.dataset_id,
@@ -58,7 +53,7 @@ def _gap_evidence(
         extraction_method="sequence_contract_gap_detection",
         content_sha256=contract.content_sha256,
         redacted_excerpt="",
-        metadata_json=_canonical_json(
+        metadata_json=canonical_json(
             {
                 "metadata": {
                     "artifact_kind": missing_step.artifact_kind,
@@ -163,7 +158,7 @@ def _dangling_parent_evidence(
     parent_key: str,
     source_evidence: EvidenceRecord,
 ) -> EvidenceRecord:
-    payload = _canonical_json(
+    payload = canonical_json(
         {
             "child_key": child.canonical_key,
             "dataset_id": bundle.dataset_id,
@@ -187,7 +182,7 @@ def _dangling_parent_evidence(
         extraction_method="dangling_thread_parent_detection",
         content_sha256=source_evidence.content_sha256,
         redacted_excerpt="",
-        metadata_json=_canonical_json(
+        metadata_json=canonical_json(
             {
                 "metadata": {
                     "expected_kind": "thread_parent",

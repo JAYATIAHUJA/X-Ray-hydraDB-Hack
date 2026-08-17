@@ -44,4 +44,7 @@ def test_parquet_evidence_repository_reopens_snapshot(tmp_path: Path) -> None:
     assert repository.get(gap_evidence.evidence_id) == gap_evidence
     assert len(repository.list()) == 34
     assert "limitations.json" in manifest.file_sha256
-    assert "This is a labelled synthetic fixture and is not a measured real-organization result." in repository.limitations()
+    assert (
+        "This is a labelled synthetic fixture and is not a measured real-organization result."
+        in repository.limitations()
+    )
