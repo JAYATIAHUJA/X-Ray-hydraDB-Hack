@@ -33,14 +33,19 @@ def slack_export_rows(
         timestamp = _required_str(message, "ts")
         thread_ts = message.get("thread_ts")
         parent_author_id = None
+        thread_parent_id = None
         if isinstance(thread_ts, str) and thread_ts != timestamp:
+            # Keep the parent reference even when the parent message is missing from
+            # the export: that dangling reference is exactly what the Gaps lens
+            # materializes as a Phantom (spec §5.3 rule 1).
+            thread_parent_id = f"{channel}-{thread_ts}"
             parent_author_id = parent_authors.get((channel, thread_ts))
         rows.append(
             {
                 "id": f"{channel}-{timestamp}",
                 "occurred_at_epoch": int(float(timestamp)),
                 "author_id": _required_str(message, "user"),
-                "thread_parent_id": f"{channel}-{thread_ts}" if parent_author_id else None,
+                "thread_parent_id": thread_parent_id,
                 "parent_author_id": parent_author_id,
                 "mentions": _mentions(str(message.get("text", ""))),
                 "module_keys": tuple(channel_modules.get(channel, ())),

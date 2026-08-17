@@ -133,6 +133,34 @@ full `canonicalize → derive → detect gaps` pipeline in one deterministic bui
 canonical exports can also be passed through the same boundary while a source is being migrated.
 Git rows may declare `dependency_keys` to create explicit `DEPENDS_ON` evidence.
 
+### Bring your own exports
+
+Real exports identify people by email address, Slack user id, or JIRA account id. X-Ray resolves
+those **offline, in Python, before anything reaches the graph** through an explicit identity map;
+it never fuzzy-matches inside the engine. Ids that are not in the map are kept as visible
+`unresolved-…` handles with a bundle limitation, so a partial map degrades honestly instead of
+failing.
+
+```powershell
+git log --name-only --format="%x1e%H%x1f%at%x1f%ae%x1f%s%x1f%b" > git.log
+
+uv run python scripts/ingest_export.py `
+  --dataset-id my-team `
+  --directory directory.json `          # people / teams / modules as canonical records
+  --identity-map identity.json `        # {"alice@example.com": "alice", "U0123": "alice"}
+  --mbox dev.mbox `                     # mailing list or mailbox export
+  --jira-csv jira.csv `                 # JIRA CSV export
+  --git-log git.log --module-prefixes modules.json `   # {"services/payments": "payments-api"}
+  --slack-dir slack-export/ `           # one folder per channel
+  --out data/snapshots/my-team
+```
+
+Adapters: `mbox_rows` (From/To/Cc/In-Reply-To headers), `jira_csv_rows`, `git_log_rows`
+(0x1e-separated commits, `Depends-On:` trailers become explicit dependencies), and
+`slack_export_rows` (explicit user ids, thread parents kept even when the parent message is
+absent — that absence is what the Gaps lens surfaces). Live OAuth connectors are intentionally
+out of scope for this build.
+
 ## Setup
 
 ### Requirements
