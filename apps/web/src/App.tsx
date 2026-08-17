@@ -476,6 +476,8 @@ function ImportPanel() {
   const [channelFile, setChannelFile] = useState<File | null>(null);
   const [messageFile, setMessageFile] = useState<File | null>(null);
   const [slackFiles, setSlackFiles] = useState<File[]>([]);
+  const [confluenceFile, setConfluenceFile] = useState<File | null>(null);
+  const [githubCsvFile, setGithubCsvFile] = useState<File | null>(null);
   const [status, setStatus] = useState<string | null>(null);
 
   async function readJson(file: File | null, fallback: unknown) {
@@ -509,7 +511,9 @@ function ImportPanel() {
         module_prefixes: modulePrefixes,
         slack_exports: slackExports,
         channel_modules: channelModules,
-        message_modules: messageModules
+        message_modules: messageModules,
+        confluence_xml: confluenceFile ? await confluenceFile.text() : undefined,
+        github_csv: githubCsvFile ? await githubCsvFile.text() : undefined
       };
       const snapshot = await importSnapshot(payload);
       setStatus(`Imported ${snapshot.node_count} nodes and ${snapshot.edge_count} edges. Reloading…`);
@@ -537,6 +541,8 @@ function ImportPanel() {
         <label>Slack JSON<input accept=".json" multiple type="file" onChange={(event) => setSlackFiles(Array.from(event.target.files ?? []))} /></label>
         <label>Channel map<input accept=".json" type="file" onChange={(event) => setChannelFile(event.target.files?.[0] ?? null)} /></label>
         <label>Message map<input accept=".json" type="file" onChange={(event) => setMessageFile(event.target.files?.[0] ?? null)} /></label>
+        <label>Confluence XML<input accept=".xml" type="file" onChange={(event) => setConfluenceFile(event.target.files?.[0] ?? null)} /></label>
+        <label>GitHub Issues CSV<input accept=".csv" type="file" onChange={(event) => setGithubCsvFile(event.target.files?.[0] ?? null)} /></label>
         <button className="report-button" onClick={importFiles} type="button">Import snapshot</button>
       </div>
       {status ? <small className="report-status">{status}</small> : null}
