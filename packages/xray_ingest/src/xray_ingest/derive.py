@@ -222,6 +222,77 @@ def _ownership_edges(bundle: CanonicalBundle) -> tuple[EdgeRow, ...]:
     return tuple(edges)
 
 
+OWNERS_PER_MODULE = 3
+
+
+def _authorship_density_edges(bundle: CanonicalBundle) -> tuple[EdgeRow, ...]:
+    """Derive OWNS from AUTHORED + ABOUT when no explicit authorship aggregate exists.
+
+    Spec §3.2: the person who authored the most artifacts ABOUT a module owns it;
+    ``confidence`` is that person's share (0-100) of the module's authored artifacts.
+    The top ``OWNERS_PER_MODULE`` authors are emitted with an ``owner_rank`` so the
+    analysis layer can always treat rank 1 as the owner even when the share is small
+    (real modules have dozens of contributors).
+    """
+    explicit_modules = {
+        evidence.object_key
+        for evidence in bundle.evidence
+        if evidence.predicate == "authorship_aggregate"
+    }
+    nodes = {node.id: node for node in bundle.nodes}
+    author_by_artifact: dict[int, tuple[str, tuple[str, ...]]] = {}
+    for edge in bundle.edges:
+        if edge.rel_type == "AUTHORED":
+            author_by_artifact[edge.target_id] = (
+                nodes[edge.source_id].canonical_key,
+                edge.evidence_ids,
+            )
+    per_module: dict[str, dict[str, list[str]]] = {}
+    totals: dict[str, int] = {}
+    for edge in bundle.edges:
+        if edge.rel_type != "ABOUT":
+            continue
+        module_key = nodes[edge.target_id].canonical_key
+        if module_key in explicit_modules:
+            continue
+        authored = author_by_artifact.get(edge.source_id)
+        if authored is None:
+            continue
+        author_key, evidence_ids = authored
+        totals[module_key] = totals.get(module_key, 0) + 1
+        per_module.setdefault(module_key, {}).setdefault(author_key, []).extend(
+            (*evidence_ids, *edge.evidence_ids)
+        )
+
+    edges = []
+    for module_key in sorted(per_module):
+        total = totals[module_key]
+        ranked = sorted(per_module[module_key].items(), key=lambda item: (-len(item[1]), item[0]))
+        for rank, (author_key, author_evidence) in enumerate(ranked[:OWNERS_PER_MODULE], start=1):
+            # Each artifact contributes its AUTHORED and ABOUT evidence rows (two per artifact),
+            # so the artifact count is half the evidence count.
+            attributed = max(1, len(author_evidence) // 2)
+            share = round((attributed / max(1, total)) * 100)
+            edges.append(
+                _add_edge(
+                    bundle,
+                    source_key=author_key,
+                    target_key=module_key,
+                    rel_type="OWNS",
+                    discriminator="authorship_density_derived",
+                    properties={
+                        "attributed_count": attributed,
+                        "confidence": max(1, min(100, share)),
+                        "owner_rank": rank,
+                        "total_attributed_count": total,
+                    },
+                    evidence_ids=tuple(sorted(set(author_evidence))),
+                    evidence_class=EvidenceClass.INFERRED,
+                )
+            )
+    return tuple(edges)
+
+
 def _dependency_edges(bundle: CanonicalBundle) -> tuple[EdgeRow, ...]:
     allowed_kinds = {"import", "manifest", "runtime_call", "explicit_reference"}
     edges = []
@@ -325,6 +396,7 @@ def derive_edges(base: CanonicalBundle) -> tuple[EdgeRow, ...]:
     edges = (
         *_communication_edges(base),
         *_ownership_edges(base),
+        *_authorship_density_edges(base),
         *_dependency_edges(base),
         *_cochange_dependency_edges(base),
     )

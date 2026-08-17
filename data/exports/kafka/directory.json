@@ -1,0 +1,5764 @@
+[
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "103954755-k-raina",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Kaushik Raina",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:103954755-k-raina"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "107070585-aliehsaeedii",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Alieh Saeedi",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:107070585-aliehsaeedii"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "123193120-uladzislaublok",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Uladzislau Blok",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:123193120-uladzislaublok"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "124065095-hgh1472",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "124065095-hgh1472",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:124065095-hgh1472"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "139248811-dongnuo123",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Dongnuo Lyu",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:139248811-dongnuo123"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "13vivekkoya",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Vivekanand Koya",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:13vivekkoya"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "147528351-ukpagrace",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "147528351-ukpagrace",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:147528351-ukpagrace"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "31768552-abhiram98",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "31768552-abhiram98",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:31768552-abhiram98"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "32290488-shmily7829",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "32290488-shmily7829",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:32290488-shmily7829"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "39860586-tinaselenge",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Gantigmaa Selenge",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:39860586-tinaselenge"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "422766572",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "422766572",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:422766572"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "47979664-jim0987795064",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Chang-Chi Hsu",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:47979664-jim0987795064"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "48462172-jimmywang6",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "48462172-jimmywang6",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:48462172-jimmywang6"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "79797958-mirai1129",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "YuChia Ma",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:79797958-mirai1129"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "8514199",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Ji-Seung Ryu",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:8514199"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "92559179-rich-c-shop",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Rich Chen",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:92559179-rich-c-shop"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "lianetm",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Lianet Magrans",
+      "role_rank": 4,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:lianetm"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "98577846-rreddy-22",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Ritika Reddy",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:98577846-rreddy-22"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "adixit",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Abhinav Dixit",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:adixit"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "ahuang",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Alyssa Huang",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:ahuang"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "alivshits",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Artem Livshits",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:alivshits"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "almog.gavra",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Almog Gavra",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:almog.gavra"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "anatolii.popov",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Anatolii Popov",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:anatolii.popov"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "andyretajeff",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Yu-Syuan Jheng",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:andyretajeff"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "anton.agestam",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Anton Agestam",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:anton.agestam"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "anton93lev",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Anton Liauchuk",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:anton93lev"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "apalan60",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Hong-Yi Chen",
+      "role_rank": 1,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:apalan60"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "schofielaj",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Andrew Schofield",
+      "role_rank": 4,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:schofielaj"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "atul.sharma.mat17",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Atul Sharma",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:atul.sharma.mat17"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "ayoubomari1",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Ayoub Omari",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:ayoubomari1"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "bbejeck",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Bill Bejeck",
+      "role_rank": 4,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:bbejeck"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "brandboat",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Kuan Po Tseng",
+      "role_rank": 1,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:brandboat"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "cadonna",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Bruno Cadonna",
+      "role_rank": 4,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:cadonna"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "caliu",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Calvin Liu",
+      "role_rank": 1,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:caliu"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "chia7712",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Chia-Ping Tsai",
+      "role_rank": 4,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:chia7712"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "clolov",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Christo Lolov",
+      "role_rank": 4,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:clolov"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "chuckame",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "chuckame",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:chuckame"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "cjflood11",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Chris Flood",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:cjflood11"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "claude.warren",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Claude Warren, Jr",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:claude.warren"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "cmccabe",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Colin McCabe",
+      "role_rank": 4,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:cmccabe"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "cushon",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Liam Miller-Cushon",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:cushon"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "cwadhwa",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Chirag Wadhwa",
+      "role_rank": 1,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:cwadhwa"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "daojun",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Tao Jiuming",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:daojun"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "david.a.troiano",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Dave Troiano",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:david.a.troiano"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "deboteamwork",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Surafel Temesgen",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:deboteamwork"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "dejan2609",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Dejan Stojadinović",
+      "role_rank": 1,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:dejan2609"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "dengziming1993",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Ziming Deng",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:dengziming1993"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "divyaguduru90",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Divya Guduru",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:divyaguduru90"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "dajac",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "David Jacot",
+      "role_rank": 4,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:dajac"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "davekj",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "david kjerrumgaard",
+      "role_rank": 1,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:davekj"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "edocomar",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Edoardo Comar",
+      "role_rank": 3,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:edocomar"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "email",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Yeikel Santana",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:email"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "eric.k.richardson",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Eric K Richardson",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:eric.k.richardson"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "esabellico",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Emanuele Sabellico",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:esabellico"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "evgeniy.kuvardin",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Evgeniy Kuvardin",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:evgeniy.kuvardin"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "f463317373",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "leaf-soba",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:f463317373"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "cegerton",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Chris Egerton",
+      "role_rank": 4,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:cegerton"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "fedevaleri",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Federico Valeri",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:fedevaleri"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "florian.hussonnois",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Florian Hussonnois",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:florian.hussonnois"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "giuseppe.lillo",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Giuseppe Lillo",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:giuseppe.lillo"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "gongxuanzhangmelt",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Xuan-Zhang Gong",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:gongxuanzhangmelt"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "gharris",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Greg Harris",
+      "role_rank": 4,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:gharris"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "grimekillah",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Dmitry Werner",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:grimekillah"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "guang.zhao",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Zhao, Guang",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:guang.zhao"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "guozhang",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Guozhang Wang",
+      "role_rank": 4,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:guozhang"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "haiying_cai",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Henry Haiying Cai",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:haiying_cai"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "harish.shastry",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Harish Vishwanath",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:harish.shastry"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "hermankjakobsen",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Herman K. Jakobsen",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:hermankjakobsen"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "hgeraldino",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Hector Geraldino (BLOOMBERG/ 919 3RD A)",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:hgeraldino"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "hzhru",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Azhar Ahmed",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:hzhru"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "iamsubra100",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Subra I",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:iamsubra100"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "isding_l",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Lan Ding",
+      "role_rank": 1,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:isding_l"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "ivan",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Ivan Yurchenko",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:ivan"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "jaideepcvl",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Jaideep C",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:jaideepcvl"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "jamiedd13",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "jamiedd13",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:jamiedd13"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "janindupathi",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Janindu Pathirana",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:janindupathi"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "jgoodyear",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Jamie Mark Goodyear",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:jgoodyear"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "jhenyunghsu",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Jhen-Yung Hsu",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:jhenyunghsu"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "jhooper",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Jonah Hooper",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:jhooper"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "jkt",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Jack Thomasson",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:jkt"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "johnny123tw",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Johnny Wang",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:johnny123tw"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "jolshan",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Justine Olshan",
+      "role_rank": 4,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:jolshan"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "jlprat",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Josep Prat",
+      "role_rank": 4,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:jlprat"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "joshua2519",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Chih-Yuan Chien",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:joshua2519"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "jsancio",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "José Armando García Sancio",
+      "role_rank": 4,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:jsancio"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "82810752-juha-aiven",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Juha Mynttinen",
+      "role_rank": 1,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:82810752-juha-aiven"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "julian.bergner",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Julian Bergner",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:julian.bergner"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "junrao",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Jun Rao",
+      "role_rank": 4,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:junrao"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "justin.chen",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Justin Chen",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:justin.chen"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "gaurav_narula2",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Gaurav Narula",
+      "role_rank": 1,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:gaurav_narula2"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "kamalcph",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Kamal Chandraprakash",
+      "role_rank": 4,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:kamalcph"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "kapoorpalak21999",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Palak Kapoor",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:kapoorpalak21999"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "kartik.g.dev",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Kartik Dev",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:kartik.g.dev"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "kb.pcre",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Kondrát Bertalan",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:kb.pcre"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "kevin.wu2412",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Kevin Wu",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:kevin.wu2412"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "kevinapolinario.dev",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "k-apol",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:kevinapolinario.dev"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "frankvicky",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "TengYao Chi",
+      "role_rank": 3,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:frankvicky"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "kirktrue",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Kirk True",
+      "role_rank": 3,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:kirktrue"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "kumarpritammsd7",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "pritam kumar",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:kumarpritammsd7"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "lansg0504",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Nick Guo",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:lansg0504"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "lucasbru",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Lucas Brutschy",
+      "role_rank": 4,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:lucasbru"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "andy",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Andy Li",
+      "role_rank": 1,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:andy"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "lianetmr",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Lianet M.",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:lianetmr"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "linbolin1230",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Bolin Lin",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:linbolin1230"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "loganzhu96",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Logan Zhu",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:loganzhu96"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "loic.greffier",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Loïc GREFFIER",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:loic.greffier"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "lorcan.james",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "lorcan.james",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:lorcan.james"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "lorcanjames1",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "lorcan james",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:lorcanjames1"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "luoyuxia",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "luoyuxia",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:luoyuxia"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "ma.manoj",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "ma.manoj",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:ma.manoj"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "mahesh.sambharam25",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Mahesh Sambharam",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:mahesh.sambharam25"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "manikumar",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Manikumar Reddy",
+      "role_rank": 4,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:manikumar"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "mason.yunchen",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Mason Chen",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:mason.yunchen"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "max.yong",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Max Yong",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:max.yong"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "ijuma",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Ismael Juma",
+      "role_rank": 4,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:ijuma"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "mimaison",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Mickael Maison",
+      "role_rank": 4,
+      "source_identity_count": 3,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:mimaison"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "mingdaoy",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "mingdaoy",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:mingdaoy"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "mingyen066",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Ming-Yen Chung",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:mingyen066"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "mittal",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Apoorv Mittal",
+      "role_rank": 3,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:mittal"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "mjsax",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Matthias J. Sax",
+      "role_rank": 4,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:mjsax"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "moncef.abboud95",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Moncef Abboud",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:moncef.abboud95"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "mseifikar",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Mahsa Seifikar",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:mseifikar"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "davidarthur",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "David Arthur",
+      "role_rank": 4,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:davidarthur"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "nicolas.guyomar",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "NICOLAS GUYOMAR",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:nicolas.guyomar"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "nilmadhab1994",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "nilmadhab mondal",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:nilmadhab1994"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "omnia",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Omnia Ibrahim",
+      "role_rank": 3,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:omnia"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "ocadaruma",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Okada Haruki",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:ocadaruma"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "ojt90902",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "ojt90902",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:ojt90902"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "olasoji.denloye",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Denloye, Olasoji",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:olasoji.denloye"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "p1070048431",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "p1070048431",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:p1070048431"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "jan.siekierski",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Jan Siekierski",
+      "role_rank": 1,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:jan.siekierski"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "paolo.patierno",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Paolo Patierno",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:paolo.patierno"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "parkerhiphop027",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Parker Chang",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:parkerhiphop027"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "paul.brebner",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Brebner, Paul",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:paul.brebner"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "pawel.szymczyk90",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Paweł Szymczyk",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:pawel.szymczyk90"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "peter.corless",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Peter Corless",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:peter.corless"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "peter.sinoros-szabo",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Péter Sinóros-Szabó",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:peter.sinoros-szabo"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "prateek.kohli",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Prateek Kohli",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:prateek.kohli"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "priceelees",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "priceelees",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:priceelees"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "proggga",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Mikhail Fesenko",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:proggga"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "quilcate.jorge",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Jorge Esteban Quilcate Otoya",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:quilcate.jorge"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "rahul.nirgude",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Rahul Nirgude",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:rahul.nirgude"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "rsivaram",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Rajini Sivaram",
+      "role_rank": 4,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:rsivaram"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "rakesh.muniganti",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Rakesh Muniganti",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:rakesh.muniganti"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "32607481-jingjia88",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Jing-Jia Hung",
+      "role_rank": 1,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:32607481-jingjia88"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "rhauch",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Randall Hauch",
+      "role_rank": 4,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:rhauch"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "s7133700",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Ken Huang",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:s7133700"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "sarpnissi4",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Onesimus Sarpong Wiafe",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:sarpnissi4"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "satishd",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Satish Duggana",
+      "role_rank": 4,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:satishd"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "sbezawada",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Satya Bezawada",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:sbezawada"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "sebastien.viale",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Sebastien Viale",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:sebastien.viale"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "shmily7829",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "ShihYuan Lin",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:shmily7829"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "showuon",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Luke Chen",
+      "role_rank": 4,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:showuon"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "shr",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Shivsundar R",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:shr"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "shupandey7",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Shubham Pandey",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:shupandey7"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "siddhartha.devineni",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Siddhartha Devineni",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:siddhartha.devineni"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "sjhajharia",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Sanskar Jhajharia",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:sjhajharia"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "smahajan",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Sushant Mahajan",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:smahajan"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "snehashisp1995",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "snehashisp1995",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:snehashisp1995"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "sophie",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Sophie Blee-Goldman",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:sophie"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "squah",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Sean Quah",
+      "role_rank": 3,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:squah"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "sreenivasulu.narala",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Narala, Sreenivasulu",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:sreenivasulu.narala"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "stanislavkozlovski",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Stanislav Kozlovski",
+      "role_rank": 3,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:stanislavkozlovski"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "stigdoessing",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Stig Rohde Døssing",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:stigdoessing"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "tombentley",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Tom Bentley",
+      "role_rank": 4,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:tombentley"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "thomas",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Thomas Gebert",
+      "role_rank": 1,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:thomas"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "tjwu1217",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "TaiJu Wu",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:tjwu1217"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "tthornton",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Thomas Thornton",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:tthornton"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "tvainika",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Tommi Vainikainen",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:tvainika"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "vikas",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Vikas Singh",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:vikas"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "viktor",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Viktor Somogyi-Vass",
+      "role_rank": 4,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:viktor"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "vintagewang",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Xiaorui Wang",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:vintagewang"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "vinuvas321",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Vinothini A",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:vinuvas321"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "vissers.j",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Jan Vissers",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:vissers.j"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "wasnik353",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Sudesh Wasnik",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:wasnik353"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "payang",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "PoAn Yang",
+      "role_rank": 3,
+      "source_identity_count": 2,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:payang"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "yangx_soft",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "yangx_soft",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:yangx_soft"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "yashmayya",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Yash Mayya",
+      "role_rank": 3,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:yashmayya"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "yexijun",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "XiJun Ye",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:yexijun"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "yukon",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Xinyu Zhou",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:yukon"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "yunchipang",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "Yunchi Pang",
+      "role_rank": 1,
+      "source_identity_count": 1,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:yunchipang"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "abhi1260",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "abhi1260",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:abhi1260"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "adixitconfluent",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "adixitconfluent",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:adixitconfluent"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "alisa23",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "alisa23",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:alisa23"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "alyssahuang",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "alyssahuang",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:alyssahuang"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "anatolypopov",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "anatolypopov",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:anatolypopov"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "aniruddhanavare",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "aniruddhanavare",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:aniruddhanavare"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "apoorvmittal10",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "apoorvmittal10",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:apoorvmittal10"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "arnek",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "arnek",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:arnek"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "ayoubomari",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "ayoubomari",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:ayoubomari"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "azhar2407",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "azhar2407",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:azhar2407"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "azun",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "azun",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:azun"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "bdesert",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "bdesert",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:bdesert"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "bloku",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "bloku",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:bloku"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "calvinliu",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "calvinliu",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:calvinliu"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "chickenchickenlove",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "chickenchickenlove",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:chickenchickenlove"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "ckamal",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "ckamal",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:ckamal"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "claude",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "claude",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:claude"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "corkitse",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "corkitse",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:corkitse"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "cyh2012aa",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "cyh2012aa",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:cyh2012aa"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "divya2890",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "divya2890",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:divya2890"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "ecomar",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "ecomar",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:ecomar"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "eduwerc",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "eduwerc",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:eduwerc"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "emasab",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "emasab",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:emasab"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "ezhou",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "ezhou",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:ezhou"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "felixzh",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "felixzh",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:felixzh"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "flysen",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "flysen",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:flysen"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "fujian1115",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "fujian1115",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:fujian1115"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "gnarula",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "gnarula",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:gnarula"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "gongxuanzhang",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "gongxuanzhang",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:gongxuanzhang"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "hanjiandong2",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "hanjiandong2",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:hanjiandong2"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "hasil",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "hasil",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:hasil"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "hcai-pinterest.com",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "hcai@pinterest.com",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:hcai-pinterest.com"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "hiroa",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "hiroa",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:hiroa"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "ivanyu",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "ivanyu",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:ivanyu"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "jasonryu",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "jasonryu",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:jasonryu"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "javakillah",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "javakillah",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:javakillah"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "jim0987795064",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "jim0987795064",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:jim0987795064"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "jimmywang611",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "jimmywang611",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:jimmywang611"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "jingjia88",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "jingjia88",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:jingjia88"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "johnny94",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "johnny94",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:johnny94"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "julianbergner",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "julianbergner",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:julianbergner"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "juned",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "juned",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:juned"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "justin-chen",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "justin-chen",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:justin-chen"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "k-raina",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "k-raina",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:k-raina"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "kangning",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "kangning",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:kangning"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "karthickthavasiraj09",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "karthickthavasiraj09",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:karthickthavasiraj09"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "kevinwu2412",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "kevinwu2412",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:kevinwu2412"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "krishnasai12",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "krishnasai12",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:krishnasai12"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "ksolves.kafka",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "ksolves.kafka",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:ksolves.kafka"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "ktktk",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "ktktk",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:ktktk"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "kumarpritam863",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "kumarpritam863",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:kumarpritam863"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "kumarpritam8634",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "kumarpritam8634",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:kumarpritam8634"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "kunalsevkani",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "kunalsevkani",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:kunalsevkani"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "lansg",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "lansg",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:lansg"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "lizbennett",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "lizbennett",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:lizbennett"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "loganzhu",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "loganzhu",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:loganzhu"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "lorcanj",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "lorcanj",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:lorcanj"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "lpandzic",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "lpandzic",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:lpandzic"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "m1a2st",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "m1a2st",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:m1a2st"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "maheshsambaram",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "maheshsambaram",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:maheshsambaram"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "mahsaseifikar",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "mahsaseifikar",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:mahsaseifikar"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "majialong",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "majialong",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:majialong"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "masahiromori",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "masahiromori",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:masahiromori"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "masonc",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "masonc",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:masonc"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "mirai1129",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "mirai1129",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:mirai1129"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "nikita-shupletsov",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "nikita-shupletsov",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:nikita-shupletsov"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "omnia_h_ibrahim",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "omnia_h_ibrahim",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:omnia_h_ibrahim"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "palakkapoor21999",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "palakkapoor21999",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:palakkapoor21999"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "parkerchang",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "parkerchang",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:parkerchang"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "pasfilip",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "pasfilip",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:pasfilip"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "pkleindl",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "pkleindl",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:pkleindl"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "rajani",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "rajani",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:rajani"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "rivensun",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "rivensun",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:rivensun"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "rkalasapur",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "rkalasapur",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:rkalasapur"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "rreddy22",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "rreddy22",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:rreddy22"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "rstull1250",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "rstull1250",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:rstull1250"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "satish.duggana",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "satish.duggana",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:satish.duggana"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "shivsundar",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "shivsundar",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:shivsundar"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "shmily1625tw",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "shmily1625tw",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:shmily1625tw"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "siddharthadevineni",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "siddharthadevineni",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:siddharthadevineni"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "smjn",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "smjn",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:smjn"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "snehashisp",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "snehashisp",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:snehashisp"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "snophey",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "snophey",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:snophey"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "squah-confluent",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "squah-confluent",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:squah-confluent"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "sravani09",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "sravani09",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:sravani09"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "srinathps",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "srinathps",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:srinathps"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "stevenschlansker",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "stevenschlansker",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:stevenschlansker"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "striderapache",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "striderapache",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:striderapache"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "surghosh",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "surghosh",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:surghosh"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "sushmahajn",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "sushmahajn",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:sushmahajn"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "taijuwu",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "taijuwu",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:taijuwu"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "tringuyen98",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "tringuyen98",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:tringuyen98"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "twmb",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "twmb",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:twmb"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "wasniksudesh",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "wasniksudesh",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:wasniksudesh"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "xiaoheipangzi",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "xiaoheipangzi",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:xiaoheipangzi"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "yangpoan",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "yangpoan",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:yangpoan"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "yung",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "yung",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:yung"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "yutalin",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "yutalin",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:yutalin"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "yuxian0908",
+    "kind": "directory_person",
+    "metadata": {
+      "display_name": "yuxian0908",
+      "role_rank": 1,
+      "source_identity_count": 0,
+      "team_key": "team:apache-kafka"
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "person:yuxian0908"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "api-checker",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:api-checker",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:api-checker"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "build",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:build",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:build"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "clients",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:clients",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:clients"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "committer-tools",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:committer-tools",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:committer-tools"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "connect",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:connect",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:connect"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "coordinator-common",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:coordinator-common",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:coordinator-common"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "core",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:core",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:core"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "docker",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:docker",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:docker"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "docs",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:docs",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:docs"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "examples",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:examples",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:examples"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "generator",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:generator",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:generator"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "group-coordinator",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:group-coordinator",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:group-coordinator"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "jmh-benchmarks",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:jmh-benchmarks",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:jmh-benchmarks"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "metadata",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:metadata",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:metadata"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "raft",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:raft",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:raft"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "server",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:server",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:server"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "server-common",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:server-common",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:server-common"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "share-coordinator",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:share-coordinator",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:share-coordinator"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "shell",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:shell",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:shell"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "storage",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:storage",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:storage"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "streams",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:streams",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:streams"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "system-tests",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:system-tests",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:system-tests"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "test-common",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:test-common",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:test-common"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "tools",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:tools",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:tools"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "transaction-coordinator",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:transaction-coordinator",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:transaction-coordinator"
+    ]
+  },
+  {
+    "author_external_id": null,
+    "content": null,
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "external_id": "trogdor",
+    "kind": "module",
+    "metadata": {
+      "canonical_key": "module:trogdor",
+      "criticality": 1.0
+    },
+    "occurred_at_epoch": 1735689600,
+    "parent_external_id": null,
+    "source": "kafka-directory",
+    "subjects": [
+      "module:trogdor"
+    ]
+  }
+]

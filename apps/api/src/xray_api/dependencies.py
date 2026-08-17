@@ -11,6 +11,7 @@ from typing import Annotated
 from fastapi import Depends
 from xray_core.models import CanonicalBundle, CanonicalRecord, SequenceContractSet
 from xray_hydra import HydraGateway
+from xray_ingest.manifest import read_snapshot
 from xray_ingest.pipeline import ingest_exports
 
 from .config import XraySettings, get_settings
@@ -66,16 +67,41 @@ def synth_bundle() -> CanonicalBundle:
     return _canonical_fixture_bundle(SYNTH_FIXTURE_ROOT, SYNTH_DATASET_ID)
 
 
+@lru_cache(maxsize=4)
+def snapshot_bundle(root: str) -> CanonicalBundle:
+    """A bundle read from an ingested snapshot directory (see scripts/ingest_export.py)."""
+    return read_snapshot(Path(root))
+
+
+def snapshot_dir() -> Path | None:
+    value = os.environ.get("XRAY_SNAPSHOT_DIR", "").strip()
+    return Path(value) if value else None
+
+
 def current_snapshot_id() -> str:
+    root = snapshot_dir()
+    if root is not None:
+        return f"{active_dataset_id()}:snapshot"
     return f"{active_dataset_id()}:fixture"
 
 
 def active_dataset_id() -> str:
+    root = snapshot_dir()
+    if root is not None:
+        return snapshot_bundle(str(root)).dataset_id
     variant = os.environ.get("XRAY_FIXTURE_VARIANT", "demo")
     return FIXTURE_VARIANTS.get(variant, DATASET_ID)
 
 
 def active_bundle() -> CanonicalBundle:
+    """The bundle the API serves.
+
+    Precedence: ``XRAY_SNAPSHOT_DIR`` (any ingested corpus, e.g. the Apache Kafka run)
+    > ``XRAY_FIXTURE_VARIANT`` (bundled labelled fixtures) > the demo fixture.
+    """
+    root = snapshot_dir()
+    if root is not None:
+        return snapshot_bundle(str(root))
     if active_dataset_id() == SYNTH_DATASET_ID:
         return synth_bundle()
     return demo_bundle()
@@ -115,5 +141,7 @@ __all__ = [
     "current_snapshot_id",
     "demo_bundle",
     "get_gateway",
+    "snapshot_bundle",
+    "snapshot_dir",
     "synth_bundle",
 ]

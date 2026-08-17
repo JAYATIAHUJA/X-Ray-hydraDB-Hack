@@ -297,7 +297,10 @@ def _module_owners(
         if edge.rel_type != "OWNS":
             continue
         confidence = _int_property(edge, "confidence", edge.confidence)
-        if confidence <= min_owner_confidence:
+        owner_rank = _int_property(edge, "owner_rank", 1)
+        # The top author of a module is its owner even when their share is small;
+        # additional owners must clear the confidence threshold.
+        if confidence <= min_owner_confidence and owner_rank != 1:
             continue
         owner = nodes[edge.source_id].canonical_key
         module = nodes[edge.target_id].canonical_key

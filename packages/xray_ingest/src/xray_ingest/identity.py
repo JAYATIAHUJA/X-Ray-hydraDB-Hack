@@ -22,7 +22,7 @@ from xray_core.models import CanonicalRecord
 # Person-id fields per export row shape, as consumed by ``xray_ingest.sources``.
 IDENTITY_FIELDS: Mapping[str, tuple[str, ...]] = {
     "slack": ("author_id", "parent_author_id", "mentions"),
-    "email": ("from_id", "to_ids"),
+    "email": ("from_id", "to_ids", "parent_author_id"),
     "ticket": ("reporter_id",),
     "git": ("author_id",),
 }
@@ -53,7 +53,9 @@ class IdentityResolution:
 def normalize_source_id(value: str) -> str:
     """Case-fold and trim a source id; strips mailto: and angle brackets."""
     cleaned = value.strip().removeprefix("mailto:").strip("<>").strip().lower()
-    return cleaned
+    # Apache list archives append ".invalid" to addresses whose DMARC policy would
+    # otherwise reject relayed mail; it is not part of the person's identity.
+    return cleaned.removesuffix(".invalid")
 
 
 def unresolved_handle(source_id: str) -> str:

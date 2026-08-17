@@ -4,3 +4,15 @@
 !fixtures/**
 !schemas/
 !schemas/**
+# Ingested snapshots that ship with the repo (small, reproducible from public exports).
+!snapshots/
+!snapshots/kafka-2025q2/
+!snapshots/kafka-2025q2/**
+# Derived corpus inputs (directory, identity map, module map); raw exports stay out.
+!exports/
+!exports/kafka/
+!exports/kafka/directory.json
+!exports/kafka/identity.json
+!exports/kafka/modules.json
+!exports/kafka/skip-senders.json
+!exports/kafka/ignore-addresses.json
