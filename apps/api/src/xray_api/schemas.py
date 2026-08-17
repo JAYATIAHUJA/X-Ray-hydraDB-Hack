@@ -122,6 +122,8 @@ class ImportRequest(BaseModel):
     slack_exports: dict[str, tuple[dict[str, object], ...]] = {}
     channel_modules: dict[str, tuple[str, ...]] = {}
     message_modules: dict[str, tuple[str, ...]] = {}
+    confluence_xml: str | None = None
+    github_csv: str | None = None
 
 
 class ProblemDetail(BaseModel):

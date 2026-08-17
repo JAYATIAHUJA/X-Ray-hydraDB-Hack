@@ -33,7 +33,14 @@ from xray_core.models import (
 )
 from xray_core.paths import normalize_pair
 from xray_hydra import HydraGateway
-from xray_ingest.adapters import git_log_rows, jira_csv_rows, mbox_rows, slack_export_rows
+from xray_ingest.adapters import (
+    confluence_xml_rows,
+    git_log_rows,
+    github_csv_rows,
+    jira_csv_rows,
+    mbox_rows,
+    slack_export_rows,
+)
 from xray_ingest.manifest import write_snapshot
 from xray_ingest.pipeline import ingest_exports
 
@@ -150,12 +157,17 @@ def create_app() -> FastAPI:
                 mbox_paths.append(path)
             jira_path = _write_optional_source(root, "jira.csv", request.jira_csv)
             git_path = _write_optional_source(root, "git.log", request.git_log)
+            confluence_path = _write_optional_source(root, "entities.xml", request.confluence_xml)
+            github_path = _write_optional_source(root, "github-issues.csv", request.github_csv)
             slack_dir = root / "slack"
             slack_dir.mkdir()
             for channel, rows in request.slack_exports.items():
                 (slack_dir / f"{channel}.json").write_text(
                     json.dumps(list(rows)), encoding="utf-8"
                 )
+            jira_rows = jira_csv_rows(jira_path) if jira_path is not None else ()
+            confluence_rows = confluence_xml_rows(confluence_path) if confluence_path is not None else ()
+            github_rows = github_csv_rows(github_path) if github_path is not None else ()
             bundle = ingest_exports(
                 directory_records=known_directory,
                 canonical_records=tuple(record for record in directory if record.kind != "directory_person"),
@@ -166,7 +178,7 @@ def create_app() -> FastAPI:
                     mbox_paths,
                     module_keys_by_message_id=request.message_modules,
                 ) if mbox_paths else (),
-                ticket_rows=jira_csv_rows(jira_path) if jira_path is not None else (),
+                ticket_rows=(*jira_rows, *confluence_rows, *github_rows),
                 git_rows=git_log_rows(git_path, module_prefixes=request.module_prefixes)
                 if git_path is not None
                 else (),
