@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from collections import defaultdict, deque
 from dataclasses import dataclass
-from itertools import combinations
 
 from xray_core.models import CanonicalBundle, EdgeRow, NodeRow
 
@@ -77,6 +76,9 @@ def _int_property(edge: EdgeRow, key: str, default: int) -> int:
 
 type CommunicationGraph = dict[str, dict[str, int]]
 
+_REACHABLE_WITHIN_CACHE: dict[tuple[int, str, int], frozenset[str]] = {}
+_GHOST_SCORE_CACHE: dict[tuple[int, int], tuple[GhostScore, ...]] = {}
+
 
 def communication_graph(bundle: CanonicalBundle) -> CommunicationGraph:
     graph: CommunicationGraph = {}
@@ -97,22 +99,15 @@ def communication_graph(bundle: CanonicalBundle) -> CommunicationGraph:
 def ghost_scores(bundle: CanonicalBundle, *, max_len: int = 4) -> tuple[GhostScore, ...]:
     if max_len <= 0:
         raise ValueError("max_len must be positive")
+    cache_key = (id(bundle), max_len)
+    cached = _GHOST_SCORE_CACHE.get(cache_key)
+    if cached is not None:
+        return cached
 
     graph = communication_graph(bundle)
     people = _person_nodes(bundle)
     person_keys = [person.canonical_key for person in people]
-    tallies: dict[str, float] = dict.fromkeys(person_keys, 0.0)
-    sampled_pairs = 0
-
-    for source, target in combinations(person_keys, 2):
-        paths = _all_shortest_paths_within(graph, source, target, max_len)
-        if not paths:
-            continue
-        sampled_pairs += 1
-        path_credit = 1.0 / len(paths)
-        for path in paths:
-            for intermediate in path[1:-1]:
-                tallies[intermediate] += path_credit
+    tallies, sampled_pairs = _bounded_shortest_path_tallies(graph, person_keys, max_len)
 
     denominator = float(sampled_pairs or 1)
     centrality = {key: tallies[key] / denominator for key in person_keys}
@@ -137,32 +132,33 @@ def ghost_scores(bundle: CanonicalBundle, *, max_len: int = 4) -> tuple[GhostSco
         )
         for node in people
     ]
-    return tuple(sorted(scores, key=lambda score: (-score.sampled_centrality, score.person_key)))
+    result = tuple(sorted(scores, key=lambda score: (-score.sampled_centrality, score.person_key)))
+    _GHOST_SCORE_CACHE[cache_key] = result
+    return result
 
 
 def bus_factor_impact(
-    bundle: CanonicalBundle, person_key: str, *, max_len: int = 4
+    bundle: CanonicalBundle,
+    person_key: str,
+    *,
+    max_len: int = 4,
+    graph: CommunicationGraph | None = None,
 ) -> BusFactorImpact:
     if max_len <= 0:
         raise ValueError("max_len must be positive")
 
-    graph = communication_graph(bundle)
+    graph = communication_graph(bundle) if graph is None else graph
     if person_key not in graph:
         raise ValueError(f"unknown person_key {person_key!r}")
 
-    before = 0
-    lost = 0
     remaining_people = tuple(node for node in graph if node != person_key)
     reduced_graph = _without_node(graph, person_key)
-    for source, target in combinations(remaining_people, 2):
-        if _has_path_within(graph, source, target, max_len):
-            before += 1
-            if not _has_path_within(reduced_graph, source, target, max_len):
-                lost += 1
+    before = _reachable_pair_count(graph, remaining_people, max_len)
+    after = _reachable_pair_count(reduced_graph, remaining_people, max_len, use_cache=False)
     return BusFactorImpact(
         person_key=person_key,
         reachable_pairs_before=before,
-        pairs_lost_without_person=lost,
+        pairs_lost_without_person=before - after,
         max_len=max_len,
     )
 
@@ -306,7 +302,7 @@ def _bounded_distance(
         node, distance = queue.popleft()
         if distance >= max_len:
             continue
-        for neighbor in sorted(graph[node]):
+        for neighbor in graph[node]:
             if neighbor in seen:
                 continue
             next_distance = distance + 1
@@ -322,29 +318,110 @@ def _has_path_within(graph: CommunicationGraph, source: str, target: str, max_le
     return distance is not None
 
 
+def _reachable_pair_count(
+    graph: CommunicationGraph,
+    person_keys: tuple[str, ...],
+    max_len: int,
+    *,
+    use_cache: bool = True,
+) -> int:
+    ordered = tuple(sorted(person_keys))
+    order = {key: index for index, key in enumerate(ordered)}
+    total = 0
+    for source in ordered:
+        reachable = (
+            _cached_reachable_within(graph, source, max_len)
+            if use_cache
+            else _reachable_within(graph, source, max_len)
+        )
+        for target in reachable:
+            if target in order and order[source] < order[target]:
+                total += 1
+    return total
+
+
+def _cached_reachable_within(
+    graph: CommunicationGraph,
+    source: str,
+    max_len: int,
+) -> frozenset[str]:
+    cache_key = (id(graph), source, max_len)
+    reachable = _REACHABLE_WITHIN_CACHE.get(cache_key)
+    if reachable is None:
+        reachable = frozenset(_reachable_within(graph, source, max_len))
+        _REACHABLE_WITHIN_CACHE[cache_key] = reachable
+    return reachable
+
+
+def _reachable_within(
+    graph: CommunicationGraph,
+    source: str,
+    max_len: int,
+) -> set[str]:
+    if source not in graph:
+        return set()
+    reachable: set[str] = set()
+    queue: deque[tuple[str, int]] = deque([(source, 0)])
+    seen = {source}
+    while queue:
+        node, distance = queue.popleft()
+        if distance >= max_len:
+            continue
+        for neighbor in graph[node]:
+            if neighbor in seen:
+                continue
+            seen.add(neighbor)
+            reachable.add(neighbor)
+            queue.append((neighbor, distance + 1))
+    return reachable
+
+
 def _all_shortest_paths_within(
     graph: CommunicationGraph,
     source: str,
     target: str,
     max_len: int,
 ) -> tuple[tuple[str, ...], ...]:
-    distance = _bounded_distance(graph, source, target, max_len)
-    if distance is None:
+    if source not in graph or target not in graph:
+        return ()
+    if source == target:
+        return ((source,),)
+
+    predecessors: dict[str, list[str]] = {source: []}
+    distances = {source: 0}
+    queue: deque[str] = deque([source])
+    target_distance: int | None = None
+    while queue:
+        node = queue.popleft()
+        distance = distances[node]
+        if distance >= max_len or (target_distance is not None and distance >= target_distance):
+            continue
+        for neighbor in sorted(graph[node]):
+            next_distance = distance + 1
+            if next_distance > max_len:
+                continue
+            if neighbor not in distances:
+                distances[neighbor] = next_distance
+                predecessors[neighbor] = [node]
+                queue.append(neighbor)
+                if neighbor == target:
+                    target_distance = next_distance
+            elif distances[neighbor] == next_distance:
+                predecessors[neighbor].append(node)
+
+    if target not in distances:
         return ()
 
-    paths: list[tuple[str, ...]] = []
-    queue: deque[tuple[str, ...]] = deque([(source,)])
-    while queue:
-        path = queue.popleft()
-        if len(path) - 1 == distance:
-            if path[-1] == target:
-                paths.append(path)
-            continue
-        for neighbor in sorted(graph[path[-1]]):
-            if neighbor in path:
-                continue
-            queue.append((*path, neighbor))
-    return tuple(paths)
+    def build_paths(node: str) -> tuple[tuple[str, ...], ...]:
+        if node == source:
+            return ((source,),)
+        paths: list[tuple[str, ...]] = []
+        for predecessor in predecessors[node]:
+            for path in build_paths(predecessor):
+                paths.append((*path, node))
+        return tuple(paths)
+
+    return build_paths(target)
 
 
 def _without_node(graph: CommunicationGraph, removed: str) -> CommunicationGraph:
@@ -353,6 +430,57 @@ def _without_node(graph: CommunicationGraph, removed: str) -> CommunicationGraph
         for node, neighbors in graph.items()
         if node != removed
     }
+
+
+def _bounded_shortest_path_tallies(
+    graph: CommunicationGraph,
+    person_keys: list[str],
+    max_len: int,
+) -> tuple[dict[str, float], int]:
+    tallies: dict[str, float] = dict.fromkeys(person_keys, 0.0)
+    sampled_pairs: set[tuple[str, str]] = set()
+
+    for source in person_keys:
+        stack: list[str] = []
+        predecessors: dict[str, list[str]] = {key: [] for key in person_keys}
+        sigma: dict[str, float] = dict.fromkeys(person_keys, 0.0)
+        distance: dict[str, int] = dict.fromkeys(person_keys, -1)
+        sigma[source] = 1.0
+        distance[source] = 0
+        queue: deque[str] = deque([source])
+
+        while queue:
+            node = queue.popleft()
+            stack.append(node)
+            if distance[node] >= max_len:
+                continue
+            for neighbor in sorted(graph[node]):
+                if distance[neighbor] < 0:
+                    distance[neighbor] = distance[node] + 1
+                    queue.append(neighbor)
+                if distance[neighbor] == distance[node] + 1:
+                    sigma[neighbor] += sigma[node]
+                    predecessors[neighbor].append(node)
+
+        dependency: dict[str, float] = dict.fromkeys(person_keys, 0.0)
+        while stack:
+            node = stack.pop()
+            for predecessor in predecessors[node]:
+                if sigma[node] == 0:
+                    continue
+                dependency[predecessor] += (sigma[predecessor] / sigma[node]) * (
+                    1.0 + dependency[node]
+                )
+            if node != source:
+                tallies[node] += dependency[node] / 2
+                if 0 < distance[node] <= max_len:
+                    sampled_pairs.add(_normalize_pair(source, node))
+
+    return tallies, len(sampled_pairs)
+
+
+def _normalize_pair(left: str, right: str) -> tuple[str, str]:
+    return (left, right) if left <= right else (right, left)
 
 
 def _interpolated_gap_epoch(
