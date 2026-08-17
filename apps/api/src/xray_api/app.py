@@ -9,11 +9,13 @@ from xray_analytics import (
     FaultlineFinding,
     GapFinding,
     GhostScore,
+    faultline_tier,
     faultlines,
     gap_findings,
     ghost_scores,
 )
 from xray_core.models import AnalysisStatus, CanonicalBundle, EdgeRow, EvidenceRecord, NodeRow
+from xray_core.paths import normalize_pair
 
 from .config import get_settings
 from .dependencies import active_bundle, current_snapshot_id
@@ -452,16 +454,8 @@ def _with_live_distance(
     finding: FaultlineFinding,
     distances: dict[tuple[str, str], int | None],
 ) -> FaultlineFinding:
-    distance = distances.get(_normalize_pair(finding.source_owner_key, finding.target_owner_key))
-    if distance is None:
-        tier = "no_path"
-        risk = 1.0
-    elif distance >= 3:
-        tier = "weak_coordination"
-        risk = 0.5
-    else:
-        tier = "coordinated"
-        risk = 0.0
+    distance = distances.get(normalize_pair(finding.source_owner_key, finding.target_owner_key))
+    tier, risk = faultline_tier(distance)
     return FaultlineFinding(
         source_module_key=finding.source_module_key,
         target_module_key=finding.target_module_key,
@@ -556,10 +550,6 @@ def _edge_strength(weight: float) -> str:
     if weight >= 3:
         return "medium"
     return "weak"
-
-
-def _normalize_pair(left: str, right: str) -> tuple[str, str]:
-    return (left, right) if left <= right else (right, left)
 
 
 ROLE_TITLES = {

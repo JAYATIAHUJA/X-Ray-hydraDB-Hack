@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from collections.abc import Sequence
 
-from xray_core.models import EndpointExpectation, QuerySpec, Scalar, WriteBatchSpec
+from xray_core.models import QuerySpec, Scalar, WriteBatchSpec
 
 PATH_KEY = re.compile(r"^[a-z]+:[0-9]{20}$")
 
@@ -140,38 +140,6 @@ def sp_chain_query(
     )
 
 
-def resolve_path_key_query(expectation: EndpointExpectation) -> QuerySpec:
-    statement = _one_statement(
-        "MATCH (n {path_key: $path_key}) "
-        "RETURN n.id AS id, n.path_key AS path_key, "
-        "n.canonical_key AS canonical_key, n.dataset_id AS dataset_id "
-        "LIMIT 2"
-    )
-    return QuerySpec(
-        name="resolve_path_key",
-        statement=statement,
-        parameters={"path_key": expectation.path_key},
-        max_len=None,
-        result_limit=2,
-    )
-
-
-def resolve_node_id_query(expectation: EndpointExpectation) -> QuerySpec:
-    statement = _one_statement(
-        "MATCH (n {id: $id}) "
-        "RETURN n.id AS id, n.path_key AS path_key, "
-        "n.canonical_key AS canonical_key, n.dataset_id AS dataset_id "
-        "LIMIT 2"
-    )
-    return QuerySpec(
-        name="resolve_node_id",
-        statement=statement,
-        parameters={"id": expectation.hydra_id},
-        max_len=None,
-        result_limit=2,
-    )
-
-
 def node_upsert_batch(label: str, rows: Sequence[dict[str, Scalar]]) -> WriteBatchSpec:
     safe_label = _require_label(label)
     statement = _one_statement(
@@ -216,7 +184,5 @@ __all__ = [
     "communication_paths_query",
     "edge_upsert_batch",
     "node_upsert_batch",
-    "resolve_node_id_query",
-    "resolve_path_key_query",
     "sp_chain_query",
 ]

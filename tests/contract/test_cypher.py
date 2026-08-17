@@ -1,26 +1,13 @@
 from __future__ import annotations
 
 import pytest
-from pydantic import ValidationError
-from xray_core.models import EndpointExpectation
 from xray_hydra.cypher import (
     CypherCompileError,
     communication_paths_query,
     edge_upsert_batch,
     node_upsert_batch,
-    resolve_node_id_query,
-    resolve_path_key_query,
     sp_chain_query,
 )
-
-
-def endpoint() -> EndpointExpectation:
-    return EndpointExpectation(
-        path_key="person:00000000000000000001",
-        hydra_id=1,
-        canonical_key="person:alice",
-        dataset_id="xray-demo-v1",
-    )
 
 
 def test_communication_paths_use_equal_pairwise_sets_and_only_communication() -> None:
@@ -39,9 +26,15 @@ def test_communication_paths_use_equal_pairwise_sets_and_only_communication() ->
 
     assert "sourceLabel: 'Person'" in spec.statement
     assert "sourceProperty: 'path_key'" in spec.statement
-    assert "sourceValues: ['person:00000000000000000001', 'person:00000000000000000002']" in spec.statement
+    assert (
+        "sourceValues: ['person:00000000000000000001', 'person:00000000000000000002']"
+        in spec.statement
+    )
     assert "targetLabel: 'Person'" in spec.statement
-    assert "targetValues: ['person:00000000000000000001', 'person:00000000000000000002']" in spec.statement
+    assert (
+        "targetValues: ['person:00000000000000000001', 'person:00000000000000000002']"
+        in spec.statement
+    )
     assert "relTypes: ['COMMUNICATES']" in spec.statement
     assert "relDirection: 'BOTH'" in spec.statement
     assert "resultLimit: 100" in spec.statement
@@ -126,28 +119,6 @@ def test_sp_chain_rejects_invalid_bounds(
 ) -> None:
     with pytest.raises(CypherCompileError):
         sp_chain_query(source_id, target_id, max_len=max_len, result_limit=result_limit)
-
-
-def test_resolution_queries_are_exact_single_statement_limit_two() -> None:
-    by_path = resolve_path_key_query(endpoint())
-    by_id = resolve_node_id_query(endpoint())
-
-    assert by_path.statement.startswith("MATCH (n {path_key: $path_key})")
-    assert by_path.statement.endswith("LIMIT 2")
-    assert by_path.parameters == {"path_key": "person:00000000000000000001"}
-    assert by_id.statement.startswith("MATCH (n {id: $id})")
-    assert by_id.statement.endswith("LIMIT 2")
-    assert by_id.parameters == {"id": 1}
-
-
-def test_endpoint_expectation_rejects_non_path_key() -> None:
-    with pytest.raises(ValidationError):
-        EndpointExpectation(
-            path_key="person:alice",
-            hydra_id=1,
-            canonical_key="person:alice",
-            dataset_id="xray-demo-v1",
-        )
 
 
 def test_write_batches_keep_rows_as_one_parameter_and_one_statement() -> None:

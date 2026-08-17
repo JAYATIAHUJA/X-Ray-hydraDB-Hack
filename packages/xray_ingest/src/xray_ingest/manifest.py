@@ -5,17 +5,12 @@ import json
 from pathlib import Path
 
 import polars as pl
+from xray_core.jsonutil import canonical_json
 from xray_core.models import CanonicalBundle, EvidenceRecord, SnapshotManifest
 
 
-def _canonical_json(value: object) -> str:
-    return json.dumps(
-        value, ensure_ascii=False, allow_nan=False, sort_keys=True, separators=(",", ":")
-    )
-
-
 def _write_json(path: Path, value: object) -> None:
-    path.write_text(f"{_canonical_json(value)}\n", encoding="utf-8", newline="\n")
+    path.write_text(f"{canonical_json(value)}\n", encoding="utf-8", newline="\n")
 
 
 def _sha256_file(path: Path) -> str:
@@ -23,7 +18,7 @@ def _sha256_file(path: Path) -> str:
 
 
 def _snapshot_content_hash(file_sha256: dict[str, str], row_counts: dict[str, int]) -> str:
-    payload = _canonical_json({"file_sha256": file_sha256, "row_counts": row_counts})
+    payload = canonical_json({"file_sha256": file_sha256, "row_counts": row_counts})
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
@@ -40,7 +35,7 @@ def _node_rows(bundle: CanonicalBundle) -> list[dict[str, object]]:
             "label": node.label,
             "evidence_class": node.evidence_class.value,
             "confidence": node.confidence,
-            "properties_json": _canonical_json(node.properties),
+            "properties_json": canonical_json(node.properties),
         }
         for node in bundle.nodes
     ]
@@ -56,7 +51,7 @@ def _edge_rows(bundle: CanonicalBundle) -> list[dict[str, object]]:
             "rel_type": edge.rel_type,
             "evidence_class": edge.evidence_class.value,
             "confidence": edge.confidence,
-            "properties_json": _canonical_json(edge.properties),
+            "properties_json": canonical_json(edge.properties),
         }
         for edge in bundle.edges
     ]

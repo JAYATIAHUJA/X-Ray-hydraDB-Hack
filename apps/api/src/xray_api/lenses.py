@@ -5,12 +5,22 @@ import time
 from collections import defaultdict
 from dataclasses import asdict, dataclass
 
-from xray_analytics import GhostScore, bus_factor_impact, communication_graph, ghost_scores
-from xray_core.models import CanonicalBundle, NodeRow, QuerySpec
+from xray_analytics import (
+    GhostScore,
+    bus_factor_impact,
+    communication_graph,
+    display_name,
+    formal_ranks,
+    ghost_scores,
+    role_rank,
+)
+from xray_core.models import CanonicalBundle, QuerySpec
+from xray_core.paths import normalize_pair, path_key_tuple
 from xray_hydra import HydraGateway
 from xray_hydra.cypher import communication_paths_query, sp_chain_query
 
 from .config import XraySettings
+from .hydra import open_gateway
 
 logger = logging.getLogger(__name__)
 _FIXTURE_GHOST_CACHE: dict[tuple[int, int], tuple[dict[str, object], ...]] = {}
@@ -69,11 +79,9 @@ def live_ghost_findings(
         pairwise=False,
     )
     started = time.perf_counter()
-    created_gateway = gateway is None
-
     try:
-        resolved_gateway = gateway or _create_gateway(settings)
-        rows = resolved_gateway.run(query)
+        with open_gateway(settings, gateway) as resolved_gateway:
+            rows = resolved_gateway.run(query)
     except Exception as exc:
         logger.exception("HydraDB Ghost MSpaths query failed")
         return LiveGhostResult(
@@ -81,17 +89,10 @@ def live_ghost_findings(
             executed_query=_executed(query, started),
             error=str(exc),
         )
-    finally:
-        if (
-            created_gateway
-            and "resolved_gateway" in locals()
-            and hasattr(resolved_gateway.driver, "close")
-        ):
-            resolved_gateway.driver.close()
 
-    paths = tuple(path for row in rows if (path := _path_key_tuple(row.get("path"))))
+    paths = tuple(path for row in rows if (path := path_key_tuple(row.get("path"))))
     sampled_pairs = {
-        _normalize_pair(path[0], path[-1])
+        normalize_pair(path[0], path[-1])
         for path in paths
         if len(path) >= 2 and path[0] != path[-1]
     }
@@ -102,7 +103,7 @@ def live_ghost_findings(
             tallies[intermediate] += 1.0
 
     graph = communication_graph(bundle)
-    formal_rank = _formal_rank(people)
+    formal_rank = formal_ranks(people)
     structural_order = sorted(
         (node.canonical_key for node in people),
         key=lambda key: (-(tallies[key] / denominator), key),
@@ -115,8 +116,8 @@ def live_ghost_findings(
         node = nodes_by_key[key]
         score = GhostScore(
             person_key=key,
-            display_name=_display_name(node),
-            role_rank=_role_rank(node),
+            display_name=display_name(node),
+            role_rank=role_rank(node),
             structural_rank=structural_rank[key],
             formal_rank=formal_rank[key],
             rank_gap=formal_rank[key] - structural_rank[key],
@@ -177,10 +178,9 @@ def live_gap_chain(
 
     query = sp_chain_query(source.id, target.id, max_len=max_len, result_limit=20)
     started = time.perf_counter()
-    created_gateway = gateway is None
     try:
-        resolved_gateway = gateway or _create_gateway(settings)
-        rows = resolved_gateway.run(query)
+        with open_gateway(settings, gateway) as resolved_gateway:
+            rows = resolved_gateway.run(query)
     except Exception as exc:
         logger.exception("HydraDB Gap SPpaths query failed")
         return LiveGapChainResult(
@@ -188,72 +188,11 @@ def live_gap_chain(
             executed_query=_executed(query, started),
             error=str(exc),
         )
-    finally:
-        if (
-            created_gateway
-            and "resolved_gateway" in locals()
-            and hasattr(resolved_gateway.driver, "close")
-        ):
-            resolved_gateway.driver.close()
 
     node_keys: tuple[str, ...] = ()
     if rows:
-        node_keys = _path_key_tuple(rows[0].get("path"))
+        node_keys = path_key_tuple(rows[0].get("path"))
     return LiveGapChainResult(node_keys=node_keys, executed_query=_executed(query, started))
-
-
-def _formal_rank(people: tuple[NodeRow, ...]) -> dict[str, int]:
-    ordered = sorted(people, key=lambda node: (-_role_rank(node), node.canonical_key))
-    return {node.canonical_key: index for index, node in enumerate(ordered, start=1)}
-
-
-def _display_name(node: NodeRow) -> str:
-    value = node.properties.get("display_name") or node.properties.get("handle")
-    return value if isinstance(value, str) else node.canonical_key
-
-
-def _role_rank(node: NodeRow) -> int:
-    value = node.properties.get("role_rank")
-    return value if type(value) is int else 0
-
-
-def _path_key_tuple(path: object) -> tuple[str, ...]:
-    if path is None:
-        return ()
-    if isinstance(path, (list, tuple)):
-        nodes: tuple[object, ...] = tuple(
-            item
-            for item in path
-            if isinstance(item, dict)
-            or (not isinstance(item, str) and hasattr(item, "__getitem__"))
-        )
-    else:
-        raw_nodes = path.get("nodes") if isinstance(path, dict) else getattr(path, "nodes", None)
-        if not isinstance(raw_nodes, (list, tuple)):
-            return ()
-        nodes = tuple(raw_nodes)
-    keys: list[str] = []
-    for node in nodes:
-        value = _node_value(node, "canonical_key")
-        if not isinstance(value, str):
-            value = _node_value(node, "path_key")
-        if not isinstance(value, str):
-            return ()
-        keys.append(value)
-    return tuple(keys)
-
-
-def _node_value(node: object, key: str) -> object:
-    if isinstance(node, dict):
-        return node.get(key)
-    try:
-        return node[key]  # type: ignore[index]
-    except Exception:
-        return None
-
-
-def _normalize_pair(left: str, right: str) -> tuple[str, str]:
-    return (left, right) if left <= right else (right, left)
 
 
 def _executed(query: QuerySpec, started: float) -> ExecutedQuery:
@@ -264,20 +203,6 @@ def _executed(query: QuerySpec, started: float) -> ExecutedQuery:
         round_trips=1,
         engine_ms=(time.perf_counter() - started) * 1000,
     )
-
-
-def _create_gateway(settings: XraySettings) -> HydraGateway:
-    hydra_uri = settings.hydra_uri
-    if hydra_uri is None:
-        raise AssertionError("hydra_configured must imply hydra_uri is set")
-
-    from neo4j import GraphDatabase
-
-    auth = None
-    if settings.hydra_user is not None or settings.hydra_password is not None:
-        auth = (settings.hydra_user or "", settings.hydra_password or "")
-
-    return HydraGateway(GraphDatabase.driver(hydra_uri, auth=auth))
 
 
 __all__ = [
