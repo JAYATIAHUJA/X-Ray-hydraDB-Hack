@@ -19,6 +19,7 @@ from .analysis import (
     ghost_scores,
     reachable_pair_count,
     role_rank,
+    shortest_communication_bridge,
     without_people,
 )
 
@@ -41,5 +42,6 @@ __all__ = [
     "ghost_scores",
     "reachable_pair_count",
     "role_rank",
+    "shortest_communication_bridge",
     "without_people",
 ]
