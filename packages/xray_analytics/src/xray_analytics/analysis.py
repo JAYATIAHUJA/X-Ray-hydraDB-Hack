@@ -336,6 +336,44 @@ def _bounded_distance(
     return None
 
 
+def shortest_communication_bridge(
+    bundle: CanonicalBundle,
+    source_key: str,
+    target_key: str,
+    *,
+    max_len: int = 4,
+) -> tuple[str, ...] | None:
+    """Return one deterministic shortest communication bridge between two people."""
+    if max_len <= 0:
+        raise ValueError("max_len must be positive")
+    graph = communication_graph(bundle)
+    if source_key not in graph or target_key not in graph:
+        return None
+    if source_key == target_key:
+        return (source_key,)
+    queue: deque[str] = deque([source_key])
+    parent: dict[str, str | None] = {source_key: None}
+    distance = {source_key: 0}
+    while queue:
+        node = queue.popleft()
+        if distance[node] >= max_len:
+            continue
+        for neighbor in sorted(graph[node]):
+            if neighbor in parent:
+                continue
+            parent[neighbor] = node
+            distance[neighbor] = distance[node] + 1
+            if neighbor == target_key:
+                path: list[str] = []
+                current: str | None = neighbor
+                while current is not None:
+                    path.append(current)
+                    current = parent[current]
+                return tuple(reversed(path))
+            queue.append(neighbor)
+    return None
+
+
 def _has_path_within(graph: CommunicationGraph, source: str, target: str, max_len: int) -> bool:
     distance = _bounded_distance(graph, source, target, max_len)
     return distance is not None
@@ -576,5 +614,6 @@ __all__ = [
     "ghost_scores",
     "reachable_pair_count",
     "role_rank",
+    "shortest_communication_bridge",
     "without_people",
 ]
