@@ -117,9 +117,12 @@ export type FaultlineFinding = {
   source_owner_key: string;
   target_owner_key: string;
   dependency_weight: number;
+  source_owner_confidence: number;
+  target_owner_confidence: number;
   communication_distance: number | null;
   tier: string;
   severity: number;
+  bridge?: string[] | null;
   evidence: EvidenceSummary[];
 };
 
@@ -142,6 +145,19 @@ export type GapFinding = {
 export type GapPathRequest = {
   source_artifact_key: string;
   target_artifact_key: string;
+};
+
+export type ImportPayload = {
+  dataset_id: string;
+  directory: Record<string, unknown>[];
+  identity_map: Record<string, string>;
+  mbox: string[];
+  jira_csv?: string;
+  git_log?: string;
+  module_prefixes: Record<string, string>;
+  slack_exports: Record<string, Record<string, unknown>[]>;
+  channel_modules: Record<string, string[]>;
+  message_modules: Record<string, string[]>;
 };
 
 export const DEFAULT_GAP_REQUEST: GapPathRequest = {
@@ -173,14 +189,18 @@ export function getHealth() {
   return requestJson<HealthResponse>("/api/v1/health");
 }
 
-export function getGraph(snapshotId: string) {
-  return requestJson<GraphResponse>(`/api/v1/snapshots/${encodeURIComponent(snapshotId)}/graph`);
+export function getGraph(snapshotId: string, windowDays = 0) {
+  return requestJson<GraphResponse>(
+    `/api/v1/snapshots/${encodeURIComponent(snapshotId)}/graph${windowDays > 0 ? `?window_days=${windowDays}` : ""}`
+  );
 }
 
-export function getGhosts(snapshotId: string, exclude: string[] = []) {
+export function getGhosts(snapshotId: string, exclude: string[] = [], windowDays = 0) {
   const query = exclude.map((key) => `exclude=${encodeURIComponent(key)}`).join("&");
+  const windowQuery = windowDays > 0 ? `window_days=${windowDays}` : "";
+  const separator = query && windowQuery ? "&" : "";
   return requestJson<LensEnvelope<GhostFinding>>(
-    `/api/v1/snapshots/${encodeURIComponent(snapshotId)}/ghosts${query ? `?${query}` : ""}`
+    `/api/v1/snapshots/${encodeURIComponent(snapshotId)}/ghosts${query || windowQuery ? `?${query}${separator}${windowQuery}` : ""}`
   );
 }
 
@@ -190,9 +210,9 @@ export function getGaps(snapshotId: string, limit = 100) {
   );
 }
 
-export function getFaultlines(snapshotId: string) {
+export function getFaultlines(snapshotId: string, windowDays = 0) {
   return requestJson<LensEnvelope<FaultlineFinding>>(
-    `/api/v1/snapshots/${encodeURIComponent(snapshotId)}/faultlines`
+    `/api/v1/snapshots/${encodeURIComponent(snapshotId)}/faultlines${windowDays > 0 ? `?window_days=${windowDays}` : ""}`
   );
 }
 
@@ -204,4 +224,21 @@ export function getGapPath(snapshotId: string, request: GapPathRequest = DEFAULT
       method: "POST"
     }
   );
+}
+
+export async function getRiskReport(snapshotId: string) {
+  const response = await fetch(
+    `${apiBaseUrl}/api/v1/snapshots/${encodeURIComponent(snapshotId)}/risk-report`
+  );
+  if (!response.ok) {
+    throw new Error(`Risk report request failed: ${response.status}`);
+  }
+  return response.text();
+}
+
+export function importSnapshot(payload: ImportPayload) {
+  return requestJson<SnapshotResponse>("/api/v1/snapshots/import", {
+    body: JSON.stringify(payload),
+    method: "POST"
+  });
 }

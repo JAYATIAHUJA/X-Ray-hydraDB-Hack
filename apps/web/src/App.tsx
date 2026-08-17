@@ -11,6 +11,8 @@ import type {
   GraphNode,
   LensEnvelope
 } from "./api";
+import { getRiskReport, importSnapshot } from "./api";
+import type { ImportPayload } from "./api";
 import type { Lens } from "./data";
 import { useXraySnapshot } from "./queries";
 
@@ -43,7 +45,13 @@ export function App() {
   const [selectedGapIndex, setSelectedGapIndex] = useState(0);
   const [gapRequest, setGapRequest] = useState<GapPathRequest | undefined>();
   const [excluded, setExcluded] = useState<string[]>([]);
-  const { faultlines, gapPath, gaps, ghosts, graph, health, snapshot } = useXraySnapshot(gapRequest, excluded);
+  const [windowDays, setWindowDays] = useState(0);
+  const [reportStatus, setReportStatus] = useState<string | null>(null);
+  const { faultlines, gapPath, gaps, ghosts, graph, health, snapshot } = useXraySnapshot(
+    gapRequest,
+    excluded,
+    windowDays
+  );
   const people = graph.data?.nodes ?? [];
   const defaultSelectedKey = people.find((person) => person.selected)?.key ?? people[0]?.key;
   const selectedKey = people.some((person) => person.key === selectedNodeKey) ? selectedNodeKey : defaultSelectedKey;
@@ -83,6 +91,24 @@ export function App() {
   const selectedGap = gapFindings[selectedGapIndex] ?? gapFindings[0];
   const activeEnvelope = envelopeForLens(activeLens, ghosts.data, faultlines.data, gapPath.data ?? gaps.data);
   const activeQuery = activeEnvelope?.executed_query;
+
+  async function exportRiskReport() {
+    if (snapshot.data === undefined) return;
+    setReportStatus("Preparing report");
+    try {
+      const report = await getRiskReport(snapshot.data.snapshot_id);
+      const blob = new Blob([report], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `${snapshot.data.dataset_id}-risk-report.md`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+      setReportStatus("Report downloaded");
+    } catch {
+      setReportStatus("Report unavailable");
+    }
+  }
   const queryErrors = [
     ["health", health.isError],
     ["snapshot", snapshot.isError],
@@ -174,7 +200,7 @@ export function App() {
       </header>
 
       <section className="hero-strip" aria-label="Snapshot summary">
-        <button className="hero-tile" onClick={() => setActiveLens("org")} type="button">
+        <button className="hero-tile" onClick={() => setActiveLens("org")} type="button" title="Ghost lens: person whose sampled betweenness centrality in the communication graph exceeds their formal seniority rank">
           <span>Load-bearing person</span>
           <strong>{topGhost?.display_name ?? "—"}</strong>
           <small>
@@ -185,7 +211,7 @@ export function App() {
               : "waiting for Ghost lens"}
           </small>
         </button>
-        <button className="hero-tile" onClick={() => setActiveLens("faultlines")} type="button">
+        <button className="hero-tile" onClick={() => setActiveLens("faultlines")} type="button" title="Faultline lens: module dependencies whose owners have no bounded communication path (≤4 hops) in the collaboration graph">
           <span>Uncoordinated dependencies</span>
           <strong>{faultlines.data ? faultlineFindings.length : "—"}</strong>
           <small>
@@ -194,7 +220,7 @@ export function App() {
               : "module pairs whose owners have no bounded path"}
           </small>
         </button>
-        <button className="hero-tile" onClick={() => setActiveLens("gaps")} type="button">
+        <button className="hero-tile" onClick={() => setActiveLens("gaps")} type="button" title="Gap lens: Phantom nodes the graph requires (via sequence contracts or dangling thread parents) but that are absent from the evidence corpus. Absence ≠ deletion.">
           <span>Structurally missing records</span>
           <strong>{gaps.data ? gapTotal : "—"}</strong>
           <small>
@@ -217,6 +243,8 @@ export function App() {
           </small>
         </div>
       </section>
+
+      <ImportPanel />
 
       <div className="workspace">
         <aside className="rail" aria-label="Lens navigation">
@@ -269,6 +297,18 @@ export function App() {
             <div className="query-source">
               {activeEnvelope?.source ?? "fixture"} · {activeEnvelope?.analysis_status ?? "pending"}
             </div>
+            <label className="window-control">
+              Window
+              <select value={windowDays} onChange={(event) => setWindowDays(Number(event.target.value))}>
+                <option value={0}>All time</option>
+                <option value={30}>30 days</option>
+                <option value={90}>90 days</option>
+                <option value={365}>365 days</option>
+              </select>
+            </label>
+            <button className="report-button" onClick={exportRiskReport} type="button">
+              Export report
+            </button>
           </div>
 
           <div className="graph-stage" data-lens={activeLens}>
@@ -341,11 +381,13 @@ export function App() {
               detail={`${ghostFinding?.structural_rank ?? "--"} structural rank`}
               label="Actual centrality"
               value={formatCentrality(ghostFinding)}
+              tooltip="Sampled betweenness centrality: fraction of bounded (≤4-hop) shortest paths that pass through this person across the sampled communication graph. Higher = more load-bearing."
             />
             <Metric
               detail={`Formal rank: ${ghostFinding?.formal_rank ?? "--"}`}
               label="Rank gap"
               value={formatRankGap(ghostFinding)}
+              tooltip="Structural rank minus formal rank. Positive = this person carries more coordination weight than their title suggests. Negative = formal authority without structural centrality."
             />
             <Metric
               detail={`Lost within ${ghostFinding?.removal_impact?.max_len ?? 4} hops`}
@@ -355,11 +397,13 @@ export function App() {
                   ? `${ghostFinding.removal_impact.pairs_lost_without_person.toLocaleString()} pairs`
                   : "top-10 only"
               }
+              tooltip="Number of person-pairs that lose their bounded shortest path when this person is removed from the communication graph. Measures how much coordination load they carry."
             />
             <Metric
               detail={snapshot.data?.dataset_id ?? "Waiting for snapshot"}
               label="Evidence limits"
               value={`${snapshot.data?.limitations.length ?? "--"} notes`}
+              tooltip="Known limitations of the evidence corpus. Absence of a record does not establish that it was deleted — only that it is not in the export."
             />
           </section>
 
@@ -395,6 +439,12 @@ export function App() {
             <h3>Evidence + action</h3>
             <p>{evidenceSummary(activeLens, ghostFinding, selectedFaultline, selectedGap)}</p>
             <strong>{recommendedAction(activeLens, ghostFinding, selectedFaultline, selectedGap)}</strong>
+            {selectedFaultline?.bridge ? (
+              <p className="bridge-suggestion">
+                Suggested bridge: {selectedFaultline.bridge.map(suffix).join(" → ")}
+              </p>
+            ) : null}
+            {reportStatus ? <small className="report-status">{reportStatus}</small> : null}
             <EvidenceList evidence={selectedEvidence(activeLens, ghostFinding, selectedFaultline, selectedGap)} />
             <div className="limitations-list">
               <span>Limitations</span>
@@ -412,6 +462,85 @@ export function App() {
         </aside>
       </div>
     </main>
+  );
+}
+
+function ImportPanel() {
+  const [datasetId, setDatasetId] = useState("imported-snapshot");
+  const [directoryFile, setDirectoryFile] = useState<File | null>(null);
+  const [identityFile, setIdentityFile] = useState<File | null>(null);
+  const [mboxFile, setMboxFile] = useState<File | null>(null);
+  const [jiraFile, setJiraFile] = useState<File | null>(null);
+  const [gitFile, setGitFile] = useState<File | null>(null);
+  const [moduleFile, setModuleFile] = useState<File | null>(null);
+  const [channelFile, setChannelFile] = useState<File | null>(null);
+  const [messageFile, setMessageFile] = useState<File | null>(null);
+  const [slackFiles, setSlackFiles] = useState<File[]>([]);
+  const [status, setStatus] = useState<string | null>(null);
+
+  async function readJson(file: File | null, fallback: unknown) {
+    if (file === null) return fallback;
+    return JSON.parse(await file.text()) as unknown;
+  }
+
+  async function importFiles() {
+    if (directoryFile === null) {
+      setStatus("Choose a directory.json file first");
+      return;
+    }
+    setStatus("Importing exports");
+    try {
+      const directory = await readJson(directoryFile, []) as Record<string, unknown>[];
+      const identity = await readJson(identityFile, {}) as Record<string, string>;
+      const modulePrefixes = await readJson(moduleFile, {}) as Record<string, string>;
+      const channelModules = await readJson(channelFile, {}) as Record<string, string[]>;
+      const messageModules = await readJson(messageFile, {}) as Record<string, string[]>;
+      const slackExports: Record<string, Record<string, unknown>[]> = {};
+      for (const file of slackFiles) {
+        slackExports[file.name.replace(/\.json$/i, "")] = await readJson(file, []) as Record<string, unknown>[];
+      }
+      const payload: ImportPayload = {
+        dataset_id: datasetId.trim() || "imported-snapshot",
+        directory,
+        identity_map: identity,
+        mbox: mboxFile ? [await mboxFile.text()] : [],
+        jira_csv: jiraFile ? await jiraFile.text() : undefined,
+        git_log: gitFile ? await gitFile.text() : undefined,
+        module_prefixes: modulePrefixes,
+        slack_exports: slackExports,
+        channel_modules: channelModules,
+        message_modules: messageModules
+      };
+      const snapshot = await importSnapshot(payload);
+      setStatus(`Imported ${snapshot.node_count} nodes and ${snapshot.edge_count} edges. Reloading…`);
+      window.location.reload();
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Import failed");
+    }
+  }
+
+  return (
+    <section className="import-panel" aria-label="Load your exports">
+      <div>
+        <span className="eyeline">Offline ingestion</span>
+        <h2>Load your exports</h2>
+        <p>Build a local snapshot from directory, mail, JIRA, and git exports.</p>
+      </div>
+      <div className="import-controls">
+        <label>Snapshot ID<input value={datasetId} onChange={(event) => setDatasetId(event.target.value)} /></label>
+        <label>Directory JSON<input accept=".json" type="file" onChange={(event) => setDirectoryFile(event.target.files?.[0] ?? null)} /></label>
+        <label>Identity map<input accept=".json" type="file" onChange={(event) => setIdentityFile(event.target.files?.[0] ?? null)} /></label>
+        <label>mbox<input accept=".mbox,.txt" type="file" onChange={(event) => setMboxFile(event.target.files?.[0] ?? null)} /></label>
+        <label>JIRA CSV<input accept=".csv" type="file" onChange={(event) => setJiraFile(event.target.files?.[0] ?? null)} /></label>
+        <label>git log<input accept=".log,.txt" type="file" onChange={(event) => setGitFile(event.target.files?.[0] ?? null)} /></label>
+        <label>Module prefixes<input accept=".json" type="file" onChange={(event) => setModuleFile(event.target.files?.[0] ?? null)} /></label>
+        <label>Slack JSON<input accept=".json" multiple type="file" onChange={(event) => setSlackFiles(Array.from(event.target.files ?? []))} /></label>
+        <label>Channel map<input accept=".json" type="file" onChange={(event) => setChannelFile(event.target.files?.[0] ?? null)} /></label>
+        <label>Message map<input accept=".json" type="file" onChange={(event) => setMessageFile(event.target.files?.[0] ?? null)} /></label>
+        <button className="report-button" onClick={importFiles} type="button">Import snapshot</button>
+      </div>
+      {status ? <small className="report-status">{status}</small> : null}
+    </section>
   );
 }
 
@@ -693,9 +822,11 @@ function toFaultlineRows(findings: FaultlineFinding[]) {
     id: `FL-${String(index + 1).padStart(3, "0")}`,
     modules: `${suffix(finding.source_module_key)} → ${suffix(finding.target_module_key)}`,
     owners: `${suffix(finding.source_owner_key)} / ${suffix(finding.target_owner_key)}`,
-    distance: finding.communication_distance === null ? "none within 4" : String(finding.communication_distance),
-    severity: finding.severity.toFixed(1),
-    tier: finding.tier
+    "distance (hops)": finding.communication_distance === null ? "none within 4" : String(finding.communication_distance),
+    "severity": finding.severity.toFixed(1),
+    tier: finding.tier,
+    "src conf%": `${finding.source_owner_confidence}`,
+    "tgt conf%": `${finding.target_owner_confidence}`
   }));
 }
 
@@ -827,9 +958,9 @@ function Icon({ path }: { path: string }) {
   );
 }
 
-function Metric({ label, value, detail }: { label: string; value: string; detail: string }) {
+function Metric({ label, value, detail, tooltip }: { label: string; value: string; detail: string; tooltip?: string }) {
   return (
-    <div className="metric">
+    <div className="metric" title={tooltip}>
       <span>{label}</span>
       <strong>{value}</strong>
       <small>{detail}</small>
@@ -941,6 +1072,9 @@ function GapTimeline({
                 <li
                   className={selected.chain?.phantom_indices.includes(index) ? "chain-hop phantom" : "chain-hop"}
                   key={`${key}-${index}`}
+                  title={selected.chain?.phantom_indices.includes(index)
+                    ? "Phantom node: structurally required by the graph but absent from the evidence corpus. Absence does not establish deletion."
+                    : undefined}
                 >
                   <span className="chain-dot" />
                   <code>{suffix(key)}</code>
