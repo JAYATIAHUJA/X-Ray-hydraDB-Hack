@@ -48,6 +48,15 @@ const responses: Record<string, object> = {
     source: "fixture",
     degraded_reason: null,
     executed_query: null,
+    what_if: null,
+    comparison: {
+      engine_ms: null,
+      client_ms: 12.5,
+      client_method: "python_bounded_bfs_all_pairs",
+      sampled_people: 10,
+      engine_round_trips: 0,
+      client_equivalent_round_trips: 45
+    },
     findings: [
       {
         person_key: "person:maya-chen",
@@ -115,6 +124,8 @@ const responses: Record<string, object> = {
   },
   "/api/v1/snapshots/xray-demo-v1%3Afixture/faultlines": {
     snapshot_id: "xray-demo-v1:fixture",
+    what_if: null,
+    comparison: null,
     analysis_status: "complete",
     status_explanation: "Fixture Faultline analysis completed.",
     limitations: [],
@@ -141,6 +152,28 @@ const responses: Record<string, object> = {
       }
     ]
   },
+  "/api/v1/snapshots/xray-demo-v1%3Afixture/gaps": {
+    snapshot_id: "xray-demo-v1:fixture",
+    analysis_status: "complete",
+    status_explanation: "1 structurally missing records. Absence does not establish deletion.",
+    limitations: ["Absence does not establish deletion."],
+    source: "fixture",
+    degraded_reason: null,
+    executed_query: null,
+    what_if: null,
+    comparison: null,
+    findings: [
+      {
+        phantom_key: "artifact:missing-approval",
+        expected_kind: "approval",
+        reason: "required_sequence_step_missing",
+        inferred_epoch: 1736003600,
+        predecessor_keys: ["artifact:directive"],
+        successor_keys: ["artifact:code-change"],
+        evidence: [{ ...evidence, predicate: "gap_phantom", source_record_id: "contract-approval" }]
+      }
+    ]
+  },
   "/api/v1/snapshots/xray-demo-v1%3Afixture/gap-paths": {
     snapshot_id: "xray-demo-v1:fixture",
     analysis_status: "complete",
@@ -155,6 +188,8 @@ const responses: Record<string, object> = {
       round_trips: 1,
       engine_ms: 4.1
     },
+    what_if: null,
+    comparison: null,
     findings: [
       {
         phantom_key: "artifact:missing-approval",
@@ -163,7 +198,11 @@ const responses: Record<string, object> = {
         inferred_epoch: 1736003600,
         predecessor_keys: ["artifact:directive"],
         successor_keys: ["artifact:code-change"],
-        evidence: [{ ...evidence, predicate: "gap_phantom", source_record_id: "contract-approval" }]
+        evidence: [{ ...evidence, predicate: "gap_phantom", source_record_id: "contract-approval" }],
+        chain: {
+          node_keys: ["artifact:code-change", "artifact:missing-approval", "artifact:directive"],
+          phantom_indices: [1]
+        }
       }
     ]
   }
@@ -207,20 +246,26 @@ test("renders the three-lens shell from API responses", async () => {
   expect(screen.getByText("Loading")).toBeInTheDocument();
   expect(await screen.findByText("Graph: 17 nodes / 30 edges")).toBeInTheDocument();
   expect(await screen.findByText("HydraDB: fallback")).toBeInTheDocument();
-  expect(await screen.findAllByText("Maya Chen")).toHaveLength(2);
+  expect(await screen.findAllByText("Maya Chen")).toHaveLength(3); // hero tile, node, detail panel
   expect(await screen.findByText("Operations specialist / operations")).toBeInTheDocument();
   const alexNode = screen.getByRole("button", { name: /Alex Rivera/ });
   expect(alexNode).toBeInTheDocument();
   expect(alexNode).toHaveAttribute("aria-pressed", "false");
   expect(await screen.findByText("0.231")).toBeInTheDocument();
   expect(await screen.findByText("payments-api → ledger-worker")).toBeInTheDocument();
-  expect(await screen.findByText("missing-approval")).toBeInTheDocument();
-  expect(await screen.findByRole("combobox", { name: "Source artifact" })).toHaveValue("artifact:code-change");
-  expect(await screen.findByRole("combobox", { name: "Target artifact" })).toHaveValue("artifact:directive");
+  expect(await screen.findAllByText("missing-approval")).not.toHaveLength(0);
+  // Hero strip summarises the three lenses from live data.
+  expect(screen.getByText("Load-bearing person")).toBeInTheDocument();
+  expect(screen.getByText(/structural #1 · formal #9 · gap \+8/)).toBeInTheDocument();
+  expect(screen.getByText("Uncoordinated dependencies")).toBeInTheDocument();
+  expect(screen.getByText(/1 MSpaths call replaces 45 per-pair queries/)).toBeInTheDocument();
+  // Selecting the first gap requests its chain and renders the SPpaths hops.
+  await screen.findByLabelText("Chain of custody");
   expect(gapRequests).toContainEqual({
     source_artifact_key: "artifact:code-change",
     target_artifact_key: "artifact:directive"
   });
+  expect(await screen.findByText(/missing · required_sequence_step_missing/)).toBeInTheDocument();
 
   await userEvent.click(screen.getByRole("button", { name: /Faultlines/ }));
 
@@ -243,6 +288,12 @@ test("renders the three-lens shell from API responses", async () => {
 
   expect(alexNode).toHaveAttribute("aria-pressed", "true");
   expect(await screen.findByText("Payments director / payments")).toBeInTheDocument();
+  // Official / Actual is a segmented toggle, not a select.
+  await userEvent.click(screen.getByRole("button", { name: "Official" }));
+  expect(screen.getByRole("button", { name: "Official" })).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByText(/Node size = formal seniority/)).toBeInTheDocument();
+  // What-if removal is one click from the selected person.
+  expect(screen.getByRole("button", { name: /What if Alex Rivera is out/ })).toBeInTheDocument();
   expect(screen.getByText("person:alex-rivera")).toBeInTheDocument();
   expect(screen.getByText("0.042")).toBeInTheDocument();
   expect(screen.getByText("-1 places")).toBeInTheDocument();
