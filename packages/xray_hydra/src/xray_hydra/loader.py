@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 from collections import defaultdict
 from pathlib import Path
 from typing import Protocol
@@ -11,6 +12,8 @@ from xray_core.models import LoadReport, Scalar, SnapshotManifest, WriteBatchSpe
 
 from .cypher import edge_upsert_batch, node_upsert_batch
 from .gateway import HydraGateway
+
+logger = logging.getLogger(__name__)
 
 
 class CheckpointStore(Protocol):
@@ -80,8 +83,9 @@ class HydraLoader:
                 continue
             try:
                 self.gateway.run_batch(batch)
-            except Exception:
-                failed.append(f"{batch.name}[{index}]")
+            except Exception as exc:
+                logger.exception("HydraDB batch %s[%d] failed", batch.name, index)
+                failed.append(f"{batch.name}[{index}]: {type(exc).__name__}: {exc}")
                 continue
             self.checkpoint_store.put(manifest.snapshot_id, batch.name, index, row_hash)
             completed += 1

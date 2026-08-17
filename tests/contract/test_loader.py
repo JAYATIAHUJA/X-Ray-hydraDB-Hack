@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import shutil
 from pathlib import Path
 
 from xray_core.models import CanonicalRecord, SequenceContractSet
@@ -10,7 +9,6 @@ from xray_ingest.manifest import write_snapshot
 from xray_ingest.pipeline import build_bundle
 
 FIXTURE_ROOT = Path(__file__).parents[2] / "data" / "fixtures" / "xray-demo"
-WORK_ROOT = Path(__file__).parents[2] / ".cache" / "contract-loader"
 
 
 class RecordingDriver:
@@ -26,10 +24,7 @@ class RecordingDriver:
         return [{"count": len((parameters_ or {}).get("rows", []))}]
 
 
-def demo_snapshot() -> tuple[Path, object]:
-    if WORK_ROOT.exists():
-        shutil.rmtree(WORK_ROOT)
-    WORK_ROOT.mkdir(parents=True)
+def demo_snapshot(work_root: Path) -> tuple[Path, object]:
     records: list[CanonicalRecord] = []
     for name in ("directory.json", "events.json", "git_facts.json"):
         records.extend(
@@ -44,12 +39,12 @@ def demo_snapshot() -> tuple[Path, object]:
         }
     )
     bundle = build_bundle(records, contracts, "xray-demo-v1")
-    manifest = write_snapshot(bundle, WORK_ROOT / "snapshot")
-    return WORK_ROOT / "snapshot", manifest
+    manifest = write_snapshot(bundle, work_root / "snapshot")
+    return work_root / "snapshot", manifest
 
 
-def test_loader_validates_snapshot_and_loads_nodes_before_edges() -> None:
-    snapshot_dir, manifest = demo_snapshot()
+def test_loader_validates_snapshot_and_loads_nodes_before_edges(tmp_path: Path) -> None:
+    snapshot_dir, manifest = demo_snapshot(tmp_path)
     driver = RecordingDriver()
     loader = HydraLoader(HydraGateway(driver))
 
@@ -66,8 +61,8 @@ def test_loader_validates_snapshot_and_loads_nodes_before_edges() -> None:
     assert any("MATCH (s:Person {id: row.source_id})" in call[0] for call in driver.calls)
 
 
-def test_loader_resumes_previously_completed_batches() -> None:
-    snapshot_dir, manifest = demo_snapshot()
+def test_loader_resumes_previously_completed_batches(tmp_path: Path) -> None:
+    snapshot_dir, manifest = demo_snapshot(tmp_path)
     driver = RecordingDriver()
     loader = HydraLoader(HydraGateway(driver))
 

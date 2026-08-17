@@ -12,6 +12,8 @@ def test_eval_synth_reports_planted_metrics() -> None:
         text=True,
     )
 
+    assert "| Faultline precision | 1.000 |" in result.stdout
     assert "| Faultline recall | 1.000 |" in result.stdout
+    assert "| Gap recall | 1.000 |" in result.stdout
     assert "| Gap precision | 1.000 |" in result.stdout
     assert "Ghost top-1 hit rate across seeds" in result.stdout

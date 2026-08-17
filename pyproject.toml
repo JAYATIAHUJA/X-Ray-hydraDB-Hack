@@ -40,7 +40,7 @@ xray-ingest = { workspace = true }
 xray-runtime = { workspace = true }
 
 [tool.pytest.ini_options]
-addopts = "-ra --strict-config --strict-markers -p no:cacheprovider"
+addopts = "-ra --strict-config --strict-markers -p no:cacheprovider -m 'not integration'"
 minversion = "8.0"
 testpaths = ["tests", "apps/api/tests"]
 xfail_strict = true
