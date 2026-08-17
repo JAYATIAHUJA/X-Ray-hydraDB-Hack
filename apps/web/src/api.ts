@@ -158,6 +158,8 @@ export type ImportPayload = {
   slack_exports: Record<string, Record<string, unknown>[]>;
   channel_modules: Record<string, string[]>;
   message_modules: Record<string, string[]>;
+  confluence_xml?: string;
+  github_csv?: string;
 };
 
 export const DEFAULT_GAP_REQUEST: GapPathRequest = {
