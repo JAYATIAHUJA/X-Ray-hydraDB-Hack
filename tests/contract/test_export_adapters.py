@@ -32,6 +32,7 @@ def test_mbox_adapter_maps_explicit_headers_to_email_rows(tmp_path: Path) -> Non
             "from_id": "alex@example.test",
             "to_ids": ("maya@example.test",),
             "in_reply_to_id": None,
+            "parent_author_id": None,
             "subject": "Payments rollout",
             "body": "Please review.",
             "module_keys": ("payments-api",),
