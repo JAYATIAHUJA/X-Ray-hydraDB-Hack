@@ -301,6 +301,40 @@ returns a `what_if` block (pairs lost without that person) and a `comparison` bl
 round trip vs the in-process BFS baseline, and the number of per-pair calls one pairwise
 `algo.MSpaths` call replaces).
 
+### Real corpus: Apache Kafka, March–June 2025
+
+The same pipeline was run on public Apache Kafka exports — `dev@kafka.apache.org` mbox
+(4 months), the KAFKA JIRA CSV export, and `git log --name-only` — with formal seniority taken
+from the public ASF roster (PMC = 4, committer = 3, contributor = 1). Identity is resolved
+offline by exact joins only (ASF id, email, case-folded public name). Every number traces to
+[docs/results/kafka-2025q2.json](docs/results/kafka-2025q2.json); the snapshot ships in
+`data/snapshots/kafka-2025q2` so it runs without downloading anything:
+
+```powershell
+$env:XRAY_SNAPSHOT_DIR = "data/snapshots/kafka-2025q2"
+uv run uvicorn xray_api.app:app --reload
+```
+
+| Metric | Value |
+| --- | ---: |
+| Nodes / edges | 2,294 / 4,476 (292 people, 26 modules, 1,841 artifacts, 135 phantoms) |
+| Sources | 850 person-to-person emails · 397 tickets · 597 commits |
+| Identity | 292 people, 12 unresolved source ids kept visibly; 28 PMC + 9 committers matched to the roster |
+| Ghost #1 | Chia-Ping Tsai (PMC) — structural #1, formal #4 |
+| Largest rank gap in the top 10 | **PoAn Yang, committer — structural #5, formal #34 (+29)**; TengYao Chi, committer — #8 vs #30 |
+| What-if: remove the #1 | 516 of 6,295 reachable pairs lose their ≤4-hop reply path |
+| Faultlines | 49 (48 `no_path`, 1 `weak_coordination`); top: `clients` ↔ `connect` co-changed 9× with no dev@ reply path between their top authors |
+| Incident lift | **Not measurable** — 1 of 397 issues in the window carries a component, so no lift over a churn baseline is claimed. Coordination debt only. |
+| Client baseline | bounded all-pairs BFS over 292 people ≈ 48 ms ≈ 43,071 per-pair calls |
+
+Two honest notes from this run. First, mailing-list mail is addressed to the list, so the
+person-to-person signal is *reply → parent author* (an `In-Reply-To` whose parent is in the
+corpus), not `To:`; that is what the mbox adapter emits. Second, identity quality changes the
+findings: an earlier build split `jsancio` into two handles and reported a `core ↔ metadata`
+faultline between them — merging on the exact ASF id removed it, because those two people talk.
+Faultline output is only as good as the identity map, which is why unresolved ids are surfaced
+rather than hidden.
+
 ## Scale and limitations
 
 X-Ray will report negative results as plainly as positive ones. In particular:
@@ -311,8 +345,9 @@ X-Ray will report negative results as plainly as positive ones. In particular:
 - Gaps represent structural incompleteness, never automatic evidence of deletion.
 - Sampling keeps Ghost queries bounded on larger graphs; `maxLen=4` is a product choice, not a
   universal organization-science claim.
-- The current measured corpus is synthetic. Public export adapters exist for mbox, JIRA CSV,
-  git log, and Slack export JSON, but live OAuth connectors are intentionally out of scope.
+- Measured corpora are one labelled synthetic org and one public open-source project (Apache
+  Kafka); neither is a claim about a private company. Live OAuth connectors are intentionally
+  out of scope; the export adapters (mbox, JIRA CSV, git log, Slack export JSON) are the path in.
 - HERB evaluation remains planned if time allows; it is not included in the repository.
 
 ## Demo path

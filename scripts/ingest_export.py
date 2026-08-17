@@ -47,7 +47,14 @@ def main(argv: list[str] | None = None) -> int:
     contracts = _load_contracts(args.contracts)
 
     email_rows = (
-        mbox_rows(Path(args.mbox), module_keys_by_message_id=message_modules) if args.mbox else ()
+        mbox_rows(
+            [Path(item) for item in args.mbox],
+            module_keys_by_message_id=message_modules,
+            ignore_addresses=_load_list(args.ignore_addresses),
+            skip_senders=_load_list(args.skip_senders),
+        )
+        if args.mbox
+        else ()
     )
     ticket_rows = jira_csv_rows(Path(args.jira_csv)) if args.jira_csv else ()
     git_rows = (
@@ -105,7 +112,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     )
     parser.add_argument("--identity-map", help="JSON object: source id (email, Slack id) -> handle")
     parser.add_argument("--contracts", help="JSON with sequence_contracts + limitations (optional)")
-    parser.add_argument("--mbox", help="mbox file (mailing list / mailbox export)")
+    parser.add_argument(
+        "--mbox", action="append", help="mbox file (repeatable; mailing list / mailbox export)"
+    )
+    parser.add_argument("--ignore-addresses", help="JSON list of list addresses to drop from To/Cc")
+    parser.add_argument("--skip-senders", help="JSON list of automated senders to exclude")
     parser.add_argument("--message-modules", help="JSON object: Message-ID -> [module keys]")
     parser.add_argument("--jira-csv", help="JIRA CSV export")
     parser.add_argument("--git-log", help="git log output (see module docstring for the format)")
@@ -136,6 +147,15 @@ def _load_mapping(path: str | None) -> dict[str, str]:
     ):
         raise SystemExit(f"{path} must be a JSON object of string -> string")
     return dict(payload)
+
+
+def _load_list(path: str | None) -> tuple[str, ...]:
+    if path is None:
+        return ()
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(payload, list) or not all(isinstance(item, str) for item in payload):
+        raise SystemExit(f"{path} must be a JSON list of strings")
+    return tuple(payload)
 
 
 def _load_module_lists(path: str | None) -> dict[str, tuple[str, ...]]:

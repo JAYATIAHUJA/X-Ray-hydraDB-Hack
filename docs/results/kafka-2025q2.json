@@ -1,0 +1,289 @@
+{
+  "client_baseline": {
+    "equivalent_round_trips": 42486,
+    "method": "python_bounded_bfs_all_pairs",
+    "ms": 45.1,
+    "people": 292
+  },
+  "dataset_id": "kafka-2025q2",
+  "engine": {
+    "digest": "sha256:db78309a233be54662db29744047e985a39b51c45a270d1a1f47c31a62cdb709",
+    "repository": "ghcr.io/hydra-db/hydradb",
+    "source_commit": "02a40025d2d57e97ab2754c8256219cdbfeab379"
+  },
+  "faultline": {
+    "count": 49,
+    "incident_lift": {
+      "reason": "The corpus carries no module-linked incident signal (Kafka JIRA issues in the window have no components), so no lift over a churn baseline is claimed. Faultlines are reported as coordination debt only.",
+      "status": "not_measurable"
+    },
+    "tiers": {
+      "no_path": 48,
+      "weak_coordination": 1
+    },
+    "top": [
+      {
+        "communication_distance": null,
+        "dependency_weight": 9,
+        "severity": 9.0,
+        "source_module": "module:clients",
+        "source_owner": "person:kirktrue",
+        "target_module": "module:connect",
+        "target_owner": "person:kumarpritam863",
+        "tier": "no_path"
+      },
+      {
+        "communication_distance": null,
+        "dependency_weight": 5,
+        "severity": 5.0,
+        "source_module": "module:core",
+        "source_owner": "person:payang",
+        "target_module": "module:share-coordinator",
+        "target_owner": "person:smahajan",
+        "tier": "no_path"
+      },
+      {
+        "communication_distance": null,
+        "dependency_weight": 5,
+        "severity": 5.0,
+        "source_module": "module:group-coordinator",
+        "source_owner": "person:lucasbru",
+        "target_module": "module:share-coordinator",
+        "target_owner": "person:smahajan",
+        "tier": "no_path"
+      },
+      {
+        "communication_distance": null,
+        "dependency_weight": 4,
+        "severity": 4.0,
+        "source_module": "module:connect",
+        "source_owner": "person:kumarpritam863",
+        "target_module": "module:streams",
+        "target_owner": "person:lucasbru",
+        "tier": "no_path"
+      },
+      {
+        "communication_distance": null,
+        "dependency_weight": 4,
+        "severity": 4.0,
+        "source_module": "module:connect",
+        "source_owner": "person:kumarpritam863",
+        "target_module": "module:tools",
+        "target_owner": "person:schofielaj",
+        "tier": "no_path"
+      },
+      {
+        "communication_distance": null,
+        "dependency_weight": 4,
+        "severity": 4.0,
+        "source_module": "module:streams",
+        "source_owner": "person:lucasbru",
+        "target_module": "module:system-tests",
+        "target_owner": "person:cwadhwa",
+        "tier": "no_path"
+      },
+      {
+        "communication_distance": null,
+        "dependency_weight": 3,
+        "severity": 3.0,
+        "source_module": "module:build",
+        "source_owner": "person:mimaison",
+        "target_module": "module:connect",
+        "target_owner": "person:kumarpritam863",
+        "tier": "no_path"
+      },
+      {
+        "communication_distance": null,
+        "dependency_weight": 3,
+        "severity": 3.0,
+        "source_module": "module:clients",
+        "source_owner": "person:kirktrue",
+        "target_module": "module:share-coordinator",
+        "target_owner": "person:smahajan",
+        "tier": "no_path"
+      },
+      {
+        "communication_distance": null,
+        "dependency_weight": 3,
+        "severity": 3.0,
+        "source_module": "module:clients",
+        "source_owner": "person:kirktrue",
+        "target_module": "module:system-tests",
+        "target_owner": "person:cwadhwa",
+        "tier": "no_path"
+      },
+      {
+        "communication_distance": null,
+        "dependency_weight": 3,
+        "severity": 3.0,
+        "source_module": "module:connect",
+        "source_owner": "person:kumarpritam863",
+        "target_module": "module:core",
+        "target_owner": "person:payang",
+        "tier": "no_path"
+      }
+    ]
+  },
+  "gaps": {
+    "note": "Dangling thread parents are replies whose parent message is outside the export window; absence in the corpus does not establish deletion.",
+    "phantoms": 135,
+    "reasons": {
+      "dangling_thread_parent": 135
+    }
+  },
+  "generated_at_utc": "2026-08-17T07:52:52+00:00",
+  "ghost": {
+    "largest_rank_gap_in_top": {
+      "display_name": "PoAn Yang",
+      "formal_rank": 34,
+      "rank_gap": 29,
+      "structural_rank": 5
+    },
+    "top": [
+      {
+        "communication_degree": 40,
+        "display_name": "Chia-Ping Tsai",
+        "formal_rank": 4,
+        "person_key": "person:chia7712",
+        "rank_gap": 3,
+        "role_rank": 4,
+        "sampled_centrality": 0.2047,
+        "structural_rank": 1
+      },
+      {
+        "communication_degree": 36,
+        "display_name": "Luke Chen",
+        "formal_rank": 26,
+        "person_key": "person:showuon",
+        "rank_gap": 24,
+        "role_rank": 4,
+        "sampled_centrality": 0.2042,
+        "structural_rank": 2
+      },
+      {
+        "communication_degree": 28,
+        "display_name": "Matthias J. Sax",
+        "formal_rank": 21,
+        "person_key": "person:mjsax",
+        "rank_gap": 18,
+        "role_rank": 4,
+        "sampled_centrality": 0.1412,
+        "structural_rank": 3
+      },
+      {
+        "communication_degree": 26,
+        "display_name": "Colin McCabe",
+        "formal_rank": 6,
+        "person_key": "person:cmccabe",
+        "rank_gap": 2,
+        "role_rank": 4,
+        "sampled_centrality": 0.1263,
+        "structural_rank": 4
+      },
+      {
+        "communication_degree": 30,
+        "display_name": "PoAn Yang",
+        "formal_rank": 34,
+        "person_key": "person:payang",
+        "rank_gap": 29,
+        "role_rank": 3,
+        "sampled_centrality": 0.103,
+        "structural_rank": 5
+      },
+      {
+        "communication_degree": 18,
+        "display_name": "Mickael Maison",
+        "formal_rank": 20,
+        "person_key": "person:mimaison",
+        "rank_gap": 14,
+        "role_rank": 4,
+        "sampled_centrality": 0.1005,
+        "structural_rank": 6
+      },
+      {
+        "communication_degree": 6,
+        "display_name": "Chris Egerton",
+        "formal_rank": 3,
+        "person_key": "person:cegerton",
+        "rank_gap": -4,
+        "role_rank": 4,
+        "sampled_centrality": 0.0571,
+        "structural_rank": 7
+      },
+      {
+        "communication_degree": 24,
+        "display_name": "TengYao Chi",
+        "formal_rank": 30,
+        "person_key": "person:frankvicky",
+        "rank_gap": 22,
+        "role_rank": 3,
+        "sampled_centrality": 0.0559,
+        "structural_rank": 8
+      },
+      {
+        "communication_degree": 16,
+        "display_name": "Josep Prat",
+        "formal_rank": 12,
+        "person_key": "person:jlprat",
+        "rank_gap": 3,
+        "role_rank": 4,
+        "sampled_centrality": 0.0555,
+        "structural_rank": 9
+      },
+      {
+        "communication_degree": 15,
+        "display_name": "Justine Olshan",
+        "formal_rank": 13,
+        "person_key": "person:jolshan",
+        "rank_gap": 3,
+        "role_rank": 4,
+        "sampled_centrality": 0.0532,
+        "structural_rank": 10
+      }
+    ],
+    "what_if_remove_top": {
+      "pairs_lost": 516,
+      "reachable_pairs_after": 5779,
+      "reachable_pairs_before": 6295,
+      "removed": "Chia-Ping Tsai"
+    }
+  },
+  "graph": {
+    "edge_counts": {
+      "ABOUT": 1104,
+      "AUTHORED": 1841,
+      "COMMUNICATES": 478,
+      "DEPENDS_ON": 152,
+      "OWNS": 67,
+      "REPLIES_TO": 834
+    },
+    "edges": 4476,
+    "node_counts": {
+      "Artifact": 1841,
+      "Module": 26,
+      "Person": 292,
+      "Phantom": 135
+    },
+    "nodes": 2294
+  },
+  "identity": {
+    "note": "role_rank from the public ASF roster: 4=PMC, 3=committer, 1=contributor.",
+    "people": 292,
+    "role_rank_counts": {
+      "0": 12,
+      "1": 243,
+      "3": 9,
+      "4": 28
+    },
+    "unresolved": 12
+  },
+  "limitations": [
+    "12 source identities were not in the identity map and were kept as unresolved handles: announce@apache.org, chandu.kallepalli@bluepal.com, dev-subscribe@kafka.apache.org, dev@community.apache.org, kafka-clients@googlegroups.com (+7 more). Ghost and Faultline results for those people are per-source-id, not per-person.",
+    "19 module references were not in the directory and were dropped: Tiered-Storage, admin, config, consumer, controller, documentation, kraft, log (+11 more).",
+    "A dangling thread parent is structurally absent; absence does not establish deletion."
+  ],
+  "parameters": {
+    "max_len": 4
+  },
+  "snapshot_id": "kafka-2025q2:783fb541d9008da1"
+}

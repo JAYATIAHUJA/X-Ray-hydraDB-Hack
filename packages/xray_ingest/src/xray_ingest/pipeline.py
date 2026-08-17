@@ -94,6 +94,30 @@ def ingest_exports(
     )
     git = resolve_rows(git_rows, kind="git", identity_map=effective_map, resolution=resolution)
 
+    # Module references must resolve to directory modules. Real exports name modules
+    # the directory does not know (e.g. a JIRA component); those references are
+    # dropped and reported rather than failing the whole build.
+    known_modules = {
+        record.external_id.removeprefix("module:")
+        for record in directory
+        if record.kind == "module"
+    }
+    unknown_modules: set[str] = set()
+    slack = _drop_unknown_modules(slack, known_modules, unknown_modules)
+    email = _drop_unknown_modules(email, known_modules, unknown_modules)
+    tickets = _drop_unknown_modules(tickets, known_modules, unknown_modules)
+    git = _drop_unknown_modules(git, known_modules, unknown_modules)
+    module_limitations = (
+        (
+            f"{len(unknown_modules)} module references were not in the directory and were "
+            f"dropped: {', '.join(sorted(unknown_modules)[:8])}"
+            + ("" if len(unknown_modules) <= 8 else f" (+{len(unknown_modules) - 8} more)")
+            + ".",
+        )
+        if unknown_modules
+        else ()
+    )
+
     stubs = unresolved_directory_records(
         resolution,
         source=f"{dataset_id}-identity",
@@ -110,11 +134,38 @@ def ingest_exports(
         *code_records(git),
     )
     bundle = build_bundle(records, contracts, dataset_id)
-    if not resolution.limitations:
+    extra = (*resolution.limitations, *module_limitations)
+    if not extra:
         return bundle
-    return bundle.model_copy(
-        update={"limitations": tuple(sorted({*bundle.limitations, *resolution.limitations}))}
-    )
+    return bundle.model_copy(update={"limitations": tuple(sorted({*bundle.limitations, *extra}))})
+
+
+def _drop_unknown_modules(
+    rows: tuple[dict[str, object], ...],
+    known: set[str],
+    unknown: set[str],
+) -> tuple[dict[str, object], ...]:
+    if not rows or not known:
+        return rows
+    cleaned: list[dict[str, object]] = []
+    for row in rows:
+        updated = dict(row)
+        for field in ("module_keys", "dependency_keys"):
+            value = updated.get(field)
+            if not isinstance(value, (list, tuple)):
+                continue
+            kept = []
+            for key in value:
+                if not isinstance(key, str):
+                    continue
+                bare = key.removeprefix("module:")
+                if bare in known:
+                    kept.append(key)
+                else:
+                    unknown.add(bare)
+            updated[field] = tuple(kept)
+        cleaned.append(updated)
+    return tuple(cleaned)
 
 
 __all__ = [

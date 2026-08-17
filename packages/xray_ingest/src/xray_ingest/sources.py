@@ -234,7 +234,12 @@ def slack_records(rows: Iterable[RawRecord]) -> tuple[CanonicalRecord, ...]:
 
 
 def email_records(rows: Iterable[RawRecord]) -> tuple[CanonicalRecord, ...]:
-    """Normalize email with explicit sender, recipients, and optional module references."""
+    """Normalize email with explicit sender, recipients, and optional module references.
+
+    Required fields: ``id``, ``occurred_at_epoch``, ``from_id``. Optional: ``to_ids``,
+    ``in_reply_to_id``, ``parent_author_id`` (resolved reply target — the mailing-list
+    equivalent of a Slack thread reply), ``subject``, ``body``, ``module_keys``.
+    """
     records: list[CanonicalRecord] = []
     for row in rows:
         external_id = _required_string(row, "id")
@@ -256,18 +261,34 @@ def email_records(rows: Iterable[RawRecord]) -> tuple[CanonicalRecord, ...]:
                 module_subjects=_module_subjects(row),
             )
         )
-        for recipient_id in recipients:
-            if recipient_id != sender_id:
-                records.append(
-                    _communication(
-                        source="email",
-                        external_id=external_id,
-                        epoch=epoch,
-                        sender_id=sender_id,
-                        recipient_id=recipient_id,
-                        kind="email",
-                    )
+        emitted: set[str] = {sender_id}
+        parent_author = _optional_string(row, "parent_author_id")
+        if parent_author is not None and parent_author not in emitted:
+            emitted.add(parent_author)
+            records.append(
+                _communication(
+                    source="email",
+                    external_id=external_id,
+                    epoch=epoch,
+                    sender_id=sender_id,
+                    recipient_id=parent_author,
+                    kind="reply",
                 )
+            )
+        for recipient_id in recipients:
+            if recipient_id in emitted:
+                continue  # one communication record per (message, recipient)
+            emitted.add(recipient_id)
+            records.append(
+                _communication(
+                    source="email",
+                    external_id=external_id,
+                    epoch=epoch,
+                    sender_id=sender_id,
+                    recipient_id=recipient_id,
+                    kind="email",
+                )
+            )
     return tuple(records)
 
 
