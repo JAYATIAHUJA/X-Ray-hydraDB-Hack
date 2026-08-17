@@ -109,6 +109,21 @@ class GapPathRequest(BaseModel):
     target_artifact_key: str = Field(min_length=1)
 
 
+class ImportRequest(BaseModel):
+    """Browser-friendly JSON form of the supported offline export inputs."""
+
+    dataset_id: str = Field(min_length=1, max_length=120)
+    directory: tuple[dict[str, object], ...] = ()
+    identity_map: dict[str, str] = {}
+    mbox: tuple[str, ...] = ()
+    jira_csv: str | None = None
+    git_log: str | None = None
+    module_prefixes: dict[str, str] = {}
+    slack_exports: dict[str, tuple[dict[str, object], ...]] = {}
+    channel_modules: dict[str, tuple[str, ...]] = {}
+    message_modules: dict[str, tuple[str, ...]] = {}
+
+
 class ProblemDetail(BaseModel):
     type: str
     title: str
@@ -127,6 +142,7 @@ __all__ = [
     "HealthResponse",
     "HydraHealthResponse",
     "HydraSeedResponse",
+    "ImportRequest",
     "LensEnvelope",
     "LoadReportResponse",
     "ProblemDetail",
