@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import asdict
+from typing import Annotated
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from xray_analytics import (
     FaultlineFinding,
@@ -16,9 +17,10 @@ from xray_analytics import (
 )
 from xray_core.models import AnalysisStatus, CanonicalBundle, EdgeRow, EvidenceRecord, NodeRow
 from xray_core.paths import normalize_pair
+from xray_hydra import HydraGateway
 
-from .config import get_settings
-from .dependencies import active_bundle, current_snapshot_id
+from .config import XraySettings, get_settings
+from .dependencies import active_bundle, current_snapshot_id, get_gateway
 from .errors import not_found
 from .hydra import (
     HydraGapRow,
@@ -45,6 +47,9 @@ from .schemas import (
     SnapshotResponse,
 )
 
+SettingsDep = Annotated[XraySettings, Depends(get_settings)]
+GatewayDep = Annotated[HydraGateway | None, Depends(get_gateway)]
+
 
 def create_app() -> FastAPI:
     app = FastAPI(title="X-Ray Evidence Platform API", version="0.1.0")
@@ -57,16 +62,19 @@ def create_app() -> FastAPI:
     )
 
     @app.get("/api/v1/health", response_model=HealthResponse)
-    def health() -> HealthResponse:
-        hydra = hydra_health(get_settings(), active_bundle().dataset_id)
+    def health(settings: SettingsDep) -> HealthResponse:
+        hydra = hydra_health(settings, active_bundle().dataset_id)
         return HealthResponse(
             status="ok",
             hydra=_hydra_health_response(hydra),
         )
 
     @app.post("/api/v1/hydra/seed-fixture", response_model=HydraSeedResponse)
-    def seed_fixture() -> HydraSeedResponse:
-        result = seed_bundle(get_settings(), active_bundle())
+    def seed_fixture(
+        settings: SettingsDep,
+        gateway: GatewayDep,
+    ) -> HydraSeedResponse:
+        result = seed_bundle(settings, active_bundle(), gateway=gateway)
         report = result.report
         return HydraSeedResponse(
             status=result.status,
@@ -99,13 +107,17 @@ def create_app() -> FastAPI:
         )
 
     @app.get("/api/v1/snapshots/{snapshot_id}/graph", response_model=GraphResponse)
-    def graph(snapshot_id: str) -> GraphResponse:
+    def graph(
+        snapshot_id: str,
+        settings: SettingsDep,
+        gateway: GatewayDep,
+    ) -> GraphResponse:
         _require_current_snapshot(snapshot_id)
         bundle = active_bundle()
         scores = {score.person_key: score for score in ghost_scores(bundle)}
         selected_score = max(scores.values(), key=lambda score: score.rank_gap, default=None)
         selected_key = None if selected_score is None else selected_score.person_key
-        hydra_rows = graph_rows(get_settings(), bundle)
+        hydra_rows = graph_rows(settings, bundle, gateway=gateway)
         if hydra_rows is not None and hydra_rows.nodes:
             return GraphResponse(
                 snapshot_id=snapshot_id,
@@ -139,10 +151,14 @@ def create_app() -> FastAPI:
         )
 
     @app.get("/api/v1/snapshots/{snapshot_id}/ghosts", response_model=LensEnvelope)
-    def ghosts(snapshot_id: str) -> LensEnvelope:
+    def ghosts(
+        snapshot_id: str,
+        settings: SettingsDep,
+        gateway: GatewayDep,
+    ) -> LensEnvelope:
         _require_current_snapshot(snapshot_id)
         bundle = active_bundle()
-        live_result = live_ghost_findings(get_settings(), bundle)
+        live_result = live_ghost_findings(settings, bundle, gateway=gateway)
         if live_result is not None and live_result.error is None:
             return _lens_envelope(
                 snapshot_id=snapshot_id,
@@ -169,14 +185,19 @@ def create_app() -> FastAPI:
         )
 
     @app.get("/api/v1/snapshots/{snapshot_id}/faultlines", response_model=LensEnvelope)
-    def faultline_results(snapshot_id: str) -> LensEnvelope:
+    def faultline_results(
+        snapshot_id: str,
+        settings: SettingsDep,
+        gateway: GatewayDep,
+    ) -> LensEnvelope:
         _require_current_snapshot(snapshot_id)
         bundle = active_bundle()
         findings = faultlines(bundle)
         distance_result = communication_distances(
-            get_settings(),
+            settings,
             bundle,
             tuple((finding.source_owner_key, finding.target_owner_key) for finding in findings),
+            gateway=gateway,
         )
         if distance_result is not None and distance_result.error is None:
             live_findings = tuple(
@@ -218,16 +239,27 @@ def create_app() -> FastAPI:
         )
 
     @app.post("/api/v1/snapshots/{snapshot_id}/gap-paths", response_model=LensEnvelope)
-    def gap_paths(snapshot_id: str, request: GapPathRequest) -> LensEnvelope:
+    def gap_paths(
+        snapshot_id: str,
+        request: GapPathRequest,
+        settings: SettingsDep,
+        gateway: GatewayDep,
+    ) -> LensEnvelope:
         _require_current_snapshot(snapshot_id)
         bundle = active_bundle()
         live_chain = live_gap_chain(
-            get_settings(),
+            settings,
             bundle,
             source_artifact_key=request.source_artifact_key,
             target_artifact_key=request.target_artifact_key,
+            gateway=gateway,
         )
-        live_gaps = gap_rows(get_settings(), bundle)
+        live_gaps = gap_rows(settings, bundle, gateway=gateway)
+        bundle_has_phantoms = any(node.label == "Phantom" for node in bundle.nodes)
+        if live_gaps is not None and not live_gaps and bundle_has_phantoms:
+            # The engine answered but holds no phantom rows for this dataset (seed not
+            # applied yet). Serve the bundle's findings and say so rather than an empty lens.
+            live_gaps = None
         all_findings = (
             tuple(_gap_finding_from_hydra(row) for row in live_gaps)
             if live_gaps is not None

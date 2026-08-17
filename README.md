@@ -318,4 +318,5 @@ sandboxes they can fail with `spawn EPERM` even when the code is valid.
 
 ## License
 
-This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE).
+This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE). Third-party
+components, the AGPL-3.0 engine boundary, and dataset terms are listed in [NOTICE.md](NOTICE.md).

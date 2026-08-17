@@ -58,7 +58,7 @@ def test_seed_fixture_endpoint_skips_without_hydradb_config() -> None:
     assert payload["report"] is None
 
 
-def test_seed_bundle_loads_fixture_with_gateway() -> None:
+def test_seed_bundle_loads_fixture_with_gateway(tmp_path: Path) -> None:
     driver = RecordingDriver()
     settings = settings_from_env({"XRAY_HYDRA_URI": "bolt://hydra.example:7687"})
 
@@ -67,7 +67,7 @@ def test_seed_bundle_loads_fixture_with_gateway() -> None:
         demo_bundle(),
         gateway=HydraGateway(driver),
         loader_factory=lambda gateway: RecordingLoader(gateway),
-        snapshot_dir=Path(".cache") / "api-test-snapshots" / "seed-bundle-loads-fixture",
+        snapshot_dir=tmp_path / "seed-bundle-loads-fixture",
         snapshot_writer=recording_snapshot_writer,
     )
 
