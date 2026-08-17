@@ -13,6 +13,7 @@ from xray_hydra.cypher import communication_paths_query, sp_chain_query
 from .config import XraySettings
 
 logger = logging.getLogger(__name__)
+_FIXTURE_GHOST_CACHE: dict[tuple[int, int], tuple[dict[str, object], ...]] = {}
 
 
 @dataclass(frozen=True, slots=True)
@@ -50,7 +51,9 @@ def live_ghost_findings(
     if not settings.hydra_configured:
         return None
 
-    people = tuple(sorted((node for node in bundle.nodes if node.label == "Person"), key=lambda n: n.id))
+    people = tuple(
+        sorted((node for node in bundle.nodes if node.label == "Person"), key=lambda n: n.id)
+    )
     if len(people) < 2:
         return None
 
@@ -107,6 +110,7 @@ def live_ghost_findings(
     structural_rank = {key: index for index, key in enumerate(structural_order, start=1)}
     nodes_by_key = {node.canonical_key: node for node in people}
     findings = []
+    top_impact_keys = set(structural_order[:10])
     for key in structural_order:
         node = nodes_by_key[key]
         score = GhostScore(
@@ -119,24 +123,38 @@ def live_ghost_findings(
             sampled_centrality=tallies[key] / denominator,
             communication_degree=len(graph.get(key, {})),
         )
-        removal_impact = asdict(bus_factor_impact(bundle, key, max_len=max_len))
-        removal_impact["sampled_pairs_lost_without_person"] = sum(
-            1
-            for path in paths
-            if key in path[1:-1] and path[0] != key and path[-1] != key
-        )
-        removal_impact["sampled_pairs_observed"] = len(sampled_pairs)
+        removal_impact = None
+        if key in top_impact_keys:
+            removal_impact = asdict(bus_factor_impact(bundle, key, max_len=max_len, graph=graph))
+            removal_impact["sampled_pairs_lost_without_person"] = sum(
+                1 for path in paths if key in path[1:-1] and path[0] != key and path[-1] != key
+            )
+            removal_impact["sampled_pairs_observed"] = len(sampled_pairs)
         findings.append({**asdict(score), "removal_impact": removal_impact})
 
     return LiveGhostResult(findings=tuple(findings), executed_query=_executed(query, started))
 
 
-def fixture_ghost_findings(bundle: CanonicalBundle) -> tuple[dict[str, object], ...]:
+def fixture_ghost_findings(
+    bundle: CanonicalBundle, *, max_len: int = 4
+) -> tuple[dict[str, object], ...]:
+    cache_key = (id(bundle), max_len)
+    cached = _FIXTURE_GHOST_CACHE.get(cache_key)
+    if cached is not None:
+        return cached
+
     findings = []
-    for score in ghost_scores(bundle):
-        impact = bus_factor_impact(bundle, score.person_key)
-        findings.append({**asdict(score), "removal_impact": asdict(impact)})
-    return tuple(findings)
+    graph = communication_graph(bundle)
+    for index, score in enumerate(ghost_scores(bundle, max_len=max_len)):
+        impact = (
+            asdict(bus_factor_impact(bundle, score.person_key, max_len=max_len, graph=graph))
+            if index < 10
+            else None
+        )
+        findings.append({**asdict(score), "removal_impact": impact})
+    result = tuple(findings)
+    _FIXTURE_GHOST_CACHE[cache_key] = result
+    return result
 
 
 def live_gap_chain(
@@ -206,7 +224,8 @@ def _path_key_tuple(path: object) -> tuple[str, ...]:
         nodes: tuple[object, ...] = tuple(
             item
             for item in path
-            if isinstance(item, dict) or (not isinstance(item, str) and hasattr(item, "__getitem__"))
+            if isinstance(item, dict)
+            or (not isinstance(item, str) and hasattr(item, "__getitem__"))
         )
     else:
         raw_nodes = path.get("nodes") if isinstance(path, dict) else getattr(path, "nodes", None)

@@ -42,6 +42,7 @@ from .schemas import (
     SnapshotResponse,
 )
 
+
 def create_app() -> FastAPI:
     app = FastAPI(title="X-Ray Evidence Platform API", version="0.1.0")
     app.add_middleware(
@@ -99,7 +100,8 @@ def create_app() -> FastAPI:
         _require_current_snapshot(snapshot_id)
         bundle = active_bundle()
         scores = {score.person_key: score for score in ghost_scores(bundle)}
-        selected_key = max(scores.values(), key=lambda score: score.rank_gap).person_key
+        selected_score = max(scores.values(), key=lambda score: score.rank_gap, default=None)
+        selected_key = None if selected_score is None else selected_score.person_key
         hydra_rows = graph_rows(get_settings(), bundle)
         if hydra_rows is not None and hydra_rows.nodes:
             return GraphResponse(
@@ -236,10 +238,21 @@ def create_app() -> FastAPI:
                 and request.source_artifact_key in finding.successor_keys
             )
         )
+        chain: dict[str, object] | None = None
+        if live_chain is not None and live_chain.error is None and live_chain.node_keys:
+            phantom_keys = {node.canonical_key for node in bundle.nodes if node.label == "Phantom"}
+            chain = {
+                "node_keys": live_chain.node_keys,
+                "phantom_indices": tuple(
+                    index
+                    for index, node_key in enumerate(live_chain.node_keys)
+                    if node_key in phantom_keys
+                ),
+            }
         return _lens_envelope(
             snapshot_id=snapshot_id,
             limitations=bundle.limitations,
-            findings=_with_gap_evidence(bundle, findings),
+            findings=_with_gap_evidence(bundle, findings, chain=chain),
             explanation=(
                 (
                     "HydraDB Gap analysis completed from live SPpaths and phantom lineage rows. "
@@ -337,20 +350,35 @@ def _with_faultline_evidence(
         evidence_ids = tuple(
             dict.fromkeys((*dependency_evidence, *source_owner_evidence, *target_owner_evidence))
         )
-        enriched.append({**asdict(finding), "evidence": _evidence_summaries(evidence, evidence_ids)})
+        enriched.append(
+            {**asdict(finding), "evidence": _evidence_summaries(evidence, evidence_ids)}
+        )
     return tuple(enriched)
 
 
 def _with_gap_evidence(
-    bundle: CanonicalBundle, findings: tuple[GapFinding, ...]
+    bundle: CanonicalBundle,
+    findings: tuple[GapFinding, ...],
+    *,
+    chain: dict[str, object] | None = None,
 ) -> tuple[dict[str, object], ...]:
     nodes = _nodes_by_key(bundle)
     evidence = _evidence_by_id(bundle)
     enriched: list[dict[str, object]] = []
     for finding in findings:
         phantom = nodes.get(finding.phantom_key)
-        evidence_records = _evidence_summaries(evidence, () if phantom is None else phantom.evidence_ids)
-        enriched.append({**asdict(finding), "evidence": evidence_records})
+        evidence_records = _evidence_summaries(
+            evidence, () if phantom is None else phantom.evidence_ids
+        )
+        enriched_finding = {**asdict(finding), "evidence": evidence_records}
+        chain_node_keys = chain.get("node_keys", ()) if chain is not None else ()
+        if (
+            chain is not None
+            and isinstance(chain_node_keys, tuple)
+            and finding.phantom_key in chain_node_keys
+        ):
+            enriched_finding["chain"] = chain
+        enriched.append(enriched_finding)
     return tuple(enriched)
 
 
@@ -385,7 +413,9 @@ def _matching_edge_evidence_ids(
 def _evidence_summaries(
     evidence: dict[str, EvidenceRecord], evidence_ids: tuple[str, ...], *, limit: int = 4
 ) -> tuple[dict[str, object], ...]:
-    records = tuple(evidence[evidence_id] for evidence_id in evidence_ids if evidence_id in evidence)
+    records = tuple(
+        evidence[evidence_id] for evidence_id in evidence_ids if evidence_id in evidence
+    )
     return tuple(
         {
             "evidence_id": record.evidence_id,
@@ -421,7 +451,7 @@ def _with_live_distance(
     finding: FaultlineFinding,
     distances: dict[tuple[str, str], int | None],
 ) -> FaultlineFinding:
-    distance = distances.get((finding.source_owner_key, finding.target_owner_key))
+    distance = distances.get(_normalize_pair(finding.source_owner_key, finding.target_owner_key))
     if distance is None:
         tier = "no_path"
         risk = 1.0
@@ -459,7 +489,7 @@ def _gap_finding_from_hydra(row: HydraGapRow) -> GapFinding:
     )
 
 
-def _graph_node(node: NodeRow, score: GhostScore | None, selected_key: str) -> GraphNode:
+def _graph_node(node: NodeRow, score: GhostScore | None, selected_key: str | None) -> GraphNode:
     properties = node.properties
     team = str(properties.get("team_id", "team:unknown")).removeprefix("team:")
     role_rank = int(properties.get("role_rank", 1))
@@ -477,7 +507,7 @@ def _graph_node(node: NodeRow, score: GhostScore | None, selected_key: str) -> G
 
 
 def _hydra_graph_node(
-    node: HydraGraphNode, score: GhostScore | None, selected_key: str
+    node: HydraGraphNode, score: GhostScore | None, selected_key: str | None
 ) -> GraphNode:
     team = str(node.properties.get("team_id", "team:unknown")).removeprefix("team:")
     role_rank = int(node.properties.get("role_rank", 1))
@@ -517,6 +547,10 @@ def _edge_strength(weight: float) -> str:
     if weight >= 3:
         return "medium"
     return "weak"
+
+
+def _normalize_pair(left: str, right: str) -> tuple[str, str]:
+    return (left, right) if left <= right else (right, left)
 
 
 def _person_title(team: str, role_rank: int) -> str:

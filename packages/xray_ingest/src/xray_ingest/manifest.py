@@ -9,7 +9,9 @@ from xray_core.models import CanonicalBundle, EvidenceRecord, SnapshotManifest
 
 
 def _canonical_json(value: object) -> str:
-    return json.dumps(value, ensure_ascii=False, allow_nan=False, sort_keys=True, separators=(",", ":"))
+    return json.dumps(
+        value, ensure_ascii=False, allow_nan=False, sort_keys=True, separators=(",", ":")
+    )
 
 
 def _write_json(path: Path, value: object) -> None:
@@ -136,8 +138,7 @@ class ParquetEvidenceRepository:
         if not evidence_path.exists():
             raise FileNotFoundError(evidence_path)
         self._evidence = tuple(
-            EvidenceRecord.model_validate(row)
-            for row in pl.read_parquet(evidence_path).to_dicts()
+            EvidenceRecord.model_validate(row) for row in pl.read_parquet(evidence_path).to_dicts()
         )
         self._by_id = {record.evidence_id: record for record in self._evidence}
 

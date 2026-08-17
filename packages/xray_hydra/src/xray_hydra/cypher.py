@@ -112,7 +112,9 @@ def communication_paths_query(
     )
 
 
-def sp_chain_query(source_id: int, target_id: int, *, max_len: int = 8, result_limit: int = 20) -> QuerySpec:
+def sp_chain_query(
+    source_id: int, target_id: int, *, max_len: int = 8, result_limit: int = 20
+) -> QuerySpec:
     _require_positive(source_id, "source_id")
     _require_positive(target_id, "target_id")
     if _require_positive(max_len, "max_len") > CHAIN_MAX_LEN:

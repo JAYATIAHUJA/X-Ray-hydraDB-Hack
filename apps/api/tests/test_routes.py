@@ -165,8 +165,7 @@ class GraphRowsDriver:
                     "id": 5217034559407717516,
                     "key": "person:alex-rivera",
                     "properties": (
-                        '{"display_name":"Alex Rivera","role_rank":4,'
-                        '"team_id":"team:payments"}'
+                        '{"display_name":"Alex Rivera","role_rank":4,"team_id":"team:payments"}'
                     ),
                 }
             ]
@@ -214,7 +213,11 @@ class GapRowsDriver:
         if "AS artifact_key" in query_:
             if "REPLIES_TO" in query_:
                 return []
-            if "(phantom:Phantom)-[r:PRECEDED_BY]->" in query_:
+            if (
+                "phantom:Phantom" in query_
+                and "artifact:Artifact" in query_
+                and query_.index("phantom:Phantom") < query_.index("artifact:Artifact")
+            ):
                 return [
                     {
                         "phantom_key": "artifact:missing-approval",
@@ -321,7 +324,10 @@ def test_graph_rows_reads_live_hydradb_projection() -> None:
     assert rows.edges[0].source == "person:alex-rivera"
     assert rows.edges[0].target == "person:maya-chen"
     assert rows.edges[0].weight == 5.0
-    assert driver.parameters == [{}, {}]
+    assert driver.parameters == [
+        {"dataset_id": "xray-demo-v1", "limit": 10},
+        {"dataset_id": "xray-demo-v1", "limit": 30},
+    ]
 
 
 def test_communication_distances_reads_live_hydradb_paths() -> None:
@@ -343,6 +349,30 @@ def test_communication_distances_reads_live_hydradb_paths() -> None:
     assert "sourceLabel: 'Person'" in result.query.statement
     assert "canonical_key" not in result.query.statement
     assert driver.parameters == [{}]
+
+
+def test_faultline_live_distance_lookup_accepts_reversed_owner_pair() -> None:
+    from xray_analytics import FaultlineFinding
+    from xray_api.app import _with_live_distance
+
+    finding = FaultlineFinding(
+        source_module_key="module:a",
+        target_module_key="module:b",
+        source_owner_key="person:z",
+        target_owner_key="person:a",
+        dependency_weight=10,
+        source_owner_confidence=90,
+        target_owner_confidence=90,
+        communication_distance=None,
+        tier="no_path",
+        severity=10.0,
+    )
+
+    scored = _with_live_distance(finding, {("person:a", "person:z"): 2})
+
+    assert scored.communication_distance == 2
+    assert scored.tier == "coordinated"
+    assert scored.severity == 0
 
 
 def test_gap_rows_reads_live_hydradb_lineage() -> None:
@@ -371,7 +401,9 @@ def test_live_ghost_findings_use_single_integer_id_mspaths_call() -> None:
     assert "canonical_key" not in result.executed_query.text
     assert "pairwise: false" in result.executed_query.text
     assert driver.parameters == [{}]
-    maya = next(finding for finding in result.findings if finding["person_key"] == "person:maya-chen")
+    maya = next(
+        finding for finding in result.findings if finding["person_key"] == "person:maya-chen"
+    )
     assert maya["sampled_centrality"] > 0
 
 
@@ -401,6 +433,42 @@ def test_live_gap_chain_uses_integer_id_sppaths_call() -> None:
         "target_id": 9197572505128004661,
     }
     assert driver.parameters == [result.executed_query.params]
+
+
+def test_gap_chain_can_be_attached_to_matching_finding() -> None:
+    from xray_analytics import GapFinding
+    from xray_api.app import _with_gap_evidence
+
+    finding = GapFinding(
+        phantom_key="artifact:missing-approval",
+        expected_kind="approval",
+        reason="required_sequence_step_missing",
+        inferred_epoch=1736003600,
+        predecessor_keys=("artifact:directive",),
+        successor_keys=("artifact:code-change",),
+    )
+
+    enriched = _with_gap_evidence(
+        demo_bundle(),
+        (finding,),
+        chain={
+            "node_keys": (
+                "artifact:code-change",
+                "artifact:missing-approval",
+                "artifact:directive",
+            ),
+            "phantom_indices": (1,),
+        },
+    )
+
+    assert enriched[0]["chain"] == {
+        "node_keys": (
+            "artifact:code-change",
+            "artifact:missing-approval",
+            "artifact:directive",
+        ),
+        "phantom_indices": (1,),
+    }
 
 
 def test_faultlines_endpoint_returns_no_path_coordination_debt() -> None:

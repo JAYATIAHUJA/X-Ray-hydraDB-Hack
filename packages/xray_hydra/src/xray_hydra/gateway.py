@@ -221,7 +221,8 @@ def _path_nodes(path: object) -> tuple[object, ...]:
         return tuple(
             item
             for item in path
-            if isinstance(item, Mapping) or (not isinstance(item, str) and hasattr(item, "__getitem__"))
+            if isinstance(item, Mapping)
+            or (not isinstance(item, str) and hasattr(item, "__getitem__"))
         )
     if isinstance(path, Mapping):
         nodes = path.get("nodes")
