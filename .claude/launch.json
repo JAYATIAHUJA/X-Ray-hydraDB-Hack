@@ -1,0 +1,35 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "xray-api-kafka",
+      "runtimeExecutable": "uv",
+      "runtimeArgs": [
+        "run",
+        "uvicorn",
+        "xray_api.app:app",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8000"
+      ],
+      "port": 8000,
+      "env": {
+        "PYTHONPATH": "apps/api/src;packages/xray_analytics/src;packages/xray_core/src;packages/xray_hydra/src;packages/xray_ingest/src;packages/xray_runtime/src",
+        "XRAY_SNAPSHOT_DIR": "data/snapshots/kafka-2025q2"
+      }
+    },
+    {
+      "name": "xray-web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "port": 5173,
+      "env": {
+        "VITE_XRAY_API_BASE_URL": "http://127.0.0.1:8000"
+      }
+    }
+  ]
+}

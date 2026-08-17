@@ -21,6 +21,23 @@ export type HealthResponse = {
   };
 };
 
+export type WhatIfSummary = {
+  excluded_person_keys: string[];
+  sampled_pairs_before: number;
+  sampled_pairs_after: number;
+  pairs_lost: number;
+  max_len: number;
+};
+
+export type EngineComparison = {
+  engine_ms: number | null;
+  client_ms: number;
+  client_method: string;
+  sampled_people: number;
+  engine_round_trips: number;
+  client_equivalent_round_trips: number;
+};
+
 export type LensEnvelope<TFinding> = {
   snapshot_id: string;
   analysis_status: "complete" | "partial" | "unsupported";
@@ -36,6 +53,9 @@ export type LensEnvelope<TFinding> = {
     round_trips: number;
     engine_ms: number;
   } | null;
+  what_if: WhatIfSummary | null;
+  comparison: EngineComparison | null;
+  total_findings?: number | null;
 };
 
 export type GraphNode = {
@@ -87,7 +107,7 @@ export type GhostFinding = {
     reachable_pairs_before: number;
     pairs_lost_without_person: number;
     max_len: number;
-  };
+  } | null;
   evidence: EvidenceSummary[];
 };
 
@@ -103,6 +123,11 @@ export type FaultlineFinding = {
   evidence: EvidenceSummary[];
 };
 
+export type GapChain = {
+  node_keys: string[];
+  phantom_indices: number[];
+};
+
 export type GapFinding = {
   phantom_key: string;
   expected_kind: string;
@@ -111,6 +136,7 @@ export type GapFinding = {
   predecessor_keys: string[];
   successor_keys: string[];
   evidence: EvidenceSummary[];
+  chain?: GapChain;
 };
 
 export type GapPathRequest = {
@@ -151,9 +177,16 @@ export function getGraph(snapshotId: string) {
   return requestJson<GraphResponse>(`/api/v1/snapshots/${encodeURIComponent(snapshotId)}/graph`);
 }
 
-export function getGhosts(snapshotId: string) {
+export function getGhosts(snapshotId: string, exclude: string[] = []) {
+  const query = exclude.map((key) => `exclude=${encodeURIComponent(key)}`).join("&");
   return requestJson<LensEnvelope<GhostFinding>>(
-    `/api/v1/snapshots/${encodeURIComponent(snapshotId)}/ghosts`
+    `/api/v1/snapshots/${encodeURIComponent(snapshotId)}/ghosts${query ? `?${query}` : ""}`
+  );
+}
+
+export function getGaps(snapshotId: string, limit = 100) {
+  return requestJson<LensEnvelope<GapFinding>>(
+    `/api/v1/snapshots/${encodeURIComponent(snapshotId)}/gaps?limit=${limit}`
   );
 }
 

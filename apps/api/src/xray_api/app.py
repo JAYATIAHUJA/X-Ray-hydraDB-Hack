@@ -122,8 +122,11 @@ def create_app() -> FastAPI:
     ) -> GraphResponse:
         _require_current_snapshot(snapshot_id)
         bundle = active_bundle()
-        scores = {score.person_key: score for score in ghost_scores(bundle)}
-        selected_score = max(scores.values(), key=lambda score: score.rank_gap, default=None)
+        ranked = ghost_scores(bundle)
+        scores = {score.person_key: score for score in ranked}
+        # Pre-select the story: the largest formal-vs-structural gap among the ten most
+        # structurally central people (a low-centrality outlier is not the Ghost).
+        selected_score = max(ranked[:10], key=lambda score: score.rank_gap, default=None)
         selected_key = None if selected_score is None else selected_score.person_key
         hydra_rows = graph_rows(settings, bundle, gateway=gateway)
         if hydra_rows is not None and hydra_rows.nodes:
@@ -272,6 +275,44 @@ def create_app() -> FastAPI:
             },
         )
 
+    @app.get("/api/v1/snapshots/{snapshot_id}/gaps", response_model=LensEnvelope)
+    def gaps(
+        snapshot_id: str,
+        settings: SettingsDep,
+        gateway: GatewayDep,
+        limit: Annotated[int, Query(ge=1, le=500)] = 100,
+    ) -> LensEnvelope:
+        """All Phantom findings for the snapshot (no chain); use gap-paths for one chain."""
+        _require_current_snapshot(snapshot_id)
+        bundle = active_bundle()
+        live_gaps = gap_rows(settings, bundle, gateway=gateway)
+        bundle_has_phantoms = any(node.label == "Phantom" for node in bundle.nodes)
+        if live_gaps is not None and not live_gaps and bundle_has_phantoms:
+            live_gaps = None
+        all_findings = (
+            tuple(_gap_finding_from_hydra(row) for row in live_gaps)
+            if live_gaps is not None
+            else gap_findings(bundle)
+        )
+        # Contract-declared missing steps first (they carry the strongest structural claim),
+        # then dangling thread parents; stable within each group.
+        ordered = sorted(
+            all_findings,
+            key=lambda f: (f.reason == "dangling_thread_parent", f.phantom_key),
+        )
+        return _lens_envelope(
+            snapshot_id=snapshot_id,
+            limitations=bundle.limitations,
+            findings=_with_gap_evidence(bundle, tuple(ordered[:limit])),
+            explanation=(
+                f"{len(all_findings)} structurally missing records"
+                + (f" (showing {limit})" if len(all_findings) > limit else "")
+                + ". Absence does not establish deletion."
+            ),
+            source="hydradb" if live_gaps is not None else "fixture",
+            total_findings=len(all_findings),
+        )
+
     @app.post("/api/v1/snapshots/{snapshot_id}/gap-paths", response_model=LensEnvelope)
     def gap_paths(
         snapshot_id: str,
@@ -362,6 +403,7 @@ def _lens_envelope(
     executed_query: dict[str, object] | None = None,
     what_if: dict[str, object] | None = None,
     comparison: EngineComparison | None = None,
+    total_findings: int | None = None,
 ) -> LensEnvelope:
     return LensEnvelope(
         snapshot_id=snapshot_id,
@@ -374,6 +416,7 @@ def _lens_envelope(
         executed_query=executed_query,
         what_if=None if what_if is None else WhatIfSummary.model_validate(what_if),
         comparison=comparison,
+        total_findings=total_findings,
     )
 
 

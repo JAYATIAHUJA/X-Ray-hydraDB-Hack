@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCurrentSnapshot, getFaultlines, getGapPath, getGhosts, getGraph, getHealth } from "./api";
+import { getCurrentSnapshot, getFaultlines, getGapPath, getGaps, getGhosts, getGraph, getHealth } from "./api";
 import type { GapPathRequest } from "./api";
 
-export function useXraySnapshot(gapRequest?: GapPathRequest) {
+export function useXraySnapshot(gapRequest?: GapPathRequest, excludePeople: string[] = []) {
   const health = useQuery({
     queryKey: ["health"],
     queryFn: getHealth
@@ -16,8 +16,14 @@ export function useXraySnapshot(gapRequest?: GapPathRequest) {
 
   const ghosts = useQuery({
     enabled: snapshotId !== undefined,
-    queryKey: ["ghosts", snapshotId],
-    queryFn: () => getGhosts(snapshotId ?? "")
+    queryKey: ["ghosts", snapshotId, excludePeople],
+    queryFn: () => getGhosts(snapshotId ?? "", excludePeople)
+  });
+
+  const gaps = useQuery({
+    enabled: snapshotId !== undefined,
+    queryKey: ["gaps", snapshotId],
+    queryFn: () => getGaps(snapshotId ?? "")
   });
 
   const graph = useQuery({
@@ -33,10 +39,10 @@ export function useXraySnapshot(gapRequest?: GapPathRequest) {
   });
 
   const gapPath = useQuery({
-    enabled: snapshotId !== undefined,
+    enabled: snapshotId !== undefined && gapRequest !== undefined,
     queryKey: ["gap-path", snapshotId, gapRequest],
     queryFn: () => getGapPath(snapshotId ?? "", gapRequest)
   });
 
-  return { faultlines, gapPath, ghosts, graph, health, snapshot };
+  return { faultlines, gapPath, gaps, ghosts, graph, health, snapshot };
 }

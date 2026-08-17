@@ -1,7 +1,6 @@
 import cytoscape from "cytoscape";
 import type { Core, ElementDefinition } from "cytoscape";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { DEFAULT_GAP_REQUEST } from "./api";
 import type {
   EvidenceSummary,
   FaultlineFinding,
@@ -42,18 +41,47 @@ export function App() {
   const [selectedNodeKey, setSelectedNodeKey] = useState<string | undefined>();
   const [selectedFaultlineIndex, setSelectedFaultlineIndex] = useState(0);
   const [selectedGapIndex, setSelectedGapIndex] = useState(0);
-  const [gapRequest, setGapRequest] = useState<GapPathRequest>(DEFAULT_GAP_REQUEST);
-  const { faultlines, gapPath, ghosts, graph, health, snapshot } = useXraySnapshot(gapRequest);
+  const [gapRequest, setGapRequest] = useState<GapPathRequest | undefined>();
+  const [excluded, setExcluded] = useState<string[]>([]);
+  const { faultlines, gapPath, gaps, ghosts, graph, health, snapshot } = useXraySnapshot(gapRequest, excluded);
   const people = graph.data?.nodes ?? [];
   const defaultSelectedKey = people.find((person) => person.selected)?.key ?? people[0]?.key;
   const selectedKey = people.some((person) => person.key === selectedNodeKey) ? selectedNodeKey : defaultSelectedKey;
   const selected = people.find((person) => person.key === selectedKey);
   const ghostFinding = ghosts.data?.findings.find((finding) => finding.person_key === selected?.key);
   const faultlineFindings = faultlines.data?.findings ?? [];
-  const gapFindings = gapPath.data?.findings ?? [];
+  // The gap list comes from /gaps; the SPpaths chain for the selected one comes from /gap-paths.
+  const gapList = gaps.data?.findings ?? [];
+  const gapChainFinding = gapPath.data?.findings.find((finding) => finding.chain !== undefined);
+  const gapFindings = gapList.map((finding) =>
+    gapChainFinding && finding.phantom_key === gapChainFinding.phantom_key ? gapChainFinding : finding
+  );
+  const topGhost = ghosts.data?.findings[0];
+  const largestGap = (ghosts.data?.findings ?? []).slice(0, 10).reduce<GhostFinding | undefined>(
+    (best, finding) => (best === undefined || finding.rank_gap > best.rank_gap ? finding : best),
+    undefined
+  );
+  const gapTotal = gaps.data?.total_findings ?? gapList.length;
+  const connectedKeys = useMemo(() => {
+    const keys = new Set<string>();
+    (graph.data?.edges ?? []).forEach((edge) => {
+      keys.add(edge.source);
+      keys.add(edge.target);
+    });
+    return keys;
+  }, [graph.data?.edges]);
+  const faultlineOwnerKeys = useMemo(
+    () => new Set(faultlineFindings.flatMap((f) => [f.source_owner_key, f.target_owner_key])),
+    [faultlineFindings]
+  );
+  const hiddenIsolates = people.filter(
+    (person) => !connectedKeys.has(person.key) && !faultlineOwnerKeys.has(person.key)
+  ).length;
+  const whatIf = ghosts.data?.what_if ?? null;
+  const comparison = ghosts.data?.comparison ?? null;
   const selectedFaultline = faultlineFindings[selectedFaultlineIndex] ?? faultlineFindings[0];
   const selectedGap = gapFindings[selectedGapIndex] ?? gapFindings[0];
-  const activeEnvelope = envelopeForLens(activeLens, ghosts.data, faultlines.data, gapPath.data);
+  const activeEnvelope = envelopeForLens(activeLens, ghosts.data, faultlines.data, gapPath.data ?? gaps.data);
   const activeQuery = activeEnvelope?.executed_query;
   const queryErrors = [
     ["health", health.isError],
@@ -61,7 +89,7 @@ export function App() {
     ["graph", graph.isError],
     ["ghost", ghosts.isError],
     ["faultlines", faultlines.isError],
-    ["gaps", gapPath.isError]
+    ["gaps", gaps.isError]
   ].filter(([, failed]) => failed);
   const hasError = queryErrors.length > 0;
   const isLoading =
@@ -70,10 +98,20 @@ export function App() {
     graph.isPending ||
     ghosts.isPending ||
     faultlines.isPending ||
-    gapPath.isPending;
+    gaps.isPending;
   const graphElements = useMemo(
-    () => graphElementsFor(people, graph.data?.edges ?? [], faultlineFindings, selectedFaultline, mode, selectedKey),
-    [faultlineFindings, graph.data?.edges, mode, people, selectedFaultline, selectedKey]
+    () =>
+      graphElementsFor(
+        people,
+        graph.data?.edges ?? [],
+        faultlineFindings,
+        selectedFaultline,
+        mode,
+        selectedKey,
+        excluded,
+        connectedKeys
+      ),
+    [connectedKeys, excluded, faultlineFindings, graph.data?.edges, mode, people, selectedFaultline, selectedKey]
   );
 
   useEffect(() => {
@@ -93,6 +131,22 @@ export function App() {
       setSelectedGapIndex(0);
     }
   }, [gapFindings.length, selectedGapIndex]);
+
+  useEffect(() => {
+    const finding = gapList[selectedGapIndex];
+    if (finding === undefined) {
+      return;
+    }
+    const next = requestForGap(finding);
+    if (
+      next !== undefined &&
+      (gapRequest === undefined ||
+        gapRequest.source_artifact_key !== next.source_artifact_key ||
+        gapRequest.target_artifact_key !== next.target_artifact_key)
+    ) {
+      setGapRequest(next);
+    }
+  }, [gapList, gapRequest, selectedGapIndex]);
 
   return (
     <main className="app-shell">
@@ -119,6 +173,51 @@ export function App() {
         </div>
       </header>
 
+      <section className="hero-strip" aria-label="Snapshot summary">
+        <button className="hero-tile" onClick={() => setActiveLens("org")} type="button">
+          <span>Load-bearing person</span>
+          <strong>{topGhost?.display_name ?? "—"}</strong>
+          <small>
+            {topGhost
+              ? largestGap && largestGap.person_key !== topGhost.person_key && largestGap.rank_gap > topGhost.rank_gap
+                ? `structural #${topGhost.structural_rank} · formal #${topGhost.formal_rank} — largest gap: ${largestGap.display_name} #${largestGap.structural_rank} vs #${largestGap.formal_rank}`
+                : `structural #${topGhost.structural_rank} · formal #${topGhost.formal_rank} · gap ${formatSignedRankGap(topGhost.rank_gap)}`
+              : "waiting for Ghost lens"}
+          </small>
+        </button>
+        <button className="hero-tile" onClick={() => setActiveLens("faultlines")} type="button">
+          <span>Uncoordinated dependencies</span>
+          <strong>{faultlines.data ? faultlineFindings.length : "—"}</strong>
+          <small>
+            {faultlineFindings[0]
+              ? `${suffix(faultlineFindings[0].source_module_key)} ↔ ${suffix(faultlineFindings[0].target_module_key)} · co-changed ${faultlineFindings[0].dependency_weight}× · no reply path`
+              : "module pairs whose owners have no bounded path"}
+          </small>
+        </button>
+        <button className="hero-tile" onClick={() => setActiveLens("gaps")} type="button">
+          <span>Structurally missing records</span>
+          <strong>{gaps.data ? gapTotal : "—"}</strong>
+          <small>
+            {gaps.data
+              ? `records the graph requires but the corpus lacks${gapTotal > gapList.length ? ` · showing ${gapList.length}` : ""}`
+              : "phantom nodes required by the graph"}
+          </small>
+        </button>
+        <div className="hero-tile hero-engine">
+          <span>HydraDB vs client</span>
+          <strong>
+            {comparison?.engine_ms !== null && comparison?.engine_ms !== undefined
+              ? `${comparison.engine_ms.toFixed(0)} ms`
+              : "fixture mode"}
+          </strong>
+          <small>
+            {comparison
+              ? `1 MSpaths call replaces ${comparison.client_equivalent_round_trips.toLocaleString()} per-pair queries · Python BFS ${comparison.client_ms.toFixed(0)} ms`
+              : "engine round trip vs in-process BFS"}
+          </small>
+        </div>
+      </section>
+
       <div className="workspace">
         <aside className="rail" aria-label="Lens navigation">
           <nav>
@@ -144,18 +243,29 @@ export function App() {
 
         <section className="canvas-panel" aria-label={`${activeLens} workspace`}>
           <div className="toolbar">
-            <label>
-              Centrality
-              <select
-                aria-label="Centrality mode"
-                onChange={(event) => setMode(event.target.value as "actual" | "official")}
-                value={mode}
+            <div className="segmented" role="group" aria-label="Node size mode">
+              <button
+                aria-pressed={mode === "official"}
+                className={mode === "official" ? "segment active" : "segment"}
+                onClick={() => setMode("official")}
+                type="button"
               >
-                <option value="actual">Actual normalized</option>
-                <option value="official">Official rank</option>
-              </select>
-            </label>
-            <div className="scale">Official → Actual sizes animate on the graph</div>
+                Official
+              </button>
+              <button
+                aria-pressed={mode === "actual"}
+                className={mode === "actual" ? "segment active" : "segment"}
+                onClick={() => setMode("actual")}
+                type="button"
+              >
+                Actual
+              </button>
+            </div>
+            <div className="scale">
+              {mode === "official"
+                ? "Node size = formal seniority (org chart)"
+                : "Node size = sampled path centrality (who actually carries the work)"}
+            </div>
             <div className="query-source">
               {activeEnvelope?.source ?? "fixture"} · {activeEnvelope?.analysis_status ?? "pending"}
             </div>
@@ -164,7 +274,19 @@ export function App() {
           <div className="graph-stage" data-lens={activeLens}>
             {graph.isError ? <Notice text="Graph query failed. Other lens data can still render." tone="bad" /> : null}
             <CytoscapeGraph elements={graphElements} onSelect={setSelectedNodeKey} selectedKey={selectedKey} />
-            <GraphLegend />
+            <GraphLegend hiddenIsolates={hiddenIsolates} />
+            {whatIf ? (
+              <div className="what-if-banner" role="status">
+                <strong>
+                  Without {whatIf.excluded_person_keys.map((key) => nameFor(people, key)).join(", ")}:
+                </strong>{" "}
+                {whatIf.pairs_lost.toLocaleString()} of {whatIf.sampled_pairs_before.toLocaleString()} sampled
+                pairs lose their ≤{whatIf.max_len}-hop path.
+                <button onClick={() => setExcluded([])} type="button">
+                  Restore
+                </button>
+              </div>
+            ) : null}
           </div>
 
           <div className="bottom-grid">
@@ -176,12 +298,11 @@ export function App() {
               title="Faultlines"
             />
             <GapTimeline
-              emptyText={gapPath.isPending ? "Loading gaps" : "No API gaps"}
+              emptyText={gaps.isPending ? "Loading gaps" : "No structurally missing records in this snapshot."}
               findings={gapFindings}
-              onRequestChange={setGapRequest}
               onSelect={setSelectedGapIndex}
-              request={gapRequest}
               selectedIndex={selectedGapIndex}
+              chainPending={gapPath.isPending && gapRequest !== undefined}
             />
           </div>
         </section>
@@ -194,6 +315,16 @@ export function App() {
               {selected?.title ?? "Waiting for graph"} / {selected?.team ?? "--"}
             </p>
             <code>{selected?.key ?? "--"}</code>
+            {selected ? (
+              <button
+                className="what-if-button"
+                disabled={excluded.includes(selected.key)}
+                onClick={() => setExcluded([selected.key])}
+                type="button"
+              >
+                {excluded.includes(selected.key) ? "Removed from the sample" : `What if ${selected.name} is out?`}
+              </button>
+            ) : null}
           </section>
 
           <section className="finding-block">
@@ -217,9 +348,13 @@ export function App() {
               value={formatRankGap(ghostFinding)}
             />
             <Metric
-              detail={`Lost within ${ghostFinding?.removal_impact.max_len ?? 4} hops`}
+              detail={`Lost within ${ghostFinding?.removal_impact?.max_len ?? 4} hops`}
               label="Removal impact"
-              value={`${ghostFinding?.removal_impact.pairs_lost_without_person ?? "--"} pairs`}
+              value={
+                ghostFinding?.removal_impact
+                  ? `${ghostFinding.removal_impact.pairs_lost_without_person.toLocaleString()} pairs`
+                  : "top-10 only"
+              }
             />
             <Metric
               detail={snapshot.data?.dataset_id ?? "Waiting for snapshot"}
@@ -246,6 +381,14 @@ export function App() {
               <span>engine: {activeQuery ? `${activeQuery.engine_ms.toFixed(1)}ms` : "--"}</span>
               <span>status: {activeEnvelope?.analysis_status ?? "pending"}</span>
             </footer>
+            {activeLens === "org" && comparison ? (
+              <p className="comparison-line">
+                Client-side equivalent: bounded BFS over {comparison.sampled_people} people in{" "}
+                {comparison.client_ms.toFixed(0)} ms — or {comparison.client_equivalent_round_trips.toLocaleString()}{" "}
+                per-pair shortest-path calls. HydraDB answers the same sample in {comparison.engine_round_trips || "—"}{" "}
+                round trip{comparison.engine_round_trips === 1 ? "" : "s"}.
+              </p>
+            ) : null}
           </details>
 
           <section className="evidence-drawer">
@@ -322,6 +465,18 @@ function CytoscapeGraph({
             "border-color": "#1ecad0",
             "border-width": 3,
             color: "#1ecad0"
+          }
+        },
+        {
+          selector: "node.excluded",
+          style: {
+            "background-color": "#3a4652",
+            "background-gradient-stop-colors": ["#4a5661", "#2c3640"],
+            "border-color": "#f0a95f",
+            "border-style": "dashed",
+            "border-width": 2,
+            color: "#8a97a4",
+            opacity: 0.55
           }
         },
         {
@@ -442,28 +597,51 @@ function graphElementsFor(
   findings: FaultlineFinding[],
   selectedFaultline: FaultlineFinding | undefined,
   mode: "actual" | "official",
-  selectedKey: string | undefined
+  selectedKey: string | undefined,
+  excluded: string[] = [],
+  connectedKeys?: Set<string>
 ): ElementDefinition[] {
-  const nodes = people.map((person) => ({
+  // People with no communication edges (present only in git/tickets) would render as an
+  // unlaid-out grid; keep them in the tables but off the canvas.
+  const owners = new Set(findings.flatMap((finding) => [finding.source_owner_key, finding.target_owner_key]));
+  const visible =
+    connectedKeys && connectedKeys.size > 0
+      ? people.filter(
+          (person) => connectedKeys.has(person.key) || person.key === selectedKey || owners.has(person.key)
+        )
+      : people;
+  const visibleKeys = new Set(visible.map((person) => person.key));
+  const nodes = visible.map((person) => ({
     data: {
       id: person.key,
       label: person.name,
       size: mode === "actual" ? person.actual_size : person.official_size
     },
-    classes: person.key === selectedKey ? "selected" : ""
+    classes: [person.key === selectedKey ? "selected" : "", excluded.includes(person.key) ? "excluded" : ""]
+      .filter(Boolean)
+      .join(" ")
   }));
-  const communicationEdges = edges.map((edge, index) => ({
-    data: { id: `edge-${index}`, source: edge.source, target: edge.target },
-    classes: edge.strength
-  }));
-  const faultlineEdges = findings.map((finding, index) => ({
-    data: {
-      id: `faultline-${index}`,
-      source: finding.source_owner_key,
-      target: finding.target_owner_key
-    },
-    classes: finding === selectedFaultline ? "faultline selected-faultline" : "faultline"
-  }));
+  const communicationEdges = edges
+    .filter((edge) => visibleKeys.has(edge.source) && visibleKeys.has(edge.target))
+    .map((edge, index) => ({
+      data: { id: `edge-${index}`, source: edge.source, target: edge.target },
+      classes: edge.strength
+    }));
+  const faultlineEdges = findings
+    .filter(
+      (finding) =>
+        visibleKeys.has(finding.source_owner_key) &&
+        visibleKeys.has(finding.target_owner_key) &&
+        finding.source_owner_key !== finding.target_owner_key
+    )
+    .map((finding, index) => ({
+      data: {
+        id: `faultline-${index}`,
+        source: finding.source_owner_key,
+        target: finding.target_owner_key
+      },
+      classes: finding === selectedFaultline ? "faultline selected-faultline" : "faultline"
+    }));
   return [...nodes, ...communicationEdges, ...faultlineEdges];
 }
 
@@ -659,9 +837,12 @@ function Metric({ label, value, detail }: { label: string; value: string; detail
   );
 }
 
-function GraphLegend() {
+function GraphLegend({ hiddenIsolates = 0 }: { hiddenIsolates?: number }) {
   return (
     <div className="graph-legend" aria-label="Graph legend">
+      {hiddenIsolates > 0 ? (
+        <span className="legend-note">{hiddenIsolates} people without reply edges hidden</span>
+      ) : null}
       <span>
         <i className="legend-dot communication" /> communication
       </span>
@@ -735,91 +916,97 @@ function DataTable({
 function GapTimeline({
   emptyText,
   findings,
-  onRequestChange,
   onSelect,
-  request,
-  selectedIndex
+  selectedIndex,
+  chainPending
 }: {
   emptyText: string;
   findings: GapFinding[];
-  onRequestChange: (request: GapPathRequest) => void;
   onSelect: (index: number) => void;
-  request: GapPathRequest;
   selectedIndex: number;
+  chainPending: boolean;
 }) {
-  const artifactOptions = artifactOptionsFrom(findings, request);
-
+  const selected = findings[selectedIndex];
   return (
     <section className="table-panel gap-timeline">
       <div className="panel-heading">
         <h3>Gaps</h3>
-        <span>
-          {request.source_artifact_key} to {request.target_artifact_key}
-        </span>
+        <span className="gap-caveat">Absence in the corpus is not proof of deletion.</span>
       </div>
-      <div className="gap-controls" aria-label="Gap path controls">
-        <label>
-          Source artifact
-          <select
-            aria-label="Source artifact"
-            onChange={(event) => onRequestChange({ ...request, source_artifact_key: event.target.value })}
-            value={request.source_artifact_key}
-          >
-            {artifactOptions.map((artifact) => (
-              <option key={`source-${artifact}`} value={artifact}>
-                {suffix(artifact)}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Target artifact
-          <select
-            aria-label="Target artifact"
-            onChange={(event) => onRequestChange({ ...request, target_artifact_key: event.target.value })}
-            value={request.target_artifact_key}
-          >
-            {artifactOptions.map((artifact) => (
-              <option key={`target-${artifact}`} value={artifact}>
-                {suffix(artifact)}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
+      {selected ? (
+        <div className="chain" aria-label="Chain of custody">
+          {selected.chain ? (
+            <ol className="chain-track">
+              {selected.chain.node_keys.map((key, index) => (
+                <li
+                  className={selected.chain?.phantom_indices.includes(index) ? "chain-hop phantom" : "chain-hop"}
+                  key={`${key}-${index}`}
+                >
+                  <span className="chain-dot" />
+                  <code>{suffix(key)}</code>
+                  {selected.chain?.phantom_indices.includes(index) ? <small>missing · {selected.reason}</small> : null}
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="chain-empty">
+              {chainPending
+                ? "Tracing the chain with algo.SPpaths…"
+                : selected.reason === "dangling_thread_parent"
+                  ? `${suffix(selected.successor_keys[0] ?? "")} replies to a parent that is not in the corpus.`
+                  : "No live chain for this record."}
+            </p>
+          )}
+        </div>
+      ) : null}
       {findings.length === 0 ? (
         <p className="table-empty">{emptyText}</p>
       ) : (
-        findings.map((finding, index) => (
-          <button
-            className={index === selectedIndex ? "timeline-row selected" : "timeline-row"}
-            key={finding.phantom_key}
-            onClick={() => onSelect(index)}
-            type="button"
-          >
-            <span>{`G-${String(index + 1).padStart(3, "0")}`}</span>
-            <ol>
-              <li>{suffix(finding.successor_keys[0] ?? "artifact:unknown")}</li>
-              <li className="phantom">{suffix(finding.phantom_key)}</li>
-              <li>{suffix(finding.predecessor_keys[0] ?? "artifact:unknown")}</li>
-            </ol>
-            <small>
-              {finding.expected_kind} · {finding.reason}
-            </small>
-          </button>
-        ))
+        <div className="timeline-list">
+          {findings.map((finding, index) => (
+            <button
+              className={index === selectedIndex ? "timeline-row selected" : "timeline-row"}
+              key={finding.phantom_key}
+              onClick={() => onSelect(index)}
+              type="button"
+            >
+              <span>{`G-${String(index + 1).padStart(3, "0")}`}</span>
+              <ol>
+                <li>{suffix(finding.successor_keys[0] ?? "artifact:unknown")}</li>
+                <li className="phantom">{shortKey(finding.phantom_key)}</li>
+                <li>{suffix(finding.predecessor_keys[0] ?? "artifact:unknown")}</li>
+              </ol>
+              <small>
+                {finding.expected_kind} · {finding.reason.replaceAll("_", " ")}
+              </small>
+            </button>
+          ))}
+        </div>
       )}
     </section>
   );
 }
 
-function artifactOptionsFrom(findings: GapFinding[], request: GapPathRequest) {
-  const artifacts = new Set([request.source_artifact_key, request.target_artifact_key]);
-  findings.forEach((finding) => {
-    finding.predecessor_keys.forEach((key) => artifacts.add(key));
-    finding.successor_keys.forEach((key) => artifacts.add(key));
-  });
-  return Array.from(artifacts).sort();
+function requestForGap(finding: GapFinding): GapPathRequest | undefined {
+  const source = finding.successor_keys[0];
+  const target = finding.predecessor_keys[0];
+  if (source === undefined || target === undefined) {
+    return undefined;
+  }
+  return { source_artifact_key: source, target_artifact_key: target };
+}
+
+function shortKey(value: string) {
+  const last = suffix(value);
+  return last.length > 28 ? `${last.slice(0, 26)}…` : last;
+}
+
+function nameFor(people: GraphNode[], key: string) {
+  return people.find((person) => person.key === key)?.name ?? suffix(key);
+}
+
+function formatSignedRankGap(gap: number) {
+  return gap > 0 ? `+${gap}` : String(gap);
 }
 
 function Notice({ text, tone }: { text: string; tone: "bad" | "warn" }) {

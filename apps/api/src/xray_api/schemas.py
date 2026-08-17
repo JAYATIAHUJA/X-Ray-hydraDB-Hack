@@ -101,6 +101,7 @@ class LensEnvelope(BaseModel):
     executed_query: dict[str, object] | None = None
     what_if: WhatIfSummary | None = None
     comparison: EngineComparison | None = None
+    total_findings: int | None = None
 
 
 class GapPathRequest(BaseModel):
