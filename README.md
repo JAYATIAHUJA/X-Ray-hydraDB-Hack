@@ -1,13 +1,52 @@
 # X-Ray
 
-> **The org chart says who reports to whom. X-Ray asks who actually keeps the work moving.**
+> **The org chart says who reports to whom. X-Ray shows who actually keeps the work moving —
+> and where the graph says a conversation or a record should exist and doesn't.**
 
-`HackHydra 2026` · `HydraDB` · `Evidence-first engineering intelligence`
+`HackHydra 2026 · Track 01` · self-hosted open-source **HydraDB** (pinned) · Apache-2.0
 
-X-Ray is a hackathon project that maps an engineering organization as two connected graphs:
-the **work graph** (code, modules, tickets, and dependencies) and the **human graph**
-(who communicates, collaborates, and carries context). Comparing those graphs makes risks
-visible that a document search or an org chart cannot show on its own.
+X-Ray reads exports from mail, tickets, git and Slack, builds **two graphs** — the *work graph*
+(modules, dependencies, changes) and the *human graph* (who replies to whom) — and finds the
+**missing edges between them**: technical dependency without conversation, evidence chains
+without their required link, and the people every path quietly routes through. That signal is an
+*absence in one graph where a corresponding edge exists in the other*; a vector index has no way
+to express it. HydraDB's bounded path procedures do.
+
+**One command, no API keys:**
+
+```powershell
+./scripts/setup.sh    # HydraDB + MinIO (compose) → API → seed → web (Windows: scripts\setup.ps1)
+```
+
+**Measured, traceable, honest** (every number links to a checked-in results file):
+
+| | Apache Kafka, Mar–Jun 2025 (real, public) | Labelled synthetic org (500 people) |
+| --- | --- | --- |
+| Load-bearing person | Chia-Ping Tsai (PMC) — structural #1 · formal #4 | Priya Nair — senior engineer, structural #1 · **formal #33** |
+| Largest rank gap in top 10 | **PoAn Yang, committer — #5 vs #34 (+29)** | — |
+| What-if removal | 516 of 6,295 reachable pairs lose their ≤4-hop path | **110,883 of 124,251** |
+| Uncoordinated dependencies | 49 (top: `clients` ↔ `connect`, co-changed 9×, no reply path) | 3 planted / 3 found, 0 false positives (negative control) |
+| Structurally missing records | 135 (dangling thread parents at the export boundary) | 5 planted / 5 found |
+| Incident lift | **not measurable** — reported as coordination debt only | — |
+| Engine vs client | 1 pairwise `algo.MSpaths` call replaces 42,486 per-pair queries | 1 call replaces 124,750 |
+
+Sources: [docs/results/kafka-2025q2.json](docs/results/kafka-2025q2.json) ·
+[docs/results/synth500.json](docs/results/synth500.json) ·
+[docs/cypher-compat-verified.md](docs/cypher-compat-verified.md) (what the pinned engine
+actually accepts, measured, not assumed).
+
+**Where HydraDB does the work:** one pairwise `algo.MSpaths` call for the Ghost sample and one
+for Faultline reachability; `algo.SPpaths` for the chain of custody through a `Phantom`;
+integer-id / `path_key` resolution outside the engine; every query dataset-scoped and bounded
+(`maxLen` 4 / 8). The UI shows the exact executed statement, its parameters, engine time, and the
+client-side equivalent next to every lens.
+
+**What we do not claim:** that a faultline predicts an incident (the literature is contested and
+this corpus has no module-linked incident signal); that a missing record was deleted (the corpus
+is structurally incomplete at that point); exact betweenness (it is a bounded, sampled tally,
+stated as such); or that a private company's data would look like Apache Kafka's.
+
+---
 
 ## Thesis
 
@@ -105,11 +144,13 @@ scans/counts are avoided.
 | HydraDB gateway, loader, health check, and fixture seeding | Built |
 | API and three-lens web interface | Built with live/fallback status, graph layout, evidence drawer, and query card |
 | Synthetic 500-person fixture and planted-truth evaluation | Built |
+| Real corpus: Apache Kafka (mbox + JIRA + git) through the export adapters, offline identity map | Built; snapshot ships in the repo |
+| What-if removal, engine-vs-client comparison, SPpaths chain rendering | Built |
 | Live source connectors | Out of scope for this hackathon; export adapters are the supported path |
-| HERB evaluation and incident-based validation | Planned, not included |
+| HERB evaluation and incident-based validation | Not included; no incident lift is claimed |
 
-The current demo data is synthetic and labelled. It demonstrates the product model; it is **not**
-a measured claim about a real organization.
+Measured corpora are a labelled synthetic organization and one public open-source project. Neither
+is a claim about a private company.
 
 ## Source ingestion
 
