@@ -1,11 +1,17 @@
 from __future__ import annotations
 
+import json
+import os
+import tempfile
+import time
 from collections.abc import Mapping
 from dataclasses import asdict
+from pathlib import Path
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import PlainTextResponse
 from xray_analytics import (
     FaultlineFinding,
     GapFinding,
@@ -14,10 +20,22 @@ from xray_analytics import (
     faultlines,
     gap_findings,
     ghost_scores,
+    shortest_communication_bridge,
 )
-from xray_core.models import AnalysisStatus, CanonicalBundle, EdgeRow, EvidenceRecord, NodeRow
+from xray_core.models import (
+    AnalysisStatus,
+    CanonicalBundle,
+    CanonicalRecord,
+    EdgeRow,
+    EvidenceRecord,
+    NodeRow,
+    SequenceContractSet,
+)
 from xray_core.paths import normalize_pair
 from xray_hydra import HydraGateway
+from xray_ingest.adapters import git_log_rows, jira_csv_rows, mbox_rows, slack_export_rows
+from xray_ingest.manifest import write_snapshot
+from xray_ingest.pipeline import ingest_exports
 
 from .config import XraySettings, get_settings
 from .dependencies import active_bundle, current_snapshot_id, get_gateway
@@ -49,6 +67,7 @@ from .schemas import (
     HealthResponse,
     HydraHealthResponse,
     HydraSeedResponse,
+    ImportRequest,
     LensEnvelope,
     LoadReportResponse,
     SnapshotResponse,
@@ -114,14 +133,111 @@ def create_app() -> FastAPI:
             limitations=bundle.limitations,
         )
 
+    @app.post("/api/v1/snapshots/import", response_model=SnapshotResponse)
+    def import_snapshot(request: ImportRequest) -> SnapshotResponse:
+        """Import browser-supplied export text and make the new snapshot active."""
+        directory = tuple(CanonicalRecord.model_validate(item) for item in request.directory)
+        known_directory = tuple(
+            record for record in directory if record.kind == "directory_person"
+        )
+        contracts = SequenceContractSet()
+        with tempfile.TemporaryDirectory(prefix="xray-import-input-") as input_dir:
+            root = Path(input_dir)
+            mbox_paths = []
+            for index, content in enumerate(request.mbox):
+                path = root / f"mail-{index}.mbox"
+                path.write_text(content, encoding="utf-8")
+                mbox_paths.append(path)
+            jira_path = _write_optional_source(root, "jira.csv", request.jira_csv)
+            git_path = _write_optional_source(root, "git.log", request.git_log)
+            slack_dir = root / "slack"
+            slack_dir.mkdir()
+            for channel, rows in request.slack_exports.items():
+                (slack_dir / f"{channel}.json").write_text(
+                    json.dumps(list(rows)), encoding="utf-8"
+                )
+            bundle = ingest_exports(
+                directory_records=known_directory,
+                canonical_records=tuple(record for record in directory if record.kind != "directory_person"),
+                contracts=contracts,
+                dataset_id=request.dataset_id,
+                identity_map=request.identity_map,
+                email_rows=mbox_rows(
+                    mbox_paths,
+                    module_keys_by_message_id=request.message_modules,
+                ) if mbox_paths else (),
+                ticket_rows=jira_csv_rows(jira_path) if jira_path is not None else (),
+                git_rows=git_log_rows(git_path, module_prefixes=request.module_prefixes)
+                if git_path is not None
+                else (),
+                slack_rows=slack_export_rows(
+                    slack_dir,
+                    module_keys_by_channel=request.channel_modules,
+                ) if request.slack_exports else (),
+            )
+        output_dir = Path(tempfile.mkdtemp(prefix="xray-import-snapshot-"))
+        write_snapshot(bundle, output_dir)
+        os.environ["XRAY_SNAPSHOT_DIR"] = str(output_dir)
+        from .dependencies import snapshot_bundle
+
+        snapshot_bundle.cache_clear()
+        return SnapshotResponse(
+            snapshot_id=f"{bundle.dataset_id}:snapshot",
+            dataset_id=bundle.dataset_id,
+            node_count=len(bundle.nodes),
+            edge_count=len(bundle.edges),
+            evidence_count=len(bundle.evidence),
+            limitations=bundle.limitations,
+        )
+
+    @app.get("/api/v1/snapshots/{snapshot_id}/risk-report", response_class=PlainTextResponse)
+    def risk_report(snapshot_id: str) -> str:
+        """Export the current evidence-backed findings as a portable Markdown report."""
+        _require_current_snapshot(snapshot_id)
+        bundle = active_bundle()
+        ghost_findings = fixture_ghost_findings(bundle)[:1]
+        faultline_findings = faultlines(bundle)[:3]
+        gap_findings_list = gap_findings(bundle)[:10]
+        lines = [
+            f"# X-Ray Risk Report: {bundle.dataset_id}",
+            "",
+            "Structural position, not performance. Absence in the corpus does not establish deletion.",
+            "",
+            "## Ghost",
+        ]
+        if ghost_findings:
+            ghost = ghost_findings[0]
+            lines.append(
+                f"- {ghost['display_name']}: structural rank #{ghost['structural_rank']}, "
+                f"formal rank #{ghost['formal_rank']}, rank gap {ghost['rank_gap']}."
+            )
+        else:
+            lines.append("- No Ghost finding available.")
+        lines.extend(["", "## Faultlines"])
+        for finding in faultline_findings:
+            lines.append(
+                f"- `{finding.source_module_key}` -> `{finding.target_module_key}`; "
+                f"owners `{finding.source_owner_key}` / `{finding.target_owner_key}`; "
+                f"tier `{finding.tier}`, severity {finding.severity:.1f}."
+            )
+        lines.extend(["", "## Gaps"])
+        for gap_finding in gap_findings_list:
+            lines.append(
+                f"- `{gap_finding.phantom_key}` ({gap_finding.expected_kind}, {gap_finding.reason}); "
+                "absence does not establish deletion."
+            )
+        lines.extend(["", "## Limitations", *[f"- {item}" for item in bundle.limitations]])
+        return "\n".join(lines) + "\n"
+
     @app.get("/api/v1/snapshots/{snapshot_id}/graph", response_model=GraphResponse)
     def graph(
         snapshot_id: str,
         settings: SettingsDep,
         gateway: GatewayDep,
+        window_days: Annotated[int, Query(ge=0, le=3650)] = 0,
     ) -> GraphResponse:
         _require_current_snapshot(snapshot_id)
-        bundle = active_bundle()
+        bundle = _window_bundle(active_bundle(), window_days)
         ranked = ghost_scores(bundle)
         scores = {score.person_key: score for score in ranked}
         # Pre-select the story: the largest formal-vs-structural gap among the ten most
@@ -167,10 +283,11 @@ def create_app() -> FastAPI:
         settings: SettingsDep,
         gateway: GatewayDep,
         exclude: Annotated[list[str] | None, Query()] = None,
+        window_days: Annotated[int, Query(ge=0, le=3650)] = 0,
     ) -> LensEnvelope:
         """Ghost lens. Pass ``?exclude=person:...`` (repeatable) for a what-if removal."""
         _require_current_snapshot(snapshot_id)
-        bundle = active_bundle()
+        bundle = _window_bundle(active_bundle(), window_days)
         excluded = _validated_person_keys(bundle, exclude or [])
         client_ms = client_ghost_baseline_ms(bundle)
         live_result = live_ghost_findings(
@@ -226,9 +343,10 @@ def create_app() -> FastAPI:
         snapshot_id: str,
         settings: SettingsDep,
         gateway: GatewayDep,
+        window_days: Annotated[int, Query(ge=0, le=3650)] = 0,
     ) -> LensEnvelope:
         _require_current_snapshot(snapshot_id)
-        bundle = active_bundle()
+        bundle = _window_bundle(active_bundle(), window_days)
         findings = faultlines(bundle)
         distance_result = communication_distances(
             settings,
@@ -391,6 +509,42 @@ def _require_current_snapshot(snapshot_id: str) -> None:
         raise not_found(f"Unknown snapshot {snapshot_id!r}", code="snapshot_not_found")
 
 
+def _write_optional_source(root: Path, name: str, content: str | None) -> Path | None:
+    if content is None:
+        return None
+    path = root / name
+    path.write_text(content, encoding="utf-8")
+    return path
+
+
+def _window_bundle(bundle: CanonicalBundle, window_days: int) -> CanonicalBundle:
+    if window_days <= 0:
+        return bundle
+    cutoff = int(time.time()) - (window_days * 86400)
+    edges = tuple(
+        edge
+        for edge in bundle.edges
+        if edge.rel_type != "COMMUNICATES"
+        or (
+            type(edge.properties.get("last_epoch")) is int
+            and int(edge.properties["last_epoch"]) >= cutoff
+        )
+    )
+    return bundle.model_copy(
+        update={
+            "edges": edges,
+            "limitations": tuple(
+                sorted(
+                    {
+                        *bundle.limitations,
+                        f"Communication edges are filtered to the last {window_days} days.",
+                    }
+                )
+            ),
+        }
+    )
+
+
 def _lens_envelope(
     *,
     snapshot_id: str,
@@ -481,7 +635,15 @@ def _with_faultline_evidence(
             dict.fromkeys((*dependency_evidence, *source_owner_evidence, *target_owner_evidence))
         )
         enriched.append(
-            {**asdict(finding), "evidence": _evidence_summaries(evidence, evidence_ids)}
+            {
+                **asdict(finding),
+                "bridge": shortest_communication_bridge(
+                    bundle,
+                    finding.source_owner_key,
+                    finding.target_owner_key,
+                ),
+                "evidence": _evidence_summaries(evidence, evidence_ids),
+            }
         )
     return tuple(enriched)
 
