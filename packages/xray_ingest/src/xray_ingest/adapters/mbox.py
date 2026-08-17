@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import mailbox
 from collections.abc import Mapping
+from datetime import UTC
 from email.message import Message
 from email.utils import getaddresses, parsedate_to_datetime
 from pathlib import Path
@@ -26,10 +27,16 @@ def mbox_rows(
         recipients = _addresses((*message.get_all("to", ()), *message.get_all("cc", ())))
         if sender is None or not recipients:
             continue
+        epoch = _epoch(message)
+        if epoch is None:
+            # No parseable Date header: the message cannot be placed on the timeline
+            # and would corrupt gap interpolation, so it is skipped rather than
+            # silently stamped as 1970.
+            continue
         rows.append(
             {
                 "id": message_id,
-                "occurred_at_epoch": _epoch(message),
+                "occurred_at_epoch": epoch,
                 "from_id": sender,
                 "to_ids": recipients,
                 "in_reply_to_id": _clean_message_id(message.get("In-Reply-To")),
@@ -69,16 +76,18 @@ def _addresses(values: tuple[str, ...] | list[str]) -> tuple[str, ...]:
     )
 
 
-def _epoch(message: Message) -> int:
+def _epoch(message: Message) -> int | None:
     value = message.get("Date")
     if value is None:
-        return 0
+        return None
     try:
         parsed = parsedate_to_datetime(value)
     except (TypeError, ValueError):
-        return 0
+        return None
     if parsed.tzinfo is None:
-        return int(parsed.replace(tzinfo=None).timestamp())
+        # RFC 5322 dates without a zone are treated as UTC so the epoch is the same
+        # on every machine (local-time interpretation is not deterministic).
+        parsed = parsed.replace(tzinfo=UTC)
     return int(parsed.timestamp())
 
 

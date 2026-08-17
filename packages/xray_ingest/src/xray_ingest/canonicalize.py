@@ -180,6 +180,9 @@ def _node_properties(record: CanonicalRecord, label: NodeLabel) -> dict[str, Sca
             "display_name": "display_name",
             "role_rank": "role_rank",
             "team_key": "team_id",
+            # Present only on identity stubs synthesized for unmapped source ids.
+            "identity_status": "identity_status",
+            "source_identity": "source_identity",
         }
     elif label == "Team":
         properties = {"name": record.external_id}

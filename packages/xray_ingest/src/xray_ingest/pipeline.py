@@ -14,6 +14,7 @@ from xray_core.models import (
 from .canonicalize import canonicalize
 from .derive import derive_edges
 from .gaps import detect_gaps
+from .identity import IdentityResolution, resolve_rows, unresolved_directory_records
 from .sources import code_records, email_records, slack_records, ticket_records
 
 
@@ -63,17 +64,57 @@ def ingest_exports(
     email_rows: Iterable[Mapping[str, object]] = (),
     ticket_rows: Iterable[Mapping[str, object]] = (),
     git_rows: Iterable[Mapping[str, object]] = (),
+    identity_map: Mapping[str, str] | None = None,
 ) -> CanonicalBundle:
-    """Build one evidence bundle from the supported mixed source exports."""
-    records = (
-        *tuple(directory_records),
-        *tuple(canonical_records),
-        *slack_records(slack_rows),
-        *email_records(email_rows),
-        *ticket_records(ticket_rows),
-        *code_records(git_rows),
+    """Build one evidence bundle from the supported mixed source exports.
+
+    ``identity_map`` maps source-native ids (email addresses, Slack user ids, …) to
+    directory handles. It is applied to every person-id field *before*
+    canonicalization; ids that are neither mapped nor already handles get a
+    deterministic ``unresolved-…`` handle plus a directory stub and a bundle
+    limitation, so real exports never fail on a missing endpoint.
+    """
+    directory = tuple(directory_records)
+    resolution = IdentityResolution()
+    known_handles = {
+        record.external_id for record in directory if record.kind == "directory_person"
+    }
+    # Handles that already exist in the directory resolve to themselves.
+    effective_map: dict[str, str] = {handle: handle for handle in known_handles}
+    effective_map.update(identity_map or {})
+
+    slack = resolve_rows(
+        slack_rows, kind="slack", identity_map=effective_map, resolution=resolution
     )
-    return build_bundle(records, contracts, dataset_id)
+    email = resolve_rows(
+        email_rows, kind="email", identity_map=effective_map, resolution=resolution
+    )
+    tickets = resolve_rows(
+        ticket_rows, kind="ticket", identity_map=effective_map, resolution=resolution
+    )
+    git = resolve_rows(git_rows, kind="git", identity_map=effective_map, resolution=resolution)
+
+    stubs = unresolved_directory_records(
+        resolution,
+        source=f"{dataset_id}-identity",
+        epoch=min((record.occurred_at_epoch for record in directory), default=0),
+        known_handles=known_handles,
+    )
+    records = (
+        *directory,
+        *stubs,
+        *tuple(canonical_records),
+        *slack_records(slack),
+        *email_records(email),
+        *ticket_records(tickets),
+        *code_records(git),
+    )
+    bundle = build_bundle(records, contracts, dataset_id)
+    if not resolution.limitations:
+        return bundle
+    return bundle.model_copy(
+        update={"limitations": tuple(sorted({*bundle.limitations, *resolution.limitations}))}
+    )
 
 
 __all__ = [
