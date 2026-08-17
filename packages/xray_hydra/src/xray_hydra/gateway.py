@@ -79,11 +79,25 @@ def _execute(
     statement: str,
     parameters: dict[str, object],
 ) -> list[dict[str, object]]:
-    if isinstance(driver, SessionDriverLike):
-        with driver.session() as session:
-            result = session.run(statement, parameters)
-            return _records(list(result))
-    return _records(driver.execute_query(statement, parameters_=parameters))
+    last_error: Exception | None = None
+    for attempt in range(2):
+        try:
+            if isinstance(driver, SessionDriverLike):
+                with driver.session() as session:
+                    result = session.run(statement, parameters)
+                    return _records(list(result))
+            return _records(driver.execute_query(statement, parameters_=parameters))
+        except Exception as exc:
+            last_error = exc
+            if attempt == 1 or not _is_retryable(exc):
+                raise
+    assert last_error is not None
+    raise last_error
+
+
+def _is_retryable(error: Exception) -> bool:
+    """Retry transient Bolt failures once; the next session gets a fresh connection."""
+    return type(error).__name__ in {"ServiceUnavailable", "SessionExpired"}
 
 
 __all__ = ["GatewayError", "HydraGateway"]
