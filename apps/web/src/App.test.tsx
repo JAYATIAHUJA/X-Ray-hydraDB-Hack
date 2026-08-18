@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { App } from "./App";
 
@@ -239,62 +239,63 @@ function renderApp() {
   );
 }
 
-test("renders the three-lens shell from API responses", async () => {
+test("the dashboard shows graph, KPIs and the selected person in one view", async () => {
   renderApp();
 
-  expect(screen.getByRole("heading", { name: "X-Ray" })).toBeInTheDocument();
-  expect(screen.getByText("Loading")).toBeInTheDocument();
-  expect(await screen.findByText("Graph: 17 nodes / 30 edges")).toBeInTheDocument();
-  expect(await screen.findByText("HydraDB: fallback")).toBeInTheDocument();
-  expect(await screen.findAllByText("Maya Chen")).toHaveLength(3); // hero tile, node, detail panel
-  expect(await screen.findByText("Operations specialist / operations")).toBeInTheDocument();
-  const alexNode = screen.getByRole("button", { name: /Alex Rivera/ });
-  expect(alexNode).toBeInTheDocument();
-  expect(alexNode).toHaveAttribute("aria-pressed", "false");
-  expect(await screen.findByText("0.231")).toBeInTheDocument();
-  expect(await screen.findByText("payments-api → ledger-worker")).toBeInTheDocument();
-  expect(await screen.findAllByText("missing-approval")).not.toHaveLength(0);
-  // Hero strip summarises the three lenses from live data.
-  expect(screen.getByText("Load-bearing person")).toBeInTheDocument();
-  expect(screen.getByText(/structural #1 · formal #9 · gap \+8/)).toBeInTheDocument();
-  expect(screen.getByText("Uncoordinated dependencies")).toBeInTheDocument();
-  expect(screen.getByText(/1 MSpaths call replaces 45 per-pair queries/)).toBeInTheDocument();
-  // Selecting the first gap requests its chain and renders the SPpaths hops.
-  await screen.findByLabelText("Chain of custody");
-  expect(gapRequests).toContainEqual({
-    source_artifact_key: "artifact:code-change",
-    target_artifact_key: "artifact:directive"
-  });
-  expect(await screen.findByText(/missing · required_sequence_step_missing/)).toBeInTheDocument();
+  expect(await screen.findByText("xray-demo-v1")).toBeInTheDocument();
+  expect(await screen.findByText("live")).toBeInTheDocument();
 
-  await userEvent.click(screen.getByRole("button", { name: /Faultlines/ }));
+  // Selected-node card on the graph.
+  expect(await screen.findAllByText("Maya Chen")).not.toHaveLength(0);
+  expect(await screen.findByText("Operations specialist")).toBeInTheDocument();
+  expect(await screen.findByText("#1")).toBeInTheDocument();
+  expect(await screen.findByText("#9")).toBeInTheDocument();
+  expect(await screen.findAllByText("+8")).not.toHaveLength(0);
 
-  expect(screen.getByRole("button", { name: /Faultlines/ })).toHaveAttribute("aria-current", "page");
-  expect(screen.getByText("CALL algo.MSpaths({sourceLabel: 'Person'})")).toBeInTheDocument();
-  await userEvent.click(screen.getByText("FL-001"));
-  expect(screen.getByText(/payments-api depends on ledger-worker/)).toBeInTheDocument();
-  expect(screen.getByText("payments-api and ledger-worker changed together")).toBeInTheDocument();
-  expect(screen.getByText("100%")).toBeInTheDocument();
-  expect(screen.getByText("0123456789ab…")).toBeInTheDocument();
+  // Three KPI tiles.
+  expect(screen.getByText("Load-bearing")).toBeInTheDocument();
+  expect(screen.getByText("Faultlines", { selector: ".kpi span" })).toBeInTheDocument();
+  expect(screen.getByText("Gaps", { selector: ".kpi span" })).toBeInTheDocument();
+  expect(screen.getByText("#1 structural · #9 formal")).toBeInTheDocument();
 
-  await userEvent.click(screen.getByRole("button", { name: /Gaps/ }));
+  // Ghost tab content by default.
+  expect(await screen.findByText(/If Maya leaves/)).toBeInTheDocument();
+  expect(screen.getByText("0.231")).toBeInTheDocument();
 
-  expect(screen.getByText("CALL algo.SPpaths({sourceNode: $source_id})")).toBeInTheDocument();
-  await userEvent.click(screen.getByRole("button", { name: /missing-approval/ }));
-  expect(screen.getByText(/missing-approval is a structurally missing approval/)).toBeInTheDocument();
-  expect(screen.getByText("Absence does not establish deletion.")).toBeInTheDocument();
+  await waitFor(() =>
+    expect(gapRequests).toContainEqual({
+      source_artifact_key: "artifact:code-change",
+      target_artifact_key: "artifact:directive"
+    })
+  );
+});
 
-  await userEvent.click(alexNode);
+test("lens tabs switch the right panel", async () => {
+  renderApp();
+  await screen.findAllByText("Maya Chen");
 
-  expect(alexNode).toHaveAttribute("aria-pressed", "true");
-  expect(await screen.findByText("Payments director / payments")).toBeInTheDocument();
-  // Official / Actual is a segmented toggle, not a select.
-  await userEvent.click(screen.getByRole("button", { name: "Official" }));
-  expect(screen.getByRole("button", { name: "Official" })).toHaveAttribute("aria-pressed", "true");
-  expect(screen.getByText(/Node size = formal seniority/)).toBeInTheDocument();
-  // What-if removal is one click from the selected person.
-  expect(screen.getByRole("button", { name: /What if Alex Rivera is out/ })).toBeInTheDocument();
-  expect(screen.getByText("person:alex-rivera")).toBeInTheDocument();
-  expect(screen.getByText("0.042")).toBeInTheDocument();
-  expect(screen.getByText("-1 places")).toBeInTheDocument();
+  await userEvent.click(screen.getByRole("button", { name: "Faultlines" }));
+  expect(await screen.findByText(/co-changed 12/)).toBeInTheDocument();
+  expect(screen.getByText(/Introduce alex-rivera and theo-brooks/)).toBeInTheDocument();
+
+  await userEvent.click(screen.getByRole("button", { name: "Gaps" }));
+  expect(screen.getByText("Absence in the corpus is not proof of deletion.")).toBeInTheDocument();
+  expect(await screen.findAllByText(/missing-approval/)).not.toHaveLength(0);
+
+  // Query toggle shows the executed HydraDB query for the active lens.
+  await userEvent.click(screen.getByRole("button", { name: /Show HydraDB query/ }));
+  expect(await screen.findByText("CALL algo.SPpaths({sourceNode: $source_id})")).toBeInTheDocument();
+});
+
+test("the Official / Actual toggle and what-if removal both work", async () => {
+  renderApp();
+  await screen.findAllByText("Maya Chen");
+
+  const official = screen.getByRole("button", { name: "Official" });
+  await userEvent.click(official);
+  expect(official).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByText("Sized by job title")).toBeInTheDocument();
+
+  await userEvent.click(screen.getByRole("button", { name: /Remove from the graph/ }));
+  expect(await screen.findByRole("button", { name: /Put back in the graph/ })).toBeInTheDocument();
 });
