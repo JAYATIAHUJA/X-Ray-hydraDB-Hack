@@ -1,0 +1,33 @@
+# One-command hosted-style demo: web + API on the bundled Apache Kafka snapshot.
+#
+#   docker compose -f compose.demo.yaml up --build
+#   → http://localhost:8080        (landing)      http://localhost:8080/app  (dashboard)
+#
+# This is the *analysis* stack in snapshot mode. To run the live HydraDB engine
+# path as well, bring up the pinned engine from compose.yaml (./scripts/setup.sh)
+# and set XRAY_HYDRA_URI / XRAY_HYDRA_AUTH_TOKEN_FILE on the api service below.
+name: xray-demo
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      XRAY_SNAPSHOT_DIR: /app/data/snapshots/kafka-2025q2
+      # XRAY_HYDRA_URI: bolt://host.docker.internal:7687
+      # XRAY_HYDRA_AUTH_TOKEN_FILE: /run/secrets/hydra-auth-token
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      API_UPSTREAM: http://api:8000
+      PORT: "8080"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api

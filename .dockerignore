@@ -1,0 +1,13 @@
+.git
+.venv
+node_modules
+apps/web/node_modules
+apps/web/dist
+data/exports
+data/snapshots/herb-*
+docs/shots
+reports
+**/__pycache__
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
