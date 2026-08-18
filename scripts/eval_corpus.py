@@ -33,6 +33,31 @@ from xray_ingest.manifest import read_snapshot
 IMAGE_LOCK = Path("infra/runtime-images.lock")
 
 
+def _identity_note(dataset_id: str) -> str:
+    if dataset_id.startswith("herb"):
+        return (
+            "role_rank from HERB metadata/employee.json roles: 6=VP/CPO, 3=lead/PM/architect, "
+            "2=UX/analyst, 1=engineer/QA, 0=unresolved (PR logins EMP_… have no HERB mapping)."
+        )
+    return "role_rank from the public ASF roster: 4=PMC, 3=committer, 1=contributor."
+
+
+def _incident_note(dataset_id: str, faultline_count: int) -> str:
+    if dataset_id.startswith("herb"):
+        if faultline_count == 0:
+            return (
+                "HERB pull requests are single-product and the corpus carries no cross-product "
+                "co-change or explicit dependency reference, so no DEPENDS_ON edges exist and the "
+                "Faultline lens correctly returns zero. Reported as a null result, not padded."
+            )
+        return "HERB carries no incident signal; faultlines are reported as coordination debt only."
+    return (
+        "The corpus carries no module-linked incident signal (Kafka JIRA issues in "
+        "the window have no components), so no lift over a churn baseline is claimed. "
+        "Faultlines are reported as coordination debt only."
+    )
+
+
 def main() -> int:
     args = _parse_args()
     root = Path(args.snapshot)
@@ -79,7 +104,7 @@ def main() -> int:
             "people": len(people),
             "unresolved": len(unresolved),
             "role_rank_counts": dict(sorted(role_counts.items())),
-            "note": "role_rank from the public ASF roster: 4=PMC, 3=committer, 1=contributor.",
+            "note": _identity_note(bundle.dataset_id),
         },
         "parameters": {"max_len": max_len},
         "ghost": {
@@ -127,11 +152,7 @@ def main() -> int:
             ],
             "incident_lift": {
                 "status": "not_measurable",
-                "reason": (
-                    "The corpus carries no module-linked incident signal (Kafka JIRA issues in "
-                    "the window have no components), so no lift over a churn baseline is claimed. "
-                    "Faultlines are reported as coordination debt only."
-                ),
+                "reason": _incident_note(bundle.dataset_id, len(findings)),
             },
         },
         "gaps": {

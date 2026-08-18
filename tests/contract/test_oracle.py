@@ -13,13 +13,13 @@ our bounded BFS or HydraDB MSpaths. The two centrality values will differ
 numerically (bounded 4-hop vs. full betweenness) but the top-ranked person
 should agree for a connected graph with a clear structural centre.
 """
+
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
 import pytest
-
 from xray_analytics import ghost_scores
 from xray_core.models import CanonicalRecord, SequenceContractSet
 from xray_ingest.pipeline import build_bundle

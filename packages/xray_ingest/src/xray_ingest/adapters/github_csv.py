@@ -40,7 +40,7 @@ def github_csv_rows(
             row = _parse_row(raw, col, repo_module, label_modules or {})
             if row is not None:
                 rows.append(row)
-    rows.sort(key=lambda r: r["occurred_at_epoch"])
+    rows.sort(key=lambda r: int(str(r["occurred_at_epoch"])))
     return tuple(rows)
 
 

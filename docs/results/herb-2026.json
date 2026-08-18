@@ -1,0 +1,182 @@
+{
+  "client_baseline": {
+    "equivalent_round_trips": 13135375,
+    "method": "python_bounded_bfs_all_pairs",
+    "ms": 17951.0,
+    "people": 5126
+  },
+  "dataset_id": "herb-2026",
+  "engine": {
+    "digest": "sha256:db78309a233be54662db29744047e985a39b51c45a270d1a1f47c31a62cdb709",
+    "repository": "ghcr.io/hydra-db/hydradb",
+    "source_commit": "02a40025d2d57e97ab2754c8256219cdbfeab379"
+  },
+  "faultline": {
+    "count": 0,
+    "incident_lift": {
+      "reason": "HERB pull requests are single-product and the corpus carries no cross-product co-change or explicit dependency reference, so no DEPENDS_ON edges exist and the Faultline lens correctly returns zero. Reported as a null result, not padded.",
+      "status": "not_measurable"
+    },
+    "tiers": {},
+    "top": []
+  },
+  "gaps": {
+    "note": "Dangling thread parents are replies whose parent message is outside the export window; absence in the corpus does not establish deletion.",
+    "phantoms": 0,
+    "reasons": {}
+  },
+  "generated_at_utc": "2026-08-18T17:34:36+00:00",
+  "ghost": {
+    "largest_rank_gap_in_top": {
+      "display_name": "Ian Miller",
+      "formal_rank": 461,
+      "rank_gap": 451,
+      "structural_rank": 10
+    },
+    "top": [
+      {
+        "communication_degree": 32,
+        "display_name": "Emma Jones",
+        "formal_rank": 282,
+        "person_key": "person:eid_446bc3ee",
+        "rank_gap": 281,
+        "role_rank": 1,
+        "sampled_centrality": 0.0412,
+        "structural_rank": 1
+      },
+      {
+        "communication_degree": 29,
+        "display_name": "Julia Garcia",
+        "formal_rank": 114,
+        "person_key": "person:eid_8df92d08",
+        "rank_gap": 112,
+        "role_rank": 3,
+        "sampled_centrality": 0.0276,
+        "structural_rank": 2
+      },
+      {
+        "communication_degree": 20,
+        "display_name": "George Brown",
+        "formal_rank": 109,
+        "person_key": "person:eid_86044ae5",
+        "rank_gap": 106,
+        "role_rank": 3,
+        "sampled_centrality": 0.0237,
+        "structural_rank": 3
+      },
+      {
+        "communication_degree": 18,
+        "display_name": "Charlie Miller",
+        "formal_rank": 306,
+        "person_key": "person:eid_5549aeb7",
+        "rank_gap": 302,
+        "role_rank": 1,
+        "sampled_centrality": 0.0232,
+        "structural_rank": 4
+      },
+      {
+        "communication_degree": 19,
+        "display_name": "Ian Miller",
+        "formal_rank": 137,
+        "person_key": "person:eid_bed67c52",
+        "rank_gap": 132,
+        "role_rank": 3,
+        "sampled_centrality": 0.023,
+        "structural_rank": 5
+      },
+      {
+        "communication_degree": 21,
+        "display_name": "Emma Jones",
+        "formal_rank": 75,
+        "person_key": "person:eid_4afd9484",
+        "rank_gap": 69,
+        "role_rank": 3,
+        "sampled_centrality": 0.0208,
+        "structural_rank": 6
+      },
+      {
+        "communication_degree": 17,
+        "display_name": "David Johnson",
+        "formal_rank": 131,
+        "person_key": "person:eid_aedadd3e",
+        "rank_gap": 124,
+        "role_rank": 3,
+        "sampled_centrality": 0.02,
+        "structural_rank": 7
+      },
+      {
+        "communication_degree": 22,
+        "display_name": "Hannah Johnson",
+        "formal_rank": 275,
+        "person_key": "person:eid_3f3ea10f",
+        "rank_gap": 267,
+        "role_rank": 1,
+        "sampled_centrality": 0.0194,
+        "structural_rank": 8
+      },
+      {
+        "communication_degree": 14,
+        "display_name": "David Williams",
+        "formal_rank": 155,
+        "person_key": "person:eid_e96d2f38",
+        "rank_gap": 146,
+        "role_rank": 3,
+        "sampled_centrality": 0.0193,
+        "structural_rank": 9
+      },
+      {
+        "communication_degree": 15,
+        "display_name": "Ian Miller",
+        "formal_rank": 461,
+        "person_key": "person:eid_c7622c8e",
+        "rank_gap": 451,
+        "role_rank": 1,
+        "sampled_centrality": 0.0179,
+        "structural_rank": 10
+      }
+    ],
+    "what_if_remove_top": {
+      "pairs_lost": 75,
+      "reachable_pairs_after": 23795,
+      "reachable_pairs_before": 23870,
+      "removed": "Emma Jones"
+    }
+  },
+  "graph": {
+    "edge_counts": {
+      "ABOUT": 40917,
+      "AUTHORED": 40917,
+      "COMMUNICATES": 5615,
+      "OWNS": 90,
+      "REPLIES_TO": 4609
+    },
+    "edges": 92148,
+    "node_counts": {
+      "Artifact": 40917,
+      "Module": 30,
+      "Person": 5126
+    },
+    "nodes": 46073
+  },
+  "identity": {
+    "note": "role_rank from HERB metadata/employee.json roles: 6=VP/CPO, 3=lead/PM/architect, 2=UX/analyst, 1=engineer/QA, 0=unresolved (PR logins EMP_\u2026 have no HERB mapping).",
+    "people": 5126,
+    "role_rank_counts": {
+      "0": 4596,
+      "1": 326,
+      "2": 36,
+      "3": 132,
+      "6": 36
+    },
+    "unresolved": 4596
+  },
+  "limitations": [
+    "4596 source identities were not in the identity map and were kept as unresolved handles: eid_12345678, eid_4eec2a5, eid_8658e19, eid_87654321, eid_a7ddc52 (+4591 more). Ghost and Faultline results for those people are per-source-id, not per-person.",
+    "HERB Slack carries no thread metadata; reply edges come from PR reviews and explicit @mentions only.",
+    "PR author logins (EMP_\u2026) have no HERB mapping to employee ids and stay unresolved by design."
+  ],
+  "parameters": {
+    "max_len": 4
+  },
+  "snapshot_id": "herb-2026:069dbc1747acb5fb"
+}

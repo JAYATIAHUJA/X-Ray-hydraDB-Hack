@@ -8,6 +8,7 @@ Usage:
 Requires a running HydraDB stack (docker compose --profile core up -d) with the
 synth-500 fixture already seeded (POST /api/v1/hydra/seed-fixture).
 """
+
 from __future__ import annotations
 
 import json
@@ -30,10 +31,12 @@ def main() -> None:
 
     try:
         import neo4j  # type: ignore[import-untyped]
+
         driver = neo4j.GraphDatabase.driver(uri)
     except ImportError:
         try:
             import neo4j_driver as neo4j  # type: ignore[import-untyped, no-redef]
+
             driver = neo4j.GraphDatabase.driver(uri)
         except ImportError:
             print("No Bolt driver found (neo4j or neo4j-driver). Skipping live measurement.")

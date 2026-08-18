@@ -43,7 +43,7 @@ def confluence_xml_rows(
         if row is not None:
             rows.append(row)
 
-    rows.sort(key=lambda r: r["occurred_at_epoch"])
+    rows.sort(key=lambda r: int(str(r["occurred_at_epoch"])))
     return tuple(rows)
 
 
@@ -73,7 +73,9 @@ def _parse_object(
     try:
         epoch = _parse_confluence_date(date_str)
     except ValueError:
-        _log.debug("confluence_xml: skipping %s id=%s — unparseable date %r", kind, obj_id, date_str)
+        _log.debug(
+            "confluence_xml: skipping %s id=%s — unparseable date %r", kind, obj_id, date_str
+        )
         return None
 
     if kind == "Page":
