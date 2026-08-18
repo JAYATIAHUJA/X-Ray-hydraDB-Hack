@@ -28,6 +28,7 @@ from xray_analytics import (
     reachable_pair_count,
     without_people,
 )
+from xray_ingest.gaps import EXPORT_BOUNDARY_DAYS
 from xray_ingest.manifest import read_snapshot
 
 IMAGE_LOCK = Path("infra/runtime-images.lock")
@@ -77,6 +78,33 @@ def main() -> int:
     client_ms = (time.perf_counter() - started) * 1000
 
     scores = ghost_scores(bundle, max_len=max_len)
+
+    # Identity robustness: does the Ghost ranking survive dropping every unresolved
+    # handle? If the top-k is the same people, the ranking is not an artefact of
+    # anonymous source ids padding the graph.
+    resolved_only: dict[str, Any] | None = None
+    if unresolved:
+        resolved_bundle = without_people(bundle, tuple(n.canonical_key for n in unresolved))
+        resolved_scores = ghost_scores(resolved_bundle, max_len=max_len)
+        full_top = [s.person_key for s in scores[: args.top]]
+        sub_top = [s.person_key for s in resolved_scores[: args.top]]
+        overlap = len(set(full_top) & set(sub_top)) / max(1, len(full_top))
+        resolved_only = {
+            "people_removed": len(unresolved),
+            "people_remaining": sum(1 for n in resolved_bundle.nodes if n.label == "Person"),
+            "top_k": args.top,
+            "top_k_overlap_with_full_ranking": round(overlap, 3),
+            "top_1_same": bool(full_top and sub_top and full_top[0] == sub_top[0]),
+            "top": [
+                {
+                    "display_name": s.display_name,
+                    "structural_rank": s.structural_rank,
+                    "formal_rank": s.formal_rank,
+                    "rank_gap": s.rank_gap,
+                }
+                for s in resolved_scores[: args.top]
+            ],
+        }
     top = scores[0]
     before = reachable_pair_count(graph, max_len=max_len, excluding=(top.person_key,))
     after = reachable_pair_count(
@@ -88,6 +116,7 @@ def main() -> int:
     tiers = Counter(f.tier for f in findings)
     gaps = gap_findings(bundle)
     gap_reasons = Counter(g.reason for g in gaps)
+    gap_positions = Counter(g.window_position for g in gaps)
 
     payload: dict[str, Any] = {
         "dataset_id": bundle.dataset_id,
@@ -121,6 +150,7 @@ def main() -> int:
                 }
                 for s in scores[: args.top]
             ],
+            "resolved_only": resolved_only,
             "largest_rank_gap_in_top": {
                 "display_name": largest_gap.display_name,
                 "structural_rank": largest_gap.structural_rank,
@@ -158,9 +188,14 @@ def main() -> int:
         "gaps": {
             "phantoms": sum(1 for n in bundle.nodes if n.label == "Phantom"),
             "reasons": dict(sorted(gap_reasons.items())),
+            "window_position": dict(sorted(gap_positions.items())),
+            "export_boundary_days": EXPORT_BOUNDARY_DAYS,
             "note": (
-                "Dangling thread parents are replies whose parent message is outside the export "
-                "window; absence in the corpus does not establish deletion."
+                "export_boundary = the reply sits within the first "
+                f"{EXPORT_BOUNDARY_DAYS} days of the export, so its parent most likely predates "
+                "the export (an artefact of the window, not a finding). in_window = the reply is "
+                "deep inside the export and its parent is still absent — the corpus is structurally "
+                "incomplete at that point. Absence does not establish deletion in either case."
             ),
         },
         "client_baseline": {
@@ -190,7 +225,10 @@ def main() -> int:
     print(
         f"What-if remove {top.display_name}: {before - after:,} of {before:,} reachable pairs lose a <= {max_len}-hop path"
     )
-    print(f"Faultlines: {len(findings)} ({dict(tiers)}); phantoms: {payload['gaps']['phantoms']}")
+    print(
+        f"Faultlines: {len(findings)} ({dict(tiers)}); phantoms: {payload['gaps']['phantoms']} "
+        f"{dict(gap_positions)}"
+    )
     for f in findings[:5]:
         print(
             f"  {f.source_module_key[7:]:<18} -> {f.target_module_key[7:]:<18} w={f.dependency_weight} owners={f.source_owner_key[7:]}/{f.target_owner_key[7:]} dist={f.communication_distance}"
