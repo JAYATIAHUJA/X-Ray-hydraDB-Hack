@@ -87,9 +87,16 @@ GatewayDep = Annotated[HydraGateway | None, Depends(get_gateway)]
 
 def create_app() -> FastAPI:
     app = FastAPI(title="X-Ray Evidence Platform API", version="0.1.0")
+    # Extra origins for deployed frontends, comma-separated (the demo compose/Fly setup
+    # proxies /api same-origin, so it needs none of this).
+    extra_origins = [
+        origin.strip()
+        for origin in os.environ.get("XRAY_CORS_ORIGINS", "").split(",")
+        if origin.strip()
+    ]
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"],
+        allow_origins=["http://127.0.0.1:5173", "http://localhost:5173", *extra_origins],
         allow_credentials=True,
         allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
         allow_headers=["content-type"],
@@ -144,9 +151,7 @@ def create_app() -> FastAPI:
     def import_snapshot(request: ImportRequest) -> SnapshotResponse:
         """Import browser-supplied export text and make the new snapshot active."""
         directory = tuple(CanonicalRecord.model_validate(item) for item in request.directory)
-        known_directory = tuple(
-            record for record in directory if record.kind == "directory_person"
-        )
+        known_directory = tuple(record for record in directory if record.kind == "directory_person")
         contracts = SequenceContractSet()
         with tempfile.TemporaryDirectory(prefix="xray-import-input-") as input_dir:
             root = Path(input_dir)
@@ -162,22 +167,26 @@ def create_app() -> FastAPI:
             slack_dir = root / "slack"
             slack_dir.mkdir()
             for channel, rows in request.slack_exports.items():
-                (slack_dir / f"{channel}.json").write_text(
-                    json.dumps(list(rows)), encoding="utf-8"
-                )
+                (slack_dir / f"{channel}.json").write_text(json.dumps(list(rows)), encoding="utf-8")
             jira_rows = jira_csv_rows(jira_path) if jira_path is not None else ()
-            confluence_rows = confluence_xml_rows(confluence_path) if confluence_path is not None else ()
+            confluence_rows = (
+                confluence_xml_rows(confluence_path) if confluence_path is not None else ()
+            )
             github_rows = github_csv_rows(github_path) if github_path is not None else ()
             bundle = ingest_exports(
                 directory_records=known_directory,
-                canonical_records=tuple(record for record in directory if record.kind != "directory_person"),
+                canonical_records=tuple(
+                    record for record in directory if record.kind != "directory_person"
+                ),
                 contracts=contracts,
                 dataset_id=request.dataset_id,
                 identity_map=request.identity_map,
                 email_rows=mbox_rows(
                     mbox_paths,
                     module_keys_by_message_id=request.message_modules,
-                ) if mbox_paths else (),
+                )
+                if mbox_paths
+                else (),
                 ticket_rows=(*jira_rows, *confluence_rows, *github_rows),
                 git_rows=git_log_rows(git_path, module_prefixes=request.module_prefixes)
                 if git_path is not None
@@ -185,7 +194,9 @@ def create_app() -> FastAPI:
                 slack_rows=slack_export_rows(
                     slack_dir,
                     module_keys_by_channel=request.channel_modules,
-                ) if request.slack_exports else (),
+                )
+                if request.slack_exports
+                else (),
             )
         output_dir = Path(tempfile.mkdtemp(prefix="xray-import-snapshot-"))
         write_snapshot(bundle, output_dir)

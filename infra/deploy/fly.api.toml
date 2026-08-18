@@ -1,0 +1,29 @@
+# fly launch --no-deploy --copy-config --config infra/deploy/fly.api.toml --name xray-api
+# fly deploy --config infra/deploy/fly.api.toml --dockerfile apps/api/Dockerfile
+app = "xray-api"
+primary_region = "sin"
+
+[build]
+  dockerfile = "../../apps/api/Dockerfile"
+
+[env]
+  PORT = "8000"
+  XRAY_SNAPSHOT_DIR = "/app/data/snapshots/kafka-2025q2"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    interval = "15s"
+    timeout = "3s"
+    grace_period = "20s"
+    method = "GET"
+    path = "/api/v1/health"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "1gb"
