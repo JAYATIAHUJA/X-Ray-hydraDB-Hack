@@ -2,7 +2,7 @@
   "client_baseline": {
     "equivalent_round_trips": 42486,
     "method": "python_bounded_bfs_all_pairs",
-    "ms": 45.1,
+    "ms": 46.3,
     "people": 292
   },
   "dataset_id": "kafka-2025q2",
@@ -125,19 +125,93 @@
     ]
   },
   "gaps": {
-    "note": "Dangling thread parents are replies whose parent message is outside the export window; absence in the corpus does not establish deletion.",
+    "export_boundary_days": 30,
+    "note": "export_boundary = the reply sits within the first 30 days of the export, so its parent most likely predates the export (an artefact of the window, not a finding). in_window = the reply is deep inside the export and its parent is still absent \u2014 the corpus is structurally incomplete at that point. Absence does not establish deletion in either case.",
     "phantoms": 135,
     "reasons": {
       "dangling_thread_parent": 135
+    },
+    "window_position": {
+      "export_boundary": 82,
+      "in_window": 53
     }
   },
-  "generated_at_utc": "2026-08-17T07:52:52+00:00",
+  "generated_at_utc": "2026-08-18T18:24:15+00:00",
   "ghost": {
     "largest_rank_gap_in_top": {
       "display_name": "PoAn Yang",
       "formal_rank": 34,
       "rank_gap": 29,
       "structural_rank": 5
+    },
+    "resolved_only": {
+      "people_remaining": 280,
+      "people_removed": 12,
+      "top": [
+        {
+          "display_name": "Chia-Ping Tsai",
+          "formal_rank": 4,
+          "rank_gap": 3,
+          "structural_rank": 1
+        },
+        {
+          "display_name": "Luke Chen",
+          "formal_rank": 26,
+          "rank_gap": 24,
+          "structural_rank": 2
+        },
+        {
+          "display_name": "Colin McCabe",
+          "formal_rank": 6,
+          "rank_gap": 3,
+          "structural_rank": 3
+        },
+        {
+          "display_name": "Matthias J. Sax",
+          "formal_rank": 21,
+          "rank_gap": 17,
+          "structural_rank": 4
+        },
+        {
+          "display_name": "Mickael Maison",
+          "formal_rank": 20,
+          "rank_gap": 15,
+          "structural_rank": 5
+        },
+        {
+          "display_name": "PoAn Yang",
+          "formal_rank": 34,
+          "rank_gap": 28,
+          "structural_rank": 6
+        },
+        {
+          "display_name": "Chris Egerton",
+          "formal_rank": 3,
+          "rank_gap": -4,
+          "structural_rank": 7
+        },
+        {
+          "display_name": "Josep Prat",
+          "formal_rank": 12,
+          "rank_gap": 4,
+          "structural_rank": 8
+        },
+        {
+          "display_name": "Justine Olshan",
+          "formal_rank": 13,
+          "rank_gap": 4,
+          "structural_rank": 9
+        },
+        {
+          "display_name": "Andrew Schofield",
+          "formal_rank": 25,
+          "rank_gap": 15,
+          "structural_rank": 10
+        }
+      ],
+      "top_1_same": true,
+      "top_k": 10,
+      "top_k_overlap_with_full_ranking": 0.9
     },
     "top": [
       {
@@ -285,5 +359,5 @@
   "parameters": {
     "max_len": 4
   },
-  "snapshot_id": "kafka-2025q2:783fb541d9008da1"
+  "snapshot_id": "kafka-2025q2:dfe6ea49254861f0"
 }

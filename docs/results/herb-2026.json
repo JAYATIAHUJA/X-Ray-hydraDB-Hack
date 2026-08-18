@@ -2,7 +2,7 @@
   "client_baseline": {
     "equivalent_round_trips": 13135375,
     "method": "python_bounded_bfs_all_pairs",
-    "ms": 17951.0,
+    "ms": 39559.1,
     "people": 5126
   },
   "dataset_id": "herb-2026",
@@ -21,17 +21,88 @@
     "top": []
   },
   "gaps": {
-    "note": "Dangling thread parents are replies whose parent message is outside the export window; absence in the corpus does not establish deletion.",
+    "export_boundary_days": 30,
+    "note": "export_boundary = the reply sits within the first 30 days of the export, so its parent most likely predates the export (an artefact of the window, not a finding). in_window = the reply is deep inside the export and its parent is still absent \u2014 the corpus is structurally incomplete at that point. Absence does not establish deletion in either case.",
     "phantoms": 0,
-    "reasons": {}
+    "reasons": {},
+    "window_position": {}
   },
-  "generated_at_utc": "2026-08-18T17:34:36+00:00",
+  "generated_at_utc": "2026-08-18T18:23:48+00:00",
   "ghost": {
     "largest_rank_gap_in_top": {
       "display_name": "Ian Miller",
       "formal_rank": 461,
       "rank_gap": 451,
       "structural_rank": 10
+    },
+    "resolved_only": {
+      "people_remaining": 530,
+      "people_removed": 4596,
+      "top": [
+        {
+          "display_name": "Emma Jones",
+          "formal_rank": 282,
+          "rank_gap": 281,
+          "structural_rank": 1
+        },
+        {
+          "display_name": "Julia Garcia",
+          "formal_rank": 114,
+          "rank_gap": 112,
+          "structural_rank": 2
+        },
+        {
+          "display_name": "Charlie Miller",
+          "formal_rank": 306,
+          "rank_gap": 303,
+          "structural_rank": 3
+        },
+        {
+          "display_name": "George Brown",
+          "formal_rank": 109,
+          "rank_gap": 105,
+          "structural_rank": 4
+        },
+        {
+          "display_name": "Ian Miller",
+          "formal_rank": 137,
+          "rank_gap": 132,
+          "structural_rank": 5
+        },
+        {
+          "display_name": "Emma Jones",
+          "formal_rank": 75,
+          "rank_gap": 69,
+          "structural_rank": 6
+        },
+        {
+          "display_name": "David Johnson",
+          "formal_rank": 131,
+          "rank_gap": 124,
+          "structural_rank": 7
+        },
+        {
+          "display_name": "David Williams",
+          "formal_rank": 155,
+          "rank_gap": 147,
+          "structural_rank": 8
+        },
+        {
+          "display_name": "Hannah Johnson",
+          "formal_rank": 275,
+          "rank_gap": 266,
+          "structural_rank": 9
+        },
+        {
+          "display_name": "Ian Miller",
+          "formal_rank": 461,
+          "rank_gap": 451,
+          "structural_rank": 10
+        }
+      ],
+      "top_1_same": true,
+      "top_k": 10,
+      "top_k_overlap_with_full_ranking": 1.0
     },
     "top": [
       {
