@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel, Field
 from xray_core.models import AnalysisStatus
 
@@ -45,6 +47,19 @@ class SnapshotResponse(BaseModel):
     edge_count: int = Field(ge=0)
     evidence_count: int = Field(ge=0)
     limitations: tuple[str, ...]
+
+
+class AvailableSnapshot(BaseModel):
+    """A corpus the API can switch to without re-ingesting."""
+
+    name: str
+    kind: Literal["snapshot", "fixture"]
+    dataset_id: str | None = None
+    active: bool = False
+
+
+class ActivateSnapshotRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=120, pattern=r"^[A-Za-z0-9._-]+$")
 
 
 class GraphNode(BaseModel):

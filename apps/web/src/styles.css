@@ -253,6 +253,22 @@ a { color: inherit; }
 .evidence code { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); }
 
 /* ── Import screen ───────────────────────────── */
+.corpus-picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; margin: 6px 0 4px; }
+.corpus { display: flex; flex-direction: column; gap: 5px; padding: 16px 16px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); text-align: left; cursor: pointer; transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease; }
+.corpus:hover:not(:disabled) { border-color: var(--teal); box-shadow: 0 8px 20px -14px rgba(12,155,150,0.6); transform: translateY(-1px); }
+.corpus:disabled { opacity: 0.6; cursor: default; }
+.corpus.active { border-color: var(--teal); background: var(--teal-wash); }
+.corpus span { font: 600 9.5px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.corpus strong { font-size: 15px; font-weight: 650; }
+.corpus small { font-size: 12px; color: var(--ink-3); line-height: 1.45; }
+.corpus em { margin-top: 6px; font-style: normal; font-size: 12.5px; font-weight: 600; color: var(--teal); }
+.import-divider { border: 0; border-top: 1px solid var(--line); margin: 30px 0 22px; }
+.import-h2 { font-size: 22px; font-weight: 700; margin: 10px 0 8px; }
+.gap-badge { display: inline-block; margin-left: 8px; padding: 2px 7px; border-radius: 999px; font: 600 9.5px/1.4 var(--mono); letter-spacing: 0.04em; text-transform: uppercase; vertical-align: middle; }
+.gap-badge.in { background: rgba(194,113,12,0.12); color: var(--amber); }
+.gap-badge.edge { background: var(--sunken); color: var(--ink-3); }
+.caveat em { font-style: normal; font-weight: 600; }
+.muted code { font-family: var(--mono); font-size: 12px; background: var(--sunken); padding: 1px 5px; border-radius: 4px; }
 .import-screen { flex: 1; display: grid; place-items: start center; padding: 48px 24px 72px; }
 .import-card { width: 100%; max-width: 920px; }
 .import-card h1 { font-size: 30px; font-weight: 700; margin: 12px 0 10px; }

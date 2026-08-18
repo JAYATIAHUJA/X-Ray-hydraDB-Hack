@@ -8,8 +8,8 @@ import type {
   GraphNode,
   LensEnvelope
 } from "./api";
-import { getRiskReport, importSnapshot } from "./api";
-import type { ImportPayload } from "./api";
+import { activateSnapshot, getAvailableSnapshots, getRiskReport, importSnapshot } from "./api";
+import type { AvailableSnapshot, ImportPayload } from "./api";
 import type { Lens } from "./data";
 import { Graph3D } from "./Graph3D";
 import type { Graph3DEdge, Graph3DNode } from "./Graph3D";
@@ -320,7 +320,17 @@ function GhostPanel({ list, selectedKey, onSelect, status }: { list: GhostFindin
 }
 
 function FaultlinePanel({ list, index, onSelect, selected, status }: { list: FaultlineFinding[]; index: number; onSelect: (i: number) => void; selected?: FaultlineFinding; status?: string }) {
-  if (list.length === 0) return <p className="muted">{status ?? "No uncoordinated dependencies."}</p>;
+  if (list.length === 0)
+    return (
+      <div className="muted">
+        <p>{status ?? "No uncoordinated dependencies."}</p>
+        <p style={{ marginTop: 8 }}>
+          A faultline needs a <code>DEPENDS_ON</code> edge — two modules that co-change or explicitly reference each
+          other — with no communication path between their owners. If the corpus carries no cross-module signal, this
+          lens returns zero rather than inventing one. Faultlines are a coordination-debt map, not a bug oracle.
+        </p>
+      </div>
+    );
   return (
     <>
       {selected ? (
@@ -350,7 +360,10 @@ function GapPanel({ list, index, onSelect, selected, pending, status }: { list: 
   if (list.length === 0) return <p className="muted">{status ?? "No structurally missing records."}</p>;
   return (
     <>
-      <p className="caveat">Absence in the corpus is not proof of deletion.</p>
+      <p className="caveat">
+        Absence in the corpus is not proof of deletion. <em>In window</em> = the parent should be in this export and
+        isn&apos;t; <em>export boundary</em> = the reply sits in the first 30 days, so the parent probably predates the export.
+      </p>
       {selected?.chain ? (
         <ol className="chain">
           {selected.chain.node_keys.map((k, i) => {
@@ -371,7 +384,14 @@ function GapPanel({ list, index, onSelect, selected, pending, status }: { list: 
         {list.slice(0, 10).map((f, i) => (
           <li key={f.phantom_key}>
             <button className={i === index ? "gap active" : "gap"} onClick={() => onSelect(i)} type="button">
-              <span>{shortKey(f.phantom_key)}</span>
+              <span>
+                {shortKey(f.phantom_key)}
+                {f.window_position === "in_window" ? (
+                  <b className="gap-badge in">in window · day {f.days_after_corpus_start ?? "?"}</b>
+                ) : f.window_position === "export_boundary" ? (
+                  <b className="gap-badge edge">export boundary</b>
+                ) : null}
+              </span>
               <small>{f.reason.replaceAll("_", " ")}</small>
             </button>
           </li>
@@ -475,12 +495,55 @@ function ImportScreen({ onDone }: { onDone: () => void }) {
     }
   }
 
+  const [available, setAvailable] = useState<AvailableSnapshot[]>([]);
+  const [switching, setSwitching] = useState<string | null>(null);
+  useEffect(() => {
+    getAvailableSnapshots().then(setAvailable).catch(() => setAvailable([]));
+  }, []);
+  async function open(name: string) {
+    setSwitching(name);
+    try {
+      await activateSnapshot(name);
+      window.location.reload();
+    } catch (e) {
+      setStatus(e instanceof Error ? e.message : "Could not switch corpus");
+      setSwitching(null);
+    }
+  }
+  const labels: Record<string, { title: string; blurb: string }> = {
+    demo: { title: "Demo org", blurb: "10 people, planted findings, no setup." },
+    synth500: { title: "Synthetic 500", blurb: "Labelled ground truth — precision/recall are checkable." },
+    "kafka-2025q2": { title: "Apache Kafka · Q2 2025", blurb: "Real public dev list + git + JIRA, 292 people." },
+    "herb-2026": { title: "Salesforce HERB", blurb: "Official Track 01 corpus, 30 products, 5,126 people." }
+  };
+
   return (
     <section className="import-screen">
       <div className="import-card">
-        <span className="eyeline">Load your exports</span>
-        <h1>Build a snapshot from what you already have.</h1>
-        <p className="import-lede">Everything runs locally. Drop in whichever exports you have — the more sources, the sharper the graph.</p>
+        {available.length > 0 ? (
+          <>
+            <span className="eyeline">Open a shipped corpus</span>
+            <h1>Start with data that&apos;s already here.</h1>
+            <p className="import-lede">One click. No files. Every corpus below runs through the same pipeline as your own exports.</p>
+            <div className="corpus-picker">
+              {available.map((c) => {
+                const meta = labels[c.name] ?? { title: c.dataset_id ?? c.name, blurb: c.kind === "fixture" ? "Bundled fixture." : "Ingested snapshot." };
+                return (
+                  <button className={c.active ? "corpus active" : "corpus"} disabled={switching !== null} key={c.name} onClick={() => open(c.name)} type="button">
+                    <span>{c.kind === "fixture" ? "fixture" : "snapshot"}{c.active ? " · active" : ""}</span>
+                    <strong>{meta.title}</strong>
+                    <small>{meta.blurb}</small>
+                    <em>{switching === c.name ? "Opening…" : c.active ? "Currently open" : "Open →"}</em>
+                  </button>
+                );
+              })}
+            </div>
+            <hr className="import-divider" />
+          </>
+        ) : null}
+        <span className="eyeline">Or load your own exports</span>
+        <h2 className="import-h2">Build a snapshot from what you already have.</h2>
+        <p className="import-lede">Everything runs locally. Only <b>Directory</b> is required — add whatever else you have; the more sources, the sharper the graph.</p>
 
         <div className="import-groups">
           <fieldset>
