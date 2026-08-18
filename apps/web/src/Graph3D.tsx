@@ -46,6 +46,12 @@ type Body = {
   depth: number;
 };
 
+// "dev-subscribe@kafka.apache.org" → "dev-subscribe"; long names truncate.
+function shortLabel(label: string) {
+  const base = label.includes("@") ? label.slice(0, label.indexOf("@")) : label;
+  return base.length > 22 ? `${base.slice(0, 20)}…` : base;
+}
+
 function withAlpha(hex: string, alpha: number) {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
@@ -348,19 +354,31 @@ export function Graph3D({
       }
 
       // Labels only where they carry meaning — big nodes, hover, selection.
-      const labelled = sortedBodies.filter(
-        (body) => (body.focus && body.sr > 4) || body.key === hover || body.key === selected
-      );
+      // Labels: selected + hover first, then focus nodes nearest the camera.
+      // Skip any label whose box would overlap one already drawn.
+      const labelled = [...sortedBodies]
+        .filter((body) => (body.focus && body.sr > 4) || body.key === hover || body.key === selected)
+        .sort((p, q) => {
+          const pp = p.key === selected ? 2 : p.key === hover ? 1 : 0;
+          const qq = q.key === selected ? 2 : q.key === hover ? 1 : 0;
+          return qq - pp || p.depth - q.depth;
+        });
+      const placed: Array<{ x: number; y: number; w: number; h: number }> = [];
       context!.font = "600 11px Inter, system-ui, sans-serif";
       context!.textAlign = "center";
       context!.textBaseline = "top";
       for (const body of labelled) {
         const emphasised = body.key === hover || body.key === selected;
-        const text = body.label;
+        const text = shortLabel(body.label);
         const metrics = context!.measureText(text);
         const padX = 6;
         const boxW = metrics.width + padX * 2;
         const top = body.sy + body.sr + 7;
+        const box = { x: body.sx - boxW / 2 - 2, y: top - 2, w: boxW + 4, h: 21 };
+        if (!emphasised && placed.some((o) => box.x < o.x + o.w && box.x + box.w > o.x && box.y < o.y + o.h && box.y + box.h > o.y)) {
+          continue;
+        }
+        placed.push(box);
         const labelBg =
           body.key === selected
             ? "rgba(124, 108, 246, 0.96)"

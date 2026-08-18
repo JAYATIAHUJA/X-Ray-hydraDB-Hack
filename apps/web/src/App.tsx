@@ -68,10 +68,12 @@ export function App() {
   const graphNodes = useMemo<Graph3DNode[]>(() => {
     const owners = new Set(faultlineFindings.flatMap((f) => [f.source_owner_key, f.target_owner_key]));
     // Only nodes that carry a finding get colour and a name; the rest recede into the background.
+    // Cap the highlighted set so the canvas stays legible on real corpora.
+    const topOwners = new Set(faultlineFindings.slice(0, 6).flatMap((f) => [f.source_owner_key, f.target_owner_key]));
     const focus = new Set<string>([
       ...ghostList.slice(0, 8).map((f) => f.person_key),
-      ...ghostList.filter((f) => f.rank_gap >= 10).map((f) => f.person_key),
-      ...owners
+      ...ghostList.slice(0, 20).filter((f) => f.rank_gap >= 15).map((f) => f.person_key),
+      ...topOwners
     ]);
     if (selectedKey) focus.add(selectedKey);
     const ghostKeys = new Set(ghostList.slice(0, 8).map((f) => f.person_key));
@@ -83,7 +85,7 @@ export function App() {
         size: mode === "actual" ? p.actual_size : p.official_size,
         excluded: excluded.includes(p.key),
         focus: focus.has(p.key),
-        role: owners.has(p.key) ? ("faultline" as const) : ghostKeys.has(p.key) ? ("ghost" as const) : ("none" as const)
+        role: topOwners.has(p.key) ? ("faultline" as const) : ghostKeys.has(p.key) ? ("ghost" as const) : owners.has(p.key) ? ("faultline" as const) : ("none" as const)
       }));
   }, [connectedKeys, excluded, faultlineFindings, ghostList, mode, people, selectedKey]);
 
