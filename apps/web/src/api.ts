@@ -138,8 +138,17 @@ export type GapFinding = {
   inferred_epoch: number | null;
   predecessor_keys: string[];
   successor_keys: string[];
+  window_position?: "in_window" | "export_boundary" | "unknown";
+  days_after_corpus_start?: number | null;
   evidence: EvidenceSummary[];
   chain?: GapChain;
+};
+
+export type AvailableSnapshot = {
+  name: string;
+  kind: "snapshot" | "fixture";
+  dataset_id: string | null;
+  active: boolean;
 };
 
 export type GapPathRequest = {
@@ -236,6 +245,17 @@ export async function getRiskReport(snapshotId: string) {
     throw new Error(`Risk report request failed: ${response.status}`);
   }
   return response.text();
+}
+
+export function getAvailableSnapshots() {
+  return requestJson<AvailableSnapshot[]>("/api/v1/snapshots/available");
+}
+
+export function activateSnapshot(name: string) {
+  return requestJson<SnapshotResponse>("/api/v1/snapshots/activate", {
+    body: JSON.stringify({ name }),
+    method: "POST"
+  });
 }
 
 export function importSnapshot(payload: ImportPayload) {

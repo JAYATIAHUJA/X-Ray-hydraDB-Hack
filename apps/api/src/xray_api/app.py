@@ -9,7 +9,7 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, Query
+from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
 from xray_analytics import (
@@ -66,6 +66,8 @@ from .lenses import (
     live_ghost_findings,
 )
 from .schemas import (
+    ActivateSnapshotRequest,
+    AvailableSnapshot,
     EngineComparison,
     GapPathRequest,
     GraphEdge,
@@ -137,6 +139,66 @@ def create_app() -> FastAPI:
 
     @app.get("/api/v1/snapshots/current", response_model=SnapshotResponse)
     def current_snapshot() -> SnapshotResponse:
+        bundle = active_bundle()
+        return SnapshotResponse(
+            snapshot_id=current_snapshot_id(),
+            dataset_id=bundle.dataset_id,
+            node_count=len(bundle.nodes),
+            edge_count=len(bundle.edges),
+            evidence_count=len(bundle.evidence),
+            limitations=bundle.limitations,
+        )
+
+    @app.get("/api/v1/snapshots/available", response_model=tuple[AvailableSnapshot, ...])
+    def available_snapshots() -> tuple[AvailableSnapshot, ...]:
+        """Corpora that ship with the repo or were ingested into data/snapshots."""
+        from .dependencies import FIXTURE_VARIANTS, snapshot_dir
+
+        current = snapshot_dir()
+        current_name = current.name if current is not None else None
+        variant = os.environ.get("XRAY_FIXTURE_VARIANT", "demo")
+        items: list[AvailableSnapshot] = [
+            AvailableSnapshot(
+                name=key,
+                kind="fixture",
+                dataset_id=dataset,
+                active=current is None and variant == key,
+            )
+            for key, dataset in FIXTURE_VARIANTS.items()
+        ]
+        for path in sorted(_snapshots_root().glob("*/manifest.json")):
+            try:
+                manifest = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                continue
+            items.append(
+                AvailableSnapshot(
+                    name=path.parent.name,
+                    kind="snapshot",
+                    dataset_id=str(manifest.get("dataset_id") or path.parent.name),
+                    active=path.parent.name == current_name,
+                )
+            )
+        return tuple(items)
+
+    @app.post("/api/v1/snapshots/activate", response_model=SnapshotResponse)
+    def activate_snapshot(request: ActivateSnapshotRequest) -> SnapshotResponse:
+        """Switch the served corpus to a shipped fixture or an ingested snapshot.
+
+        Only names under data/snapshots or the bundled fixture keys are accepted —
+        this is a picker, not a path input.
+        """
+        from .dependencies import FIXTURE_VARIANTS, snapshot_bundle
+
+        if request.name in FIXTURE_VARIANTS:
+            os.environ.pop("XRAY_SNAPSHOT_DIR", None)
+            os.environ["XRAY_FIXTURE_VARIANT"] = request.name
+        else:
+            candidate = _snapshots_root() / request.name
+            if not (candidate / "manifest.json").is_file():
+                raise HTTPException(status_code=404, detail=f"unknown snapshot {request.name!r}")
+            os.environ["XRAY_SNAPSHOT_DIR"] = str(candidate.resolve())
+        snapshot_bundle.cache_clear()
         bundle = active_bundle()
         return SnapshotResponse(
             snapshot_id=current_snapshot_id(),
@@ -436,17 +498,31 @@ def create_app() -> FastAPI:
             else gap_findings(bundle)
         )
         # Contract-declared missing steps first (they carry the strongest structural claim),
-        # then dangling thread parents; stable within each group.
+        # then in-window dangling parents (the corpus should contain them and does not),
+        # then export-boundary ones (parent most likely predates the export); stable within
+        # each group.
         ordered = sorted(
             all_findings,
-            key=lambda f: (f.reason == "dangling_thread_parent", f.phantom_key),
+            key=lambda f: (
+                f.reason == "dangling_thread_parent",
+                f.window_position == "export_boundary",
+                -(f.days_after_corpus_start or 0),
+                f.phantom_key,
+            ),
+        )
+        in_window = sum(1 for f in all_findings if f.window_position == "in_window")
+        boundary = sum(1 for f in all_findings if f.window_position == "export_boundary")
+        position_note = (
+            f" — {in_window} inside the export window, {boundary} at its boundary"
+            if in_window or boundary
+            else ""
         )
         return _lens_envelope(
             snapshot_id=snapshot_id,
             limitations=bundle.limitations,
             findings=_with_gap_evidence(bundle, tuple(ordered[:limit])),
             explanation=(
-                f"{len(all_findings)} structurally missing records"
+                f"{len(all_findings)} structurally missing records{position_note}"
                 + (f" (showing {limit})" if len(all_findings) > limit else "")
                 + ". Absence does not establish deletion."
             ),
@@ -671,6 +747,14 @@ def _with_faultline_evidence(
     return tuple(enriched)
 
 
+def _snapshots_root() -> Path:
+    """data/snapshots relative to the repo, overridable for deployments."""
+    configured = os.environ.get("XRAY_SNAPSHOTS_ROOT", "").strip()
+    if configured:
+        return Path(configured)
+    return Path(__file__).parents[4] / "data" / "snapshots"
+
+
 def _with_gap_evidence(
     bundle: CanonicalBundle,
     findings: tuple[GapFinding, ...],
@@ -793,6 +877,16 @@ def _gap_finding_from_hydra(row: HydraGapRow) -> GapFinding:
         inferred_epoch=inferred_epoch if type(inferred_epoch) is int else None,
         predecessor_keys=row.predecessor_keys,
         successor_keys=row.successor_keys,
+        window_position=(
+            str(row.properties["window_position"])
+            if isinstance(row.properties.get("window_position"), str)
+            else "unknown"
+        ),
+        days_after_corpus_start=(
+            int(row.properties["days_after_corpus_start"])
+            if type(row.properties.get("days_after_corpus_start")) is int
+            else None
+        ),
     )
 
 

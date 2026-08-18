@@ -527,3 +527,30 @@ def test_ghosts_endpoint_fixture_what_if_reports_pairs_lost_and_comparison() -> 
     assert comparison["engine_ms"] is None
     assert comparison["client_equivalent_round_trips"] == 45
     assert comparison["client_method"] == "python_bounded_bfs_all_pairs"
+
+
+def test_snapshot_picker_lists_bundled_corpora_and_rejects_paths(
+    monkeypatch, tmp_path: Path
+) -> None:
+    """The picker only ever exposes bundled fixtures and data/snapshots/*; it is not a path input."""
+    monkeypatch.delenv("XRAY_SNAPSHOT_DIR", raising=False)
+    monkeypatch.setenv("XRAY_FIXTURE_VARIANT", "demo")
+    monkeypatch.setenv("XRAY_SNAPSHOTS_ROOT", str(tmp_path))  # empty: no ingested snapshots
+    api = client()
+
+    listing = api.get("/api/v1/snapshots/available").json()
+    names = {item["name"]: item for item in listing}
+    assert {"demo", "synth500"} <= set(names)
+    assert names["demo"]["active"] is True
+    assert all(item["kind"] == "fixture" for item in listing)
+
+    # Path-shaped or unknown names are refused before anything is touched.
+    assert api.post("/api/v1/snapshots/activate", json={"name": "../etc"}).status_code == 422
+    assert api.post("/api/v1/snapshots/activate", json={"name": "nope"}).status_code == 404
+
+    switched = api.post("/api/v1/snapshots/activate", json={"name": "synth500"}).json()
+    assert switched["dataset_id"] == "xray-synth-500"
+    assert api.get("/api/v1/snapshots/current").json()["dataset_id"] == "xray-synth-500"
+
+    back = api.post("/api/v1/snapshots/activate", json={"name": "demo"}).json()
+    assert back["snapshot_id"] == "xray-demo-v1:fixture"
