@@ -1,168 +1,121 @@
-import cytoscape from "cytoscape";
-import type { Core, ElementDefinition } from "cytoscape";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type {
   EvidenceSummary,
   FaultlineFinding,
   GapFinding,
   GapPathRequest,
   GhostFinding,
-  GraphEdge,
   GraphNode,
   LensEnvelope
 } from "./api";
 import { getRiskReport, importSnapshot } from "./api";
 import type { ImportPayload } from "./api";
 import type { Lens } from "./data";
+import { Graph3D } from "./Graph3D";
+import type { Graph3DEdge, Graph3DNode } from "./Graph3D";
 import { useXraySnapshot } from "./queries";
 
-const tabs: Array<{ id: Lens; label: string; sublabel: string; icon: string }> = [
-  {
-    id: "org",
-    label: "Org",
-    sublabel: "People & Structure",
-    icon: "M8 3v4m0 0H5v4h6V7H8Zm0 0h8m0-4v4m0 0h-3v4h6V7h-3ZM8 15v-2m8 2v-2m-8 2H5v4h6v-4H8Zm8 0h-3v4h6v-4h-3Z"
-  },
-  {
-    id: "faultlines",
-    label: "Faultlines",
-    sublabel: "Tension & Risk",
-    icon: "M12 2 5 13h6l-1 9 7-12h-6l1-8Z"
-  },
-  {
-    id: "gaps",
-    label: "Gaps",
-    sublabel: "Missing Links",
-    icon: "M4 8V4h4m8 0h4v4M4 16v4h4m8 0h4v-4M9 9h6v6H9z"
-  }
+const LENSES: Array<{ id: Lens; label: string; hint: string }> = [
+  { id: "org", label: "Ghost", hint: "who holds it together" },
+  { id: "faultlines", label: "Faultlines", hint: "code depends, people don't talk" },
+  { id: "gaps", label: "Gaps", hint: "records the graph requires" }
 ];
 
 export function App() {
-  const [activeLens, setActiveLens] = useState<Lens>("org");
+  const [lens, setLens] = useState<Lens>("org");
   const [mode, setMode] = useState<"actual" | "official">("actual");
   const [selectedNodeKey, setSelectedNodeKey] = useState<string | undefined>();
   const [selectedFaultlineIndex, setSelectedFaultlineIndex] = useState(0);
   const [selectedGapIndex, setSelectedGapIndex] = useState(0);
   const [gapRequest, setGapRequest] = useState<GapPathRequest | undefined>();
   const [excluded, setExcluded] = useState<string[]>([]);
-  const [windowDays, setWindowDays] = useState(0);
+  const [showImport, setShowImport] = useState(false);
+  const [showQuery, setShowQuery] = useState(false);
   const [reportStatus, setReportStatus] = useState<string | null>(null);
-  const { faultlines, gapPath, gaps, ghosts, graph, health, snapshot } = useXraySnapshot(
-    gapRequest,
-    excluded,
-    windowDays
-  );
+
+  const { faultlines, gapPath, gaps, ghosts, graph, health, snapshot } = useXraySnapshot(gapRequest, excluded, 0);
+
   const people = graph.data?.nodes ?? [];
-  const defaultSelectedKey = people.find((person) => person.selected)?.key ?? people[0]?.key;
-  const selectedKey = people.some((person) => person.key === selectedNodeKey) ? selectedNodeKey : defaultSelectedKey;
-  const selected = people.find((person) => person.key === selectedKey);
-  const ghostFinding = ghosts.data?.findings.find((finding) => finding.person_key === selected?.key);
+  const defaultSelectedKey = people.find((p) => p.selected)?.key ?? people[0]?.key;
+  const selectedKey = people.some((p) => p.key === selectedNodeKey) ? selectedNodeKey : defaultSelectedKey;
+  const selected = people.find((p) => p.key === selectedKey);
+  const ghostList = ghosts.data?.findings ?? [];
+  const ghostFinding = ghostList.find((f) => f.person_key === selected?.key);
   const faultlineFindings = faultlines.data?.findings ?? [];
-  // The gap list comes from /gaps; the SPpaths chain for the selected one comes from /gap-paths.
   const gapList = gaps.data?.findings ?? [];
-  const gapChainFinding = gapPath.data?.findings.find((finding) => finding.chain !== undefined);
-  const gapFindings = gapList.map((finding) =>
-    gapChainFinding && finding.phantom_key === gapChainFinding.phantom_key ? gapChainFinding : finding
-  );
-  const topGhost = ghosts.data?.findings[0];
-  const largestGap = (ghosts.data?.findings ?? []).slice(0, 10).reduce<GhostFinding | undefined>(
-    (best, finding) => (best === undefined || finding.rank_gap > best.rank_gap ? finding : best),
-    undefined
+  const gapChainFinding = gapPath.data?.findings.find((f) => f.chain !== undefined);
+  const gapFindings = gapList.map((f) =>
+    gapChainFinding && f.phantom_key === gapChainFinding.phantom_key ? gapChainFinding : f
   );
   const gapTotal = gaps.data?.total_findings ?? gapList.length;
-  const connectedKeys = useMemo(() => {
-    const keys = new Set<string>();
-    (graph.data?.edges ?? []).forEach((edge) => {
-      keys.add(edge.source);
-      keys.add(edge.target);
-    });
-    return keys;
-  }, [graph.data?.edges]);
-  const faultlineOwnerKeys = useMemo(
-    () => new Set(faultlineFindings.flatMap((f) => [f.source_owner_key, f.target_owner_key])),
-    [faultlineFindings]
-  );
-  const hiddenIsolates = people.filter(
-    (person) => !connectedKeys.has(person.key) && !faultlineOwnerKeys.has(person.key)
-  ).length;
+  const topGhost = ghostList[0];
   const whatIf = ghosts.data?.what_if ?? null;
   const comparison = ghosts.data?.comparison ?? null;
   const selectedFaultline = faultlineFindings[selectedFaultlineIndex] ?? faultlineFindings[0];
   const selectedGap = gapFindings[selectedGapIndex] ?? gapFindings[0];
-  const activeEnvelope = envelopeForLens(activeLens, ghosts.data, faultlines.data, gapPath.data ?? gaps.data);
-  const activeQuery = activeEnvelope?.executed_query;
+  const activeEnvelope: LensEnvelope<unknown> | undefined =
+    lens === "org" ? ghosts.data : lens === "faultlines" ? faultlines.data : (gapPath.data ?? gaps.data);
 
-  async function exportRiskReport() {
-    if (snapshot.data === undefined) return;
-    setReportStatus("Preparing report");
-    try {
-      const report = await getRiskReport(snapshot.data.snapshot_id);
-      const blob = new Blob([report], { type: "text/markdown;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = `${snapshot.data.dataset_id}-risk-report.md`;
-      anchor.click();
-      URL.revokeObjectURL(url);
-      setReportStatus("Report downloaded");
-    } catch {
-      setReportStatus("Report unavailable");
-    }
-  }
-  const queryErrors = [
-    ["health", health.isError],
-    ["snapshot", snapshot.isError],
-    ["graph", graph.isError],
-    ["ghost", ghosts.isError],
-    ["faultlines", faultlines.isError],
-    ["gaps", gaps.isError]
-  ].filter(([, failed]) => failed);
-  const hasError = queryErrors.length > 0;
-  const isLoading =
-    health.isPending ||
-    snapshot.isPending ||
-    graph.isPending ||
-    ghosts.isPending ||
-    faultlines.isPending ||
-    gaps.isPending;
-  const graphElements = useMemo(
-    () =>
-      graphElementsFor(
-        people,
-        graph.data?.edges ?? [],
-        faultlineFindings,
-        selectedFaultline,
-        mode,
-        selectedKey,
-        excluded,
-        connectedKeys
-      ),
-    [connectedKeys, excluded, faultlineFindings, graph.data?.edges, mode, people, selectedFaultline, selectedKey]
-  );
+  const connectedKeys = useMemo(() => {
+    const keys = new Set<string>();
+    (graph.data?.edges ?? []).forEach((e) => {
+      keys.add(e.source);
+      keys.add(e.target);
+    });
+    return keys;
+  }, [graph.data?.edges]);
+
+  const graphNodes = useMemo<Graph3DNode[]>(() => {
+    const owners = new Set(faultlineFindings.flatMap((f) => [f.source_owner_key, f.target_owner_key]));
+    // Only nodes that carry a finding get colour and a name; the rest recede into the background.
+    const focus = new Set<string>([
+      ...ghostList.slice(0, 8).map((f) => f.person_key),
+      ...ghostList.filter((f) => f.rank_gap >= 10).map((f) => f.person_key),
+      ...owners
+    ]);
+    if (selectedKey) focus.add(selectedKey);
+    const ghostKeys = new Set(ghostList.slice(0, 8).map((f) => f.person_key));
+    return people
+      .filter((p) => connectedKeys.has(p.key) || owners.has(p.key) || p.key === selectedKey)
+      .map((p) => ({
+        key: p.key,
+        label: p.name,
+        size: mode === "actual" ? p.actual_size : p.official_size,
+        excluded: excluded.includes(p.key),
+        focus: focus.has(p.key),
+        role: owners.has(p.key) ? ("faultline" as const) : ghostKeys.has(p.key) ? ("ghost" as const) : ("none" as const)
+      }));
+  }, [connectedKeys, excluded, faultlineFindings, ghostList, mode, people, selectedKey]);
+
+  const graphEdges = useMemo<Graph3DEdge[]>(() => {
+    const visible = new Set(graphNodes.map((n) => n.key));
+    const comms: Graph3DEdge[] = (graph.data?.edges ?? [])
+      .filter((e) => visible.has(e.source) && visible.has(e.target))
+      .map((e) => ({ source: e.source, target: e.target, kind: e.strength }));
+    const faults: Graph3DEdge[] = faultlineFindings
+      .filter(
+        (f) => visible.has(f.source_owner_key) && visible.has(f.target_owner_key) && f.source_owner_key !== f.target_owner_key
+      )
+      .map((f) => ({ source: f.source_owner_key, target: f.target_owner_key, kind: "faultline" as const }));
+    return [...comms, ...faults];
+  }, [faultlineFindings, graph.data?.edges, graphNodes]);
+
+  const hasError = [snapshot, graph, ghosts, faultlines, gaps].some((q) => q.isError);
+  const isLoading = snapshot.isPending || graph.isPending || ghosts.isPending;
+  const noData = !snapshot.isPending && (snapshot.isError || (snapshot.data?.node_count ?? 0) === 0);
 
   useEffect(() => {
-    if (selectedNodeKey === undefined && defaultSelectedKey !== undefined) {
-      setSelectedNodeKey(defaultSelectedKey);
-    }
+    if (selectedNodeKey === undefined && defaultSelectedKey !== undefined) setSelectedNodeKey(defaultSelectedKey);
   }, [defaultSelectedKey, selectedNodeKey]);
-
   useEffect(() => {
-    if (selectedFaultlineIndex >= faultlineFindings.length) {
-      setSelectedFaultlineIndex(0);
-    }
+    if (selectedFaultlineIndex >= faultlineFindings.length) setSelectedFaultlineIndex(0);
   }, [faultlineFindings.length, selectedFaultlineIndex]);
-
   useEffect(() => {
-    if (selectedGapIndex >= gapFindings.length) {
-      setSelectedGapIndex(0);
-    }
+    if (selectedGapIndex >= gapFindings.length) setSelectedGapIndex(0);
   }, [gapFindings.length, selectedGapIndex]);
-
   useEffect(() => {
     const finding = gapList[selectedGapIndex];
-    if (finding === undefined) {
-      return;
-    }
+    if (finding === undefined) return;
     const next = requestForGap(finding);
     if (
       next !== undefined &&
@@ -174,981 +127,427 @@ export function App() {
     }
   }, [gapList, gapRequest, selectedGapIndex]);
 
+  async function exportRiskReport() {
+    if (snapshot.data === undefined) return;
+    setReportStatus("Preparing…");
+    try {
+      const report = await getRiskReport(snapshot.data.snapshot_id);
+      const blob = new Blob([report], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${snapshot.data.dataset_id}-risk-report.md`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setReportStatus("Downloaded");
+    } catch {
+      setReportStatus("Unavailable");
+    }
+    globalThis.setTimeout(() => setReportStatus(null), 2500);
+  }
+
+  if (showImport || noData) {
+    return (
+      <main className="app">
+        <TopBar
+          dataset={snapshot.data?.dataset_id}
+          status={hasError ? "bad" : isLoading ? "wait" : "ok"}
+          onImport={() => setShowImport(true)}
+          onExport={exportRiskReport}
+          canClose={!noData}
+          onClose={() => setShowImport(false)}
+        />
+        <ImportScreen onDone={() => setShowImport(false)} />
+      </main>
+    );
+  }
+
   return (
-    <main className="app-shell">
-      <header className="topbar" aria-label="Application status">
-        <div className="brand-mark" aria-hidden="true">
-          X
-        </div>
-        <div>
-          <h1>X-Ray</h1>
-          <p>X-Ray Evidence Platform</p>
-        </div>
-        <div className="status-pill">{snapshot.data?.dataset_id ?? "fixture"}</div>
-        <div className={hasError ? "topbar-metric unhealthy" : "topbar-metric healthy"}>
-          {hasError ? `${queryErrors.map(([name]) => name).join(", ")} error` : isLoading ? "Loading" : "Healthy"}
-        </div>
-        <div className="topbar-metric">
-          Graph: {snapshot.data?.node_count ?? "--"} nodes / {snapshot.data?.edge_count ?? "--"} edges
-        </div>
-        <div className={hydraStatusClass(health.data?.hydra.status)}>
-          HydraDB: {formatHydraStatus(health.data?.hydra.status)}
-          {health.data?.hydra.node_count !== null && health.data?.hydra.node_count !== undefined
-            ? ` · ${health.data.hydra.node_count} nodes · ${health.data.hydra.edge_count ?? "--"} edges`
-            : ""}
-        </div>
-      </header>
+    <main className="app">
+      <TopBar
+        dataset={snapshot.data?.dataset_id}
+        status={hasError ? "bad" : isLoading ? "wait" : "ok"}
+        onImport={() => setShowImport(true)}
+        onExport={exportRiskReport}
+        reportStatus={reportStatus}
+      />
 
-      <section className="hero-strip" aria-label="Snapshot summary">
-        <button className="hero-tile" onClick={() => setActiveLens("org")} type="button" title="Ghost lens: person whose sampled betweenness centrality in the communication graph exceeds their formal seniority rank">
-          <span>Load-bearing person</span>
-          <strong>{topGhost?.display_name ?? "—"}</strong>
-          <small>
-            {topGhost
-              ? largestGap && largestGap.person_key !== topGhost.person_key && largestGap.rank_gap > topGhost.rank_gap
-                ? `structural #${topGhost.structural_rank} · formal #${topGhost.formal_rank} — largest gap: ${largestGap.display_name} #${largestGap.structural_rank} vs #${largestGap.formal_rank}`
-                : `structural #${topGhost.structural_rank} · formal #${topGhost.formal_rank} · gap ${formatSignedRankGap(topGhost.rank_gap)}`
-              : "waiting for Ghost lens"}
-          </small>
-        </button>
-        <button className="hero-tile" onClick={() => setActiveLens("faultlines")} type="button" title="Faultline lens: module dependencies whose owners have no bounded communication path (≤4 hops) in the collaboration graph">
-          <span>Uncoordinated dependencies</span>
-          <strong>{faultlines.data ? faultlineFindings.length : "—"}</strong>
-          <small>
-            {faultlineFindings[0]
-              ? `${suffix(faultlineFindings[0].source_module_key)} ↔ ${suffix(faultlineFindings[0].target_module_key)} · co-changed ${faultlineFindings[0].dependency_weight}× · no reply path`
-              : "module pairs whose owners have no bounded path"}
-          </small>
-        </button>
-        <button className="hero-tile" onClick={() => setActiveLens("gaps")} type="button" title="Gap lens: Phantom nodes the graph requires (via sequence contracts or dangling thread parents) but that are absent from the evidence corpus. Absence ≠ deletion.">
-          <span>Structurally missing records</span>
-          <strong>{gaps.data ? gapTotal : "—"}</strong>
-          <small>
-            {gaps.data
-              ? `records the graph requires but the corpus lacks${gapTotal > gapList.length ? ` · showing ${gapList.length}` : ""}`
-              : "phantom nodes required by the graph"}
-          </small>
-        </button>
-        <div className="hero-tile hero-engine">
-          <span>HydraDB vs client</span>
-          <strong>
-            {comparison?.engine_ms !== null && comparison?.engine_ms !== undefined
-              ? `${comparison.engine_ms.toFixed(0)} ms`
-              : "fixture mode"}
-          </strong>
-          <small>
-            {comparison
-              ? `1 MSpaths call replaces ${comparison.client_equivalent_round_trips.toLocaleString()} per-pair queries · Python BFS ${comparison.client_ms.toFixed(0)} ms`
-              : "engine round trip vs in-process BFS"}
-          </small>
-        </div>
-      </section>
-
-      <ImportPanel />
-
-      <div className="workspace">
-        <aside className="rail" aria-label="Lens navigation">
-          <nav>
-            {tabs.map((tab) => (
-              <button
-                aria-current={activeLens === tab.id ? "page" : undefined}
-                className={activeLens === tab.id ? "rail-item active" : "rail-item"}
-                key={tab.id}
-                onClick={() => setActiveLens(tab.id)}
-                type="button"
-              >
-                <Icon path={tab.icon} />
-                <span>{tab.label}</span>
-                <small>{tab.sublabel}</small>
-              </button>
-            ))}
-          </nav>
-          <div className="rail-footer">
-            <span>Mode</span>
-            <strong>{activeEnvelope?.source ?? "fixture"}</strong>
-          </div>
-        </aside>
-
-        <section className="canvas-panel" aria-label={`${activeLens} workspace`}>
-          <div className="toolbar">
+      <div className="dash">
+        {/* ── Left: graph ── */}
+        <section className="dash-graph" aria-label="Communication graph">
+          <div className="dash-graph-bar">
             <div className="segmented" role="group" aria-label="Node size mode">
-              <button
-                aria-pressed={mode === "official"}
-                className={mode === "official" ? "segment active" : "segment"}
-                onClick={() => setMode("official")}
-                type="button"
-              >
+              <button aria-pressed={mode === "official"} className={mode === "official" ? "segment active" : "segment"} onClick={() => setMode("official")} type="button">
                 Official
               </button>
-              <button
-                aria-pressed={mode === "actual"}
-                className={mode === "actual" ? "segment active" : "segment"}
-                onClick={() => setMode("actual")}
-                type="button"
-              >
+              <button aria-pressed={mode === "actual"} className={mode === "actual" ? "segment active" : "segment"} onClick={() => setMode("actual")} type="button">
                 Actual
               </button>
             </div>
-            <div className="scale">
-              {mode === "official"
-                ? "Node size = formal seniority (org chart)"
-                : "Node size = sampled path centrality (who actually carries the work)"}
+            <span className="dash-caption">{mode === "official" ? "Sized by job title" : "Sized by coordination load"}</span>
+            <span className="dash-legend">
+              <i className="lg-ghost" /> load-bearing
+              <i className="lg-fault" /> faultline owner
+              <i className="lg-sel" /> selected
+              <i className="lg-edge" /> faultline
+            </span>
+          </div>
+
+          <Graph3D nodes={graphNodes} edges={graphEdges} onSelect={setSelectedNodeKey} selectedKey={selectedKey} spin />
+
+          {selected ? (
+            <div className="node-card">
+              <span className="eyeline">Selected</span>
+              <strong>{selected.name}</strong>
+              <small>{selected.title}</small>
+              <dl>
+                <div><dt>Structural</dt><dd>{ghostFinding ? `#${ghostFinding.structural_rank}` : "—"}</dd></div>
+                <div><dt>Formal</dt><dd>{ghostFinding ? `#${ghostFinding.formal_rank}` : "—"}</dd></div>
+                <div><dt>Gap</dt><dd className={ghostFinding && ghostFinding.rank_gap > 0 ? "pos" : ""}>{ghostFinding ? signed(ghostFinding.rank_gap) : "—"}</dd></div>
+              </dl>
+              {excluded.includes(selected.key) ? (
+                <button className="btn-ghost" onClick={() => setExcluded([])} type="button">Put back in the graph</button>
+              ) : (
+                <button className="btn-ghost" onClick={() => setExcluded([selected.key])} type="button">Remove from the graph</button>
+              )}
             </div>
-            <div className="query-source">
-              {activeEnvelope?.source ?? "fixture"} · {activeEnvelope?.analysis_status ?? "pending"}
+          ) : null}
+
+          {whatIf ? (
+            <div className="whatif" role="status">
+              <strong>Without {whatIf.excluded_person_keys.map((k) => nameFor(people, k)).join(", ")}</strong>
+              <span>{whatIf.pairs_lost.toLocaleString()} of {whatIf.sampled_pairs_before.toLocaleString()} coordination paths disappear</span>
+              <button onClick={() => setExcluded([])} type="button">Restore</button>
             </div>
-            <label className="window-control">
-              Window
-              <select value={windowDays} onChange={(event) => setWindowDays(Number(event.target.value))}>
-                <option value={0}>All time</option>
-                <option value={30}>30 days</option>
-                <option value={90}>90 days</option>
-                <option value={365}>365 days</option>
-              </select>
-            </label>
-            <button className="report-button" onClick={exportRiskReport} type="button">
-              Export report
+          ) : null}
+        </section>
+
+        {/* ── Right: findings panel ── */}
+        <aside className="dash-panel" aria-label="Findings">
+          <div className="kpis">
+            <button className={lens === "org" ? "kpi active" : "kpi"} onClick={() => setLens("org")} type="button">
+              <span>Load-bearing</span>
+              <strong>{topGhost?.display_name ?? "—"}</strong>
+              <small>{topGhost ? `#${topGhost.structural_rank} structural · #${topGhost.formal_rank} formal` : "computing"}</small>
+            </button>
+            <button className={lens === "faultlines" ? "kpi active" : "kpi"} onClick={() => setLens("faultlines")} type="button">
+              <span>Faultlines</span>
+              <strong>{faultlines.data ? faultlineFindings.length : "—"}</strong>
+              <small>uncoordinated dependencies</small>
+            </button>
+            <button className={lens === "gaps" ? "kpi active" : "kpi"} onClick={() => setLens("gaps")} type="button">
+              <span>Gaps</span>
+              <strong>{gaps.data ? gapTotal : "—"}</strong>
+              <small>missing records</small>
             </button>
           </div>
 
-          <div className="graph-stage" data-lens={activeLens}>
-            {graph.isError ? <Notice text="Graph query failed. Other lens data can still render." tone="bad" /> : null}
-            <CytoscapeGraph elements={graphElements} onSelect={setSelectedNodeKey} selectedKey={selectedKey} />
-            <GraphLegend hiddenIsolates={hiddenIsolates} />
-            {whatIf ? (
-              <div className="what-if-banner" role="status">
-                <strong>
-                  Without {whatIf.excluded_person_keys.map((key) => nameFor(people, key)).join(", ")}:
-                </strong>{" "}
-                {whatIf.pairs_lost.toLocaleString()} of {whatIf.sampled_pairs_before.toLocaleString()} sampled
-                pairs lose their ≤{whatIf.max_len}-hop path.
-                <button onClick={() => setExcluded([])} type="button">
-                  Restore
-                </button>
-              </div>
-            ) : null}
-          </div>
-
-          <div className="bottom-grid">
-            <DataTable
-              emptyText={faultlines.isPending ? "Loading faultlines" : "No API faultlines"}
-              onRowSelect={setSelectedFaultlineIndex}
-              rows={toFaultlineRows(faultlineFindings)}
-              selectedIndex={selectedFaultlineIndex}
-              title="Faultlines"
-            />
-            <GapTimeline
-              emptyText={gaps.isPending ? "Loading gaps" : "No structurally missing records in this snapshot."}
-              findings={gapFindings}
-              onSelect={setSelectedGapIndex}
-              selectedIndex={selectedGapIndex}
-              chainPending={gapPath.isPending && gapRequest !== undefined}
-            />
-          </div>
-        </section>
-
-        <aside className="detail-panel" aria-label="Selected finding details">
-          <section className="selected-block">
-            <span className="eyeline">Selected node</span>
-            <h2>{selected?.name ?? "Loading graph"}</h2>
-            <p>
-              {selected?.title ?? "Waiting for graph"} / {selected?.team ?? "--"}
-            </p>
-            <code>{selected?.key ?? "--"}</code>
-            {selected ? (
-              <button
-                className="what-if-button"
-                disabled={excluded.includes(selected.key)}
-                onClick={() => setExcluded([selected.key])}
-                type="button"
-              >
-                {excluded.includes(selected.key) ? "Removed from the sample" : `What if ${selected.name} is out?`}
+          <nav className="tabs" aria-label="Lens">
+            {LENSES.map((t) => (
+              <button aria-current={lens === t.id ? "page" : undefined} className={lens === t.id ? "tab active" : "tab"} key={t.id} onClick={() => setLens(t.id)} type="button">
+                {t.label}
               </button>
-            ) : null}
-          </section>
+            ))}
+          </nav>
 
-          <section className="finding-block">
-            <h3>Ghost</h3>
-            <p>{ghosts.data?.status_explanation ?? "Waiting for fixture Ghost analysis."}</p>
-            {ghostFinding === undefined && selected !== undefined ? (
-              <p className="inline-warning">No ghost score for the selected person.</p>
-            ) : null}
-            {activeEnvelope?.degraded_reason ? <p className="inline-warning">{activeEnvelope.degraded_reason}</p> : null}
-          </section>
-
-          <section className="metric-grid">
-            <Metric
-              detail={`${ghostFinding?.structural_rank ?? "--"} structural rank`}
-              label="Actual centrality"
-              value={formatCentrality(ghostFinding)}
-              tooltip="Sampled betweenness centrality: fraction of bounded (≤4-hop) shortest paths that pass through this person across the sampled communication graph. Higher = more load-bearing."
-            />
-            <Metric
-              detail={`Formal rank: ${ghostFinding?.formal_rank ?? "--"}`}
-              label="Rank gap"
-              value={formatRankGap(ghostFinding)}
-              tooltip="Structural rank minus formal rank. Positive = this person carries more coordination weight than their title suggests. Negative = formal authority without structural centrality."
-            />
-            <Metric
-              detail={`Lost within ${ghostFinding?.removal_impact?.max_len ?? 4} hops`}
-              label="Removal impact"
-              value={
-                ghostFinding?.removal_impact
-                  ? `${ghostFinding.removal_impact.pairs_lost_without_person.toLocaleString()} pairs`
-                  : "top-10 only"
-              }
-              tooltip="Number of person-pairs that lose their bounded shortest path when this person is removed from the communication graph. Measures how much coordination load they carry."
-            />
-            <Metric
-              detail={snapshot.data?.dataset_id ?? "Waiting for snapshot"}
-              label="Evidence limits"
-              value={`${snapshot.data?.limitations.length ?? "--"} notes`}
-              tooltip="Known limitations of the evidence corpus. Absence of a record does not establish that it was deleted — only that it is not in the export."
-            />
-          </section>
-
-          <details className="query-card" open>
-            <summary>How HydraDB answered {activeLens}</summary>
-            {activeQuery ? (
-              <>
-                <pre>{activeQuery.text}</pre>
-                <pre className="params">{JSON.stringify(activeQuery.params, null, 2)}</pre>
-              </>
+          <div className="panel-body">
+            {lens === "org" ? (
+              <GhostPanel list={ghostList} selectedKey={selectedKey} onSelect={setSelectedNodeKey} status={ghosts.data?.status_explanation} />
+            ) : lens === "faultlines" ? (
+              <FaultlinePanel list={faultlineFindings} index={selectedFaultlineIndex} onSelect={setSelectedFaultlineIndex} selected={selectedFaultline} status={faultlines.data?.status_explanation} />
             ) : (
-              <p className="query-empty">
-                No live HydraDB query for this response. Current source: {activeEnvelope?.source ?? "pending"}.
-              </p>
+              <GapPanel list={gapFindings} index={selectedGapIndex} onSelect={setSelectedGapIndex} selected={selectedGap} pending={gapPath.isPending && gapRequest !== undefined} status={gaps.data?.status_explanation} />
             )}
-            <footer>
-              <span>maxLen: {activeQuery?.max_len ?? "--"}</span>
-              <span>round trips: {activeQuery?.round_trips ?? "--"}</span>
-              <span>engine: {activeQuery ? `${activeQuery.engine_ms.toFixed(1)}ms` : "--"}</span>
-              <span>status: {activeEnvelope?.analysis_status ?? "pending"}</span>
-            </footer>
-            {activeLens === "org" && comparison ? (
-              <p className="comparison-line">
-                Client-side equivalent: bounded BFS over {comparison.sampled_people} people in{" "}
-                {comparison.client_ms.toFixed(0)} ms — or {comparison.client_equivalent_round_trips.toLocaleString()}{" "}
-                per-pair shortest-path calls. HydraDB answers the same sample in {comparison.engine_round_trips || "—"}{" "}
-                round trip{comparison.engine_round_trips === 1 ? "" : "s"}.
-              </p>
-            ) : null}
-          </details>
+          </div>
 
-          <section className="evidence-drawer">
-            <h3>Evidence + action</h3>
-            <p>{evidenceSummary(activeLens, ghostFinding, selectedFaultline, selectedGap)}</p>
-            <strong>{recommendedAction(activeLens, ghostFinding, selectedFaultline, selectedGap)}</strong>
-            {selectedFaultline?.bridge ? (
-              <p className="bridge-suggestion">
-                Suggested bridge: {selectedFaultline.bridge.map(suffix).join(" → ")}
-              </p>
-            ) : null}
-            {reportStatus ? <small className="report-status">{reportStatus}</small> : null}
-            <EvidenceList evidence={selectedEvidence(activeLens, ghostFinding, selectedFaultline, selectedGap)} />
-            <div className="limitations-list">
-              <span>Limitations</span>
-              {activeEnvelope?.limitations.length ? (
-                <ul>
-                  {activeEnvelope.limitations.map((limitation) => (
-                    <li key={limitation}>{limitation}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No additional limitations reported.</p>
-              )}
-            </div>
-          </section>
+          <footer className="panel-foot">
+            <button className="foot-link" onClick={() => setShowQuery((v) => !v)} type="button">
+              {showQuery ? "Hide" : "Show"} HydraDB query
+            </button>
+            <span>
+              {comparison ? `1 call · ${comparison.client_equivalent_round_trips.toLocaleString()} queries avoided` : ""}
+              {health.data ? ` · engine ${health.data.hydra.status}` : ""}
+            </span>
+          </footer>
+          {showQuery && activeEnvelope?.executed_query ? (
+            <pre className="query-pre">{activeEnvelope.executed_query.text}</pre>
+          ) : showQuery ? (
+            <p className="query-none">No live query for this lens ({activeEnvelope?.source ?? "pending"}).</p>
+          ) : null}
         </aside>
       </div>
     </main>
   );
 }
 
-function ImportPanel() {
-  const [datasetId, setDatasetId] = useState("imported-snapshot");
-  const [directoryFile, setDirectoryFile] = useState<File | null>(null);
-  const [identityFile, setIdentityFile] = useState<File | null>(null);
-  const [mboxFile, setMboxFile] = useState<File | null>(null);
-  const [jiraFile, setJiraFile] = useState<File | null>(null);
-  const [gitFile, setGitFile] = useState<File | null>(null);
-  const [moduleFile, setModuleFile] = useState<File | null>(null);
-  const [channelFile, setChannelFile] = useState<File | null>(null);
-  const [messageFile, setMessageFile] = useState<File | null>(null);
-  const [slackFiles, setSlackFiles] = useState<File[]>([]);
-  const [confluenceFile, setConfluenceFile] = useState<File | null>(null);
-  const [githubCsvFile, setGithubCsvFile] = useState<File | null>(null);
-  const [status, setStatus] = useState<string | null>(null);
+/* ── Panels ───────────────────────────────────────────────── */
 
-  async function readJson(file: File | null, fallback: unknown) {
-    if (file === null) return fallback;
-    return JSON.parse(await file.text()) as unknown;
+function GhostPanel({ list, selectedKey, onSelect, status }: { list: GhostFinding[]; selectedKey?: string; onSelect: (k: string) => void; status?: string }) {
+  if (list.length === 0) return <p className="muted">{status ?? "Waiting for the Ghost analysis."}</p>;
+  const top = list[0]!;
+  const sel = list.find((f) => f.person_key === selectedKey) ?? top;
+  return (
+    <>
+      <div className="stat-row">
+        <div>
+          <span>If {top.display_name.split(" ")[0]} leaves</span>
+          <strong>{top.removal_impact ? top.removal_impact.pairs_lost_without_person.toLocaleString() : "—"}</strong>
+          <small>of {top.removal_impact?.reachable_pairs_before.toLocaleString() ?? "—"} paths lost</small>
+        </div>
+        <div>
+          <span>Selected centrality</span>
+          <strong>{sel.sampled_centrality.toFixed(3)}</strong>
+          <small>{sel.communication_degree} direct contacts</small>
+        </div>
+      </div>
+      <ol className="rank-list">
+        {list.slice(0, 8).map((f) => (
+          <li key={f.person_key}>
+            <button className={f.person_key === selectedKey ? "active" : ""} onClick={() => onSelect(f.person_key)} type="button">
+              <span className="rank-pos">{f.structural_rank}</span>
+              <span className="rank-name">{f.display_name}</span>
+              <span className="rank-bar"><i style={{ width: `${bar(f, list)}%` }} /></span>
+              <span className={f.rank_gap > 0 ? "rank-gap pos" : "rank-gap"}>{signed(f.rank_gap)}</span>
+            </button>
+          </li>
+        ))}
+      </ol>
+      <Evidence records={sel.evidence} />
+    </>
+  );
+}
+
+function FaultlinePanel({ list, index, onSelect, selected, status }: { list: FaultlineFinding[]; index: number; onSelect: (i: number) => void; selected?: FaultlineFinding; status?: string }) {
+  if (list.length === 0) return <p className="muted">{status ?? "No uncoordinated dependencies."}</p>;
+  return (
+    <>
+      {selected ? (
+        <div className="action-row">
+          <span>Recommended</span>
+          <strong>Introduce {suffix(selected.source_owner_key)} and {suffix(selected.target_owner_key)}</strong>
+          {selected.bridge ? <small>via {selected.bridge.map(suffix).join(" → ")}</small> : null}
+        </div>
+      ) : null}
+      <ul className="pair-list">
+        {list.slice(0, 10).map((f, i) => (
+          <li key={`${f.source_module_key}-${f.target_module_key}`}>
+            <button className={i === index ? "pair active" : "pair"} onClick={() => onSelect(i)} type="button">
+              <span className="pair-modules">{suffix(f.source_module_key)}<i />{suffix(f.target_module_key)}</span>
+              <span className="pair-meta">co-changed {f.dependency_weight}× · {f.communication_distance === null ? "no path" : `${f.communication_distance} hops`}</span>
+              <span className="pair-owners">{suffix(f.source_owner_key)} / {suffix(f.target_owner_key)}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <Evidence records={selected?.evidence ?? []} />
+    </>
+  );
+}
+
+function GapPanel({ list, index, onSelect, selected, pending, status }: { list: GapFinding[]; index: number; onSelect: (i: number) => void; selected?: GapFinding; pending: boolean; status?: string }) {
+  if (list.length === 0) return <p className="muted">{status ?? "No structurally missing records."}</p>;
+  return (
+    <>
+      <p className="caveat">Absence in the corpus is not proof of deletion.</p>
+      {selected?.chain ? (
+        <ol className="chain">
+          {selected.chain.node_keys.map((k, i) => {
+            const ph = selected.chain?.phantom_indices.includes(i) === true;
+            return (
+              <li className={ph ? "hop phantom" : "hop"} key={`${k}-${i}`}>
+                <i />
+                <code>{shortKey(k)}</code>
+                {ph ? <small>missing</small> : null}
+              </li>
+            );
+          })}
+        </ol>
+      ) : (
+        <p className="muted">{pending ? "Tracing the chain…" : selected ? `${suffix(selected.successor_keys[0] ?? "")} replies to a record that is not in the corpus.` : ""}</p>
+      )}
+      <ul className="gap-list">
+        {list.slice(0, 10).map((f, i) => (
+          <li key={f.phantom_key}>
+            <button className={i === index ? "gap active" : "gap"} onClick={() => onSelect(i)} type="button">
+              <span>{shortKey(f.phantom_key)}</span>
+              <small>{f.reason.replaceAll("_", " ")}</small>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <Evidence records={selected?.evidence ?? []} />
+    </>
+  );
+}
+
+function Evidence({ records }: { records: EvidenceSummary[] }) {
+  const [open, setOpen] = useState(false);
+  if (records.length === 0) return null;
+  return (
+    <div className="evidence">
+      <button onClick={() => setOpen(!open)} type="button">
+        {open ? "Hide" : "Show"} {records.length} source record{records.length === 1 ? "" : "s"}
+      </button>
+      {open ? (
+        <ul>
+          {records.slice(0, 5).map((r) => (
+            <li key={r.evidence_id}>
+              <span className="ev-type">{r.source_type}</span>
+              <p>{r.redacted_excerpt || r.predicate}</p>
+              <code>{r.source_record_id} · {r.confidence}%</code>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
+
+/* ── Chrome ───────────────────────────────────────────────── */
+
+function TopBar({ dataset, status, onImport, onExport, reportStatus, canClose, onClose }: { dataset?: string; status: "ok" | "wait" | "bad"; onImport: () => void; onExport: () => void; reportStatus?: string | null; canClose?: boolean; onClose?: () => void }) {
+  return (
+    <header className="nav">
+      <a className="nav-brand" href="/"><i />X-Ray</a>
+      {dataset ? <span className="nav-dataset">{dataset}</span> : null}
+      <span className={`nav-status ${status}`}>{status === "ok" ? "live" : status === "wait" ? "loading" : "degraded"}</span>
+      <div className="nav-spacer" />
+      {reportStatus ? <span className="nav-note">{reportStatus}</span> : null}
+      {canClose ? (
+        <button className="nav-link" onClick={onClose} type="button">Back to dashboard</button>
+      ) : (
+        <button className="nav-link" onClick={onImport} type="button">Load data</button>
+      )}
+      <button className="btn-primary" onClick={onExport} type="button">Export report</button>
+    </header>
+  );
+}
+
+function ImportScreen({ onDone }: { onDone: () => void }) {
+  const [datasetId, setDatasetId] = useState("imported-snapshot");
+  const [files, setFiles] = useState<Record<string, File | null>>({});
+  const [slackFiles, setSlackFiles] = useState<File[]>([]);
+  const [status, setStatus] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const pick = (k: string) => (f: File | null) => setFiles((s) => ({ ...s, [k]: f }));
+  async function readJson(f: File | null | undefined, fb: unknown) {
+    if (!f) return fb;
+    return JSON.parse(await f.text()) as unknown;
+  }
+  async function readText(f: File | null | undefined) {
+    return f ? await f.text() : undefined;
   }
 
-  async function importFiles() {
-    if (directoryFile === null) {
-      setStatus("Choose a directory.json file first");
+  async function run() {
+    if (!files.directory) {
+      setStatus("A directory.json is required — it lists the people.");
       return;
     }
-    setStatus("Importing exports");
+    setBusy(true);
+    setStatus("Building the graph…");
     try {
-      const directory = await readJson(directoryFile, []) as Record<string, unknown>[];
-      const identity = await readJson(identityFile, {}) as Record<string, string>;
-      const modulePrefixes = await readJson(moduleFile, {}) as Record<string, string>;
-      const channelModules = await readJson(channelFile, {}) as Record<string, string[]>;
-      const messageModules = await readJson(messageFile, {}) as Record<string, string[]>;
       const slackExports: Record<string, Record<string, unknown>[]> = {};
-      for (const file of slackFiles) {
-        slackExports[file.name.replace(/\.json$/i, "")] = await readJson(file, []) as Record<string, unknown>[];
-      }
+      for (const f of slackFiles) slackExports[f.name.replace(/\.json$/i, "")] = (await readJson(f, [])) as Record<string, unknown>[];
       const payload: ImportPayload = {
         dataset_id: datasetId.trim() || "imported-snapshot",
-        directory,
-        identity_map: identity,
-        mbox: mboxFile ? [await mboxFile.text()] : [],
-        jira_csv: jiraFile ? await jiraFile.text() : undefined,
-        git_log: gitFile ? await gitFile.text() : undefined,
-        module_prefixes: modulePrefixes,
+        directory: (await readJson(files.directory, [])) as Record<string, unknown>[],
+        identity_map: (await readJson(files.identity, {})) as Record<string, string>,
+        mbox: files.mbox ? [await files.mbox.text()] : [],
+        jira_csv: await readText(files.jira),
+        git_log: await readText(files.git),
+        module_prefixes: (await readJson(files.modules, {})) as Record<string, string>,
         slack_exports: slackExports,
-        channel_modules: channelModules,
-        message_modules: messageModules,
-        confluence_xml: confluenceFile ? await confluenceFile.text() : undefined,
-        github_csv: githubCsvFile ? await githubCsvFile.text() : undefined
+        channel_modules: (await readJson(files.channels, {})) as Record<string, string[]>,
+        message_modules: (await readJson(files.messages, {})) as Record<string, string[]>,
+        confluence_xml: await readText(files.confluence),
+        github_csv: await readText(files.github)
       };
-      const snapshot = await importSnapshot(payload);
-      setStatus(`Imported ${snapshot.node_count} nodes and ${snapshot.edge_count} edges. Reloading…`);
-      window.location.reload();
-    } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Import failed");
+      const snap = await importSnapshot(payload);
+      setStatus(`Imported ${snap.node_count.toLocaleString()} nodes and ${snap.edge_count.toLocaleString()} edges. Opening dashboard…`);
+      globalThis.setTimeout(() => window.location.reload(), 600);
+      onDone();
+    } catch (e) {
+      setStatus(e instanceof Error ? e.message : "Import failed");
+      setBusy(false);
     }
   }
 
   return (
-    <section className="import-panel" aria-label="Load your exports">
-      <div>
-        <span className="eyeline">Offline ingestion</span>
-        <h2>Load your exports</h2>
-        <p>Build a local snapshot from directory, mail, JIRA, and git exports.</p>
-      </div>
-      <div className="import-controls">
-        <label>Snapshot ID<input value={datasetId} onChange={(event) => setDatasetId(event.target.value)} /></label>
-        <label>Directory JSON<input accept=".json" type="file" onChange={(event) => setDirectoryFile(event.target.files?.[0] ?? null)} /></label>
-        <label>Identity map<input accept=".json" type="file" onChange={(event) => setIdentityFile(event.target.files?.[0] ?? null)} /></label>
-        <label>mbox<input accept=".mbox,.txt" type="file" onChange={(event) => setMboxFile(event.target.files?.[0] ?? null)} /></label>
-        <label>JIRA CSV<input accept=".csv" type="file" onChange={(event) => setJiraFile(event.target.files?.[0] ?? null)} /></label>
-        <label>git log<input accept=".log,.txt" type="file" onChange={(event) => setGitFile(event.target.files?.[0] ?? null)} /></label>
-        <label>Module prefixes<input accept=".json" type="file" onChange={(event) => setModuleFile(event.target.files?.[0] ?? null)} /></label>
-        <label>Slack JSON<input accept=".json" multiple type="file" onChange={(event) => setSlackFiles(Array.from(event.target.files ?? []))} /></label>
-        <label>Channel map<input accept=".json" type="file" onChange={(event) => setChannelFile(event.target.files?.[0] ?? null)} /></label>
-        <label>Message map<input accept=".json" type="file" onChange={(event) => setMessageFile(event.target.files?.[0] ?? null)} /></label>
-        <label>Confluence XML<input accept=".xml" type="file" onChange={(event) => setConfluenceFile(event.target.files?.[0] ?? null)} /></label>
-        <label>GitHub Issues CSV<input accept=".csv" type="file" onChange={(event) => setGithubCsvFile(event.target.files?.[0] ?? null)} /></label>
-        <button className="report-button" onClick={importFiles} type="button">Import snapshot</button>
-      </div>
-      {status ? <small className="report-status">{status}</small> : null}
-    </section>
-  );
-}
+    <section className="import-screen">
+      <div className="import-card">
+        <span className="eyeline">Load your exports</span>
+        <h1>Build a snapshot from what you already have.</h1>
+        <p className="import-lede">Everything runs locally. Drop in whichever exports you have — the more sources, the sharper the graph.</p>
 
-function CytoscapeGraph({
-  elements,
-  selectedKey,
-  onSelect
-}: {
-  elements: ElementDefinition[];
-  selectedKey: string | undefined;
-  onSelect: (key: string) => void;
-}) {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const cyRef = useRef<Core | null>(null);
-  const hasCanvas = canRenderCanvas();
-
-  useEffect(() => {
-    if (!hasCanvas || containerRef.current === null || cyRef.current !== null) {
-      return;
-    }
-    const cy = cytoscape({
-      container: containerRef.current,
-      elements: [],
-      layout: { name: "cose", animate: false, padding: 38 },
-      style: [
-        {
-          selector: "node",
-          style: {
-            "background-color": "#1ecad0",
-            "background-gradient-direction": "to-bottom-right",
-            "background-gradient-stop-colors": ["#5ee4df", "#158994"],
-            "border-color": "#7a8ea1",
-            "border-width": 1,
-            color: "#c5d3df",
-            "font-family": "Inter, system-ui, sans-serif",
-            "font-size": 9,
-            height: "data(size)",
-            label: "data(label)",
-            "overlay-opacity": 0,
-            "text-margin-y": 8,
-            "text-valign": "bottom",
-            "text-wrap": "wrap",
-            "transition-duration": 260,
-            "transition-property": "width height background-color border-color",
-            width: "data(size)"
-          }
-        },
-        {
-          selector: "node:selected, node.selected",
-          style: {
-            "border-color": "#1ecad0",
-            "border-width": 3,
-            color: "#1ecad0"
-          }
-        },
-        {
-          selector: "node.excluded",
-          style: {
-            "background-color": "#3a4652",
-            "background-gradient-stop-colors": ["#4a5661", "#2c3640"],
-            "border-color": "#f0a95f",
-            "border-style": "dashed",
-            "border-width": 2,
-            color: "#8a97a4",
-            opacity: 0.55
-          }
-        },
-        {
-          selector: "edge",
-          style: {
-            "curve-style": "bezier",
-            "line-color": "rgba(124, 149, 164, 0.32)",
-            opacity: 0.82,
-            width: 1.2
-          }
-        },
-        {
-          selector: "edge.strong",
-          style: { "line-color": "rgba(30, 202, 208, 0.75)", width: 2 }
-        },
-        {
-          selector: "edge.medium",
-          style: { "line-color": "rgba(135, 155, 169, 0.48)", width: 1.5 }
-        },
-        {
-          selector: "edge.faultline",
-          style: {
-            "line-color": "#f05f6b",
-            "line-style": "dashed",
-            opacity: 1,
-            width: 3
-          }
-        },
-        {
-          selector: "edge.selected-faultline",
-          style: {
-            "line-color": "#ff8992",
-            "target-arrow-color": "#ff8992",
-            opacity: 1,
-            width: 5
-          }
-        }
-      ]
-    });
-    cy.on("tap", "node", (event) => onSelect(String(event.target.id())));
-    cyRef.current = cy;
-    return () => {
-      cy.destroy();
-      cyRef.current = null;
-    };
-  }, [hasCanvas, onSelect]);
-
-  useEffect(() => {
-    const cy = cyRef.current;
-    if (!hasCanvas || cy === null) {
-      return;
-    }
-    cy.elements().remove();
-    cy.add(elements);
-    cy.nodes().removeClass("selected");
-    if (selectedKey !== undefined) {
-      cy.getElementById(selectedKey).addClass("selected");
-    }
-    cy.layout({ name: "cose", animate: true, animationDuration: 260, padding: 38 }).run();
-  }, [elements, hasCanvas, selectedKey]);
-
-  useEffect(() => {
-    const cy = cyRef.current;
-    if (!hasCanvas || cy === null || globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
-      return;
-    }
-    let pulsed = false;
-    const timer = globalThis.setInterval(() => {
-      pulsed = !pulsed;
-      cy.edges(".faultline").style({
-        opacity: pulsed ? 0.42 : 1,
-        width: pulsed ? 5 : 3
-      });
-    }, 650);
-    return () => globalThis.clearInterval(timer);
-  }, [elements, hasCanvas]);
-
-  if (!hasCanvas) {
-    return (
-      <div className="graph-fallback" role="list">
-        {elements
-          .filter((element) => !("source" in element.data))
-          .map((element) => (
-            <button
-              aria-pressed={element.data.id === selectedKey}
-              className={element.data.id === selectedKey ? "fallback-node selected" : "fallback-node"}
-              key={String(element.data.id)}
-              onClick={() => onSelect(String(element.data.id))}
-              type="button"
-            >
-              {String(element.data.label)}
-            </button>
-          ))}
-      </div>
-    );
-  }
-  return <div className="cy-graph" ref={containerRef} />;
-}
-
-function canRenderCanvas() {
-  if (typeof document === "undefined") {
-    return false;
-  }
-  if (typeof navigator !== "undefined" && navigator.userAgent.includes("jsdom")) {
-    return false;
-  }
-  try {
-    const canvas = document.createElement("canvas");
-    return canvas.getContext("2d") !== null;
-  } catch {
-    return false;
-  }
-}
-
-function graphElementsFor(
-  people: GraphNode[],
-  edges: GraphEdge[],
-  findings: FaultlineFinding[],
-  selectedFaultline: FaultlineFinding | undefined,
-  mode: "actual" | "official",
-  selectedKey: string | undefined,
-  excluded: string[] = [],
-  connectedKeys?: Set<string>
-): ElementDefinition[] {
-  // People with no communication edges (present only in git/tickets) would render as an
-  // unlaid-out grid; keep them in the tables but off the canvas.
-  const owners = new Set(findings.flatMap((finding) => [finding.source_owner_key, finding.target_owner_key]));
-  const visible =
-    connectedKeys && connectedKeys.size > 0
-      ? people.filter(
-          (person) => connectedKeys.has(person.key) || person.key === selectedKey || owners.has(person.key)
-        )
-      : people;
-  const visibleKeys = new Set(visible.map((person) => person.key));
-  const nodes = visible.map((person) => ({
-    data: {
-      id: person.key,
-      label: person.name,
-      size: mode === "actual" ? person.actual_size : person.official_size
-    },
-    classes: [person.key === selectedKey ? "selected" : "", excluded.includes(person.key) ? "excluded" : ""]
-      .filter(Boolean)
-      .join(" ")
-  }));
-  const communicationEdges = edges
-    .filter((edge) => visibleKeys.has(edge.source) && visibleKeys.has(edge.target))
-    .map((edge, index) => ({
-      data: { id: `edge-${index}`, source: edge.source, target: edge.target },
-      classes: edge.strength
-    }));
-  const faultlineEdges = findings
-    .filter(
-      (finding) =>
-        visibleKeys.has(finding.source_owner_key) &&
-        visibleKeys.has(finding.target_owner_key) &&
-        finding.source_owner_key !== finding.target_owner_key
-    )
-    .map((finding, index) => ({
-      data: {
-        id: `faultline-${index}`,
-        source: finding.source_owner_key,
-        target: finding.target_owner_key
-      },
-      classes: finding === selectedFaultline ? "faultline selected-faultline" : "faultline"
-    }));
-  return [...nodes, ...communicationEdges, ...faultlineEdges];
-}
-
-function formatCentrality(finding: GhostFinding | undefined) {
-  return finding === undefined ? "--" : finding.sampled_centrality.toFixed(3);
-}
-
-function formatRankGap(finding: GhostFinding | undefined) {
-  if (finding === undefined) {
-    return "--";
-  }
-  return finding.rank_gap > 0 ? `+${finding.rank_gap} places` : `${finding.rank_gap} places`;
-}
-
-function formatHydraStatus(status: "fallback" | "live" | "offline" | undefined) {
-  if (status === undefined) {
-    return "pending";
-  }
-  return status;
-}
-
-function hydraStatusClass(status: "fallback" | "live" | "offline" | undefined) {
-  if (status === "live") {
-    return "topbar-metric healthy";
-  }
-  if (status === "offline") {
-    return "topbar-metric unhealthy";
-  }
-  return "topbar-metric warning";
-}
-
-function envelopeForLens(
-  lens: Lens,
-  ghosts: LensEnvelope<GhostFinding> | undefined,
-  faultlines: LensEnvelope<FaultlineFinding> | undefined,
-  gaps: LensEnvelope<GapFinding> | undefined
-) {
-  if (lens === "org") {
-    return ghosts;
-  }
-  if (lens === "faultlines") {
-    return faultlines;
-  }
-  return gaps;
-}
-
-function toFaultlineRows(findings: FaultlineFinding[]) {
-  return findings.map((finding, index) => ({
-    id: `FL-${String(index + 1).padStart(3, "0")}`,
-    modules: `${suffix(finding.source_module_key)} → ${suffix(finding.target_module_key)}`,
-    owners: `${suffix(finding.source_owner_key)} / ${suffix(finding.target_owner_key)}`,
-    "distance (hops)": finding.communication_distance === null ? "none within 4" : String(finding.communication_distance),
-    "severity": finding.severity.toFixed(1),
-    tier: finding.tier,
-    "src conf%": `${finding.source_owner_confidence}`,
-    "tgt conf%": `${finding.target_owner_confidence}`
-  }));
-}
-
-function toGapRows(findings: GapFinding[]) {
-  return findings.map((finding, index) => ({
-    id: `G-${String(index + 1).padStart(3, "0")}`,
-    path:
-      finding.reason === "dangling_thread_parent"
-        ? `${suffix(finding.successor_keys[0] ?? "artifact:unknown")} → missing ${suffix(finding.phantom_key)}`
-        : `${suffix(finding.successor_keys[0] ?? "artifact:unknown")} → ${suffix(finding.phantom_key)} → ${suffix(
-            finding.predecessor_keys[0] ?? "artifact:unknown"
-          )}`,
-    expected: finding.reason === "dangling_thread_parent" ? "thread parent" : finding.expected_kind,
-    inferred: finding.inferred_epoch === null ? "unknown" : String(finding.inferred_epoch),
-    reason: finding.reason
-  }));
-}
-
-function evidenceSummary(
-  lens: Lens,
-  ghost: GhostFinding | undefined,
-  faultline: FaultlineFinding | undefined,
-  gap: GapFinding | undefined
-) {
-  if (lens === "org") {
-    return ghost
-      ? `${ghost.display_name} appears on sampled communication paths; centrality ${ghost.sampled_centrality.toFixed(3)} with degree ${ghost.communication_degree}.`
-      : "Select a scored person to inspect Ghost evidence.";
-  }
-  if (lens === "faultlines") {
-    return faultline
-      ? `${suffix(faultline.source_module_key)} depends on ${suffix(faultline.target_module_key)}; owners are ${suffix(
-          faultline.source_owner_key
-        )} and ${suffix(faultline.target_owner_key)}.`
-      : "No faultline evidence is currently selected.";
-  }
-  return gap
-    ? `${suffix(gap.phantom_key)} is a structurally missing ${gap.expected_kind}; absence does not establish deletion.`
-    : "No gap evidence is currently selected.";
-}
-
-function recommendedAction(
-  lens: Lens,
-  ghost: GhostFinding | undefined,
-  faultline: FaultlineFinding | undefined,
-  gap: GapFinding | undefined
-) {
-  if (lens === "org") {
-    return ghost
-      ? `Action: document ${ghost.display_name}'s handoff paths and add a backup owner.`
-      : "Action: select a person with a Ghost score.";
-  }
-  if (lens === "faultlines") {
-    return faultline
-      ? `Action: introduce ${suffix(faultline.source_owner_key)} ↔ ${suffix(faultline.target_owner_key)} for this dependency.`
-      : "Action: no introduction needed.";
-  }
-  return gap
-    ? `Action: request the missing ${gap.expected_kind} record or mark the source export incomplete.`
-    : "Action: no missing step selected.";
-}
-
-function selectedEvidence(
-  lens: Lens,
-  ghost: GhostFinding | undefined,
-  faultline: FaultlineFinding | undefined,
-  gap: GapFinding | undefined
-) {
-  if (lens === "org") {
-    return ghost?.evidence ?? [];
-  }
-  if (lens === "faultlines") {
-    return faultline?.evidence ?? [];
-  }
-  return gap?.evidence ?? [];
-}
-
-function EvidenceList({ evidence }: { evidence: EvidenceSummary[] }) {
-  if (evidence.length === 0) {
-    return <p className="evidence-empty">No source evidence is attached to this finding.</p>;
-  }
-  return (
-    <div className="evidence-list">
-      {evidence.map((record) => (
-        <article className="evidence-record" key={record.evidence_id}>
-          <div>
-            <span>{record.source_type}</span>
-            <strong>{record.predicate}</strong>
-          </div>
-          <p>{record.redacted_excerpt || "No redacted excerpt available."}</p>
-          <dl>
-            <div>
-              <dt>record</dt>
-              <dd>{record.source_record_id}</dd>
-            </div>
-            <div>
-              <dt>confidence</dt>
-              <dd>{record.confidence}%</dd>
-            </div>
-            <div>
-              <dt>class</dt>
-              <dd>{record.evidence_class}</dd>
-            </div>
-            <div>
-              <dt>sha</dt>
-              <dd title={record.content_sha256}>{shortSha(record.content_sha256)}</dd>
-            </div>
-          </dl>
-          <code>{record.evidence_id}</code>
-        </article>
-      ))}
-    </div>
-  );
-}
-
-function shortSha(value: string) {
-  return value.length > 12 ? `${value.slice(0, 12)}…` : value;
-}
-
-function suffix(value: string) {
-  return value.split(":").at(-1) ?? value;
-}
-
-function Icon({ path }: { path: string }) {
-  return (
-    <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
-      <path d={path} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" />
-    </svg>
-  );
-}
-
-function Metric({ label, value, detail, tooltip }: { label: string; value: string; detail: string; tooltip?: string }) {
-  return (
-    <div className="metric" title={tooltip}>
-      <span>{label}</span>
-      <strong>{value}</strong>
-      <small>{detail}</small>
-    </div>
-  );
-}
-
-function GraphLegend({ hiddenIsolates = 0 }: { hiddenIsolates?: number }) {
-  return (
-    <div className="graph-legend" aria-label="Graph legend">
-      {hiddenIsolates > 0 ? (
-        <span className="legend-note">{hiddenIsolates} people without reply edges hidden</span>
-      ) : null}
-      <span>
-        <i className="legend-dot communication" /> communication
-      </span>
-      <span>
-        <i className="legend-dot faultline" /> faultline
-      </span>
-      <span>
-        <i className="legend-dot phantom" /> phantom
-      </span>
-    </div>
-  );
-}
-
-function DataTable({
-  emptyText,
-  onRowSelect,
-  selectedIndex,
-  title,
-  rows
-}: {
-  emptyText: string;
-  onRowSelect?: (index: number) => void;
-  selectedIndex?: number;
-  title: string;
-  rows: Array<Record<string, string>>;
-}) {
-  const keys = Object.keys(rows[0] ?? {});
-
-  return (
-    <section className="table-panel">
-      <h3>{title}</h3>
-      {rows.length === 0 ? (
-        <p className="table-empty">{emptyText}</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              {keys.map((key) => (
-                <th key={key}>{key}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, rowIndex) => (
-              <tr
-                className={rowIndex === selectedIndex ? "data-row selected" : "data-row"}
-                key={row.id}
-                onClick={() => onRowSelect?.(rowIndex)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    onRowSelect?.(rowIndex);
-                  }
-                }}
-                tabIndex={onRowSelect === undefined ? undefined : 0}
-              >
-                {keys.map((key) => (
-                  <td data-label={key} key={key}>
-                    {row[key]}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </section>
-  );
-}
-
-function GapTimeline({
-  emptyText,
-  findings,
-  onSelect,
-  selectedIndex,
-  chainPending
-}: {
-  emptyText: string;
-  findings: GapFinding[];
-  onSelect: (index: number) => void;
-  selectedIndex: number;
-  chainPending: boolean;
-}) {
-  const selected = findings[selectedIndex];
-  return (
-    <section className="table-panel gap-timeline">
-      <div className="panel-heading">
-        <h3>Gaps</h3>
-        <span className="gap-caveat">Absence in the corpus is not proof of deletion.</span>
-      </div>
-      {selected ? (
-        <div className="chain" aria-label="Chain of custody">
-          {selected.chain ? (
-            <ol className="chain-track">
-              {selected.chain.node_keys.map((key, index) => (
-                <li
-                  className={selected.chain?.phantom_indices.includes(index) ? "chain-hop phantom" : "chain-hop"}
-                  key={`${key}-${index}`}
-                  title={selected.chain?.phantom_indices.includes(index)
-                    ? "Phantom node: structurally required by the graph but absent from the evidence corpus. Absence does not establish deletion."
-                    : undefined}
-                >
-                  <span className="chain-dot" />
-                  <code>{suffix(key)}</code>
-                  {selected.chain?.phantom_indices.includes(index) ? <small>missing · {selected.reason}</small> : null}
-                </li>
-              ))}
-            </ol>
-          ) : (
-            <p className="chain-empty">
-              {chainPending
-                ? "Tracing the chain with algo.SPpaths…"
-                : selected.reason === "dangling_thread_parent"
-                  ? `${suffix(selected.successor_keys[0] ?? "")} replies to a parent that is not in the corpus.`
-                  : "No live chain for this record."}
-            </p>
-          )}
+        <div className="import-groups">
+          <fieldset>
+            <legend>Required</legend>
+            <label>Snapshot name<input value={datasetId} onChange={(e) => setDatasetId(e.target.value)} /></label>
+            <FileField label="Directory (people) · .json" accept=".json" onPick={pick("directory")} required />
+            <FileField label="Identity map · .json" accept=".json" onPick={pick("identity")} />
+          </fieldset>
+          <fieldset>
+            <legend>Conversations</legend>
+            <label>Slack export · .json (multiple)<input accept=".json" multiple type="file" onChange={(e) => setSlackFiles(Array.from(e.target.files ?? []))} /></label>
+            <FileField label="Email · .mbox" accept=".mbox,.txt" onPick={pick("mbox")} />
+            <FileField label="Confluence space · .xml" accept=".xml" onPick={pick("confluence")} />
+          </fieldset>
+          <fieldset>
+            <legend>Work</legend>
+            <FileField label="git log · .log" accept=".log,.txt" onPick={pick("git")} />
+            <FileField label="JIRA · .csv" accept=".csv" onPick={pick("jira")} />
+            <FileField label="GitHub Issues · .csv" accept=".csv" onPick={pick("github")} />
+          </fieldset>
+          <fieldset>
+            <legend>Mappings (optional)</legend>
+            <FileField label="Module prefixes · .json" accept=".json" onPick={pick("modules")} />
+            <FileField label="Channel → modules · .json" accept=".json" onPick={pick("channels")} />
+            <FileField label="Message → modules · .json" accept=".json" onPick={pick("messages")} />
+          </fieldset>
         </div>
-      ) : null}
-      {findings.length === 0 ? (
-        <p className="table-empty">{emptyText}</p>
-      ) : (
-        <div className="timeline-list">
-          {findings.map((finding, index) => (
-            <button
-              className={index === selectedIndex ? "timeline-row selected" : "timeline-row"}
-              key={finding.phantom_key}
-              onClick={() => onSelect(index)}
-              type="button"
-            >
-              <span>{`G-${String(index + 1).padStart(3, "0")}`}</span>
-              <ol>
-                <li>{suffix(finding.successor_keys[0] ?? "artifact:unknown")}</li>
-                <li className="phantom">{shortKey(finding.phantom_key)}</li>
-                <li>{suffix(finding.predecessor_keys[0] ?? "artifact:unknown")}</li>
-              </ol>
-              <small>
-                {finding.expected_kind} · {finding.reason.replaceAll("_", " ")}
-              </small>
-            </button>
-          ))}
+
+        <div className="import-actions">
+          <button className="btn-primary" disabled={busy} onClick={run} type="button">{busy ? "Working…" : "Build snapshot"}</button>
+          {status ? <small>{status}</small> : null}
         </div>
-      )}
+      </div>
     </section>
   );
 }
 
-function requestForGap(finding: GapFinding): GapPathRequest | undefined {
-  const source = finding.successor_keys[0];
-  const target = finding.predecessor_keys[0];
-  if (source === undefined || target === undefined) {
-    return undefined;
-  }
-  return { source_artifact_key: source, target_artifact_key: target };
+function FileField({ label, accept, onPick, required }: { label: string; accept: string; onPick: (f: File | null) => void; required?: boolean }) {
+  const [name, setName] = useState<string | null>(null);
+  return (
+    <label className={name ? "file picked" : "file"}>
+      <span>{label}{required ? " *" : ""}</span>
+      <input accept={accept} type="file" onChange={(e) => { const f = e.target.files?.[0] ?? null; setName(f?.name ?? null); onPick(f); }} />
+      <em>{name ?? "Choose file"}</em>
+    </label>
+  );
 }
 
-function shortKey(value: string) {
-  const last = suffix(value);
-  return last.length > 28 ? `${last.slice(0, 26)}…` : last;
-}
+/* ── Helpers ──────────────────────────────────────────────── */
 
+function bar(f: GhostFinding, all: GhostFinding[]) {
+  const top = all[0]?.sampled_centrality ?? 1;
+  return top <= 0 ? 4 : Math.max(4, Math.round((f.sampled_centrality / top) * 100));
+}
+function signed(n: number) {
+  return n > 0 ? `+${n}` : String(n);
+}
+function suffix(v: string) {
+  return v.split(":").at(-1) ?? v;
+}
+function shortKey(v: string) {
+  const l = suffix(v);
+  return l.length > 26 ? `${l.slice(0, 24)}…` : l;
+}
 function nameFor(people: GraphNode[], key: string) {
-  return people.find((person) => person.key === key)?.name ?? suffix(key);
+  return people.find((p) => p.key === key)?.name ?? suffix(key);
 }
-
-function formatSignedRankGap(gap: number) {
-  return gap > 0 ? `+${gap}` : String(gap);
-}
-
-function Notice({ text, tone }: { text: string; tone: "bad" | "warn" }) {
-  return <div className={`notice ${tone}`}>{text}</div>;
+function requestForGap(f: GapFinding): GapPathRequest | undefined {
+  const s = f.successor_keys[0];
+  const t = f.predecessor_keys[0];
+  return s === undefined || t === undefined ? undefined : { source_artifact_key: s, target_artifact_key: t };
 }
