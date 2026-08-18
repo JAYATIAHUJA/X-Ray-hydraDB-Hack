@@ -3,8 +3,6 @@ from __future__ import annotations
 import textwrap
 from pathlib import Path
 
-import pytest
-
 from xray_ingest.adapters.confluence_xml import confluence_xml_rows
 from xray_ingest.adapters.github_csv import github_csv_rows
 
@@ -74,6 +72,7 @@ _GITHUB_CSV_ALT_HEADERS = textwrap.dedent("""\
 # Confluence XML tests
 # ---------------------------------------------------------------------------
 
+
 class TestConfluenceXmlRows:
     def test_parses_pages_and_comments(self, tmp_path: Path) -> None:
         xml_file = tmp_path / "entities.xml"
@@ -133,6 +132,7 @@ class TestConfluenceXmlRows:
 # ---------------------------------------------------------------------------
 # GitHub CSV tests
 # ---------------------------------------------------------------------------
+
 
 class TestGithubCsvRows:
     def test_parses_standard_export(self, tmp_path: Path) -> None:

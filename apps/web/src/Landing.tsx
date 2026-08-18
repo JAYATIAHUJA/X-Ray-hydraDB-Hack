@@ -260,13 +260,14 @@ RETURN collect(path)`}</code></pre>
       {/* ── DATA ── */}
       <section className="datasets" id="data">
         <div className="ds-head rv">
-          <h2>Runs on <em>your</em> exports.<br />Ships with three corpora.</h2>
+          <h2>Runs on <em>your</em> exports.<br />Ships with four corpora.</h2>
           <p>Every adapter is deterministic — explicit IDs only, no NLP guessing. What you load is what you get.</p>
         </div>
         <div className="ds-grid">
           <div className="ds rv"><span>demo</span><strong>xray-demo</strong><p>10-person synthetic org, planted findings, no external service.</p></div>
           <div className="ds rv"><span>synthetic · labelled</span><strong>synth-500</strong><p>Faultline & gap precision/recall 1.0 · ghost top-10 overlap 0.93 vs exact betweenness.</p></div>
           <div className="ds rv"><span>real · public</span><strong>kafka-2025q2</strong><p>Apache Kafka git log + dev list, through the same adapters you&apos;d use on your own data.</p></div>
+          <div className="ds rv"><span>official · track 01</span><strong>herb-2026</strong><p>Salesforce HERB, all 30 products — 5,126 people, 92k edges. Ghost #1 is a Software Engineer ranked #282 on paper.</p></div>
         </div>
         <div className="ds-live rv">
           <div><strong>{data ? data.node_count.toLocaleString() : "—"}</strong><span>nodes live</span></div>

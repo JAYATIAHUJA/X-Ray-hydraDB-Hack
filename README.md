@@ -13,6 +13,11 @@
 
 </div>
 
+<p align="center">
+<b>49,635 nodes · 92,148 edges · 64,019 evidence records on the official Track 01 corpus (HERB) · 1 <code>algo.MSpaths</code> call instead of 13,135,375 per-pair queries</b><br/>
+<sub>plus a real public corpus (Apache Kafka) and a 500-person synthetic org with planted ground truth — every number below traces to a results file stamped with the engine digest.</sub>
+</p>
+
 ---
 
 ## What is X-Ray?
@@ -54,6 +59,25 @@ Every finding includes: source evidence IDs · confidence score · content SHA-2
 
 ## Results at a glance
 
+### Salesforce HERB — the official Track 01 corpus (all 30 products)
+
+HERB ships explicit employee ids, a role hierarchy, Slack with `@eid` mentions, and pull requests with reviewers. X-Ray reads exactly those ids — nothing is inferred from prose — through the same pipeline as every other source ([adapter](packages/xray_ingest/src/xray_ingest/adapters/herb.py) · [builder](scripts/build_herb_corpus.py)).
+
+| Finding | Result |
+|---|---|
+| **Graph** | 5,126 people · 30 modules · 40,917 artifacts · **92,148 edges** (5,615 COMMUNICATES, 4,609 REPLIES_TO) |
+| **Ghost #1** | Emma Jones, *Software Engineer* — structural rank **#1**, formal rank **#282** (+281) |
+| **Ghost top-10** | 4 of 10 are ICs (role 1); largest gap in top-10: Ian Miller, structural #10 vs formal **#461** |
+| **Bus-factor impact** | Remove Ghost #1 → 75 of 23,870 reachable pairs lose their ≤4-hop path |
+| **Faultlines** | **0 — a null result, reported as such.** HERB PRs are single-product; no cross-product co-change exists in the corpus, so no `DEPENDS_ON` edge is derived and none is invented |
+| **Phantom gaps** | 0 — every review reply resolves to its PR artifact; HERB Slack has no thread metadata, so no dangling parents are claimed |
+| **Identity** | 530 employees resolve by `eid`; 4,596 PR logins (`EMP_…`) have no HERB mapping and stay **visibly unresolved** (a stated limitation, not a merge) |
+| **Engine leverage** | 1 `algo.MSpaths` call replaces **13,135,375** per-pair queries (client BFS baseline: 17.7 s) |
+
+Two "Emma Jones" and two "Ian Miller" appear in the top-10 — HERB deliberately reuses names. X-Ray keeps them separate because identity is the explicit `eid`, not the display name; that is the entity-resolution trap the track description warns about, handled by design.
+
+Reproduce: `uv run python scripts/build_herb_corpus.py --all --out data/snapshots/herb-2026 && uv run python scripts/eval_corpus.py --snapshot data/snapshots/herb-2026 --json docs/results/herb-2026.json`
+
 ### Apache Kafka — real public corpus (Mar–Jun 2025)
 
 | Finding | Result |
@@ -75,7 +99,7 @@ Every finding includes: source evidence IDs · confidence score · content SHA-2
 | What-if: remove the planted Ghost | 110,883 of 124,251 pairs lose their ≤4-hop path |
 | Engine leverage | 1 call replaces **124,750** per-pair queries |
 
-Sources: [docs/results/kafka-2025q2.json](docs/results/kafka-2025q2.json) · [docs/results/synth500.json](docs/results/synth500.json)
+Sources: [docs/results/herb-2026.json](docs/results/herb-2026.json) · [docs/results/kafka-2025q2.json](docs/results/kafka-2025q2.json) · [docs/results/synth500.json](docs/results/synth500.json)
 
 ---
 
@@ -225,7 +249,7 @@ X-Ray resolves all identities **before** graph ingestion — never inside the en
 
 ---
 
-## Supported sources (6 adapters)
+## Supported sources (7 adapters)
 
 | Source | Adapter | Key fields |
 |---|---|---|
@@ -235,6 +259,7 @@ X-Ray resolves all identities **before** graph ingestion — never inside the en
 | Confluence XML | `confluence_xml_rows` | `id`, `occurred_at_epoch`, `reporter_id`, `space→module_keys` |
 | GitHub Issues CSV | `github_csv_rows` | `id`, `occurred_at_epoch`, `reporter_id`, `label→module_keys` |
 | Git log | `git_log_rows` | `sha`, `occurred_at_epoch`, `author_id`, `Depends-On:` trailers |
+| Salesforce HERB (Track 01 corpus) | `herb_slack_rows` · `herb_pr_rows` · `herb_document_rows` · `herb_directory_records` | `eid` authors, `@eid` mentions, PR `user`/`reviews`, `employee.json` roles → `role_rank` |
 
 All adapters: **explicit IDs only** — no NLP, no guessing module assignments from message text.
 
@@ -270,6 +295,15 @@ HydraDB query card (shown live in UI):
 ---
 
 ## Quick start
+
+### Hosted-style demo (web + API, no engine required)
+
+```bash
+docker compose -f compose.demo.yaml up --build
+# http://localhost:8080  →  landing · http://localhost:8080/app  →  dashboard on the Kafka snapshot
+```
+
+Deploy the same two images anywhere Docker runs — Fly configs and notes in [infra/deploy](infra/deploy/README.md).
 
 ### One-command local stack
 
@@ -343,6 +377,7 @@ uv run python scripts/ingest_export.py `
 | `xray-demo` | 10 synthetic | 47 | default — runs with no config |
 | `xray-synth-500` | 500 synthetic + planted ground truth | 1,319 | `XRAY_FIXTURE_VARIANT=synth500` |
 | `kafka-2025q2` | 292 real (Apache Kafka) | 4,476 | `XRAY_SNAPSHOT_DIR=data/snapshots/kafka-2025q2` |
+| `herb-2026` | 5,126 (official Track 01 corpus, 30 products) | 92,148 | `scripts/build_herb_corpus.py --all` then `XRAY_SNAPSHOT_DIR=data/snapshots/herb-2026` |
 
 ```powershell
 # Run the Kafka corpus
