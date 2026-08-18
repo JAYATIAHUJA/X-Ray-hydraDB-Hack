@@ -48,6 +48,10 @@ class GapFinding:
     inferred_epoch: int | None
     predecessor_keys: tuple[str, ...]
     successor_keys: tuple[str, ...]
+    # "export_boundary" (reply sits within the first N days of the export, parent
+    # probably predates it) vs "in_window" (parent should be present and is not).
+    window_position: str = "unknown"
+    days_after_corpus_start: int | None = None
 
 
 def _nodes_by_id(bundle: CanonicalBundle) -> dict[int, NodeRow]:
@@ -276,9 +280,29 @@ def gap_findings(bundle: CanonicalBundle) -> tuple[GapFinding, ...]:
                 ),
                 predecessor_keys=predecessor_keys,
                 successor_keys=successor_keys,
+                window_position=(
+                    str(node.properties.get("window_position"))
+                    if node.properties.get("window_position") is not None
+                    else "unknown"
+                ),
+                days_after_corpus_start=(
+                    int(str(node.properties["days_after_corpus_start"]))
+                    if str(node.properties.get("days_after_corpus_start", "")).isdigit()
+                    else None
+                ),
             )
         )
-    return tuple(sorted(findings, key=lambda finding: finding.phantom_key))
+    # In-window gaps first: they are the ones that warrant a question.
+    return tuple(
+        sorted(
+            findings,
+            key=lambda f: (
+                f.window_position != "in_window",
+                -(f.days_after_corpus_start or 0),
+                f.phantom_key,
+            ),
+        )
+    )
 
 
 def role_rank(node: NodeRow) -> int:

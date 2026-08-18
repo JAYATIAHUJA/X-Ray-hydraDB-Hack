@@ -279,7 +279,7 @@ test("lens tabs switch the right panel", async () => {
   expect(screen.getByText(/Introduce alex-rivera and theo-brooks/)).toBeInTheDocument();
 
   await userEvent.click(screen.getByRole("button", { name: "Gaps" }));
-  expect(screen.getByText("Absence in the corpus is not proof of deletion.")).toBeInTheDocument();
+  expect(screen.getByText(/Absence in the corpus is not proof of deletion/)).toBeInTheDocument();
   expect(await screen.findAllByText(/missing-approval/)).not.toHaveLength(0);
 
   // Query toggle shows the executed HydraDB query for the active lens.

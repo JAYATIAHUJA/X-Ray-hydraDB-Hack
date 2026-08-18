@@ -194,12 +194,36 @@ def _dangling_parent_evidence(
     )
 
 
+# A reply this close to the start of the export most likely answers a message from
+# before the export began — that is a boundary artefact, not a finding. Replies deeper
+# into the window whose parent is still absent are the ones worth a question.
+EXPORT_BOUNDARY_DAYS = 30
+
+
+def _window_position(child_epoch: int, corpus_start: int | None) -> tuple[str, int | None]:
+    if corpus_start is None:
+        return "unknown", None
+    days = max(0, (child_epoch - corpus_start) // 86400)
+    return ("export_boundary" if days <= EXPORT_BOUNDARY_DAYS else "in_window"), days
+
+
 def _dangling_parent_node(
     bundle: CanonicalBundle,
     parent_key: str,
     evidence: EvidenceRecord,
+    *,
+    corpus_start: int | None = None,
 ) -> NodeRow:
     node_id = stable_id(bundle.dataset_id, "Phantom", parent_key)
+    position, days = _window_position(evidence.observed_epoch, corpus_start)
+    properties: dict[str, int | float | str] = {
+        "expected_kind": "thread_parent",
+        "reason": "dangling_thread_parent",
+        "inferred_epoch": evidence.observed_epoch,
+        "window_position": position,
+    }
+    if days is not None:
+        properties["days_after_corpus_start"] = days
     return NodeRow(
         id=node_id,
         canonical_key=parent_key,
@@ -207,11 +231,7 @@ def _dangling_parent_node(
         label="Phantom",
         evidence_class=EvidenceClass.INFERRED,
         confidence=100,
-        properties={
-            "expected_kind": "thread_parent",
-            "reason": "dangling_thread_parent",
-            "inferred_epoch": evidence.observed_epoch,
-        },
+        properties=properties,
         evidence_ids=(evidence.evidence_id,),
     )
 
@@ -249,10 +269,16 @@ def detect_gaps(base: CanonicalBundle, contracts: SequenceContractSet) -> GapDer
     edges: list[EdgeRow] = []
     evidence_records: list[EvidenceRecord] = []
     limitations = set(contracts.limitations)
+    artifact_epochs = [
+        int(str(node.properties.get("created_epoch")))
+        for node in base.nodes
+        if node.label == "Artifact" and str(node.properties.get("created_epoch", "")).isdigit()
+    ]
+    corpus_start = min(artifact_epochs) if artifact_epochs else None
 
     for child, parent_key, source_evidence in _thread_parent_evidence(base):
         gap_evidence = _dangling_parent_evidence(base, child, parent_key, source_evidence)
-        phantom = _dangling_parent_node(base, parent_key, gap_evidence)
+        phantom = _dangling_parent_node(base, parent_key, gap_evidence, corpus_start=corpus_start)
         phantoms[parent_key] = phantom
         evidence_records.append(gap_evidence)
         edges.append(_dangling_parent_edge(base, child, phantom, gap_evidence))
@@ -292,4 +318,4 @@ def detect_gaps(base: CanonicalBundle, contracts: SequenceContractSet) -> GapDer
     )
 
 
-__all__ = ["detect_gaps"]
+__all__ = ["EXPORT_BOUNDARY_DAYS", "detect_gaps"]
