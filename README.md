@@ -14,8 +14,8 @@
 </div>
 
 <p align="center">
-<b>49,635 nodes · 92,148 edges · 64,019 evidence records on the official Track 01 corpus (HERB) · 1 <code>algo.MSpaths</code> call instead of 13,135,375 per-pair queries</b><br/>
-<sub>plus a real public corpus (Apache Kafka) and a 500-person synthetic org with planted ground truth — every number below traces to a results file stamped with the engine digest.</sub>
+<b>Official Track 01 corpus (HERB, all 30 products): 5,126 people · 5,615 communication edges · Ghost #1 is a Software Engineer ranked #282 on paper</b><br/>
+<sub>Same ranking with every unresolved handle removed (top-10 overlap 1.0). Plus Apache Kafka (real, 292 people) and a 500-person synthetic org with planted ground truth. Every number traces to a results file stamped with the engine digest. Full graph incl. artifacts: 46k nodes / 92k edges — the analysed graph is the people.</sub>
 </p>
 
 ---
@@ -65,10 +65,11 @@ HERB ships explicit employee ids, a role hierarchy, Slack with `@eid` mentions, 
 
 | Finding | Result |
 |---|---|
-| **Graph** | 5,126 people · 30 modules · 40,917 artifacts · **92,148 edges** (5,615 COMMUNICATES, 4,609 REPLIES_TO) |
+| **Analysed graph** | **5,126 people · 5,615 COMMUNICATES edges** (from 4,609 review replies + explicit `@eid` mentions). Full graph incl. artifacts: 46,073 nodes / 92,148 edges |
 | **Ghost #1** | Emma Jones, *Software Engineer* — structural rank **#1**, formal rank **#282** (+281) |
 | **Ghost top-10** | 4 of 10 are ICs (role 1); largest gap in top-10: Ian Miller, structural #10 vs formal **#461** |
 | **Bus-factor impact** | Remove Ghost #1 → 75 of 23,870 reachable pairs lose their ≤4-hop path |
+| **Identity robustness** | Drop all 4,596 unresolved handles and re-rank the 530 named employees: **top-10 overlap 1.0, same #1**. The ranking is not an artefact of anonymous ids padding the graph |
 | **Faultlines** | **0 — a null result, reported as such.** HERB PRs are single-product; no cross-product co-change exists in the corpus, so no `DEPENDS_ON` edge is derived and none is invented |
 | **Phantom gaps** | 0 — every review reply resolves to its PR artifact; HERB Slack has no thread metadata, so no dangling parents are claimed |
 | **Identity** | 530 employees resolve by `eid`; 4,596 PR logins (`EMP_…`) have no HERB mapping and stay **visibly unresolved** (a stated limitation, not a merge) |
@@ -86,7 +87,8 @@ Reproduce: `uv run python scripts/build_herb_corpus.py --all --out data/snapshot
 | **Largest rank gap** | PoAn Yang, committer — structural #5 vs formal #34 **(+29)** |
 | **Bus-factor impact** | Remove Ghost #1 → 516 of 6,295 reachable pairs lose their ≤4-hop path |
 | **Faultlines found** | 49 — top: `clients ↔ connect`, co-changed 9×, no reply path between owners |
-| **Phantom gaps** | 135 dangling thread parents at export boundary |
+| **Phantom gaps** | 135 dangling thread parents — **53 inside the export window** (reply ≥30 days in, parent still absent from the corpus) · 82 at the export boundary (parent most likely predates the export; reported, not counted as a finding) |
+| **Identity robustness** | Drop the 12 unresolved handles → top-10 overlap 0.9, same #1 |
 | **Engine leverage** | 1 `algo.MSpaths` call replaces **42,486** per-pair queries |
 
 ### Synthetic 500-person org — ground truth evaluation
@@ -269,7 +271,7 @@ All adapters: **explicit IDs only** — no NLP, no guessing module assignments f
 
 | Operation | HydraDB query | What it replaces |
 |---|---|---|
-| Ghost scoring | one `algo.MSpaths` over `COMMUNICATES` | 42,486 per-pair queries (Kafka corpus) |
+| Ghost scoring | one pairwise `algo.MSpaths` over `COMMUNICATES` | a client-side all-pairs bounded BFS (42,486 pairs on Kafka, 13.1M on HERB — 17.7 s in Python). Any graph engine collapses this to one call; the point is that X-Ray *does* keep traversal in the engine and shows the executed statement per lens |
 | Faultline reachability | one bounded `algo.MSpaths` per candidate pair | unbounded client traversal loop |
 | Gap chain | `algo.SPpaths` over `PRECEDED_BY` | multi-hop manual BFS |
 | Graph load | `UNWIND` batch writes · 500 edges/batch | row-by-row inserts |
@@ -295,6 +297,10 @@ HydraDB query card (shown live in UI):
 ---
 
 ## Quick start
+
+### Open a shipped corpus with one click
+
+The dashboard's **Load data** screen lists every bundled corpus (demo, synth-500, Kafka, HERB once built) — pick one and it is served immediately (`POST /api/v1/snapshots/activate`, restricted to `data/snapshots/*` and bundled fixtures). Your own exports remain the second path on the same screen.
 
 ### Hosted-style demo (web + API, no engine required)
 
@@ -478,9 +484,10 @@ uv run pytest tests/contract/test_oracle.py -v
 
 X-Ray reports negative results as plainly as positive ones:
 
-- A **Faultline** is coordination debt, not a predicted incident. No causal claim is made.
-- A **Ghost** score is bounded and sampled — stated as such, not presented as exact betweenness.
-- A **Phantom** (Gap) marks structural incompleteness, never automatic evidence of deletion. Export filtering and missing sources remain possible explanations.
+- **Ghost is sampled betweenness, and betweenness is not new** (Freeman 1977). What is new here is the *pairing*: structural rank against formal rank from the same corpus, a what-if removal, and evidence per row — shipped as open source, which no comparable OSS project does. We do not claim the metric is novel.
+- A **Faultline** is coordination debt, not a predicted incident. The socio-technical-congruence literature is contested (Cataldo 2009 for; Mauerer 2021 against), so no causal claim is made — and on HERB the lens returns **0**, because the corpus has no cross-module signal. It says so instead of padding.
+- A **Phantom** (Gap) marks structural incompleteness, never automatic evidence of deletion. Each one is labelled `in_window` (parent should be in this export and is not) or `export_boundary` (reply falls in the first 30 days; parent probably predates the export). Only the former is worth a question; both are reported.
+- **Identity resolution is deliberately conservative**: explicit ids only. On HERB, 4,596 PR logins have no employee mapping and stay visibly unresolved; the Ghost top-10 is unchanged when they are removed. Unresolved counts and names are surfaced in every response, never merged by guesswork.
 - Measured corpora are one labelled synthetic org and one public open-source project. Neither is a claim about a private company.
 - Live OAuth connectors are intentionally out of scope. Export adapters are the supported ingest path.
 - `maxLen=4` is a product choice, not a universal organization-science claim.
