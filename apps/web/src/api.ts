@@ -103,6 +103,7 @@ export type GhostFinding = {
   rank_gap: number;
   sampled_centrality: number;
   communication_degree: number;
+  centrality_method: string;
   removal_impact: {
     reachable_pairs_before: number;
     pairs_lost_without_person: number;
@@ -154,6 +155,19 @@ export type AvailableSnapshot = {
 export type GapPathRequest = {
   source_artifact_key: string;
   target_artifact_key: string;
+};
+
+export type QuestionResponse = {
+  snapshot_id: string;
+  question: string;
+  intent: "owner" | "author" | "reviewer" | "unsupported";
+  status: "answered" | "not_found" | "no_answer" | "unsupported";
+  answer: string;
+  subject_key: string | null;
+  person_keys: string[];
+  evidence_ids: string[];
+  paths: string[][];
+  confidence: number | null;
 };
 
 export type ImportPayload = {
@@ -234,6 +248,13 @@ export function getGapPath(snapshotId: string, request: GapPathRequest = DEFAULT
       body: JSON.stringify(request),
       method: "POST"
     }
+  );
+}
+
+export function askQuestion(snapshotId: string, question: string) {
+  return requestJson<QuestionResponse>(
+    `/api/v1/snapshots/${encodeURIComponent(snapshotId)}/questions`,
+    { body: JSON.stringify({ question }), method: "POST" }
   );
 }
 

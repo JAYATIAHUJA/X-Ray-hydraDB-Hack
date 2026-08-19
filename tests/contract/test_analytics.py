@@ -3,7 +3,14 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from xray_analytics import bus_factor_impact, faultlines, gap_findings, ghost_scores
+from xray_analytics import (
+    bus_factor_impact,
+    communication_asymmetries,
+    directed_communication_graph,
+    faultlines,
+    gap_findings,
+    ghost_scores,
+)
 from xray_core.models import CanonicalRecord, SequenceContractSet
 from xray_ingest.pipeline import build_bundle
 
@@ -39,6 +46,28 @@ def test_ghost_scores_surface_structural_gap_from_communication_paths() -> None:
     assert maya.formal_rank > maya.structural_rank
     assert maya.rank_gap > 0
     assert maya.sampled_centrality > 0
+
+
+def test_directed_projection_preserves_sender_recipient_asymmetry() -> None:
+    bundle = demo_bundle()
+    graph = directed_communication_graph(bundle)
+
+    assert "person:maya-chen" in graph["person:alex-rivera"]
+    assert "person:alex-rivera" not in graph["person:maya-chen"]
+    communication = next(edge for edge in bundle.edges if edge.rel_type == "COMMUNICATES")
+    directional = bundle.model_copy(
+        update={
+            "edges": tuple(
+                edge.model_copy(
+                    update={"properties": {**edge.properties, "reply_weight": 4}}
+                )
+                if edge.id == communication.id
+                else edge
+                for edge in bundle.edges
+            )
+        }
+    )
+    assert communication_asymmetries(directional, min_replies=1, min_ratio=2)
 
 
 def test_bus_factor_counts_pairs_lost_within_the_bounded_sample() -> None:

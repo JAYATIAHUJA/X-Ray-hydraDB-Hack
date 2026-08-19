@@ -348,7 +348,8 @@ def test_communication_distances_reads_live_hydradb_paths() -> None:
     assert "sourceProperty: 'path_key'" in result.query.statement
     assert "sourceLabel: 'Person'" in result.query.statement
     assert "canonical_key" not in result.query.statement
-    assert driver.parameters == [{}]
+    assert driver.parameters[0] == result.query.parameters
+    assert set(driver.parameters[0] or {}) == {"source_values", "target_values"}
 
 
 def test_faultline_live_distance_lookup_accepts_reversed_owner_pair() -> None:
@@ -400,7 +401,8 @@ def test_live_ghost_findings_use_single_integer_id_mspaths_call() -> None:
     assert "sourceLabel: 'Person'" in result.executed_query.text
     assert "canonical_key" not in result.executed_query.text
     assert "pairwise: false" in result.executed_query.text
-    assert driver.parameters == [{}]
+    assert driver.parameters[0] == result.executed_query.params
+    assert set(driver.parameters[0] or {}) == {"source_values", "target_values"}
     maya = next(
         finding for finding in result.findings if finding["person_key"] == "person:maya-chen"
     )
@@ -505,6 +507,31 @@ def test_unknown_snapshot_returns_problem_detail() -> None:
 
     assert response.status_code == 404
     assert response.json()["detail"]["code"] == "snapshot_not_found"
+
+
+def test_question_endpoint_answers_from_typed_edges_with_evidence() -> None:
+    response = client().post(
+        "/api/v1/snapshots/xray-demo-v1:fixture/questions",
+        json={"question": "Who owns payments-api?"},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["status"] == "answered"
+    assert payload["subject_key"] == "module:payments-api"
+    assert payload["paths"]
+    assert payload["evidence_ids"]
+
+
+def test_asymmetry_endpoint_discloses_direction_and_safe_interpretation() -> None:
+    response = client().get(
+        "/api/v1/snapshots/xray-demo-v1:fixture/asymmetries?min_replies=1&min_ratio=2"
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert "Directed reply flow is preserved" in payload["status_explanation"]
+    assert any("not an employee performance score" in item for item in payload["limitations"])
 
 
 def test_ghosts_endpoint_fixture_what_if_reports_pairs_lost_and_comparison() -> None:

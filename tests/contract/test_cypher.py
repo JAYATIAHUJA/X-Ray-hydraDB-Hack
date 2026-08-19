@@ -26,15 +26,9 @@ def test_communication_paths_use_equal_pairwise_sets_and_only_communication() ->
 
     assert "sourceLabel: 'Person'" in spec.statement
     assert "sourceProperty: 'path_key'" in spec.statement
-    assert (
-        "sourceValues: ['person:00000000000000000001', 'person:00000000000000000002']"
-        in spec.statement
-    )
+    assert "sourceValues: $source_values" in spec.statement
     assert "targetLabel: 'Person'" in spec.statement
-    assert (
-        "targetValues: ['person:00000000000000000001', 'person:00000000000000000002']"
-        in spec.statement
-    )
+    assert "targetValues: $target_values" in spec.statement
     assert "relTypes: ['COMMUNICATES']" in spec.statement
     assert "relDirection: 'BOTH'" in spec.statement
     assert "resultLimit: 100" in spec.statement
@@ -42,7 +36,10 @@ def test_communication_paths_use_equal_pairwise_sets_and_only_communication() ->
     assert "collect(" not in spec.statement
     assert spec.max_len == 4
     assert spec.result_limit == 100
-    assert spec.parameters == {}
+    assert spec.parameters == {
+        "source_values": tuple(keys),
+        "target_values": tuple(keys),
+    }
 
 
 def test_cross_set_communication_paths_disable_pairwise() -> None:

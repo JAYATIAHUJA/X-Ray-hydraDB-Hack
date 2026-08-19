@@ -38,15 +38,13 @@ def _require_positive(value: int, name: str) -> int:
     return value
 
 
-def _literal_list(values: Sequence[str]) -> str:
+def _validated_path_keys(values: Sequence[str]) -> tuple[str, ...]:
     if not values:
         raise CypherCompileError("path selectors must be non-empty canonical path keys")
-    rendered: list[str] = []
     for value in values:
         if PATH_KEY.fullmatch(value) is None:
             raise CypherCompileError("path selectors must be non-empty canonical path keys")
-        rendered.append(f"'{value}'")
-    return "[" + ", ".join(rendered) + "]"
+    return tuple(values)
 
 
 def _one_statement(statement: str) -> str:
@@ -86,14 +84,16 @@ def communication_paths_query(
     _require_positive(path_count, "path_count")
     _require_positive(result_limit, "result_limit")
     pairwise_literal = "true" if pairwise else "false"
+    source_values = _validated_path_keys(sources)
+    target_values = _validated_path_keys(targets)
     statement = _one_statement(
         "CALL algo.MSpaths({"
         "sourceLabel: 'Person', "
         "sourceProperty: 'path_key', "
-        f"sourceValues: {_literal_list(sources)}, "
+        "sourceValues: $source_values, "
         "targetLabel: 'Person', "
         "targetProperty: 'path_key', "
-        f"targetValues: {_literal_list(targets)}, "
+        "targetValues: $target_values, "
         "relTypes: ['COMMUNICATES'], "
         f"relDirection: '{REL_DIRECTION_BOTH}', "
         f"maxLen: {max_len}, "
@@ -106,7 +106,7 @@ def communication_paths_query(
     return QuerySpec(
         name="communication_paths",
         statement=statement,
-        parameters={},
+        parameters={"source_values": source_values, "target_values": target_values},
         max_len=max_len,
         result_limit=result_limit,
     )

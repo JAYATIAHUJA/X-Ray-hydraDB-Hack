@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import type { FormEvent } from "react";
 import type {
   EvidenceSummary,
   FaultlineFinding,
@@ -8,15 +9,15 @@ import type {
   GraphNode,
   LensEnvelope
 } from "./api";
-import { activateSnapshot, getAvailableSnapshots, getRiskReport, importSnapshot } from "./api";
-import type { AvailableSnapshot, ImportPayload } from "./api";
+import { activateSnapshot, askQuestion, getAvailableSnapshots, getRiskReport, importSnapshot } from "./api";
+import type { AvailableSnapshot, ImportPayload, QuestionResponse } from "./api";
 import type { Lens } from "./data";
 import { Graph3D } from "./Graph3D";
 import type { Graph3DEdge, Graph3DNode } from "./Graph3D";
 import { useXraySnapshot } from "./queries";
 
 const LENSES: Array<{ id: Lens; label: string; hint: string }> = [
-  { id: "org", label: "Ghost", hint: "who holds it together" },
+  { id: "org", label: "Structural", hint: "structural rank × formal rank" },
   { id: "faultlines", label: "Faultlines", hint: "code depends, people don't talk" },
   { id: "gaps", label: "Gaps", hint: "records the graph requires" }
 ];
@@ -32,6 +33,9 @@ export function App() {
   const [showImport, setShowImport] = useState(false);
   const [showQuery, setShowQuery] = useState(false);
   const [reportStatus, setReportStatus] = useState<string | null>(null);
+  const [question, setQuestion] = useState("Who owns payments-api?");
+  const [questionAnswer, setQuestionAnswer] = useState<QuestionResponse | null>(null);
+  const [questionPending, setQuestionPending] = useState(false);
 
   const { faultlines, gapPath, gaps, ghosts, graph, health, snapshot } = useXraySnapshot(gapRequest, excluded, 0);
 
@@ -148,6 +152,17 @@ export function App() {
     globalThis.setTimeout(() => setReportStatus(null), 2500);
   }
 
+  async function submitQuestion(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (snapshot.data === undefined || question.trim().length < 3) return;
+    setQuestionPending(true);
+    try {
+      setQuestionAnswer(await askQuestion(snapshot.data.snapshot_id, question));
+    } finally {
+      setQuestionPending(false);
+    }
+  }
+
   if (showImport || noData) {
     return (
       <main className="app">
@@ -226,9 +241,22 @@ export function App() {
 
         {/* ── Right: findings panel ── */}
         <aside className="dash-panel" aria-label="Findings">
+          <form className="question-box" onSubmit={submitQuestion}>
+            <label htmlFor="ontology-question">Ask the work graph</label>
+            <div>
+              <input id="ontology-question" onChange={(event) => setQuestion(event.target.value)} value={question} />
+              <button disabled={questionPending} type="submit">{questionPending ? "…" : "Ask"}</button>
+            </div>
+            {questionAnswer ? (
+              <p data-status={questionAnswer.status}>
+                {questionAnswer.answer}
+                {questionAnswer.evidence_ids.length > 0 ? <small>{questionAnswer.evidence_ids.length} evidence record(s)</small> : null}
+              </p>
+            ) : <small>Try “Who owns module X?” or “Who authored artifact Y?”</small>}
+          </form>
           <div className="kpis">
             <button className={lens === "org" ? "kpi active" : "kpi"} onClick={() => setLens("org")} type="button">
-              <span>Load-bearing</span>
+              <span>Structural rank</span>
               <strong>{topGhost?.display_name ?? "—"}</strong>
               <small>{topGhost ? `#${topGhost.structural_rank} structural · #${topGhost.formal_rank} formal` : "computing"}</small>
             </button>
@@ -267,7 +295,7 @@ export function App() {
               {showQuery ? "Hide" : "Show"} HydraDB query
             </button>
             <span>
-              {comparison ? `1 call · ${comparison.client_equivalent_round_trips.toLocaleString()} queries avoided` : ""}
+              {comparison ? `engine ${comparison.engine_ms ?? "—"} ms · local reference ${comparison.client_ms.toFixed(1)} ms` : ""}
               {health.data ? ` · engine ${health.data.hydra.status}` : ""}
             </span>
           </footer>
@@ -292,7 +320,7 @@ function GhostPanel({ list, selectedKey, onSelect, status }: { list: GhostFindin
     <>
       <div className="stat-row">
         <div>
-          <span>If {top.display_name.split(" ")[0]} leaves</span>
+          <span>Bounded removal test</span>
           <strong>{top.removal_impact ? top.removal_impact.pairs_lost_without_person.toLocaleString() : "—"}</strong>
           <small>of {top.removal_impact?.reachable_pairs_before.toLocaleString() ?? "—"} paths lost</small>
         </div>

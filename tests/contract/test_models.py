@@ -319,12 +319,20 @@ def test_remaining_stable_models_construct_with_bounded_values() -> None:
     ).pointer_swapped
 
 
-def test_query_and_batch_models_reject_nested_hydra_values() -> None:
+def test_query_parameters_accept_flat_arrays_but_reject_nested_values() -> None:
+    query = QuerySpec(
+        name="selectors",
+        statement="RETURN $values",
+        parameters={"values": [1, "two"]},
+        max_len=None,
+        result_limit=None,
+    )
+    assert query.parameters == {"values": (1, "two")}
     with pytest.raises(ValidationError, match="Hydra properties"):
         QuerySpec(
             name="unsafe",
             statement="RETURN $value",
-            parameters={"value": [1]},
+            parameters={"value": [[1]]},
             max_len=None,
             result_limit=None,
         )

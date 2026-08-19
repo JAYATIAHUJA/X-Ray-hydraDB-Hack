@@ -124,6 +124,23 @@ class GapPathRequest(BaseModel):
     target_artifact_key: str = Field(min_length=1)
 
 
+class QuestionRequest(BaseModel):
+    question: str = Field(min_length=3, max_length=500)
+
+
+class QuestionResponse(BaseModel):
+    snapshot_id: str
+    question: str
+    intent: str
+    status: Literal["answered", "not_found", "no_answer", "unsupported"]
+    answer: str
+    subject_key: str | None
+    person_keys: tuple[str, ...]
+    evidence_ids: tuple[str, ...]
+    paths: tuple[tuple[str, ...], ...]
+    confidence: int | None = Field(default=None, ge=0, le=100)
+
+
 class ImportRequest(BaseModel):
     """Browser-friendly JSON form of the supported offline export inputs."""
 
@@ -163,6 +180,8 @@ __all__ = [
     "LensEnvelope",
     "LoadReportResponse",
     "ProblemDetail",
+    "QuestionRequest",
+    "QuestionResponse",
     "SnapshotResponse",
     "WhatIfSummary",
 ]

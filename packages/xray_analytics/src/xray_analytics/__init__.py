@@ -1,16 +1,20 @@
 """Evidence-aware analytics for X-Ray."""
 
 from .analysis import (
+    EXACT_CENTRALITY_MAX_PEOPLE,
     TIER_COORDINATED,
     TIER_NO_PATH,
     TIER_WEAK,
     BusFactorImpact,
+    CommunicationAsymmetry,
     FaultlineFinding,
     GapFinding,
     GhostScore,
     bounded_shortest_path_tallies,
     bus_factor_impact,
+    communication_asymmetries,
     communication_graph,
+    directed_communication_graph,
     display_name,
     faultline_tier,
     faultlines,
@@ -22,18 +26,25 @@ from .analysis import (
     shortest_communication_bridge,
     without_people,
 )
+from .questions import OntologyAnswer, answer_ontology_question
 
 __all__ = [
+    "EXACT_CENTRALITY_MAX_PEOPLE",
     "TIER_COORDINATED",
     "TIER_NO_PATH",
     "TIER_WEAK",
     "BusFactorImpact",
+    "CommunicationAsymmetry",
     "FaultlineFinding",
     "GapFinding",
     "GhostScore",
+    "OntologyAnswer",
+    "answer_ontology_question",
     "bounded_shortest_path_tallies",
     "bus_factor_impact",
+    "communication_asymmetries",
     "communication_graph",
+    "directed_communication_graph",
     "display_name",
     "faultline_tier",
     "faultlines",

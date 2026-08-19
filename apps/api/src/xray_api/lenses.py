@@ -4,6 +4,7 @@ import logging
 import time
 from collections import defaultdict
 from dataclasses import asdict, dataclass
+from functools import lru_cache
 
 from xray_analytics import (
     GhostScore,
@@ -26,7 +27,6 @@ from .config import XraySettings
 from .hydra import open_gateway
 
 logger = logging.getLogger(__name__)
-_FIXTURE_GHOST_CACHE: dict[tuple[int, int, tuple[str, ...]], tuple[dict[str, object], ...]] = {}
 
 
 @dataclass(frozen=True, slots=True)
@@ -160,6 +160,7 @@ def live_ghost_findings(
             rank_gap=formal_rank[key] - structural_rank[key],
             sampled_centrality=tallies[key] / denominator,
             communication_degree=len(graph.get(key, {})),
+            centrality_method=f"hydradb_bounded_undirected_mspaths_max_len_{max_len}",
         )
         removal_impact = None
         if key in top_impact_keys:
@@ -185,11 +186,6 @@ def fixture_ghost_findings(
     exclude_person_keys: tuple[str, ...] = (),
 ) -> tuple[dict[str, object], ...]:
     """In-memory Ghost findings; excluded people are removed from the graph before scoring."""
-    cache_key = (id(bundle), max_len, tuple(sorted(exclude_person_keys)))
-    cached = _FIXTURE_GHOST_CACHE.get(cache_key)
-    if cached is not None:
-        return cached
-
     findings = []
     scored_bundle = without_people(bundle, exclude_person_keys) if exclude_person_keys else bundle
     graph = communication_graph(scored_bundle)
@@ -200,9 +196,7 @@ def fixture_ghost_findings(
             else None
         )
         findings.append({**asdict(score), "removal_impact": impact})
-    result = tuple(findings)
-    _FIXTURE_GHOST_CACHE[cache_key] = result
-    return result
+    return tuple(findings)
 
 
 def fixture_what_if(
@@ -225,26 +219,27 @@ def fixture_what_if(
     )
 
 
-_CLIENT_BASELINE_MS: dict[tuple[int, int], float] = {}
-
-
 def client_ghost_baseline_ms(bundle: CanonicalBundle, *, max_len: int = 4) -> float:
     """Wall-clock ms for the in-process bounded-BFS Ghost tally over the whole bundle.
 
     Measured once per bundle on the uncached path so the API can show the engine
     round trip next to the client-side equivalent honestly.
     """
-    key = (id(bundle), max_len)
-    cached = _CLIENT_BASELINE_MS.get(key)
-    if cached is not None:
-        return cached
     graph = communication_graph(bundle)
-    person_keys = sorted(graph)
+    adjacency = tuple(
+        (node, tuple(sorted(neighbors))) for node, neighbors in sorted(graph.items())
+    )
+    return _client_ghost_baseline_cached(adjacency, max_len)
+
+
+@lru_cache(maxsize=32)
+def _client_ghost_baseline_cached(
+    adjacency: tuple[tuple[str, tuple[str, ...]], ...], max_len: int
+) -> float:
+    graph = {node: dict.fromkeys(neighbors, 1) for node, neighbors in adjacency}
     started = time.perf_counter()
-    bounded_shortest_path_tallies(graph, person_keys, max_len)
-    elapsed = (time.perf_counter() - started) * 1000
-    _CLIENT_BASELINE_MS[key] = elapsed
-    return elapsed
+    bounded_shortest_path_tallies(graph, sorted(graph), max_len)
+    return (time.perf_counter() - started) * 1000
 
 
 def live_gap_chain(
