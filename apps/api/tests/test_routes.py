@@ -5,7 +5,7 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 from xray_api import create_app
 from xray_api.app import _window_bundle
-from xray_api.config import settings_from_env
+from xray_api.config import get_settings, settings_from_env
 from xray_api.dependencies import demo_bundle
 from xray_api.hydra import communication_distances, gap_rows, graph_rows, seed_bundle
 from xray_api.lenses import live_gap_chain, live_ghost_findings
@@ -47,6 +47,20 @@ def test_settings_reads_hydradb_environment_contract() -> None:
     assert settings.hydra_user == "neo4j"
     assert settings.hydra_password == "password"
     assert settings.hydra_database == "xray"
+
+
+def test_settings_parse_deployment_safety_flags() -> None:
+    settings = settings_from_env(
+        {
+            "XRAY_READ_ONLY": "true",
+            "XRAY_ENABLE_IMPORTS": "yes",
+            "XRAY_WRITE_TOKEN": "secret",
+        }
+    )
+
+    assert settings.read_only is True
+    assert settings.imports_enabled is True
+    assert settings.write_token == "secret"
 
 
 def test_historical_window_uses_latest_observed_event_not_wall_clock() -> None:
@@ -615,3 +629,53 @@ def test_snapshot_picker_lists_bundled_corpora_and_rejects_paths(
 
     back = api.post("/api/v1/snapshots/activate", json={"name": "demo"}).json()
     assert back["snapshot_id"] == "xray-demo-v1:fixture"
+
+
+def test_snapshot_selection_is_isolated_per_app(monkeypatch) -> None:
+    monkeypatch.delenv("XRAY_SNAPSHOT_DIR", raising=False)
+    monkeypatch.setenv("XRAY_FIXTURE_VARIANT", "demo")
+    first = client()
+    second = client()
+
+    assert first.post("/api/v1/snapshots/activate", json={"name": "synth500"}).status_code == 200
+
+    assert first.get("/api/v1/snapshots/current").json()["dataset_id"] == "xray-synth-500"
+    assert second.get("/api/v1/snapshots/current").json()["dataset_id"] == "xray-demo-v1"
+
+
+def test_read_only_deployment_blocks_mutations() -> None:
+    app = create_app()
+    app.dependency_overrides[get_settings] = lambda: settings_from_env(
+        {"XRAY_READ_ONLY": "true", "XRAY_ENABLE_IMPORTS": "true"}
+    )
+    api = TestClient(app)
+
+    assert api.post("/api/v1/hydra/seed-fixture").status_code == 403
+    assert api.post("/api/v1/snapshots/activate", json={"name": "synth500"}).status_code == 403
+    assert api.post("/api/v1/snapshots/import", json={"dataset_id": "private"}).status_code == 403
+
+
+def test_import_is_opt_in_and_mutations_can_require_token() -> None:
+    app = create_app()
+    app.dependency_overrides[get_settings] = lambda: settings_from_env(
+        {"XRAY_WRITE_TOKEN": "secret"}
+    )
+    api = TestClient(app)
+
+    assert api.post("/api/v1/snapshots/activate", json={"name": "synth500"}).status_code == 401
+    assert (
+        api.post(
+            "/api/v1/snapshots/activate",
+            json={"name": "synth500"},
+            headers={"X-Xray-Write-Token": "secret"},
+        ).status_code
+        == 200
+    )
+    assert (
+        api.post(
+            "/api/v1/snapshots/import",
+            json={"dataset_id": "private"},
+            headers={"X-Xray-Write-Token": "secret"},
+        ).status_code
+        == 403
+    )

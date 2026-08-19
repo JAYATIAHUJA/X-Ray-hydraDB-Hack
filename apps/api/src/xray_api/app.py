@@ -2,13 +2,15 @@ from __future__ import annotations
 
 import json
 import os
+import secrets
 import tempfile
 from collections.abc import Mapping
-from dataclasses import asdict
+from dataclasses import asdict, dataclass
 from pathlib import Path
+from threading import RLock
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
 from xray_analytics import (
@@ -46,7 +48,15 @@ from xray_ingest.manifest import write_snapshot
 from xray_ingest.pipeline import ingest_exports
 
 from .config import XraySettings, get_settings
-from .dependencies import active_bundle, current_snapshot_id, get_gateway
+from .dependencies import (
+    FIXTURE_VARIANTS,
+    SYNTH_DATASET_ID,
+    active_bundle,
+    demo_bundle,
+    get_gateway,
+    snapshot_dir,
+    synth_bundle,
+)
 from .errors import not_found
 from .hydra import (
     HydraGapRow,
@@ -88,10 +98,65 @@ from .schemas import (
 
 SettingsDep = Annotated[XraySettings, Depends(get_settings)]
 GatewayDep = Annotated[HydraGateway | None, Depends(get_gateway)]
+WriteToken = Annotated[str | None, Header(alias="X-Xray-Write-Token")]
+
+
+@dataclass(frozen=True, slots=True)
+class _SelectedSnapshot:
+    bundle: CanonicalBundle
+    kind: str
+    name: str
+
+    @property
+    def snapshot_id(self) -> str:
+        return f"{self.bundle.dataset_id}:{self.kind}"
+
+
+class _SnapshotStore:
+    """App-local snapshot selection; requests never mutate process environment."""
+
+    def __init__(self) -> None:
+        root = snapshot_dir()
+        bundle = active_bundle()
+        self._selection = _SelectedSnapshot(
+            bundle=bundle,
+            kind="snapshot" if root is not None else "fixture",
+            name=root.name if root is not None else os.environ.get("XRAY_FIXTURE_VARIANT", "demo"),
+        )
+        self._lock = RLock()
+
+    def current(self) -> _SelectedSnapshot:
+        with self._lock:
+            return self._selection
+
+    def require(self, snapshot_id: str) -> CanonicalBundle:
+        selected = self.current()
+        if snapshot_id != selected.snapshot_id:
+            raise not_found(f"Unknown snapshot {snapshot_id!r}", code="snapshot_not_found")
+        return selected.bundle
+
+    def activate_fixture(self, name: str) -> _SelectedSnapshot:
+        bundle = synth_bundle() if FIXTURE_VARIANTS[name] == SYNTH_DATASET_ID else demo_bundle()
+        return self._set(bundle=bundle, kind="fixture", name=name)
+
+    def activate_snapshot(self, name: str, root: Path) -> _SelectedSnapshot:
+        from .dependencies import snapshot_bundle
+
+        return self._set(bundle=snapshot_bundle(str(root)), kind="snapshot", name=name)
+
+    def activate_import(self, bundle: CanonicalBundle, root: Path) -> _SelectedSnapshot:
+        return self._set(bundle=bundle, kind="snapshot", name=root.name)
+
+    def _set(self, *, bundle: CanonicalBundle, kind: str, name: str) -> _SelectedSnapshot:
+        selected = _SelectedSnapshot(bundle=bundle, kind=kind, name=name)
+        with self._lock:
+            self._selection = selected
+        return selected
 
 
 def create_app() -> FastAPI:
     app = FastAPI(title="X-Ray Evidence Platform API", version="0.1.0")
+    snapshots = _SnapshotStore()
     # Extra origins for deployed frontends, comma-separated (the demo compose/Fly setup
     # proxies /api same-origin, so it needs none of this).
     extra_origins = [
@@ -109,18 +174,22 @@ def create_app() -> FastAPI:
 
     @app.get("/api/v1/health", response_model=HealthResponse)
     def health(settings: SettingsDep) -> HealthResponse:
-        hydra = hydra_health(settings, active_bundle().dataset_id)
+        hydra = hydra_health(settings, snapshots.current().bundle.dataset_id)
         return HealthResponse(
             status="ok",
             hydra=_hydra_health_response(hydra),
+            read_only=settings.read_only,
+            imports_enabled=settings.imports_enabled and not settings.read_only,
         )
 
     @app.post("/api/v1/hydra/seed-fixture", response_model=HydraSeedResponse)
     def seed_fixture(
         settings: SettingsDep,
         gateway: GatewayDep,
+        write_token: WriteToken = None,
     ) -> HydraSeedResponse:
-        result = seed_bundle(settings, active_bundle(), gateway=gateway)
+        _require_write_access(settings, write_token)
+        result = seed_bundle(settings, snapshots.current().bundle, gateway=gateway)
         report = result.report
         return HydraSeedResponse(
             status=result.status,
@@ -142,30 +211,18 @@ def create_app() -> FastAPI:
 
     @app.get("/api/v1/snapshots/current", response_model=SnapshotResponse)
     def current_snapshot() -> SnapshotResponse:
-        bundle = active_bundle()
-        return SnapshotResponse(
-            snapshot_id=current_snapshot_id(),
-            dataset_id=bundle.dataset_id,
-            node_count=len(bundle.nodes),
-            edge_count=len(bundle.edges),
-            evidence_count=len(bundle.evidence),
-            limitations=bundle.limitations,
-        )
+        return _snapshot_response(snapshots.current())
 
     @app.get("/api/v1/snapshots/available", response_model=tuple[AvailableSnapshot, ...])
     def available_snapshots() -> tuple[AvailableSnapshot, ...]:
         """Corpora that ship with the repo or were ingested into data/snapshots."""
-        from .dependencies import FIXTURE_VARIANTS, snapshot_dir
-
-        current = snapshot_dir()
-        current_name = current.name if current is not None else None
-        variant = os.environ.get("XRAY_FIXTURE_VARIANT", "demo")
+        current = snapshots.current()
         items: list[AvailableSnapshot] = [
             AvailableSnapshot(
                 name=key,
                 kind="fixture",
                 dataset_id=dataset,
-                active=current is None and variant == key,
+                active=current.kind == "fixture" and current.name == key,
             )
             for key, dataset in FIXTURE_VARIANTS.items()
         ]
@@ -179,42 +236,40 @@ def create_app() -> FastAPI:
                     name=path.parent.name,
                     kind="snapshot",
                     dataset_id=str(manifest.get("dataset_id") or path.parent.name),
-                    active=path.parent.name == current_name,
+                    active=current.kind == "snapshot" and path.parent.name == current.name,
                 )
             )
         return tuple(items)
 
     @app.post("/api/v1/snapshots/activate", response_model=SnapshotResponse)
-    def activate_snapshot(request: ActivateSnapshotRequest) -> SnapshotResponse:
+    def activate_snapshot(
+        request: ActivateSnapshotRequest,
+        settings: SettingsDep,
+        write_token: WriteToken = None,
+    ) -> SnapshotResponse:
         """Switch the served corpus to a shipped fixture or an ingested snapshot.
 
         Only names under data/snapshots or the bundled fixture keys are accepted —
         this is a picker, not a path input.
         """
-        from .dependencies import FIXTURE_VARIANTS, snapshot_bundle
-
+        _require_write_access(settings, write_token)
         if request.name in FIXTURE_VARIANTS:
-            os.environ.pop("XRAY_SNAPSHOT_DIR", None)
-            os.environ["XRAY_FIXTURE_VARIANT"] = request.name
+            selected = snapshots.activate_fixture(request.name)
         else:
             candidate = _snapshots_root() / request.name
             if not (candidate / "manifest.json").is_file():
                 raise HTTPException(status_code=404, detail=f"unknown snapshot {request.name!r}")
-            os.environ["XRAY_SNAPSHOT_DIR"] = str(candidate.resolve())
-        snapshot_bundle.cache_clear()
-        bundle = active_bundle()
-        return SnapshotResponse(
-            snapshot_id=current_snapshot_id(),
-            dataset_id=bundle.dataset_id,
-            node_count=len(bundle.nodes),
-            edge_count=len(bundle.edges),
-            evidence_count=len(bundle.evidence),
-            limitations=bundle.limitations,
-        )
+            selected = snapshots.activate_snapshot(request.name, candidate.resolve())
+        return _snapshot_response(selected)
 
     @app.post("/api/v1/snapshots/import", response_model=SnapshotResponse)
-    def import_snapshot(request: ImportRequest) -> SnapshotResponse:
+    def import_snapshot(
+        request: ImportRequest,
+        settings: SettingsDep,
+        write_token: WriteToken = None,
+    ) -> SnapshotResponse:
         """Import browser-supplied export text and make the new snapshot active."""
+        _require_write_access(settings, write_token, import_operation=True)
         directory = tuple(CanonicalRecord.model_validate(item) for item in request.directory)
         known_directory = tuple(record for record in directory if record.kind == "directory_person")
         contracts = SequenceContractSet()
@@ -265,24 +320,12 @@ def create_app() -> FastAPI:
             )
         output_dir = Path(tempfile.mkdtemp(prefix="xray-import-snapshot-"))
         write_snapshot(bundle, output_dir)
-        os.environ["XRAY_SNAPSHOT_DIR"] = str(output_dir)
-        from .dependencies import snapshot_bundle
-
-        snapshot_bundle.cache_clear()
-        return SnapshotResponse(
-            snapshot_id=f"{bundle.dataset_id}:snapshot",
-            dataset_id=bundle.dataset_id,
-            node_count=len(bundle.nodes),
-            edge_count=len(bundle.edges),
-            evidence_count=len(bundle.evidence),
-            limitations=bundle.limitations,
-        )
+        return _snapshot_response(snapshots.activate_import(bundle, output_dir))
 
     @app.get("/api/v1/snapshots/{snapshot_id}/risk-report", response_class=PlainTextResponse)
     def risk_report(snapshot_id: str) -> str:
         """Export the current evidence-backed findings as a portable Markdown report."""
-        _require_current_snapshot(snapshot_id)
-        bundle = active_bundle()
+        bundle = snapshots.require(snapshot_id)
         ghost_findings = fixture_ghost_findings(bundle)[:1]
         faultline_findings = faultlines(bundle)[:3]
         gap_findings_list = gap_findings(bundle)[:10]
@@ -324,8 +367,7 @@ def create_app() -> FastAPI:
         gateway: GatewayDep,
         window_days: Annotated[int, Query(ge=0, le=3650)] = 0,
     ) -> GraphResponse:
-        _require_current_snapshot(snapshot_id)
-        bundle = _window_bundle(active_bundle(), window_days)
+        bundle = _window_bundle(snapshots.require(snapshot_id), window_days)
         ranked = ghost_scores(bundle)
         scores = {score.person_key: score for score in ranked}
         # Pre-select the story: the largest formal-vs-structural gap among the ten most
@@ -374,8 +416,7 @@ def create_app() -> FastAPI:
         window_days: Annotated[int, Query(ge=0, le=3650)] = 0,
     ) -> LensEnvelope:
         """Ghost lens. Pass ``?exclude=person:...`` (repeatable) for a what-if removal."""
-        _require_current_snapshot(snapshot_id)
-        bundle = _window_bundle(active_bundle(), window_days)
+        bundle = _window_bundle(snapshots.require(snapshot_id), window_days)
         excluded = _validated_person_keys(bundle, exclude or [])
         client_ms = client_ghost_baseline_ms(bundle)
         live_result = live_ghost_findings(
@@ -433,8 +474,7 @@ def create_app() -> FastAPI:
         gateway: GatewayDep,
         window_days: Annotated[int, Query(ge=0, le=3650)] = 0,
     ) -> LensEnvelope:
-        _require_current_snapshot(snapshot_id)
-        bundle = _window_bundle(active_bundle(), window_days)
+        bundle = _window_bundle(snapshots.require(snapshot_id), window_days)
         findings = faultlines(bundle)
         distance_result = communication_distances(
             settings,
@@ -489,8 +529,7 @@ def create_app() -> FastAPI:
         limit: Annotated[int, Query(ge=1, le=500)] = 100,
     ) -> LensEnvelope:
         """All Phantom findings for the snapshot (no chain); use gap-paths for one chain."""
-        _require_current_snapshot(snapshot_id)
-        bundle = active_bundle()
+        bundle = snapshots.require(snapshot_id)
         live_gaps = gap_rows(settings, bundle, gateway=gateway)
         bundle_has_phantoms = any(node.label == "Phantom" for node in bundle.nodes)
         if live_gaps is not None and not live_gaps and bundle_has_phantoms:
@@ -540,8 +579,7 @@ def create_app() -> FastAPI:
         settings: SettingsDep,
         gateway: GatewayDep,
     ) -> LensEnvelope:
-        _require_current_snapshot(snapshot_id)
-        bundle = active_bundle()
+        bundle = snapshots.require(snapshot_id)
         live_chain = live_gap_chain(
             settings,
             bundle,
@@ -608,8 +646,7 @@ def create_app() -> FastAPI:
         response_model=QuestionResponse,
     )
     def answer_question(snapshot_id: str, request: QuestionRequest) -> QuestionResponse:
-        _require_current_snapshot(snapshot_id)
-        answer = answer_ontology_question(active_bundle(), request.question)
+        answer = answer_ontology_question(snapshots.require(snapshot_id), request.question)
         return QuestionResponse(snapshot_id=snapshot_id, **asdict(answer))
 
     @app.get("/api/v1/snapshots/{snapshot_id}/asymmetries", response_model=LensEnvelope)
@@ -618,8 +655,7 @@ def create_app() -> FastAPI:
         min_replies: Annotated[int, Query(ge=1, le=1000)] = 3,
         min_ratio: Annotated[float, Query(gt=1, le=100)] = 3.0,
     ) -> LensEnvelope:
-        _require_current_snapshot(snapshot_id)
-        bundle = active_bundle()
+        bundle = snapshots.require(snapshot_id)
         findings = tuple(
             asdict(finding)
             for finding in communication_asymmetries(
@@ -646,9 +682,36 @@ def create_app() -> FastAPI:
     return app
 
 
-def _require_current_snapshot(snapshot_id: str) -> None:
-    if snapshot_id != current_snapshot_id():
-        raise not_found(f"Unknown snapshot {snapshot_id!r}", code="snapshot_not_found")
+def _snapshot_response(selected: _SelectedSnapshot) -> SnapshotResponse:
+    bundle = selected.bundle
+    return SnapshotResponse(
+        snapshot_id=selected.snapshot_id,
+        dataset_id=bundle.dataset_id,
+        node_count=len(bundle.nodes),
+        edge_count=len(bundle.edges),
+        evidence_count=len(bundle.evidence),
+        limitations=bundle.limitations,
+    )
+
+
+def _require_write_access(
+    settings: XraySettings,
+    supplied_token: str | None,
+    *,
+    import_operation: bool = False,
+) -> None:
+    if settings.read_only:
+        raise HTTPException(status_code=403, detail="This deployment is read-only.")
+    if import_operation and not settings.imports_enabled:
+        raise HTTPException(
+            status_code=403,
+            detail="Snapshot imports are disabled; set XRAY_ENABLE_IMPORTS=true locally to opt in.",
+        )
+    if settings.write_token is not None and (
+        supplied_token is None
+        or not secrets.compare_digest(supplied_token, settings.write_token)
+    ):
+        raise HTTPException(status_code=401, detail="A valid X-Xray-Write-Token is required.")
 
 
 def _write_optional_source(root: Path, name: str, content: str | None) -> Path | None:

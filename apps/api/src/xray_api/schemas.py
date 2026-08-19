@@ -20,6 +20,8 @@ class HydraHealthResponse(BaseModel):
 class HealthResponse(BaseModel):
     status: str
     hydra: HydraHealthResponse
+    read_only: bool
+    imports_enabled: bool
 
 
 class LoadReportResponse(BaseModel):

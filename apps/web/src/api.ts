@@ -9,6 +9,8 @@ export type SnapshotResponse = {
 
 export type HealthResponse = {
   status: string;
+  read_only: boolean;
+  imports_enabled: boolean;
   hydra: {
     status: "fallback" | "live" | "offline";
     configured: boolean;

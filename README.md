@@ -496,6 +496,8 @@ X-Ray reports negative results as plainly as positive ones:
 
 X-Ray is a team-coordination aid, not an employee performance or termination system. Deployments should use role-based access, short retention windows, aggregate views by default, and corpora collected with appropriate notice and authorization. Reply asymmetry and structural rank require team context; neither is a measure of individual value or intent. Evidence hashes establish record integrity, not permission to use workforce data for unrelated decisions.
 
+The hosted demo is read-only and does not accept uploads. Self-hosted browser imports are disabled by default; set `XRAY_ENABLE_IMPORTS=true` only on an API deployment you operate. Set `XRAY_READ_ONLY=true` for immutable deployments and `XRAY_WRITE_TOKEN` to require `X-Xray-Write-Token` on seed, activation, and import operations.
+
 ---
 
 ## Project structure
