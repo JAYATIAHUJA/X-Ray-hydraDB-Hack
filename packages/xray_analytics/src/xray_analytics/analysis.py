@@ -269,7 +269,7 @@ def _ghost_scores_cached(
     if len(person_keys) < EXACT_CENTRALITY_MAX_PEOPLE:
         import networkx as nx
 
-        reference = nx.Graph()
+        reference: nx.Graph[str] = nx.Graph()
         reference.add_nodes_from(person_keys)
         reference.add_edges_from(
             (source, target) for source, neighbors in graph.items() for target in neighbors
