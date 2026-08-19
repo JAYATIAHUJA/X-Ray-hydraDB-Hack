@@ -32,7 +32,6 @@ from xray_core.models import (
     EdgeRow,
     EvidenceRecord,
     NodeRow,
-    SequenceContractSet,
 )
 from xray_core.paths import normalize_pair
 from xray_hydra import HydraGateway
@@ -272,7 +271,7 @@ def create_app() -> FastAPI:
         _require_write_access(settings, write_token, import_operation=True)
         directory = tuple(CanonicalRecord.model_validate(item) for item in request.directory)
         known_directory = tuple(record for record in directory if record.kind == "directory_person")
-        contracts = SequenceContractSet()
+        contracts = request.sequence_contracts
         with tempfile.TemporaryDirectory(prefix="xray-import-input-") as input_dir:
             root = Path(input_dir)
             mbox_paths = []
@@ -326,36 +325,48 @@ def create_app() -> FastAPI:
     def risk_report(snapshot_id: str) -> str:
         """Export the current evidence-backed findings as a portable Markdown report."""
         bundle = snapshots.require(snapshot_id)
-        ghost_findings = fixture_ghost_findings(bundle)[:1]
-        faultline_findings = faultlines(bundle)[:3]
-        gap_findings_list = gap_findings(bundle)[:10]
+        ghost_findings = _with_ghost_evidence(bundle, fixture_ghost_findings(bundle)[:1])
+        faultline_findings = _with_faultline_evidence(bundle, faultlines(bundle)[:3])
+        gap_findings_list = _with_gap_evidence(bundle, gap_findings(bundle)[:10])
         lines = [
             f"# X-Ray Risk Report: {bundle.dataset_id}",
             "",
             "Structural position, not performance. Absence in the corpus does not establish deletion.",
+            f"Snapshot: `{snapshot_id}` · {len(bundle.evidence)} evidence records.",
             "",
             "## Ghost",
         ]
         if ghost_findings:
             ghost = ghost_findings[0]
-            lines.append(
-                f"- {ghost['display_name']}: structural rank #{ghost['structural_rank']}, "
-                f"formal rank #{ghost['formal_rank']}, rank gap {ghost['rank_gap']}."
+            lines.extend(
+                [
+                    f"- **{ghost['display_name']}**: structural rank #{ghost['structural_rank']}, formal rank #{ghost['formal_rank']}, rank gap {ghost['rank_gap']}.",
+                    f"  - Method: `{ghost['centrality_method']}`; communication degree {ghost['communication_degree']}.",
+                    "  - Action: review team-level handoff and backup coverage; do not interpret this rank as individual performance.",
+                    *_report_evidence_lines(ghost.get("evidence")),
+                ]
             )
         else:
             lines.append("- No Ghost finding available.")
         lines.extend(["", "## Faultlines"])
         for finding in faultline_findings:
-            lines.append(
-                f"- `{finding.source_module_key}` -> `{finding.target_module_key}`; "
-                f"owners `{finding.source_owner_key}` / `{finding.target_owner_key}`; "
-                f"tier `{finding.tier}`, severity {finding.severity:.1f}."
+            lines.extend(
+                [
+                    f"- `{finding['source_module_key']}` -> `{finding['target_module_key']}`; owners `{finding['source_owner_key']}` / `{finding['target_owner_key']}`; tier `{finding['tier']}`, severity {finding['severity']}.",
+                    f"  - Ownership evidence shares: {finding['source_owner_confidence']}% / {finding['target_owner_confidence']}%; dependency weight {finding['dependency_weight']}.",
+                    "  - Action: validate ownership with the team, then create or confirm a coordination path between module maintainers.",
+                    *_report_evidence_lines(finding.get("evidence")),
+                ]
             )
         lines.extend(["", "## Gaps"])
         for gap_finding in gap_findings_list:
-            lines.append(
-                f"- `{gap_finding.phantom_key}` ({gap_finding.expected_kind}, {gap_finding.reason}); "
-                "absence does not establish deletion."
+            lines.extend(
+                [
+                    f"- `{gap_finding['phantom_key']}` ({gap_finding['expected_kind']}, {gap_finding['reason']}); absence does not establish deletion.",
+                    f"  - Window position: `{gap_finding['window_position']}`; inferred epoch {gap_finding['inferred_epoch']}.",
+                    "  - Action: ask the record owner whether the expected step exists outside this export before treating it as a process gap.",
+                    *_report_evidence_lines(gap_finding.get("evidence")),
+                ]
             )
         lines.extend(["", "## Limitations", *[f"- {item}" for item in bundle.limitations]])
         return "\n".join(lines) + "\n"
@@ -957,6 +968,22 @@ def _evidence_summaries(
         }
         for record in records[:limit]
     )
+
+
+def _report_evidence_lines(records: object) -> list[str]:
+    if not isinstance(records, (list, tuple)) or not records:
+        return ["  - Evidence: none attached; treat this finding as unsupported."]
+    lines = []
+    for record in records:
+        if not isinstance(record, dict):
+            continue
+        evidence_id = str(record.get("evidence_id", "unknown"))
+        content_sha256 = str(record.get("content_sha256", "unknown"))
+        confidence = record.get("confidence", "unknown")
+        lines.append(
+            f"  - Evidence: `{evidence_id}` · SHA-256 `{content_sha256}` · record confidence {confidence}%."
+        )
+    return lines or ["  - Evidence: none attached; treat this finding as unsupported."]
 
 
 def _hydra_health_response(hydra: HydraHealth) -> HydraHealthResponse:

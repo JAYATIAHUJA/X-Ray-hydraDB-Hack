@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -9,6 +10,7 @@ from xray_api.config import get_settings, settings_from_env
 from xray_api.dependencies import demo_bundle
 from xray_api.hydra import communication_distances, gap_rows, graph_rows, seed_bundle
 from xray_api.lenses import live_gap_chain, live_ghost_findings
+from xray_api.schemas import ImportRequest
 from xray_core.models import CanonicalBundle, LoadReport, SnapshotManifest, WriteBatchSpec
 from xray_hydra import HydraGateway
 
@@ -24,6 +26,8 @@ def test_health_and_current_snapshot() -> None:
     assert health["status"] == "ok"
     assert health["hydra"]["status"] == "fallback"
     assert health["hydra"]["configured"] is False
+    assert health["read_only"] is False
+    assert health["imports_enabled"] is False
     snapshot = api.get("/api/v1/snapshots/current").json()
 
     assert snapshot["snapshot_id"] == "xray-demo-v1:fixture"
@@ -94,6 +98,35 @@ def test_historical_window_uses_latest_observed_event_not_wall_clock() -> None:
 
     assert [edge.canonical_key for edge in retained] == [communication_edges[1].canonical_key]
     assert any("latest observed communication" in item for item in windowed.limitations)
+
+
+def test_import_request_accepts_explicit_sequence_contracts() -> None:
+    manifest = json.loads(
+        Path("data/fixtures/xray-demo/manifest.json").read_text(encoding="utf-8")
+    )
+    request = ImportRequest.model_validate(
+        {
+            "dataset_id": "contracted-import",
+            "sequence_contracts": {
+                "contracts": manifest["sequence_contracts"],
+                "limitations": manifest["limitations"],
+            },
+        }
+    )
+
+    assert len(request.sequence_contracts.contracts) == len(manifest["sequence_contracts"])
+
+
+def test_risk_report_carries_method_evidence_hashes_and_actions() -> None:
+    api = client()
+    snapshot_id = api.get("/api/v1/snapshots/current").json()["snapshot_id"]
+
+    report = api.get(f"/api/v1/snapshots/{snapshot_id}/risk-report").text
+
+    assert "Method:" in report
+    assert "Evidence: `evidence:" in report
+    assert "SHA-256 `" in report
+    assert "Action:" in report
 
 
 def test_seed_fixture_endpoint_skips_without_hydradb_config() -> None:

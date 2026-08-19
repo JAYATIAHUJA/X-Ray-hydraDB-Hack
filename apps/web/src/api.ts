@@ -185,6 +185,7 @@ export type ImportPayload = {
   message_modules: Record<string, string[]>;
   confluence_xml?: string;
   github_csv?: string;
+  sequence_contracts: Record<string, unknown>;
 };
 
 export const DEFAULT_GAP_REQUEST: GapPathRequest = {
@@ -203,7 +204,9 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
     ...init
   });
   if (!response.ok) {
-    throw new Error(`API request failed: ${response.status}`);
+    const problem = await response.json().catch(() => null) as { detail?: string | { detail?: string } } | null;
+    const detail = typeof problem?.detail === "string" ? problem.detail : problem?.detail?.detail;
+    throw new Error(detail ?? `API request failed: ${response.status}`);
   }
   return response.json() as Promise<T>;
 }

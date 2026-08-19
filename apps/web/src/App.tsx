@@ -35,6 +35,7 @@ export function App() {
   const [reportStatus, setReportStatus] = useState<string | null>(null);
   const [question, setQuestion] = useState("Who owns payments-api?");
   const [questionAnswer, setQuestionAnswer] = useState<QuestionResponse | null>(null);
+  const [questionError, setQuestionError] = useState<string | null>(null);
   const [questionPending, setQuestionPending] = useState(false);
 
   const { faultlines, gapPath, gaps, ghosts, graph, health, snapshot } = useXraySnapshot(gapRequest, excluded, 0);
@@ -157,8 +158,12 @@ export function App() {
     event.preventDefault();
     if (snapshot.data === undefined || question.trim().length < 3) return;
     setQuestionPending(true);
+    setQuestionError(null);
     try {
       setQuestionAnswer(await askQuestion(snapshot.data.snapshot_id, question));
+    } catch (error) {
+      setQuestionAnswer(null);
+      setQuestionError(error instanceof Error ? error.message : "Question failed");
     } finally {
       setQuestionPending(false);
     }
@@ -250,7 +255,9 @@ export function App() {
               <input id="ontology-question" onChange={(event) => setQuestion(event.target.value)} value={question} />
               <button disabled={questionPending} type="submit">{questionPending ? "…" : "Ask"}</button>
             </div>
-            {questionAnswer ? (
+            {questionError ? (
+              <p data-status="error">{questionError}</p>
+            ) : questionAnswer ? (
               <p data-status={questionAnswer.status}>
                 {questionAnswer.answer}
                 {questionAnswer.evidence_ids.length > 0 ? <small>{questionAnswer.evidence_ids.length} evidence record(s)</small> : null}
@@ -514,7 +521,8 @@ function ImportScreen({ onDone }: { onDone: () => void }) {
         channel_modules: (await readJson(files.channels, {})) as Record<string, string[]>,
         message_modules: (await readJson(files.messages, {})) as Record<string, string[]>,
         confluence_xml: await readText(files.confluence),
-        github_csv: await readText(files.github)
+        github_csv: await readText(files.github),
+        sequence_contracts: (await readJson(files.contracts, { contracts: [], limitations: [] })) as Record<string, unknown>
       };
       const snap = await importSnapshot(payload);
       setStatus(`Imported ${snap.node_count.toLocaleString()} nodes and ${snap.edge_count.toLocaleString()} edges. Opening dashboard…`);
@@ -574,7 +582,7 @@ function ImportScreen({ onDone }: { onDone: () => void }) {
         ) : null}
         <span className="eyeline">Or load your own exports</span>
         <h2 className="import-h2">Build a snapshot from what you already have.</h2>
-        <p className="import-lede">Everything runs locally. Only <b>Directory</b> is required — add whatever else you have; the more sources, the sharper the graph.</p>
+        <p className="import-lede">Exports are processed by this self-hosted API deployment. Only <b>Directory</b> is required; explicit mappings and contracts improve the graph.</p>
 
         <div className="import-groups">
           <fieldset>
@@ -600,6 +608,7 @@ function ImportScreen({ onDone }: { onDone: () => void }) {
             <FileField label="Module prefixes · .json" accept=".json" onPick={pick("modules")} />
             <FileField label="Channel → modules · .json" accept=".json" onPick={pick("channels")} />
             <FileField label="Message → modules · .json" accept=".json" onPick={pick("messages")} />
+            <FileField label="Sequence contracts · .json" accept=".json" onPick={pick("contracts")} />
           </fieldset>
         </div>
 
