@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import os
 import tempfile
-import time
 from collections.abc import Mapping
 from dataclasses import asdict
 from pathlib import Path
@@ -663,7 +662,27 @@ def _write_optional_source(root: Path, name: str, content: str | None) -> Path |
 def _window_bundle(bundle: CanonicalBundle, window_days: int) -> CanonicalBundle:
     if window_days <= 0:
         return bundle
-    cutoff = int(time.time()) - (window_days * 86400)
+    observed_epochs = tuple(
+        int(edge.properties["last_epoch"])
+        for edge in bundle.edges
+        if edge.rel_type == "COMMUNICATES"
+        and type(edge.properties.get("last_epoch")) is int
+    )
+    if not observed_epochs:
+        return bundle.model_copy(
+            update={
+                "limitations": tuple(
+                    sorted(
+                        {
+                            *bundle.limitations,
+                            f"The {window_days}-day communication window was not applied because no communication timestamps are available.",
+                        }
+                    )
+                )
+            }
+        )
+    reference_epoch = max(observed_epochs)
+    cutoff = reference_epoch - (window_days * 86400)
     edges = tuple(
         edge
         for edge in bundle.edges
@@ -680,7 +699,7 @@ def _window_bundle(bundle: CanonicalBundle, window_days: int) -> CanonicalBundle
                 sorted(
                     {
                         *bundle.limitations,
-                        f"Communication edges are filtered to the last {window_days} days.",
+                        f"Communication edges are filtered to the last {window_days} days ending at the latest observed communication ({reference_epoch}).",
                     }
                 )
             ),
