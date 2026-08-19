@@ -101,9 +101,7 @@ def test_historical_window_uses_latest_observed_event_not_wall_clock() -> None:
 
 
 def test_import_request_accepts_explicit_sequence_contracts() -> None:
-    manifest = json.loads(
-        Path("data/fixtures/xray-demo/manifest.json").read_text(encoding="utf-8")
-    )
+    manifest = json.loads(Path("data/fixtures/xray-demo/manifest.json").read_text(encoding="utf-8"))
     request = ImportRequest.model_validate(
         {
             "dataset_id": "contracted-import",

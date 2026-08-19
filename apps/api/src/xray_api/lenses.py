@@ -123,9 +123,7 @@ def live_ghost_findings(
     )
 
 
-def _evenly_spaced_people(
-    people: tuple[NodeRow, ...], sample_size: int
-) -> tuple[NodeRow, ...]:
+def _evenly_spaced_people(people: tuple[NodeRow, ...], sample_size: int) -> tuple[NodeRow, ...]:
     """Select deterministic endpoints across the full canonical ordering."""
     limit = min(len(people), sample_size)
     if limit <= 0:
@@ -185,9 +183,7 @@ def client_ghost_baseline_ms(bundle: CanonicalBundle, *, max_len: int = 4) -> fl
     round trip next to the client-side equivalent honestly.
     """
     graph = communication_graph(bundle)
-    adjacency = tuple(
-        (node, tuple(sorted(neighbors))) for node, neighbors in sorted(graph.items())
-    )
+    adjacency = tuple((node, tuple(sorted(neighbors))) for node, neighbors in sorted(graph.items()))
     return _client_ghost_baseline_cached(adjacency, max_len)
 
 

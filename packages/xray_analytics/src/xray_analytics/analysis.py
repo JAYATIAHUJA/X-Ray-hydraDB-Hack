@@ -147,9 +147,7 @@ def _bundle_graph_snapshot(bundle: CanonicalBundle) -> _GraphSnapshot:
             return cached[1]
 
     nodes = _nodes_by_id(bundle)
-    graph: CommunicationGraph = {
-        person.canonical_key: {} for person in _person_nodes(bundle)
-    }
+    graph: CommunicationGraph = {person.canonical_key: {} for person in _person_nodes(bundle)}
     for edge in bundle.edges:
         if edge.rel_type != "COMMUNICATES":
             continue
@@ -197,9 +195,7 @@ def communication_graph(bundle: CanonicalBundle) -> CommunicationGraph:
 
 def directed_communication_graph(bundle: CanonicalBundle) -> CommunicationGraph:
     """Preserve observed sender/replier direction for directional analysis."""
-    graph: CommunicationGraph = {
-        person.canonical_key: {} for person in _person_nodes(bundle)
-    }
+    graph: CommunicationGraph = {person.canonical_key: {} for person in _person_nodes(bundle)}
     nodes = _nodes_by_id(bundle)
     for edge in bundle.edges:
         if edge.rel_type != "COMMUNICATES":
@@ -608,9 +604,7 @@ def _cached_reachability(
     adjacency: GraphAdjacency, max_len: int
 ) -> tuple[tuple[str, frozenset[str]], ...]:
     graph = _graph_from_adjacency(adjacency)
-    return tuple(
-        (source, frozenset(_reachable_within(graph, source, max_len))) for source in graph
-    )
+    return tuple((source, frozenset(_reachable_within(graph, source, max_len))) for source in graph)
 
 
 def _reachable_within(

@@ -58,9 +58,7 @@ def test_directed_projection_preserves_sender_recipient_asymmetry() -> None:
     directional = bundle.model_copy(
         update={
             "edges": tuple(
-                edge.model_copy(
-                    update={"properties": {**edge.properties, "reply_weight": 4}}
-                )
+                edge.model_copy(update={"properties": {**edge.properties, "reply_weight": 4}})
                 if edge.id == communication.id
                 else edge
                 for edge in bundle.edges

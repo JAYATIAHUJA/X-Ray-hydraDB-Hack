@@ -18,9 +18,7 @@ def test_eval_max_len_emits_auditable_snapshot_results(tmp_path: Path) -> None:
         for name in ("directory.json", "events.json", "git_facts.json")
         for item in json.loads((FIXTURE_ROOT / name).read_text(encoding="utf-8"))
     )
-    fixture_manifest = json.loads(
-        (FIXTURE_ROOT / "manifest.json").read_text(encoding="utf-8")
-    )
+    fixture_manifest = json.loads((FIXTURE_ROOT / "manifest.json").read_text(encoding="utf-8"))
     contracts = SequenceContractSet.model_validate(
         {
             "contracts": fixture_manifest["sequence_contracts"],
