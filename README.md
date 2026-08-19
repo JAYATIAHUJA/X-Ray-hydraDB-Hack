@@ -33,6 +33,27 @@ The query surface answers ownership, authorship, and review questions over typed
 
 ---
 
+## Why this problem is real
+
+X-Ray does not treat every organizational-network signal as proof of risk. It starts from a narrower, well-supported premise: ownership, communication, and dependency structure can diverge, and that divergence is worth making inspectable.
+
+| Evidence | What it establishes — and what it does not |
+|---|---|
+| A study of 133 popular GitHub projects estimated that **65% had a truck factor of two or less**; surveyed maintainers gave partial or full support to the identified key authors in 84% of valid responses. ([Avelino et al.](https://arxiv.org/abs/1604.06766)) | Knowledge concentration is measurable. It does not mean centrality alone predicts project failure. |
+| The 2024 XZ Utils backdoor used a long-running maintainer-access path; OpenSSF and OpenJS subsequently warned projects about similar social-engineering takeover attempts. ([OpenSSF incident note](https://openssf.org/blog/2024/03/30/xz-backdoor-cve-2024-3094/) · [joint alert](https://openssf.org/blog/2024/04/15/open-source-security-openssf-and-openjs-foundations-issue-alert-for-social-engineering-takeovers-of-open-source-projects/)) | Maintainer access and succession are supply-chain concerns. X-Ray is not a security scanner. |
+| Unpublishing `left-pad` disrupted thousands of projects and produced hundreds of failures per minute until npm restored the package. ([npm incident report](https://blog.npmjs.org/post/141577284765/kik-left-pad-and-npm)) | Small components can be load-bearing far beyond their size. |
+| Heartbleed affected widely deployed OpenSSL versions from 2012 until the 2014 fix and could expose keys, credentials, and protected content. ([Heartbleed disclosure](https://www.heartbleed.com/)) | Critical shared infrastructure needs visible stewardship; this incident alone does not prove an org-network cause. |
+| The US Cyber Safety Review Board described Log4j as an endemic vulnerability and noted that volunteer-based open-source security needs sustained support and expertise. ([CSRB report](https://www.cisa.gov/sites/default/files/2023-02/CSRB-Report-on-Log4j-PublicReport-July-11-2022-508-Compliant.pdf)) | Maintenance capacity is an operational dependency, not merely a repository statistic. |
+| In one organizational-network case, the top two leadership layers represented only one-third of measured influence ties; leaders identified the actual network influencers less than half the time. ([Rob Cross](https://www.robcross.org/surprising-ways-organizational-network-analysis-enables-cultural-change/)) | Formal hierarchy can miss informal influence. This result is a case, not a universal constant. |
+| A study of 61,182 Microsoft employees found firm-wide remote work made collaboration networks more static and siloed, with fewer bridges across groups. ([Nature Human Behaviour](https://www.nature.com/articles/s41562-021-01196-4)) | Communication topology changes with work mode, so a static org chart is incomplete. |
+| Socio-technical congruence research asks whether technical dependencies are matched by coordination. Earlier work reported associations, while a later 25-project longitudinal study found no relationship with bugs or churn. ([Cataldo et al.](https://doi.org/10.1145/1414004.1414008) · [Mauerer et al.](https://arxiv.org/abs/2105.08198)) | Faultlines are coordination debt to review, **not predicted defects**. |
+| Backstage's CNCF-incubating Software Catalog models service owners and dependencies, demonstrating durable demand for discoverable ownership metadata. ([CNCF](https://www.cncf.io/projects/backstage/) · [Backstage](https://github.com/backstage/backstage)) | Catalogs answer declared ownership; X-Ray tests observed coordination around it. The products are adjacent, not interchangeable. |
+| The Inverse Conway Maneuver is an established practice for aligning team boundaries with system design to reduce handoffs and coupling. ([Thoughtworks](https://www.thoughtworks.com/en-us/insights/blog/customer-experience/inverse-conway-maneuver-product-development-teams)) | Organizational structure and architecture are deliberately managed together; X-Ray provides evidence for that discussion, not an automatic reorganization plan. |
+
+The incidents motivate the problem but do not validate X-Ray's rankings. Product claims below therefore come from reproducible corpora, negative controls, oracle comparisons, sensitivity checks, and explicit null results.
+
+---
+
 ## Three lenses. One question each.
 
 ```
