@@ -147,6 +147,7 @@ def main() -> int:
                     "rank_gap": s.rank_gap,
                     "sampled_centrality": round(s.sampled_centrality, 4),
                     "communication_degree": s.communication_degree,
+                    "centrality_method": s.centrality_method,
                 }
                 for s in scores[: args.top]
             ],
@@ -162,6 +163,7 @@ def main() -> int:
                 "reachable_pairs_before": before,
                 "reachable_pairs_after": after,
                 "pairs_lost": before - after,
+                "pairs_lost_percent": round(((before - after) / max(1, before)) * 100, 3),
             },
         },
         "faultline": {

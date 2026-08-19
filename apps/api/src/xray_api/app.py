@@ -16,6 +16,8 @@ from xray_analytics import (
     FaultlineFinding,
     GapFinding,
     GhostScore,
+    answer_ontology_question,
+    communication_asymmetries,
     faultline_tier,
     faultlines,
     gap_findings,
@@ -79,6 +81,8 @@ from .schemas import (
     ImportRequest,
     LensEnvelope,
     LoadReportResponse,
+    QuestionRequest,
+    QuestionResponse,
     SnapshotResponse,
     WhatIfSummary,
 )
@@ -598,6 +602,46 @@ def create_app() -> FastAPI:
             source="hydradb" if live_chain is not None or live_gaps is not None else "fixture",
             degraded_reason=None if live_chain is None else live_chain.error,
             executed_query=None if live_chain is None else asdict(live_chain.executed_query),
+        )
+
+    @app.post(
+        "/api/v1/snapshots/{snapshot_id}/questions",
+        response_model=QuestionResponse,
+    )
+    def answer_question(snapshot_id: str, request: QuestionRequest) -> QuestionResponse:
+        _require_current_snapshot(snapshot_id)
+        answer = answer_ontology_question(active_bundle(), request.question)
+        return QuestionResponse(snapshot_id=snapshot_id, **asdict(answer))
+
+    @app.get("/api/v1/snapshots/{snapshot_id}/asymmetries", response_model=LensEnvelope)
+    def asymmetries(
+        snapshot_id: str,
+        min_replies: Annotated[int, Query(ge=1, le=1000)] = 3,
+        min_ratio: Annotated[float, Query(gt=1, le=100)] = 3.0,
+    ) -> LensEnvelope:
+        _require_current_snapshot(snapshot_id)
+        bundle = active_bundle()
+        findings = tuple(
+            asdict(finding)
+            for finding in communication_asymmetries(
+                bundle, min_replies=min_replies, min_ratio=min_ratio
+            )
+        )
+        return _lens_envelope(
+            snapshot_id=snapshot_id,
+            limitations=tuple(
+                sorted(
+                    {
+                        *bundle.limitations,
+                        "Reply asymmetry is a team-level coordination prompt, not an employee performance score.",
+                    }
+                )
+            ),
+            findings=findings,
+            explanation=(
+                "Directed reply flow is preserved. Findings mark strong send/receive imbalance "
+                "and require team context before interpretation."
+            ),
         )
 
     return app

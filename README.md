@@ -2,8 +2,8 @@
 
 # X-Ray Evidence Platform
 
-**The org chart says who reports to whom.**  
-**X-Ray shows who actually keeps the work moving — and where the record trail goes silent.**
+**Ask who owns, authored, or reviewed work — then inspect coordination structure around the answer.**<br>
+**X-Ray pairs typed ontology traversal with structural/formal rank and evidence-backed what-if analysis.**
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.13-blue.svg)](https://python.org)
@@ -27,7 +27,7 @@ X-Ray reads your engineering organization's offline exports — Slack, email, JI
 - **The human graph** — who replies to whom, across every channel
 - **The work graph** — which modules depend on which, from git co-changes and tickets
 
-Then it finds the **missing edges between them**: a technical dependency with no conversation path between its owners, an expected evidence step that has no corresponding record, and the people every coordination path quietly routes through.
+The query surface answers ownership, authorship, and review questions over typed edges with evidence IDs. The analysis surface then compares structural rank with formal rank, tests bounded removal impact, and finds missing coordination or record edges. Betweenness itself is standard; the product is the pairing and traceability.
 
 > **A vector database retrieves similar text. X-Ray asks: is there a communication path of length ≤ 4 between the owners of two co-changing modules?** That question requires typed graph traversal — HydraDB's `algo.MSpaths` — not similarity search.
 
@@ -68,12 +68,12 @@ HERB ships explicit employee ids, a role hierarchy, Slack with `@eid` mentions, 
 | **Analysed graph** | **5,126 people · 5,615 COMMUNICATES edges** (from 4,609 review replies + explicit `@eid` mentions). Full graph incl. artifacts: 46,073 nodes / 92,148 edges |
 | **Ghost #1** | Emma Jones, *Software Engineer* — structural rank **#1**, formal rank **#282** (+281) |
 | **Ghost top-10** | 4 of 10 are ICs (role 1); largest gap in top-10: Ian Miller, structural #10 vs formal **#461** |
-| **Bus-factor impact** | Remove Ghost #1 → 75 of 23,870 reachable pairs lose their ≤4-hop path |
+| **Bounded removal impact** | Remove structural #1 → 75 of 23,870 reachable pairs lose their ≤4-hop path (**0.314%**); reported as a small effect, not a bus-factor claim |
 | **Identity robustness** | Drop all 4,596 unresolved handles and re-rank the 530 named employees: **top-10 overlap 1.0, same #1**. The ranking is not an artefact of anonymous ids padding the graph |
 | **Faultlines** | **0 — a null result, reported as such.** HERB PRs are single-product; no cross-product co-change exists in the corpus, so no `DEPENDS_ON` edge is derived and none is invented |
 | **Phantom gaps** | 0 — every review reply resolves to its PR artifact; HERB Slack has no thread metadata, so no dangling parents are claimed |
 | **Identity** | 530 employees resolve by `eid`; 4,596 PR logins (`EMP_…`) have no HERB mapping and stay **visibly unresolved** (a stated limitation, not a merge) |
-| **Engine leverage** | 1 `algo.MSpaths` call replaces **13,135,375** per-pair queries (client BFS baseline: 17.7 s) |
+| **Execution** | HydraDB runs one bounded multi-source path operation; the checked-in client timing is a same-question Python baseline, not a claim that production clients issue millions of network requests |
 
 Two "Emma Jones" and two "Ian Miller" appear in the top-10 — HERB deliberately reuses names. X-Ray keeps them separate because identity is the explicit `eid`, not the display name; that is the entity-resolution trap the track description warns about, handled by design.
 
@@ -85,11 +85,11 @@ Reproduce: `uv run python scripts/build_herb_corpus.py --all --out data/snapshot
 |---|---|
 | **Ghost #1** | Chia-Ping Tsai (PMC) — structural rank #1, formal rank #4 |
 | **Largest rank gap** | PoAn Yang, committer — structural #5 vs formal #34 **(+29)** |
-| **Bus-factor impact** | Remove Ghost #1 → 516 of 6,295 reachable pairs lose their ≤4-hop path |
+| **Bounded removal impact** | Remove structural #1 → 516 of 6,295 reachable pairs lose their ≤4-hop path (**8.197%**) |
 | **Faultlines found** | 49 — top: `clients ↔ connect`, co-changed 9×, no reply path between owners |
 | **Phantom gaps** | 135 dangling thread parents — **53 inside the export window** (reply ≥30 days in, parent still absent from the corpus) · 82 at the export boundary (parent most likely predates the export; reported, not counted as a finding) |
 | **Identity robustness** | Drop the 12 unresolved handles → top-10 overlap 0.9, same #1 |
-| **Engine leverage** | 1 `algo.MSpaths` call replaces **42,486** per-pair queries |
+| **Execution** | One HydraDB multi-source path operation; compare engine and local timings in `docs/results/latency.json` |
 
 ### Synthetic 500-person org — ground truth evaluation
 
@@ -99,7 +99,7 @@ Reproduce: `uv run python scripts/build_herb_corpus.py --all --out data/snapshot
 | Gap precision / recall | **1.000 / 1.000** (5 planted, 5 found) |
 | Ghost top-10 overlap vs exact betweenness | **0.933** |
 | What-if: remove the planted Ghost | 110,883 of 124,251 pairs lose their ≤4-hop path |
-| Engine leverage | 1 call replaces **124,750** per-pair queries |
+| Execution | One bounded multi-source path operation, with a local reference implementation used for validation |
 
 Sources: [docs/results/herb-2026.json](docs/results/herb-2026.json) · [docs/results/kafka-2025q2.json](docs/results/kafka-2025q2.json) · [docs/results/synth500.json](docs/results/synth500.json)
 
@@ -271,7 +271,7 @@ All adapters: **explicit IDs only** — no NLP, no guessing module assignments f
 
 | Operation | HydraDB query | What it replaces |
 |---|---|---|
-| Ghost scoring | one pairwise `algo.MSpaths` over `COMMUNICATES` | a client-side all-pairs bounded BFS (42,486 pairs on Kafka, 13.1M on HERB — 17.7 s in Python). Any graph engine collapses this to one call; the point is that X-Ray *does* keep traversal in the engine and shows the executed statement per lens |
+| Structural scoring | one pairwise `algo.MSpaths` over the explicitly undirected coordination projection | the same bounded-path calculation in the local reference implementation; both timings are reported on the same machine when benchmarked |
 | Faultline reachability | one bounded `algo.MSpaths` per candidate pair | unbounded client traversal loop |
 | Gap chain | `algo.SPpaths` over `PRECEDED_BY` | multi-hop manual BFS |
 | Graph load | `UNWIND` batch writes · 500 edges/batch | row-by-row inserts |
@@ -323,17 +323,17 @@ scripts\setup.ps1
 
 Starts HydraDB + MinIO (Docker), syncs Python deps, seeds fixture, starts API + web UI. Expected result: browser opens, header shows **HydraDB: live**.
 
-### Development mode
+### Development mode (macOS/Linux)
 
-```powershell
+```bash
 # Terminal 1 — API
 uv sync
-$env:PYTHONPATH = "apps/api/src;packages/xray_analytics/src;packages/xray_core/src;packages/xray_hydra/src;packages/xray_ingest/src;packages/xray_runtime/src"
+export PYTHONPATH="apps/api/src:packages/xray_analytics/src:packages/xray_core/src:packages/xray_hydra/src:packages/xray_ingest/src:packages/xray_runtime/src"
 uv run uvicorn xray_api.app:app --reload
 
 # Terminal 2 — Web
 npm install
-$env:VITE_XRAY_API_BASE_URL = "http://127.0.0.1:8000"
+export VITE_XRAY_API_BASE_URL="http://127.0.0.1:8000"
 npm run dev
 ```
 
@@ -393,9 +393,9 @@ uv run uvicorn xray_api.app:app --reload
 
 ---
 
-## Ingest throughput
+## Local ingest measurement
 
-Measured on local HydraDB + MinIO, 16 Aug 2026. Node setup excluded from timing.
+Measured on one local HydraDB + MinIO setup, 16 Aug 2026. Node setup excluded from timing. This is capacity-planning data for this loader, not a cross-database benchmark; no Neo4j performance claim is made.
 
 ```powershell
 uv run python scripts/bench_ingest.py --edges 10000 --people 500
@@ -484,13 +484,17 @@ uv run pytest tests/contract/test_oracle.py -v
 
 X-Ray reports negative results as plainly as positive ones:
 
-- **Ghost is sampled betweenness, and betweenness is not new** (Freeman 1977). What is new here is the *pairing*: structural rank against formal rank from the same corpus, a what-if removal, and evidence per row — shipped as open source, which no comparable OSS project does. We do not claim the metric is novel.
+- **Betweenness is not new** (Freeman 1977). Corpora below 2,000 people use exact NetworkX betweenness; larger corpora disclose bounded Brandes or HydraDB MSpaths as the calculation method. The contribution is structural rank × formal rank × what-if removal × evidence, not the metric.
 - A **Faultline** is coordination debt, not a predicted incident. The socio-technical-congruence literature is contested (Cataldo 2009 for; Mauerer 2021 against), so no causal claim is made — and on HERB the lens returns **0**, because the corpus has no cross-module signal. It says so instead of padding.
 - A **Phantom** (Gap) marks structural incompleteness, never automatic evidence of deletion. Each one is labelled `in_window` (parent should be in this export and is not) or `export_boundary` (reply falls in the first 30 days; parent probably predates the export). Only the former is worth a question; both are reported.
 - **Identity resolution is deliberately conservative**: explicit ids only. On HERB, 4,596 PR logins have no employee mapping and stay visibly unresolved; the Ghost top-10 is unchanged when they are removed. Unresolved counts and names are surfaced in every response, never merged by guesswork.
 - Measured corpora are one labelled synthetic org and one public open-source project. Neither is a claim about a private company.
 - Live OAuth connectors are intentionally out of scope. Export adapters are the supported ingest path.
-- `maxLen=4` is a product choice, not a universal organization-science claim.
+- `maxLen=4` remains the live HydraDB product bound. Run `uv run python scripts/eval_max_len.py --snapshot PATH --json docs/results/maxlen.json` to disclose top-k stability over bounds 2–6 on any real snapshot.
+
+### Privacy and appropriate use
+
+X-Ray is a team-coordination aid, not an employee performance or termination system. Deployments should use role-based access, short retention windows, aggregate views by default, and corpora collected with appropriate notice and authorization. Reply asymmetry and structural rank require team context; neither is a measure of individual value or intent. Evidence hashes establish record integrity, not permission to use workforce data for unrelated decisions.
 
 ---
 

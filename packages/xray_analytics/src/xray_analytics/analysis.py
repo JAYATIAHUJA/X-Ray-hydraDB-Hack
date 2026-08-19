@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from collections import defaultdict, deque
 from dataclasses import dataclass
+from functools import lru_cache
+from threading import RLock
+from weakref import ReferenceType, ref
 
 from xray_core.models import CanonicalBundle, EdgeRow, NodeRow
 
@@ -16,6 +19,7 @@ class GhostScore:
     rank_gap: int
     sampled_centrality: float
     communication_degree: int
+    centrality_method: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -24,6 +28,16 @@ class BusFactorImpact:
     reachable_pairs_before: int
     pairs_lost_without_person: int
     max_len: int
+
+
+@dataclass(frozen=True, slots=True)
+class CommunicationAsymmetry:
+    person_key: str
+    display_name: str
+    replies_sent: int
+    replies_received: int
+    imbalance_ratio: float
+    direction: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -88,6 +102,7 @@ TIER_WEAK = "weak_coordination"
 TIER_COORDINATED = "coordinated"
 WEAK_DISTANCE = 3
 TIER_RISK = {TIER_NO_PATH: 1.0, TIER_WEAK: 0.5, TIER_COORDINATED: 0.0}
+EXACT_CENTRALITY_MAX_PEOPLE = 2_000
 
 
 def faultline_tier(distance: int | None) -> tuple[str, float]:
@@ -109,11 +124,62 @@ def formal_ranks(people: tuple[NodeRow, ...]) -> dict[str, int]:
     return {node.canonical_key: index for index, node in enumerate(ordered, start=1)}
 
 
-_REACHABLE_WITHIN_CACHE: dict[tuple[int, str, int], frozenset[str]] = {}
-_GHOST_SCORE_CACHE: dict[tuple[int, int], tuple[GhostScore, ...]] = {}
+type GraphAdjacency = tuple[tuple[str, tuple[tuple[str, int], ...]], ...]
+type PersonInputs = tuple[tuple[str, str, int], ...]
+
+
+@dataclass(frozen=True, slots=True)
+class _GraphSnapshot:
+    people: PersonInputs
+    adjacency: GraphAdjacency
+
+
+_BUNDLE_SNAPSHOT_LOCK = RLock()
+_BUNDLE_SNAPSHOTS: dict[int, tuple[ReferenceType[CanonicalBundle], _GraphSnapshot]] = {}
+
+
+def _bundle_graph_snapshot(bundle: CanonicalBundle) -> _GraphSnapshot:
+    """Memoize immutable graph inputs without retaining bundles or trusting recycled ids."""
+    bundle_id = id(bundle)
+    with _BUNDLE_SNAPSHOT_LOCK:
+        cached = _BUNDLE_SNAPSHOTS.get(bundle_id)
+        if cached is not None and cached[0]() is bundle:
+            return cached[1]
+
+    nodes = _nodes_by_id(bundle)
+    graph: CommunicationGraph = {
+        person.canonical_key: {} for person in _person_nodes(bundle)
+    }
+    for edge in bundle.edges:
+        if edge.rel_type != "COMMUNICATES":
+            continue
+        source = nodes[edge.source_id].canonical_key
+        target = nodes[edge.target_id].canonical_key
+        weight = _int_property(edge, "weight", 1)
+        graph[source][target] = weight
+        graph[target][source] = weight
+    snapshot = _GraphSnapshot(
+        people=tuple(
+            (person.canonical_key, display_name(person), role_rank(person))
+            for person in _person_nodes(bundle)
+        ),
+        adjacency=_graph_adjacency(graph),
+    )
+
+    def discard(reference: ReferenceType[CanonicalBundle]) -> None:
+        with _BUNDLE_SNAPSHOT_LOCK:
+            current = _BUNDLE_SNAPSHOTS.get(bundle_id)
+            if current is not None and current[0] is reference:
+                _BUNDLE_SNAPSHOTS.pop(bundle_id, None)
+
+    reference = ref(bundle, discard)
+    with _BUNDLE_SNAPSHOT_LOCK:
+        _BUNDLE_SNAPSHOTS[bundle_id] = (reference, snapshot)
+    return snapshot
 
 
 def communication_graph(bundle: CanonicalBundle) -> CommunicationGraph:
+    """Return the explicitly undirected coordination projection used by path lenses."""
     graph: CommunicationGraph = {}
     nodes = _nodes_by_id(bundle)
     for person in _person_nodes(bundle):
@@ -129,41 +195,112 @@ def communication_graph(bundle: CanonicalBundle) -> CommunicationGraph:
     return graph
 
 
+def directed_communication_graph(bundle: CanonicalBundle) -> CommunicationGraph:
+    """Preserve observed sender/replier direction for directional analysis."""
+    graph: CommunicationGraph = {
+        person.canonical_key: {} for person in _person_nodes(bundle)
+    }
+    nodes = _nodes_by_id(bundle)
+    for edge in bundle.edges:
+        if edge.rel_type != "COMMUNICATES":
+            continue
+        source = nodes[edge.source_id].canonical_key
+        target = nodes[edge.target_id].canonical_key
+        graph[source][target] = _int_property(edge, "weight", 1)
+    return graph
+
+
+def communication_asymmetries(
+    bundle: CanonicalBundle, *, min_replies: int = 3, min_ratio: float = 3.0
+) -> tuple[CommunicationAsymmetry, ...]:
+    """Surface reply-flow imbalance without interpreting it as employee performance."""
+    if min_replies <= 0 or min_ratio <= 1:
+        raise ValueError("min_replies must be positive and min_ratio must exceed 1")
+    nodes = _nodes_by_id(bundle)
+    people = _nodes_by_key(bundle)
+    sent: defaultdict[str, int] = defaultdict(int)
+    received: defaultdict[str, int] = defaultdict(int)
+    for edge in bundle.edges:
+        if edge.rel_type != "COMMUNICATES":
+            continue
+        weight = _int_property(edge, "reply_weight", 0)
+        if weight <= 0:
+            continue
+        source = nodes[edge.source_id].canonical_key
+        target = nodes[edge.target_id].canonical_key
+        sent[source] += weight
+        received[target] += weight
+
+    findings = []
+    for key in sorted(set(sent) | set(received)):
+        outgoing, incoming = sent[key], received[key]
+        high, low = max(outgoing, incoming), min(outgoing, incoming)
+        ratio = high / max(1, low)
+        if high < min_replies or ratio < min_ratio:
+            continue
+        findings.append(
+            CommunicationAsymmetry(
+                person_key=key,
+                display_name=display_name(people[key]),
+                replies_sent=outgoing,
+                replies_received=incoming,
+                imbalance_ratio=ratio,
+                direction="mostly_sends" if outgoing > incoming else "mostly_receives",
+            )
+        )
+    return tuple(
+        sorted(findings, key=lambda finding: (-finding.imbalance_ratio, finding.person_key))
+    )
+
+
 def ghost_scores(bundle: CanonicalBundle, *, max_len: int = 4) -> tuple[GhostScore, ...]:
     if max_len <= 0:
         raise ValueError("max_len must be positive")
-    cache_key = (id(bundle), max_len)
-    cached = _GHOST_SCORE_CACHE.get(cache_key)
-    if cached is not None:
-        return cached
+    snapshot = _bundle_graph_snapshot(bundle)
+    return _ghost_scores_cached(snapshot.people, snapshot.adjacency, max_len)
 
-    graph = communication_graph(bundle)
-    people = _person_nodes(bundle)
-    person_keys = [person.canonical_key for person in people]
-    tallies, sampled_pairs = bounded_shortest_path_tallies(graph, person_keys, max_len)
 
-    denominator = float(sampled_pairs or 1)
-    centrality = {key: tallies[key] / denominator for key in person_keys}
+@lru_cache(maxsize=32)
+def _ghost_scores_cached(
+    people: PersonInputs, adjacency: GraphAdjacency, max_len: int
+) -> tuple[GhostScore, ...]:
+    graph = _graph_from_adjacency(adjacency)
+    person_keys = [person[0] for person in people]
+    if len(person_keys) < EXACT_CENTRALITY_MAX_PEOPLE:
+        import networkx as nx
+
+        reference = nx.Graph()
+        reference.add_nodes_from(person_keys)
+        reference.add_edges_from(
+            (source, target) for source, neighbors in graph.items() for target in neighbors
+        )
+        centrality = nx.betweenness_centrality(reference, normalized=True, weight=None)
+        centrality_method = "exact_undirected_networkx"
+    else:
+        tallies, sampled_pairs = bounded_shortest_path_tallies(graph, person_keys, max_len)
+        denominator = float(sampled_pairs or 1)
+        centrality = {key: tallies[key] / denominator for key in person_keys}
+        centrality_method = f"bounded_undirected_brandes_max_len_{max_len}"
     structural_order = sorted(person_keys, key=lambda key: (-centrality[key], key))
     structural_rank = {key: index for index, key in enumerate(structural_order, start=1)}
-    formal_rank = formal_ranks(people)
+    formal_order = sorted(people, key=lambda person: (-person[2], person[0]))
+    formal_rank = {person[0]: index for index, person in enumerate(formal_order, start=1)}
 
     scores = [
         GhostScore(
-            person_key=node.canonical_key,
-            display_name=display_name(node),
-            role_rank=role_rank(node),
-            structural_rank=structural_rank[node.canonical_key],
-            formal_rank=formal_rank[node.canonical_key],
-            rank_gap=formal_rank[node.canonical_key] - structural_rank[node.canonical_key],
-            sampled_centrality=centrality[node.canonical_key],
-            communication_degree=len(graph[node.canonical_key]),
+            person_key=person_key,
+            display_name=person_name,
+            role_rank=person_role_rank,
+            structural_rank=structural_rank[person_key],
+            formal_rank=formal_rank[person_key],
+            rank_gap=formal_rank[person_key] - structural_rank[person_key],
+            sampled_centrality=centrality[person_key],
+            communication_degree=len(graph[person_key]),
+            centrality_method=centrality_method,
         )
-        for node in people
+        for person_key, person_name, person_role_rank in people
     ]
-    result = tuple(sorted(scores, key=lambda score: (-score.sampled_centrality, score.person_key)))
-    _GHOST_SCORE_CACHE[cache_key] = result
-    return result
+    return tuple(sorted(scores, key=lambda score: (-score.sampled_centrality, score.person_key)))
 
 
 def bus_factor_impact(
@@ -442,12 +579,13 @@ def _reachable_pair_count(
 ) -> int:
     ordered = tuple(sorted(person_keys))
     order = {key: index for index, key in enumerate(ordered)}
+    reachability = dict(_cached_reachability(_graph_adjacency(graph), max_len))
     total = 0
     for source in ordered:
         reachable = (
-            _cached_reachable_within(graph, source, max_len)
+            reachability.get(source, frozenset())
             if use_cache
-            else _reachable_within(graph, source, max_len)
+            else frozenset(_reachable_within(graph, source, max_len))
         )
         for target in reachable:
             if target in order and order[source] < order[target]:
@@ -455,17 +593,24 @@ def _reachable_pair_count(
     return total
 
 
-def _cached_reachable_within(
-    graph: CommunicationGraph,
-    source: str,
-    max_len: int,
-) -> frozenset[str]:
-    cache_key = (id(graph), source, max_len)
-    reachable = _REACHABLE_WITHIN_CACHE.get(cache_key)
-    if reachable is None:
-        reachable = frozenset(_reachable_within(graph, source, max_len))
-        _REACHABLE_WITHIN_CACHE[cache_key] = reachable
-    return reachable
+def _graph_adjacency(graph: CommunicationGraph) -> GraphAdjacency:
+    return tuple(
+        (node, tuple(sorted(neighbors.items()))) for node, neighbors in sorted(graph.items())
+    )
+
+
+def _graph_from_adjacency(adjacency: GraphAdjacency) -> CommunicationGraph:
+    return {node: dict(neighbors) for node, neighbors in adjacency}
+
+
+@lru_cache(maxsize=64)
+def _cached_reachability(
+    adjacency: GraphAdjacency, max_len: int
+) -> tuple[tuple[str, frozenset[str]], ...]:
+    graph = _graph_from_adjacency(adjacency)
+    return tuple(
+        (source, frozenset(_reachable_within(graph, source, max_len))) for source in graph
+    )
 
 
 def _reachable_within(
@@ -620,16 +765,20 @@ def _interpolated_gap_epoch(
 
 
 __all__ = [
+    "EXACT_CENTRALITY_MAX_PEOPLE",
     "TIER_COORDINATED",
     "TIER_NO_PATH",
     "TIER_WEAK",
     "BusFactorImpact",
+    "CommunicationAsymmetry",
     "FaultlineFinding",
     "GapFinding",
     "GhostScore",
     "bounded_shortest_path_tallies",
     "bus_factor_impact",
+    "communication_asymmetries",
     "communication_graph",
+    "directed_communication_graph",
     "display_name",
     "faultline_tier",
     "faultlines",

@@ -490,6 +490,15 @@ label.file.picked em { border-style: solid; border-color: var(--teal); color: va
   .foot-grid { grid-template-columns: 1fr 1fr; }
 }
 
+.question-box { padding: 14px 16px; border-bottom: 1px solid var(--line); background: var(--paper); }
+.question-box label { display: block; margin-bottom: 7px; font: 600 10px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.question-box > div { display: grid; grid-template-columns: 1fr auto; gap: 6px; }
+.question-box input { min-width: 0; border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; background: white; color: var(--ink); }
+.question-box button { border: 0; border-radius: 8px; padding: 0 13px; background: var(--teal); color: white; font-weight: 650; cursor: pointer; }
+.question-box > p { margin-top: 8px; font-size: 12px; line-height: 1.45; color: var(--ink-2); }
+.question-box > p small { display: block; color: var(--ink-3); }
+.question-box > small { display: block; margin-top: 7px; color: var(--ink-3); font-size: 10px; }
+
 /* ── Responsive ──────────────────────────────── */
 @media (max-width: 1080px) {
   .dash { grid-template-columns: minmax(0, 1fr) 360px; }

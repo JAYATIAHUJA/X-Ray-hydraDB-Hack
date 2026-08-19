@@ -115,7 +115,7 @@ def test_live_hydradb_cypher_compatibility_probe() -> None:
     for direction in ["both", "BOTH", "out", "OUTGOING", "in", "incoming", "INCOMING"]:
         statement = (
             "CALL algo.MSpaths({sourceLabel: 'Person', "
-            "sourceProperty: 'path_key', sourceValues: ['person:00000000000000091001'], "
+            "sourceProperty: 'path_key', sourceValues: $source_values, "
             "targetLabel: 'Person', "
             "targetProperty: 'path_key', targetValues: ['person:00000000000000091002'], "
             "relTypes: ['COMMUNICATES'], "

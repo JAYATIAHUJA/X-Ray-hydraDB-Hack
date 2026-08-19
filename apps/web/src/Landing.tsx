@@ -214,7 +214,7 @@ export function Landing() {
       <section className="lenses">
         <article className="lens rv">
           <svg className="conn" viewBox="0 0 400 220" preserveAspectRatio="none"><path d="M6 6 V 150 Q 6 190 46 190 H 394" /></svg>
-          <span className="eyebrow">01 · Ghost</span>
+          <span className="eyebrow">01 · Structural rank</span>
           <h3>Who <em>quietly</em> holds it together?</h3>
           <p>Rank people by how many bounded shortest paths route through them, then compare with their title. The person at #1 is rarely the one on top of the chart.</p>
           <div className="lens-fig fig-ghost"><i /><i /><i /><i /><i /><i /><i /><b /></div>
@@ -285,7 +285,7 @@ RETURN collect(path)`}</code></pre>
             ["Does any data leave my machine?", "No. Exports are parsed locally, identity is resolved offline, and the graph lives in a HydraDB you run yourself."],
             ["Is “absence” proof someone deleted something?", "No, and we never say that. A Phantom node means the graph structurally requires a record the corpus doesn't contain. It's a precise question, not an accusation."],
             ["Why not a vector database?", "The finding is an edge present in one graph and absent in another. Embedding similarity has no notion of that. Bounded typed traversal does."],
-            ["How is Ghost computed?", "Sampled betweenness over the communication graph — one pairwise algo.MSpaths call, tallied client-side — validated against exact betweenness on a labelled synthetic org (0.93 top-10 overlap)."]
+            ["How is structural rank computed?", "Exact NetworkX betweenness below 2,000 people; larger graphs disclose bounded Brandes or HydraDB MSpaths. The metric is standard—the evidence-backed comparison with formal rank and removal impact is the product."]
           ].map(([q, a]) => (
             <details className="rv" key={q}><summary>{q}</summary><p>{a}</p></details>
           ))}

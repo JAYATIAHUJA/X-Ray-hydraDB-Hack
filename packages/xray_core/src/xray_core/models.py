@@ -14,6 +14,7 @@ MIN_HYDRA_INTEGER = -(2**63)
 SHA256_PATTERN = r"^[0-9a-f]{64}$"
 
 type Scalar = int | float | bool | str
+type QueryParameter = Scalar | tuple[Scalar, ...]
 type HydraId = Annotated[int, Field(strict=True, gt=0, le=MAX_HYDRA_ID)]
 type NonNegativeInt = Annotated[int, Field(strict=True, ge=0)]
 type Confidence = Annotated[int, Field(strict=True, ge=0, le=100)]
@@ -349,14 +350,26 @@ class NormalizedPosition(XrayModel):
 class QuerySpec(XrayModel):
     name: str = Field(min_length=1)
     statement: str = Field(min_length=1)
-    parameters: dict[str, Scalar]
+    parameters: dict[str, QueryParameter]
     max_len: Annotated[int, Field(strict=True, gt=0)] | None
     result_limit: Annotated[int, Field(strict=True, gt=0)] | None
 
     @field_validator("parameters", mode="before")
     @classmethod
-    def validate_parameters(cls, value: object) -> dict[str, Scalar]:
-        return _validate_scalar_mapping(value, "parameters")
+    def validate_parameters(cls, value: object) -> dict[str, QueryParameter]:
+        if not isinstance(value, dict):
+            raise ValueError("parameters must be a mapping")
+        normalized: dict[str, QueryParameter] = {}
+        for key, item in value.items():
+            if not isinstance(key, str) or not key.strip():
+                raise ValueError("parameters keys must be non-empty strings")
+            if isinstance(item, (list, tuple)):
+                normalized[key] = tuple(
+                    _validate_hydra_scalar(element, "parameters") for element in item
+                )
+            else:
+                normalized[key] = _validate_hydra_scalar(item, "parameters")
+        return dict(sorted(normalized.items()))
 
 
 class WriteBatchSpec(XrayModel):
