@@ -1,0 +1,91 @@
+{
+  "baseline_max_len": 4,
+  "dataset_id": "herb-2026",
+  "method": "python_bounded_shortest_path_tallies",
+  "people": 5126,
+  "results": {
+    "2": {
+      "reachable_pairs": 12614,
+      "top": [
+        "person:eid_446bc3ee",
+        "person:eid_8df92d08",
+        "person:eid_4350bf70",
+        "person:eid_95f6d01c",
+        "person:eid_4afd9484",
+        "person:eid_3f3ea10f",
+        "person:eid_86044ae5",
+        "person:eid_bed67c52",
+        "person:eid_d96fb219",
+        "person:eid_85a4de81"
+      ],
+      "top_k_overlap_with_max_len_4": 0.6
+    },
+    "3": {
+      "reachable_pairs": 20868,
+      "top": [
+        "person:eid_446bc3ee",
+        "person:eid_8df92d08",
+        "person:eid_5549aeb7",
+        "person:eid_86044ae5",
+        "person:eid_4afd9484",
+        "person:eid_bed67c52",
+        "person:eid_3f3ea10f",
+        "person:eid_4350bf70",
+        "person:eid_e96d2f38",
+        "person:eid_aedadd3e"
+      ],
+      "top_k_overlap_with_max_len_4": 0.9
+    },
+    "4": {
+      "reachable_pairs": 23969,
+      "top": [
+        "person:eid_446bc3ee",
+        "person:eid_8df92d08",
+        "person:eid_86044ae5",
+        "person:eid_5549aeb7",
+        "person:eid_bed67c52",
+        "person:eid_4afd9484",
+        "person:eid_aedadd3e",
+        "person:eid_3f3ea10f",
+        "person:eid_e96d2f38",
+        "person:eid_c7622c8e"
+      ],
+      "top_k_overlap_with_max_len_4": 1.0
+    },
+    "5": {
+      "reachable_pairs": 24394,
+      "top": [
+        "person:eid_446bc3ee",
+        "person:eid_8df92d08",
+        "person:eid_86044ae5",
+        "person:eid_bed67c52",
+        "person:eid_5549aeb7",
+        "person:eid_c7622c8e",
+        "person:eid_4afd9484",
+        "person:eid_aedadd3e",
+        "person:eid_e96d2f38",
+        "person:eid_3f3ea10f"
+      ],
+      "top_k_overlap_with_max_len_4": 1.0
+    },
+    "6": {
+      "reachable_pairs": 24443,
+      "top": [
+        "person:eid_446bc3ee",
+        "person:eid_8df92d08",
+        "person:eid_86044ae5",
+        "person:eid_bed67c52",
+        "person:eid_5549aeb7",
+        "person:eid_c7622c8e",
+        "person:eid_4afd9484",
+        "person:eid_aedadd3e",
+        "person:eid_e96d2f38",
+        "person:eid_3f3ea10f"
+      ],
+      "top_k_overlap_with_max_len_4": 1.0
+    }
+  },
+  "snapshot_content_sha256": "069dbc1747acb5fbb27fe51dcca1def2458f9d8d92e8ec1ced48c7d6a83887b2",
+  "snapshot_id": "herb-2026:069dbc1747acb5fb",
+  "top_k": 10
+}
