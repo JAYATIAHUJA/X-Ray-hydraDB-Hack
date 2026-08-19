@@ -13,6 +13,9 @@ class XraySettings:
     hydra_user: str | None = None
     hydra_password: str | None = None
     hydra_database: str | None = None
+    read_only: bool = False
+    imports_enabled: bool = False
+    write_token: str | None = None
 
     @property
     def hydra_configured(self) -> bool:
@@ -26,6 +29,9 @@ def settings_from_env(env: Mapping[str, str] | None = None) -> XraySettings:
         hydra_user=_optional_env(values, "XRAY_HYDRA_USER"),
         hydra_password=_optional_env(values, "XRAY_HYDRA_PASSWORD"),
         hydra_database=_optional_env(values, "XRAY_HYDRA_DATABASE"),
+        read_only=_boolean_env(values, "XRAY_READ_ONLY", default=False),
+        imports_enabled=_boolean_env(values, "XRAY_ENABLE_IMPORTS", default=False),
+        write_token=_optional_env(values, "XRAY_WRITE_TOKEN"),
     )
 
 
@@ -40,6 +46,20 @@ def _optional_env(values: Mapping[str, str | PathLike[str]], key: str) -> str | 
         return None
     rendered = str(value).strip()
     return rendered or None
+
+
+def _boolean_env(
+    values: Mapping[str, str | PathLike[str]], key: str, *, default: bool
+) -> bool:
+    value = values.get(key)
+    if value is None:
+        return default
+    rendered = str(value).strip().casefold()
+    if rendered in {"1", "true", "yes", "on"}:
+        return True
+    if rendered in {"0", "false", "no", "off"}:
+        return False
+    raise ValueError(f"{key} must be a boolean value")
 
 
 __all__ = ["XraySettings", "get_settings", "settings_from_env"]

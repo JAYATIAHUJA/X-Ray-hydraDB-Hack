@@ -109,6 +109,7 @@ export function App() {
   const hasError = [snapshot, graph, ghosts, faultlines, gaps].some((q) => q.isError);
   const isLoading = snapshot.isPending || graph.isPending || ghosts.isPending;
   const noData = !snapshot.isPending && (snapshot.isError || (snapshot.data?.node_count ?? 0) === 0);
+  const canImport = health.data?.imports_enabled === true;
 
   useEffect(() => {
     if (selectedNodeKey === undefined && defaultSelectedKey !== undefined) setSelectedNodeKey(defaultSelectedKey);
@@ -170,6 +171,7 @@ export function App() {
           dataset={snapshot.data?.dataset_id}
           status={hasError ? "bad" : isLoading ? "wait" : "ok"}
           onImport={() => setShowImport(true)}
+          canImport={canImport}
           onExport={exportRiskReport}
           canClose={!noData}
           onClose={() => setShowImport(false)}
@@ -185,6 +187,7 @@ export function App() {
         dataset={snapshot.data?.dataset_id}
         status={hasError ? "bad" : isLoading ? "wait" : "ok"}
         onImport={() => setShowImport(true)}
+        canImport={canImport}
         onExport={exportRiskReport}
         reportStatus={reportStatus}
       />
@@ -455,7 +458,7 @@ function Evidence({ records }: { records: EvidenceSummary[] }) {
 
 /* ── Chrome ───────────────────────────────────────────────── */
 
-function TopBar({ dataset, status, onImport, onExport, reportStatus, canClose, onClose }: { dataset?: string; status: "ok" | "wait" | "bad"; onImport: () => void; onExport: () => void; reportStatus?: string | null; canClose?: boolean; onClose?: () => void }) {
+function TopBar({ dataset, status, onImport, onExport, reportStatus, canImport, canClose, onClose }: { dataset?: string; status: "ok" | "wait" | "bad"; onImport: () => void; onExport: () => void; reportStatus?: string | null; canImport: boolean; canClose?: boolean; onClose?: () => void }) {
   return (
     <header className="nav">
       <a className="nav-brand" href="/"><i />X-Ray</a>
@@ -465,9 +468,9 @@ function TopBar({ dataset, status, onImport, onExport, reportStatus, canClose, o
       {reportStatus ? <span className="nav-note">{reportStatus}</span> : null}
       {canClose ? (
         <button className="nav-link" onClick={onClose} type="button">Back to dashboard</button>
-      ) : (
+      ) : canImport ? (
         <button className="nav-link" onClick={onImport} type="button">Load data</button>
-      )}
+      ) : null}
       <button className="btn-primary" onClick={onExport} type="button">Export report</button>
     </header>
   );

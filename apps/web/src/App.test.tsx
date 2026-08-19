@@ -21,6 +21,8 @@ const evidence = {
 const responses: Record<string, object> = {
   "/api/v1/health": {
     status: "ok",
+    read_only: true,
+    imports_enabled: false,
     hydra: {
       status: "fallback",
       configured: false,
@@ -244,6 +246,7 @@ test("the dashboard shows graph, KPIs and the selected person in one view", asyn
 
   expect(await screen.findByText("xray-demo-v1")).toBeInTheDocument();
   expect(await screen.findByText("live")).toBeInTheDocument();
+  expect(screen.queryByRole("button", { name: "Load data" })).not.toBeInTheDocument();
 
   // Selected-node card on the graph.
   expect(await screen.findAllByText("Maya Chen")).not.toHaveLength(0);
@@ -253,13 +256,13 @@ test("the dashboard shows graph, KPIs and the selected person in one view", asyn
   expect(await screen.findAllByText("+8")).not.toHaveLength(0);
 
   // Three KPI tiles.
-  expect(screen.getByText("Load-bearing")).toBeInTheDocument();
+  expect(screen.getByText("Structural rank")).toBeInTheDocument();
   expect(screen.getByText("Faultlines", { selector: ".kpi span" })).toBeInTheDocument();
   expect(screen.getByText("Gaps", { selector: ".kpi span" })).toBeInTheDocument();
   expect(screen.getByText("#1 structural · #9 formal")).toBeInTheDocument();
 
   // Ghost tab content by default.
-  expect(await screen.findByText(/If Maya leaves/)).toBeInTheDocument();
+  expect(await screen.findByText("Bounded removal test")).toBeInTheDocument();
   expect(screen.getByText("0.231")).toBeInTheDocument();
 
   await waitFor(() =>
