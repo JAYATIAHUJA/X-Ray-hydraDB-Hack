@@ -4,6 +4,7 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 from xray_api import create_app
+from xray_api.app import _window_bundle
 from xray_api.config import settings_from_env
 from xray_api.dependencies import demo_bundle
 from xray_api.hydra import communication_distances, gap_rows, graph_rows, seed_bundle
@@ -46,6 +47,39 @@ def test_settings_reads_hydradb_environment_contract() -> None:
     assert settings.hydra_user == "neo4j"
     assert settings.hydra_password == "password"
     assert settings.hydra_database == "xray"
+
+
+def test_historical_window_uses_latest_observed_event_not_wall_clock() -> None:
+    bundle = demo_bundle()
+    communication_edges = [edge for edge in bundle.edges if edge.rel_type == "COMMUNICATES"]
+    assert len(communication_edges) >= 2
+    epochs = {
+        communication_edges[0].canonical_key: 1_000_000,
+        communication_edges[1].canonical_key: 1_000_000 + (40 * 86400),
+    }
+    historical = bundle.model_copy(
+        update={
+            "edges": tuple(
+                edge.model_copy(
+                    update={
+                        "properties": {
+                            **edge.properties,
+                            "last_epoch": epochs.get(edge.canonical_key, 1),
+                        }
+                    }
+                )
+                if edge.rel_type == "COMMUNICATES"
+                else edge
+                for edge in bundle.edges
+            )
+        }
+    )
+
+    windowed = _window_bundle(historical, 30)
+    retained = [edge for edge in windowed.edges if edge.rel_type == "COMMUNICATES"]
+
+    assert [edge.canonical_key for edge in retained] == [communication_edges[1].canonical_key]
+    assert any("latest observed communication" in item for item in windowed.limitations)
 
 
 def test_seed_fixture_endpoint_skips_without_hydradb_config() -> None:
