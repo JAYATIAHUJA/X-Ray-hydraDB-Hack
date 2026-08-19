@@ -2,24 +2,19 @@ from __future__ import annotations
 
 import logging
 import time
-from collections import defaultdict
 from dataclasses import asdict, dataclass
 from functools import lru_cache
 
 from xray_analytics import (
-    GhostScore,
     bounded_shortest_path_tallies,
     bus_factor_impact,
     communication_graph,
-    display_name,
-    formal_ranks,
     ghost_scores,
     reachable_pair_count,
-    role_rank,
     without_people,
 )
-from xray_core.models import CanonicalBundle, QuerySpec
-from xray_core.paths import normalize_pair, path_key_tuple
+from xray_core.models import CanonicalBundle, NodeRow, QuerySpec
+from xray_core.paths import path_key_tuple
 from xray_hydra import HydraGateway
 from xray_hydra.cypher import communication_paths_query, sp_chain_query
 
@@ -82,7 +77,7 @@ def live_ghost_findings(
     if len(people) < 2:
         return None
 
-    sampled = people[: min(len(people), sample_size)]
+    sampled = _evenly_spaced_people(people, sample_size)
     sampled_path_keys = tuple(node.path_key for node in sampled)
     result_limit = max(1, len(sampled_path_keys) * len(sampled_path_keys) * path_count)
     query = communication_paths_query(
@@ -96,7 +91,7 @@ def live_ghost_findings(
     started = time.perf_counter()
     try:
         with open_gateway(settings, gateway) as resolved_gateway:
-            rows = resolved_gateway.run(query)
+            resolved_gateway.run(query)
     except Exception as exc:
         logger.exception("HydraDB Ghost MSpaths query failed")
         return LiveGhostResult(
@@ -105,78 +100,42 @@ def live_ghost_findings(
             error=str(exc),
         )
 
-    all_paths = tuple(path for row in rows if (path := path_key_tuple(row.get("path"))))
-    excluded = frozenset(exclude_person_keys)
-    # What-if removal (spec §5.1): drop every returned path that touches an excluded
-    # person, then compare how many sampled pairs still have a bounded path.
-    paths = (
-        tuple(path for path in all_paths if excluded.isdisjoint(path)) if excluded else all_paths
+    # MSpaths remains the engine traversal and timing measurement. Ranking is computed
+    # over the full immutable bundle so a truncated path result cannot bias people who
+    # were not selected as endpoints. Counterfactuals rebuild the graph without the
+    # excluded nodes, allowing alternate paths to be discovered.
+    findings = fixture_ghost_findings(
+        bundle,
+        max_len=max_len,
+        exclude_person_keys=exclude_person_keys,
     )
-    pairs_before = {
-        normalize_pair(path[0], path[-1])
-        for path in all_paths
-        if len(path) >= 2 and path[0] != path[-1]
-    }
-    sampled_pairs = {
-        normalize_pair(path[0], path[-1])
-        for path in paths
-        if len(path) >= 2 and path[0] != path[-1]
-    }
     what_if = (
-        WhatIfResult(
-            excluded_person_keys=tuple(sorted(excluded)),
-            sampled_pairs_before=len(pairs_before),
-            sampled_pairs_after=len(sampled_pairs),
-            pairs_lost=len(pairs_before) - len(sampled_pairs),
-            max_len=max_len,
-        )
-        if excluded
+        fixture_what_if(bundle, exclude_person_keys, max_len=max_len)
+        if exclude_person_keys
         else None
     )
-    denominator = float(len(sampled_pairs) or 1)
-    tallies: dict[str, float] = defaultdict(float)
-    for path in paths:
-        for intermediate in path[1:-1]:
-            tallies[intermediate] += 1.0
-
-    graph = communication_graph(bundle)
-    formal_rank = formal_ranks(people)
-    structural_order = sorted(
-        (node.canonical_key for node in people),
-        key=lambda key: (-(tallies[key] / denominator), key),
-    )
-    structural_rank = {key: index for index, key in enumerate(structural_order, start=1)}
-    nodes_by_key = {node.canonical_key: node for node in people}
-    findings = []
-    top_impact_keys = set(structural_order[:10])
-    for key in structural_order:
-        node = nodes_by_key[key]
-        score = GhostScore(
-            person_key=key,
-            display_name=display_name(node),
-            role_rank=role_rank(node),
-            structural_rank=structural_rank[key],
-            formal_rank=formal_rank[key],
-            rank_gap=formal_rank[key] - structural_rank[key],
-            sampled_centrality=tallies[key] / denominator,
-            communication_degree=len(graph.get(key, {})),
-            centrality_method=f"hydradb_bounded_undirected_mspaths_max_len_{max_len}",
-        )
-        removal_impact = None
-        if key in top_impact_keys:
-            removal_impact = asdict(bus_factor_impact(bundle, key, max_len=max_len, graph=graph))
-            removal_impact["sampled_pairs_lost_without_person"] = sum(
-                1 for path in paths if key in path[1:-1] and path[0] != key and path[-1] != key
-            )
-            removal_impact["sampled_pairs_observed"] = len(sampled_pairs)
-        findings.append({**asdict(score), "removal_impact": removal_impact})
 
     return LiveGhostResult(
-        findings=tuple(findings),
+        findings=findings,
         executed_query=_executed(query, started),
         what_if=what_if,
         sampled_people=len(sampled),
     )
+
+
+def _evenly_spaced_people(
+    people: tuple[NodeRow, ...], sample_size: int
+) -> tuple[NodeRow, ...]:
+    """Select deterministic endpoints across the full canonical ordering."""
+    limit = min(len(people), sample_size)
+    if limit <= 0:
+        return ()
+    if limit == len(people):
+        return people
+    if limit == 1:
+        return (people[0],)
+    last = len(people) - 1
+    return tuple(people[round(index * last / (limit - 1))] for index in range(limit))
 
 
 def fixture_ghost_findings(

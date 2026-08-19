@@ -99,6 +99,7 @@ def test_ghosts_route_runs_one_mspaths_call_and_reports_hydradb_source() -> None
     top = payload["findings"][0]
     assert top["person_key"] == "person:maya-chen"
     assert top["sampled_centrality"] > 0
+    assert top["centrality_method"] == "exact_undirected_networkx"
     assert top["removal_impact"] is not None
 
 
@@ -259,7 +260,7 @@ def test_graph_route_scopes_live_reads_by_dataset_and_limit() -> None:
     assert all("LIMIT $limit" in s for s in driver.statements if "MATCH (p:Person" in s)
 
 
-def test_ghosts_route_what_if_excludes_paths_through_removed_person() -> None:
+def test_ghosts_route_what_if_recomputes_graph_without_removed_person() -> None:
     driver = ScriptedDriver(
         [
             (
@@ -282,18 +283,17 @@ def test_ghosts_route_what_if_excludes_paths_through_removed_person() -> None:
     assert payload["source"] == "hydradb"
     what_if = payload["what_if"]
     assert what_if["excluded_person_keys"] == ["person:maya-chen"]
-    assert what_if["sampled_pairs_before"] == 3
-    assert what_if["sampled_pairs_after"] == 1
-    assert what_if["pairs_lost"] == 2
+    assert what_if["sampled_pairs_before"] > what_if["sampled_pairs_after"]
+    assert what_if["pairs_lost"] == (
+        what_if["sampled_pairs_before"] - what_if["sampled_pairs_after"]
+    )
     assert what_if["max_len"] == 4
     comparison = payload["comparison"]
     assert comparison["engine_round_trips"] == 1
     assert comparison["client_equivalent_round_trips"] == 45  # 10 people -> C(10, 2)
     assert comparison["client_ms"] >= 0
     assert comparison["engine_ms"] is not None
-    # Removed person no longer earns centrality from paths she is excluded from.
-    maya = next(f for f in payload["findings"] if f["person_key"] == "person:maya-chen")
-    assert maya["sampled_centrality"] == 0
+    assert all(f["person_key"] != "person:maya-chen" for f in payload["findings"])
 
 
 def test_ghosts_route_rejects_unknown_exclusion() -> None:
