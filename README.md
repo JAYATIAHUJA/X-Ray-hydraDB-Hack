@@ -15,7 +15,7 @@
 
 <p align="center">
 <b>Official Track 01 corpus (HERB, all 30 products): 5,126 people · 5,615 communication edges · Ghost #1 is a Software Engineer ranked #282 on paper</b><br/>
-<sub>Same ranking with every unresolved handle removed (top-10 overlap 1.0). Plus Apache Kafka (real, 292 people) and a 500-person synthetic org with planted ground truth. Every number traces to a results file stamped with the engine digest. Full graph incl. artifacts: 46k nodes / 92k edges — the analysed graph is the people.</sub>
+<sub>Same ranking with every unresolved handle removed (top-10 overlap 1.0). Plus Apache Kafka (real, 292 people) and a 500-person synthetic org with planted ground truth. Checked-in results record their method and snapshot; Hydra runs also stamp the engine digest. Full graph incl. artifacts: 46k nodes / 92k edges — the analysed graph is the people.</sub>
 </p>
 
 ---
@@ -91,6 +91,7 @@ HERB ships explicit employee ids, a role hierarchy, Slack with `@eid` mentions, 
 | **Ghost top-10** | 4 of 10 are ICs (role 1); largest gap in top-10: Ian Miller, structural #10 vs formal **#461** |
 | **Bounded removal impact** | Remove structural #1 → 75 of 23,870 reachable pairs lose their ≤4-hop path (**0.314%**); reported as a small effect, not a bus-factor claim |
 | **Identity robustness** | Drop all 4,596 unresolved handles and re-rank the 530 named employees: **top-10 overlap 1.0, same #1**. The ranking is not an artefact of anonymous ids padding the graph |
+| **`maxLen` sensitivity** | Top-1 is unchanged for bounds 2–6. Top-10 overlap with the product bound (`4`) is **0.6 / 0.9 / 1.0 / 1.0 / 1.0** for bounds 2–6; the shorter bound changes the tail and is disclosed, not hidden |
 | **Faultlines** | **0 — a null result, reported as such.** HERB PRs are single-product; no cross-product co-change exists in the corpus, so no `DEPENDS_ON` edge is derived and none is invented |
 | **Phantom gaps** | 0 — every review reply resolves to its PR artifact; HERB Slack has no thread metadata, so no dangling parents are claimed |
 | **Identity** | 530 employees resolve by `eid`; 4,596 PR logins (`EMP_…`) have no HERB mapping and stay **visibly unresolved** (a stated limitation, not a merge) |
@@ -122,7 +123,7 @@ Reproduce: `uv run python scripts/build_herb_corpus.py --all --out data/snapshot
 | What-if: remove the planted Ghost | 110,883 of 124,251 pairs lose their ≤4-hop path |
 | Execution | One bounded multi-source path operation, with a local reference implementation used for validation |
 
-Sources: [docs/results/herb-2026.json](docs/results/herb-2026.json) · [docs/results/kafka-2025q2.json](docs/results/kafka-2025q2.json) · [docs/results/synth500.json](docs/results/synth500.json)
+Sources: [docs/results/herb-2026.json](docs/results/herb-2026.json) · [docs/results/herb-maxlen.json](docs/results/herb-maxlen.json) · [docs/results/kafka-2025q2.json](docs/results/kafka-2025q2.json) · [docs/results/synth500.json](docs/results/synth500.json)
 
 ---
 
@@ -511,7 +512,7 @@ X-Ray reports negative results as plainly as positive ones:
 - **Identity resolution is deliberately conservative**: explicit ids only. On HERB, 4,596 PR logins have no employee mapping and stay visibly unresolved; the Ghost top-10 is unchanged when they are removed. Unresolved counts and names are surfaced in every response, never merged by guesswork.
 - Measured corpora are one labelled synthetic org and one public open-source project. Neither is a claim about a private company.
 - Live OAuth connectors are intentionally out of scope. Export adapters are the supported ingest path.
-- `maxLen=4` remains the live HydraDB product bound. Run `uv run python scripts/eval_max_len.py --snapshot PATH --json docs/results/maxlen.json` to disclose top-k stability over bounds 2–6 on any real snapshot.
+- `maxLen=4` remains the live HydraDB product bound. On HERB, top-1 is stable across bounds 2–6, while top-10 overlap with the bound-4 ranking is 0.6 at bound 2, 0.9 at bound 3, and 1.0 at bounds 4–6 ([result](docs/results/herb-maxlen.json)). Run `uv run python scripts/eval_max_len.py --snapshot PATH --json docs/results/maxlen.json` on another snapshot rather than assuming the same curve.
 
 ### Privacy and appropriate use
 
