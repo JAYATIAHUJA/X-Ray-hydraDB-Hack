@@ -719,8 +719,7 @@ def _require_write_access(
             detail="Snapshot imports are disabled; set XRAY_ENABLE_IMPORTS=true locally to opt in.",
         )
     if settings.write_token is not None and (
-        supplied_token is None
-        or not secrets.compare_digest(supplied_token, settings.write_token)
+        supplied_token is None or not secrets.compare_digest(supplied_token, settings.write_token)
     ):
         raise HTTPException(status_code=401, detail="A valid X-Xray-Write-Token is required.")
 
@@ -739,8 +738,7 @@ def _window_bundle(bundle: CanonicalBundle, window_days: int) -> CanonicalBundle
     observed_epochs = tuple(
         int(edge.properties["last_epoch"])
         for edge in bundle.edges
-        if edge.rel_type == "COMMUNICATES"
-        and type(edge.properties.get("last_epoch")) is int
+        if edge.rel_type == "COMMUNICATES" and type(edge.properties.get("last_epoch")) is int
     )
     if not observed_epochs:
         return bundle.model_copy(

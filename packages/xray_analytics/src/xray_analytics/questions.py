@@ -123,7 +123,7 @@ def _answer(
         question=question,
         intent=intent,
         status="answered",
-        answer=f"{', '.join(names)} {verb} { _display_name(subject) }.",
+        answer=f"{', '.join(names)} {verb} {_display_name(subject)}.",
         subject_key=subject.canonical_key,
         person_keys=person_keys,
         evidence_ids=tuple(sorted({item for match in matches for item in match[2]})),
@@ -142,7 +142,11 @@ def _match_subject(bundle: CanonicalBundle, text: str, intent: str) -> NodeRow |
         values = {
             node.canonical_key,
             node.canonical_key.split(":", 1)[-1],
-            *(str(value) for key, value in node.properties.items() if key in {"display_name", "name", "title", "subject"}),
+            *(
+                str(value)
+                for key, value in node.properties.items()
+                if key in {"display_name", "name", "title", "subject"}
+            ),
         }
         if needle in {_normalize_lookup(value) for value in values}:
             candidates.append(node)

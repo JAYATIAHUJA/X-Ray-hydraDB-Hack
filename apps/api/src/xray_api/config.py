@@ -48,9 +48,7 @@ def _optional_env(values: Mapping[str, str | PathLike[str]], key: str) -> str | 
     return rendered or None
 
 
-def _boolean_env(
-    values: Mapping[str, str | PathLike[str]], key: str, *, default: bool
-) -> bool:
+def _boolean_env(values: Mapping[str, str | PathLike[str]], key: str, *, default: bool) -> bool:
     value = values.get(key)
     if value is None:
         return default
