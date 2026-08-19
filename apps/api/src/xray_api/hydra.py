@@ -10,9 +10,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, Protocol
 
+from neo4j.exceptions import Neo4jError
 from xray_core.models import CanonicalBundle, LoadReport, QuerySpec, Scalar, SnapshotManifest
 from xray_core.paths import normalize_pair, path_key_tuple
-from xray_hydra import HydraGateway, HydraLoader
+from xray_hydra import GatewayError, HydraGateway, HydraLoader
 from xray_hydra.cypher import communication_paths_query
 from xray_ingest.manifest import write_snapshot
 
@@ -21,6 +22,11 @@ from .config import XraySettings
 HydraStatus = Literal["fallback", "live", "offline"]
 HydraSeedStatus = Literal["complete", "partial", "fallback", "offline"]
 logger = logging.getLogger(__name__)
+
+# Transport failures and explicit gateway/loader operational failures degrade to
+# fixture mode. Data-shape errors (TypeError/ValueError) intentionally propagate:
+# those are programming or contract bugs, not evidence that HydraDB is offline.
+HydraOperationalError = (GatewayError, Neo4jError, OSError, RuntimeError)
 
 
 @dataclass(frozen=True, slots=True)
@@ -129,7 +135,7 @@ def hydra_health(settings: XraySettings, dataset_id: str | None = None) -> Hydra
                     graph_loaded = bool(node_count or edge_count)
         finally:
             driver.close()
-    except Exception as exc:
+    except (Neo4jError, OSError, ValueError) as exc:
         return HydraHealth(
             status="offline",
             configured=True,
@@ -172,7 +178,7 @@ def seed_bundle(
     try:
         gateway_context = open_gateway(settings, gateway)
         resolved_gateway = gateway_context.__enter__()
-    except Exception as exc:
+    except HydraOperationalError as exc:
         hydra_uri = settings.hydra_uri or ""
         return HydraSeedResult(
             status="offline",
@@ -278,7 +284,7 @@ def communication_distances(
                 pair = normalize_pair(path_keys[0], path_keys[-1])
                 if pair in distances:
                     distances[pair] = len(path_keys) - 1
-    except Exception as exc:
+    except HydraOperationalError as exc:
         logger.exception("HydraDB communication distance query failed")
         return HydraDistanceResult(
             distances={},
@@ -339,7 +345,7 @@ def graph_rows(
                 for row in edge_rows
                 if row.get("source_id") in people_ids and row.get("target_id") in people_ids
             ]
-    except Exception:
+    except HydraOperationalError:
         logger.exception("HydraDB graph rows query failed")
         return None
 
@@ -379,7 +385,7 @@ def gap_rows(
             predecessor_rows = resolved_gateway.run(_gap_lineage_query("predecessors", bundle))
             successor_rows = resolved_gateway.run(_gap_lineage_query("successors", bundle))
             reply_rows = resolved_gateway.run(_gap_lineage_query("replies", bundle))
-    except Exception:
+    except HydraOperationalError:
         logger.exception("HydraDB gap rows query failed")
         return None
 

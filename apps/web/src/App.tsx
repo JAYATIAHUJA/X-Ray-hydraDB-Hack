@@ -1,20 +1,20 @@
-import { useEffect, useMemo, useState } from "react";
-import type { FormEvent } from "react";
+import { useMemo, useState } from "react";
 import type {
   EvidenceSummary,
   FaultlineFinding,
   GapFinding,
-  GapPathRequest,
   GhostFinding,
   GraphNode,
   LensEnvelope
 } from "./api";
-import { activateSnapshot, askQuestion, getAvailableSnapshots, getRiskReport, importSnapshot } from "./api";
-import type { AvailableSnapshot, ImportPayload, QuestionResponse } from "./api";
+import { getRiskReport } from "./api";
 import type { Lens } from "./data";
 import { Graph3D } from "./Graph3D";
 import type { Graph3DEdge, Graph3DNode } from "./Graph3D";
 import { useXraySnapshot } from "./queries";
+import { useImportFlow } from "./hooks/useImportFlow";
+import { useLensState, useLensSynchronization } from "./hooks/useLensState";
+import { useQuestion } from "./hooks/useQuestion";
 
 const LENSES: Array<{ id: Lens; label: string; hint: string }> = [
   { id: "org", label: "Structural", hint: "structural rank × formal rank" },
@@ -23,22 +23,36 @@ const LENSES: Array<{ id: Lens; label: string; hint: string }> = [
 ];
 
 export function App() {
-  const [lens, setLens] = useState<Lens>("org");
-  const [mode, setMode] = useState<"actual" | "official">("actual");
-  const [selectedNodeKey, setSelectedNodeKey] = useState<string | undefined>();
-  const [selectedFaultlineIndex, setSelectedFaultlineIndex] = useState(0);
-  const [selectedGapIndex, setSelectedGapIndex] = useState(0);
-  const [gapRequest, setGapRequest] = useState<GapPathRequest | undefined>();
-  const [excluded, setExcluded] = useState<string[]>([]);
+  const lensState = useLensState();
+  const {
+    excluded,
+    gapRequest,
+    lens,
+    mode,
+    selectedFaultlineIndex,
+    selectedGapIndex,
+    selectedNodeKey,
+    setExcluded,
+    setLens,
+    setMode,
+    setSelectedFaultlineIndex,
+    setSelectedGapIndex,
+    setSelectedNodeKey,
+    setShowQuery,
+    showQuery
+  } = lensState;
   const [showImport, setShowImport] = useState(false);
-  const [showQuery, setShowQuery] = useState(false);
   const [reportStatus, setReportStatus] = useState<string | null>(null);
-  const [question, setQuestion] = useState("Who owns payments-api?");
-  const [questionAnswer, setQuestionAnswer] = useState<QuestionResponse | null>(null);
-  const [questionError, setQuestionError] = useState<string | null>(null);
-  const [questionPending, setQuestionPending] = useState(false);
 
   const { faultlines, gapPath, gaps, ghosts, graph, health, snapshot } = useXraySnapshot(gapRequest, excluded, 0);
+  const {
+    answer: questionAnswer,
+    error: questionError,
+    pending: questionPending,
+    question,
+    setQuestion,
+    submit: submitQuestion
+  } = useQuestion(snapshot.data?.snapshot_id);
 
   const people = graph.data?.nodes ?? [];
   const defaultSelectedKey = people.find((p) => p.selected)?.key ?? people[0]?.key;
@@ -112,28 +126,19 @@ export function App() {
   const noData = !snapshot.isPending && (snapshot.isError || (snapshot.data?.node_count ?? 0) === 0);
   const canImport = health.data?.imports_enabled === true;
 
-  useEffect(() => {
-    if (selectedNodeKey === undefined && defaultSelectedKey !== undefined) setSelectedNodeKey(defaultSelectedKey);
-  }, [defaultSelectedKey, selectedNodeKey]);
-  useEffect(() => {
-    if (selectedFaultlineIndex >= faultlineFindings.length) setSelectedFaultlineIndex(0);
-  }, [faultlineFindings.length, selectedFaultlineIndex]);
-  useEffect(() => {
-    if (selectedGapIndex >= gapFindings.length) setSelectedGapIndex(0);
-  }, [gapFindings.length, selectedGapIndex]);
-  useEffect(() => {
-    const finding = gapList[selectedGapIndex];
-    if (finding === undefined) return;
-    const next = requestForGap(finding);
-    if (
-      next !== undefined &&
-      (gapRequest === undefined ||
-        gapRequest.source_artifact_key !== next.source_artifact_key ||
-        gapRequest.target_artifact_key !== next.target_artifact_key)
-    ) {
-      setGapRequest(next);
-    }
-  }, [gapList, gapRequest, selectedGapIndex]);
+  useLensSynchronization({
+    defaultSelectedKey,
+    faultlineCount: faultlineFindings.length,
+    gapRequest,
+    gaps: gapList,
+    selectedFaultlineIndex,
+    selectedGapIndex,
+    selectedNodeKey,
+    setGapRequest: lensState.setGapRequest,
+    setSelectedFaultlineIndex,
+    setSelectedGapIndex,
+    setSelectedNodeKey
+  });
 
   async function exportRiskReport() {
     if (snapshot.data === undefined) return;
@@ -152,21 +157,6 @@ export function App() {
       setReportStatus("Unavailable");
     }
     globalThis.setTimeout(() => setReportStatus(null), 2500);
-  }
-
-  async function submitQuestion(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (snapshot.data === undefined || question.trim().length < 3) return;
-    setQuestionPending(true);
-    setQuestionError(null);
-    try {
-      setQuestionAnswer(await askQuestion(snapshot.data.snapshot_id, question));
-    } catch (error) {
-      setQuestionAnswer(null);
-      setQuestionError(error instanceof Error ? error.message : "Question failed");
-    } finally {
-      setQuestionPending(false);
-    }
   }
 
   if (showImport || noData) {
@@ -484,71 +474,18 @@ function TopBar({ dataset, status, onImport, onExport, reportStatus, canImport, 
 }
 
 function ImportScreen({ onDone }: { onDone: () => void }) {
-  const [datasetId, setDatasetId] = useState("imported-snapshot");
-  const [files, setFiles] = useState<Record<string, File | null>>({});
-  const [slackFiles, setSlackFiles] = useState<File[]>([]);
-  const [status, setStatus] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-
-  const pick = (k: string) => (f: File | null) => setFiles((s) => ({ ...s, [k]: f }));
-  async function readJson(f: File | null | undefined, fb: unknown) {
-    if (!f) return fb;
-    return JSON.parse(await f.text()) as unknown;
-  }
-  async function readText(f: File | null | undefined) {
-    return f ? await f.text() : undefined;
-  }
-
-  async function run() {
-    if (!files.directory) {
-      setStatus("A directory.json is required — it lists the people.");
-      return;
-    }
-    setBusy(true);
-    setStatus("Building the graph…");
-    try {
-      const slackExports: Record<string, Record<string, unknown>[]> = {};
-      for (const f of slackFiles) slackExports[f.name.replace(/\.json$/i, "")] = (await readJson(f, [])) as Record<string, unknown>[];
-      const payload: ImportPayload = {
-        dataset_id: datasetId.trim() || "imported-snapshot",
-        directory: (await readJson(files.directory, [])) as Record<string, unknown>[],
-        identity_map: (await readJson(files.identity, {})) as Record<string, string>,
-        mbox: files.mbox ? [await files.mbox.text()] : [],
-        jira_csv: await readText(files.jira),
-        git_log: await readText(files.git),
-        module_prefixes: (await readJson(files.modules, {})) as Record<string, string>,
-        slack_exports: slackExports,
-        channel_modules: (await readJson(files.channels, {})) as Record<string, string[]>,
-        message_modules: (await readJson(files.messages, {})) as Record<string, string[]>,
-        confluence_xml: await readText(files.confluence),
-        github_csv: await readText(files.github),
-        sequence_contracts: (await readJson(files.contracts, { contracts: [], limitations: [] })) as Record<string, unknown>
-      };
-      const snap = await importSnapshot(payload);
-      setStatus(`Imported ${snap.node_count.toLocaleString()} nodes and ${snap.edge_count.toLocaleString()} edges. Opening dashboard…`);
-      globalThis.setTimeout(() => window.location.reload(), 600);
-      onDone();
-    } catch (e) {
-      setStatus(e instanceof Error ? e.message : "Import failed");
-      setBusy(false);
-    }
-  }
-
-  const [available, setAvailable] = useState<AvailableSnapshot[]>([]);
-  const [switching, setSwitching] = useState<string | null>(null);
-  useEffect(() => {
-    getAvailableSnapshots().then(setAvailable).catch(() => setAvailable([]));
-  }, []);
-  async function open(name: string) {
-    setSwitching(name);
-    try {
-      await activateSnapshot(name);
-      window.location.reload();
-    } catch (e) {
-      setStatus(e instanceof Error ? e.message : "Could not switch corpus");
-      setSwitching(null);
-    }
-  }
+  const {
+    available,
+    busy,
+    datasetId,
+    open,
+    pick,
+    run,
+    setDatasetId,
+    setSlackFiles,
+    status,
+    switching
+  } = useImportFlow(onDone);
   const labels: Record<string, { title: string; blurb: string }> = {
     demo: { title: "Demo org", blurb: "10 people, planted findings, no setup." },
     synth500: { title: "Synthetic 500", blurb: "Labelled ground truth — precision/recall are checkable." },
@@ -650,9 +587,4 @@ function shortKey(v: string) {
 }
 function nameFor(people: GraphNode[], key: string) {
   return people.find((p) => p.key === key)?.name ?? suffix(key);
-}
-function requestForGap(f: GapFinding): GapPathRequest | undefined {
-  const s = f.successor_keys[0];
-  const t = f.predecessor_keys[0];
-  return s === undefined || t === undefined ? undefined : { source_artifact_key: s, target_artifact_key: t };
 }

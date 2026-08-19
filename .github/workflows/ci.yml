@@ -56,3 +56,47 @@ jobs:
       - uses: astral-sh/setup-uv@v5
       - run: uv sync --locked
       - run: uv run pytest -q tests/infra
+
+  live-hydradb:
+    name: HydraDB live smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Sync locked environment
+        run: uv sync --locked
+      - name: Start pinned HydraDB runtime
+        run: >-
+          uv run python -m xray_runtime.manager start
+          --runtime-id ci-hydra
+          --compose-project xray-ci-hydra
+      - name: Wait for HydraDB and indexer readiness
+        run: >-
+          uv run python scripts/wait_healthy.py
+          --admin-url http://127.0.0.1:19090
+          --indexer-admin-url http://127.0.0.1:19091
+          --timeout-seconds 180
+      - name: Exercise Bolt writes and path algorithms
+        run: |
+          export XRAY_HYDRA_URI=bolt://127.0.0.1:17687
+          export XRAY_HYDRA_USER=neo4j
+          export XRAY_HYDRA_PASSWORD="$(tr -d '\r\n' < infra/runtime/ci-hydra/hydra-auth-token)"
+          uv run pytest -q -m integration tests/integration/test_hydradb_live.py
+      - name: Show service logs on failure
+        if: failure()
+        run: >-
+          docker compose
+          --env-file infra/runtime/ci-hydra/compose.env
+          -p xray-ci-hydra
+          -f compose.yaml
+          -f compose.test.yaml
+          logs --no-color --tail 200
+      - name: Stop HydraDB runtime
+        if: always()
+        run: |
+          if [ -f infra/runtime/ci-hydra/runtime-manifest.json ]; then
+            uv run python -m xray_runtime.manager stop --runtime-id ci-hydra --remove-volumes --purge-local
+          fi

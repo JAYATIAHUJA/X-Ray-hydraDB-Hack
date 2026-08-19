@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 from xray_api import create_app
 from xray_api.app import _window_bundle
@@ -407,6 +408,41 @@ def test_graph_rows_reads_live_hydradb_projection() -> None:
         {"dataset_id": "xray-demo-v1", "limit": 10},
         {"dataset_id": "xray-demo-v1", "limit": 30},
     ]
+
+
+class FailingGraphDriver:
+    def __init__(self, error: Exception) -> None:
+        self.error = error
+
+    def execute_query(
+        self,
+        query_: str,
+        parameters_: dict[str, object] | None = None,
+    ) -> list[dict[str, object]]:
+        raise self.error
+
+
+def test_graph_rows_degrades_for_operational_runtime_failure() -> None:
+    settings = settings_from_env({"XRAY_HYDRA_URI": "bolt://hydra.example:7687"})
+
+    rows = graph_rows(
+        settings,
+        demo_bundle(),
+        gateway=HydraGateway(FailingGraphDriver(RuntimeError("engine unavailable"))),
+    )
+
+    assert rows is None
+
+
+def test_graph_rows_does_not_hide_programming_or_data_errors() -> None:
+    settings = settings_from_env({"XRAY_HYDRA_URI": "bolt://hydra.example:7687"})
+
+    with pytest.raises(ValueError, match="malformed result"):
+        graph_rows(
+            settings,
+            demo_bundle(),
+            gateway=HydraGateway(FailingGraphDriver(ValueError("malformed result"))),
+        )
 
 
 def test_communication_distances_reads_live_hydradb_paths() -> None:
