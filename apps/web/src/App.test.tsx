@@ -302,3 +302,21 @@ test("the Official / Actual toggle and what-if removal both work", async () => {
   await userEvent.click(screen.getByRole("button", { name: /Remove from the graph/ }));
   expect(await screen.findByRole("button", { name: /Put back in the graph/ })).toBeInTheDocument();
 });
+
+test("question failures replace stale answers with a visible error", async () => {
+  const fallbackFetch = globalThis.fetch;
+  globalThis.fetch = async (input, init) => {
+    const url = new URL(input.toString());
+    if (url.pathname.endsWith("/questions")) {
+      return Response.json({ detail: "Question service unavailable" }, { status: 503 });
+    }
+    return fallbackFetch(input, init);
+  };
+  renderApp();
+  const user = userEvent.setup();
+
+  await screen.findByText("xray-demo-v1");
+  await user.click(screen.getByRole("button", { name: "Ask" }));
+
+  expect(await screen.findByText("Question service unavailable")).toBeInTheDocument();
+});

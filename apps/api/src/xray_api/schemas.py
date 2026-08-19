@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Literal
 
 from pydantic import BaseModel, Field
-from xray_core.models import AnalysisStatus
+from xray_core.models import AnalysisStatus, SequenceContractSet
 
 
 class HydraHealthResponse(BaseModel):
@@ -158,6 +158,7 @@ class ImportRequest(BaseModel):
     message_modules: dict[str, tuple[str, ...]] = {}
     confluence_xml: str | None = None
     github_csv: str | None = None
+    sequence_contracts: SequenceContractSet = Field(default_factory=SequenceContractSet)
 
 
 class ProblemDetail(BaseModel):
