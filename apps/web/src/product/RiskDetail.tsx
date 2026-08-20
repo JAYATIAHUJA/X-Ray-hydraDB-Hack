@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Icon } from "./Icons";
 import { riskKindLabel } from "./riskModel";
 import type { RiskItem } from "./types";
+import type { RiskAction } from "./useRiskActions";
 
 type DetailTab = "overview" | "evidence" | "query" | "limitations";
 const tabs: Array<{ id: DetailTab; label: string }> = [
@@ -9,7 +10,7 @@ const tabs: Array<{ id: DetailTab; label: string }> = [
   { id: "query", label: "HydraDB query" }, { id: "limitations", label: "Limitations" }
 ];
 
-export function RiskDetail({ risk, onClose }: { risk: RiskItem; onClose: () => void }) {
+export function RiskDetail({ risk, action, onAction, onClose }: { risk: RiskItem; action: RiskAction; onAction: (patch: Partial<RiskAction>) => void; onClose: () => void }) {
   const [tab, setTab] = useState<DetailTab>("overview");
   useEffect(() => setTab("overview"), [risk.id]);
   return <aside className="risk-detail" aria-label="Risk detail">
@@ -21,6 +22,7 @@ export function RiskDetail({ risk, onClose }: { risk: RiskItem; onClose: () => v
     <div className="detail-body">
       {tab === "overview" ? <><section><h3>What this means</h3><p>{risk.explanation}</p></section><section><h3>Potential impact</h3><p>{risk.impact}</p></section><div className="detail-metrics"><Metric label="Confidence" value={risk.confidence}/><Metric label="Data coverage" value={risk.dataCoverage}/></div><section><h3>Recommended next step</h3><p>{risk.recommendation}</p></section><EvidenceList risk={risk} compact/></> : null}
       {tab === "evidence" ? <EvidenceList risk={risk}/> : null}{tab === "query" ? <QueryPanel risk={risk}/> : null}{tab === "limitations" ? <Limitations risk={risk}/> : null}
+      <section className="ownership-panel"><h3>Ownership</h3><div><label><span>Assignee</span><select aria-label="Assignee" value={action.assignee} onChange={(event) => onAction({ assignee: event.target.value })}><option>Unassigned</option><option>Platform team</option><option>Payments team</option><option>Engineering leadership</option></select></label><label><span>Status</span><select aria-label="Risk status" value={action.status} onChange={(event) => onAction({ status: event.target.value as RiskAction["status"] })}><option value="open">Open</option><option value="acknowledged">Acknowledged</option><option value="mitigating">Mitigating</option><option value="resolved">Resolved</option><option value="dismissed">Dismissed</option></select></label><label><span>Due date</span><input aria-label="Due date" type="date" value={action.dueDate} onChange={(event) => onAction({ dueDate: event.target.value })}/></label></div><div className="detail-actions"><button className="primary-action" onClick={() => onAction({ issueCreated: true, status: action.status === "open" ? "acknowledged" : action.status })} type="button">{action.issueCreated ? "Issue draft ready" : "Create issue draft"}</button><button onClick={() => onAction({ status: "dismissed" })} type="button">Dismiss</button></div><small>Demo changes are saved in this browser only; no external issue tracker is contacted.</small></section>
     </div>
   </aside>;
 }

@@ -14,7 +14,7 @@ const responses: Record<string, object> = {
   "/api/v1/snapshots/xray-demo-v1%3Afixture/gaps": { ...envelope, total_findings: 1, findings: [{ phantom_key: "artifact:missing-approval", expected_kind: "approval", reason: "required_sequence_step_missing", inferred_epoch: 1736003600, predecessor_keys: ["artifact:directive"], successor_keys: ["artifact:code-change"], window_position: "in_window", days_after_corpus_start: 12, evidence: [{ ...evidence, predicate: "gap_phantom" }] }] }
 };
 
-beforeEach(() => { globalThis.fetch = async (input) => { const payload = responses[new URL(input.toString()).pathname]; return payload ? Response.json(payload) : new Response("not found", { status: 404 }); }; });
+beforeEach(() => { localStorage.clear(); globalThis.fetch = async (input) => { const payload = responses[new URL(input.toString()).pathname]; return payload ? Response.json(payload) : new Response("not found", { status: 404 }); }; });
 function renderApp() { const client = new QueryClient({ defaultOptions: { queries: { retry: false } } }); render(<QueryClientProvider client={client}><App/></QueryClientProvider>); }
 
 test("the product opens on a prioritized risk inbox with truthful runtime status", async () => {
@@ -51,4 +51,16 @@ test("selecting a risk opens its evidence-backed explanation", async () => {
   expect(screen.getByText("What this means")).toBeInTheDocument();
   await user.click(screen.getByRole("tab", { name: "Limitations" }));
   expect(screen.getByText("Read before acting")).toBeInTheDocument();
+});
+
+test("risk ownership changes persist into the actions queue", async () => {
+  renderApp(); const user = userEvent.setup(); await screen.findAllByText(/Payments Api depends on Ledger Worker/);
+  await user.selectOptions(screen.getByLabelText("Assignee"), "Platform team");
+  await user.selectOptions(screen.getByLabelText("Risk status"), "mitigating");
+  await user.click(screen.getByRole("button", { name: "Create issue draft" }));
+  await user.click(screen.getByRole("button", { name: "Actions" }));
+  expect(screen.getByRole("heading", { name: "Actions" })).toBeInTheDocument();
+  expect(screen.getByText("Platform team")).toBeInTheDocument();
+  expect(screen.getByText("mitigating")).toBeInTheDocument();
+  expect(screen.getByText("Draft ready")).toBeInTheDocument();
 });
