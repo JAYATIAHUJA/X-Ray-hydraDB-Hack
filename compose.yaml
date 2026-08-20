@@ -73,7 +73,11 @@ services:
       - "127.0.0.1:${XRAY_HTTP_PORT}:8443"
       - "127.0.0.1:${XRAY_ADMIN_PORT}:9090"
     secrets:
-      - hydra-auth-token
+      - source: hydra-auth-token
+        target: hydra-auth-token
+        mode: 0444
+        uid: "10001"
+        gid: "10001"
     depends_on:
       minio-init:
         condition: service_completed_successfully
@@ -90,7 +94,11 @@ services:
     ports:
       - "127.0.0.1:${XRAY_INDEXER_ADMIN_PORT}:9091"
     secrets:
-      - hydra-auth-token
+      - source: hydra-auth-token
+        target: hydra-auth-token
+        mode: 0444
+        uid: "10001"
+        gid: "10001"
     depends_on:
       minio-init:
         condition: service_completed_successfully

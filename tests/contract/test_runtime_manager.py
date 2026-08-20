@@ -54,6 +54,10 @@ def test_prepare_writes_manifest_env_and_secret_files(tmp_path: Path) -> None:
     assert (handle.runtime_dir / "hydra-auth-token").read_text(encoding="utf-8").strip()
     assert (handle.runtime_dir / "minio-root-user").read_text(encoding="utf-8").strip()
     assert (handle.runtime_dir / "minio-root-password").read_text(encoding="utf-8").strip()
+    # HydraDB containers run as UID 10001; secrets must be other-readable on Linux.
+    for name in ("hydra-auth-token", "minio-root-user", "minio-root-password"):
+        mode = (handle.runtime_dir / name).stat().st_mode & 0o777
+        assert mode & 0o004, f"{name} must be other-readable, got {mode:o}"
     env_text = handle.env_file.read_text(encoding="utf-8")
     assert "XRAY_RUNTIME_ID=runtime-demo" in env_text
     assert "XRAY_COMPOSE_PROJECT=xray-runtime-demo" in env_text

@@ -76,8 +76,7 @@ def live_ghost_findings(
             (
                 node
                 for node in bundle.nodes
-                if node.label == "Person"
-                and node.properties.get("identity_status") != "unresolved"
+                if node.label == "Person" and node.properties.get("identity_status") != "unresolved"
             ),
             key=lambda n: n.id,
         )

@@ -25,10 +25,11 @@ def test_identity_candidates_explain_members_signals_and_graph_impact() -> None:
 
 def test_identity_decision_does_not_mutate_the_graph() -> None:
     bundle = demo_bundle()
-    accepted = identity_candidates(
-        bundle, {"candidate:sam-ratnaparkhi": "accepted"}
-    )[0]
+    accepted = identity_candidates(bundle, {"candidate:sam-ratnaparkhi": "accepted"})[0]
 
     assert accepted.status == "accepted"
     assert len(bundle.nodes) == 20
-    assert all("suggested merge" in item.lower() or "future snapshot" in item.lower() for item in accepted.limitations)
+    assert all(
+        "suggested merge" in item.lower() or "future snapshot" in item.lower()
+        for item in accepted.limitations
+    )

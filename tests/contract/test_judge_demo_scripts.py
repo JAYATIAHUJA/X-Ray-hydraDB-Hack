@@ -14,7 +14,11 @@ verify = verify_module["verify"]
 def test_judge_demo_verifier_requires_live_loaded_hydra() -> None:
     with patch.dict(
         verify.__globals__,
-        {"_request": lambda *_args, **_kwargs: {"hydra": {"status": "fallback", "graph_loaded": False}}},
+        {
+            "_request": lambda *_args, **_kwargs: {
+                "hydra": {"status": "fallback", "graph_loaded": False}
+            }
+        },
     ):
         with pytest.raises(RuntimeError, match="requires HydraDB live"):
             verify("http://demo")

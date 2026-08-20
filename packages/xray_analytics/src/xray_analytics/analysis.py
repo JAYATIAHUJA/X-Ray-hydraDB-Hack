@@ -82,8 +82,7 @@ def _person_nodes(bundle: CanonicalBundle) -> tuple[NodeRow, ...]:
             (
                 node
                 for node in bundle.nodes
-                if node.label == "Person"
-                and node.properties.get("identity_status") != "unresolved"
+                if node.label == "Person" and node.properties.get("identity_status") != "unresolved"
             ),
             key=lambda n: n.id,
         )

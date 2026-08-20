@@ -38,9 +38,7 @@ def test_answers_reverse_dependency_impact_with_multi_hop_evidence() -> None:
 
 
 def test_missing_approval_abstains_and_explains_export_uncertainty() -> None:
-    answer = answer_ontology_question(
-        demo_bundle(), "Who approved the refund limit change?"
-    )
+    answer = answer_ontology_question(demo_bundle(), "Who approved the refund limit change?")
 
     assert answer.status == "no_answer"
     assert answer.intent == "approval"

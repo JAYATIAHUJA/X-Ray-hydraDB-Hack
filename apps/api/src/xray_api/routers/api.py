@@ -4,7 +4,7 @@ import os
 import time
 from collections.abc import Mapping
 from dataclasses import asdict
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import Depends, FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -200,8 +200,7 @@ def create_app() -> FastAPI:
         people_count = sum(
             1
             for node in bundle.nodes
-            if node.label == "Person"
-            and node.properties.get("identity_status") != "unresolved"
+            if node.label == "Person" and node.properties.get("identity_status") != "unresolved"
         )
         return _lens_envelope(
             snapshot_id=snapshot_id,
@@ -410,17 +409,17 @@ def create_app() -> FastAPI:
     ) -> QuestionResponse:
         bundle = snapshots.require(snapshot_id)
         answer = answer_ontology_question(bundle, request.question)
-        source = "fixture"
+        source: Literal["fixture", "hydradb"] = "fixture"
         degraded_reason = None
-        executed_query = None
+        executed_query: dict[str, object] | None = None
         engine_ms = None
         round_trips = 0
-        if gateway is not None and answer.subject_key is not None and answer.intent in {
-            "owner", "dependency_impact", "approval"
-        }:
-            query = ontology_context_query(
-                answer.intent, bundle.dataset_id, answer.subject_key
-            )
+        if (
+            gateway is not None
+            and answer.subject_key is not None
+            and answer.intent in {"owner", "dependency_impact", "approval"}
+        ):
+            query = ontology_context_query(answer.intent, bundle.dataset_id, answer.subject_key)
             started = time.perf_counter()
             try:
                 gateway.run(query)

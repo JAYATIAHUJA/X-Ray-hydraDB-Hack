@@ -82,7 +82,22 @@ class GraphRuntimeManager:
         for compose_file in self.compose_files:
             command.extend(("-f", str(compose_file)))
         command.extend(("--profile", "core", "up", "-d", "--wait"))
-        subprocess.run(command, check=True)
+        try:
+            subprocess.run(command, check=True)
+        except subprocess.CalledProcessError:
+            logs_cmd = [
+                "docker",
+                "compose",
+                "--env-file",
+                str(handle.env_file),
+                "-p",
+                handle.compose_project,
+            ]
+            for compose_file in self.compose_files:
+                logs_cmd.extend(("-f", str(compose_file)))
+            logs_cmd.extend(["logs", "--no-color", "--tail", "200"])
+            subprocess.run(logs_cmd, check=False)
+            raise
         return handle
 
     def verify(self, handle: GraphRuntimeHandle) -> None:
@@ -112,8 +127,11 @@ class GraphRuntimeManager:
         subprocess.run(command, check=True)
 
     def _write_secret(self, path: Path, value: str) -> None:
+        # Compose file secrets are bind-mounted with host ownership. HydraDB runs
+        # as UID 10001, so owner-only 0600 files are unreadable on Linux CI runners
+        # and graph-node exits immediately. Keep group/other read bits set.
         path.write_text(f"{value}\n", encoding="utf-8", newline="\n")
-        path.chmod(stat.S_IRUSR | stat.S_IWUSR)
+        path.chmod(stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
 
     def _write_env(self, rendered: RenderedRuntime, access_key: str, secret_key: str) -> None:
         spec = rendered.spec

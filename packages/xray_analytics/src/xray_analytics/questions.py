@@ -160,7 +160,9 @@ def _answer(
             paths=(),
             confidence=None,
             answer_kind="abstention",
-            reasoning=("The subject exists, but no supported typed edge carries the requested fact.",),
+            reasoning=(
+                "The subject exists, but no supported typed edge carries the requested fact.",
+            ),
             limitations=("Missing evidence is not proof that the event never occurred.",),
         )
 
@@ -199,10 +201,16 @@ def _answer_owner(
     ]
     if not owner_edges:
         return OntologyAnswer(
-            question=question, intent="owner", status="no_answer",
+            question=question,
+            intent="owner",
+            status="no_answer",
             answer=f"The graph contains {subject.canonical_key}, but has no ownership evidence.",
-            subject_key=subject.canonical_key, person_keys=(), evidence_ids=(), paths=(),
-            confidence=None, answer_kind="abstention",
+            subject_key=subject.canonical_key,
+            person_keys=(),
+            evidence_ids=(),
+            paths=(),
+            confidence=None,
+            answer_kind="abstention",
             reasoning=("No typed OWNS edge exists for the matched module.",),
             limitations=("Missing ownership evidence is not proof that the module has no owner.",),
         )
@@ -274,7 +282,9 @@ def _ownership_decision(
     nodes: dict[int, NodeRow],
     evidence_by_id: dict[str, EvidenceRecord],
 ) -> EvidenceDecision:
-    evidence = next((evidence_by_id[item] for item in edge.evidence_ids if item in evidence_by_id), None)
+    evidence = next(
+        (evidence_by_id[item] for item in edge.evidence_ids if item in evidence_by_id), None
+    )
     source_type = str(getattr(evidence, "source_type", "derived"))
     source_record_id = str(getattr(evidence, "source_record_id", edge.canonical_key))
     valid_from = _optional_int_property(edge, "valid_from_epoch")
@@ -294,7 +304,9 @@ def _ownership_decision(
         source_type=source_type,
         source_record_id=source_record_id,
         authority=str(edge.properties.get("authority", "inferred_authorship")),
-        observed_epoch=_int_property(edge, "observed_epoch", int(getattr(evidence, "observed_epoch", 0))),
+        observed_epoch=_int_property(
+            edge, "observed_epoch", int(getattr(evidence, "observed_epoch", 0))
+        ),
         valid_from_epoch=valid_from,
         valid_until_epoch=valid_until,
         confidence=_edge_confidence(edge),
@@ -309,9 +321,16 @@ def _answer_dependency_impact(
     subject = _match_subject(bundle, subject_text, "owner")
     if subject is None:
         return OntologyAnswer(
-            question=question, intent="dependency_impact", status="not_found",
-            answer="No matching module was found.", subject_key=None, person_keys=(),
-            evidence_ids=(), paths=(), confidence=None, answer_kind="abstention",
+            question=question,
+            intent="dependency_impact",
+            status="not_found",
+            answer="No matching module was found.",
+            subject_key=None,
+            person_keys=(),
+            evidence_ids=(),
+            paths=(),
+            confidence=None,
+            answer_kind="abstention",
             reasoning=("No canonical module matched the requested name.",),
             limitations=("The module may use another name or be outside the supplied exports.",),
         )
@@ -327,15 +346,30 @@ def _answer_dependency_impact(
         owners.sort(key=lambda edge: _owner_sort_key(edge, snapshot_epoch))
         if owners:
             owner = nodes[owners[0].source_id]
-            findings.append((dependent.canonical_key, owner.canonical_key, tuple(sorted({*dependency.evidence_ids, *owners[0].evidence_ids})), min(dependency.confidence, _edge_confidence(owners[0]))))
+            findings.append(
+                (
+                    dependent.canonical_key,
+                    owner.canonical_key,
+                    tuple(sorted({*dependency.evidence_ids, *owners[0].evidence_ids})),
+                    min(dependency.confidence, _edge_confidence(owners[0])),
+                )
+            )
         else:
-            findings.append((dependent.canonical_key, "", dependency.evidence_ids, dependency.confidence))
+            findings.append(
+                (dependent.canonical_key, "", dependency.evidence_ids, dependency.confidence)
+            )
     if not findings:
         return OntologyAnswer(
-            question=question, intent="dependency_impact", status="no_answer",
+            question=question,
+            intent="dependency_impact",
+            status="no_answer",
             answer=f"Not enough evidence to identify modules affected by {_display_name(subject)}.",
-            subject_key=subject.canonical_key, person_keys=(), evidence_ids=(), paths=(),
-            confidence=None, answer_kind="abstention",
+            subject_key=subject.canonical_key,
+            person_keys=(),
+            evidence_ids=(),
+            paths=(),
+            confidence=None,
+            answer_kind="abstention",
             reasoning=("No incoming DEPENDS_ON edge was present for the requested module.",),
             limitations=("Absence from the graph may reflect export or module-mapping coverage.",),
         )
@@ -343,24 +377,43 @@ def _answer_dependency_impact(
     people = tuple(dict.fromkeys(item[1] for item in findings if item[1]))
     modules = ", ".join(_display_name(_node_by_key(bundle, item[0])) for item in findings)
     return OntologyAnswer(
-        question=question, intent="dependency_impact", status="answered",
+        question=question,
+        intent="dependency_impact",
+        status="answered",
         answer=f"{modules} {'depends' if len(findings) == 1 else 'depend'} on {_display_name(subject)} and may be affected.",
-        subject_key=subject.canonical_key, person_keys=people,
+        subject_key=subject.canonical_key,
+        person_keys=people,
         evidence_ids=tuple(sorted({evidence_id for item in findings for evidence_id in item[2]})),
-        paths=tuple((subject.canonical_key, item[0], item[1]) if item[1] else (subject.canonical_key, item[0]) for item in findings),
-        confidence=min(item[3] for item in findings), answer_kind="multi_hop",
+        paths=tuple(
+            (subject.canonical_key, item[0], item[1])
+            if item[1]
+            else (subject.canonical_key, item[0])
+            for item in findings
+        ),
+        confidence=min(item[3] for item in findings),
+        answer_kind="multi_hop",
         reasoning=(
             f"Matched {_display_name(subject)} to {subject.canonical_key}.",
             "Traversed incoming DEPENDS_ON relationships to dependent modules.",
             "Joined each dependent module to its highest-confidence OWNS edge.",
         ),
-        limitations=("Impact means graph reachability, not proof that a change will cause an incident.",),
+        limitations=(
+            "Impact means graph reachability, not proof that a change will cause an incident.",
+        ),
     )
 
 
 def _answer_approval(bundle: CanonicalBundle, question: str, subject_text: str) -> OntologyAnswer:
     needle = _normalize_lookup(subject_text)
-    artifacts = [node for node in bundle.nodes if node.label in {"Artifact", "Phantom"} and (needle in _normalize_lookup(node.canonical_key) or _normalize_lookup(node.canonical_key) in needle)]
+    artifacts = [
+        node
+        for node in bundle.nodes
+        if node.label in {"Artifact", "Phantom"}
+        and (
+            needle in _normalize_lookup(node.canonical_key)
+            or _normalize_lookup(node.canonical_key) in needle
+        )
+    ]
     phantom = next(
         (
             node
@@ -373,20 +426,40 @@ def _answer_approval(bundle: CanonicalBundle, question: str, subject_text: str) 
     subject = min(artifacts, key=lambda node: node.canonical_key) if artifacts else phantom
     if subject is None:
         return OntologyAnswer(
-            question=question, intent="approval", status="not_found",
-            answer="Not enough evidence to answer who approved this change.", subject_key=None,
-            person_keys=(), evidence_ids=(), paths=(), confidence=None,
-            answer_kind="abstention", reasoning=("No approval artifact matched the question.",),
+            question=question,
+            intent="approval",
+            status="not_found",
+            answer="Not enough evidence to answer who approved this change.",
+            subject_key=None,
+            person_keys=(),
+            evidence_ids=(),
+            paths=(),
+            confidence=None,
+            answer_kind="abstention",
+            reasoning=("No approval artifact matched the question.",),
             limitations=("Missing evidence is not proof that approval did not occur.",),
         )
     evidence_ids = subject.evidence_ids
     return OntologyAnswer(
-        question=question, intent="approval", status="no_answer",
+        question=question,
+        intent="approval",
+        status="no_answer",
         answer="Not enough evidence to answer. The expected approval record is absent from the supplied corpus.",
-        subject_key=subject.canonical_key, person_keys=(), evidence_ids=evidence_ids,
-        paths=((subject.canonical_key,),), confidence=None, answer_kind="abstention",
-        reasoning=("The workflow expects an approval artifact.", "The active graph contains a Phantom placeholder instead of an observed approval record.", "X-Ray refuses to infer an approver without source evidence."),
-        limitations=("The export boundary is an alternative explanation for the missing record.", "Absence does not establish deletion or process failure."),
+        subject_key=subject.canonical_key,
+        person_keys=(),
+        evidence_ids=evidence_ids,
+        paths=((subject.canonical_key,),),
+        confidence=None,
+        answer_kind="abstention",
+        reasoning=(
+            "The workflow expects an approval artifact.",
+            "The active graph contains a Phantom placeholder instead of an observed approval record.",
+            "X-Ray refuses to infer an approver without source evidence.",
+        ),
+        limitations=(
+            "The export boundary is an alternative explanation for the missing record.",
+            "Absence does not establish deletion or process failure.",
+        ),
     )
 
 
