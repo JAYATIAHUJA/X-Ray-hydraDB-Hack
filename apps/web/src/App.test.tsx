@@ -87,3 +87,9 @@ test("overview and settings explain the product and API runtime", async () => {
   expect(screen.getByText("Useful endpoints")).toBeInTheDocument();
   expect(screen.getByText(/source: "hydradb"/)).toBeInTheDocument();
 });
+
+test("the risk search keyboard shortcut focuses the search field", async () => {
+  renderApp(); const user = userEvent.setup(); const input = await screen.findByPlaceholderText("Search risks, services, teams…");
+  await user.keyboard("{Control>}k{/Control}");
+  expect(input).toHaveFocus();
+});
