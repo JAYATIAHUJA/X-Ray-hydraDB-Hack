@@ -22,14 +22,14 @@ test("the product opens on a prioritized risk inbox with truthful runtime status
   expect(await screen.findAllByText("xray-demo-v1")).toHaveLength(2);
   expect(screen.getByText("Reference fallback")).toBeInTheDocument();
   expect(screen.getByRole("heading", { name: "Risk inbox" })).toBeInTheDocument();
-  expect(await screen.findByText(/Payments Api depends on Ledger Worker/)).toBeInTheDocument();
+  expect((await screen.findAllByText(/Payments Api depends on Ledger Worker/)).length).toBeGreaterThan(1);
   expect(screen.getAllByText("Uncoordinated dependency").length).toBeGreaterThan(1);
   expect(screen.getAllByText("Key-person dependency").length).toBeGreaterThan(1);
   expect(screen.getAllByText("Missing decision evidence").length).toBeGreaterThan(1);
 });
 
 test("risk filters and search narrow the inbox", async () => {
-  renderApp(); const user = userEvent.setup(); await screen.findByText(/Payments Api depends on Ledger Worker/);
+  renderApp(); const user = userEvent.setup(); await screen.findAllByText(/Payments Api depends on Ledger Worker/);
   await user.selectOptions(screen.getAllByRole("combobox")[0]!, "missing-evidence");
   expect(screen.getByText(/Missing Approval/)).toBeInTheDocument();
   expect(screen.queryByText(/Payments Api depends on Ledger Worker/)).not.toBeInTheDocument();
@@ -42,4 +42,13 @@ test("sidebar navigation exposes the product workspace without changing pages", 
   await user.click(screen.getByRole("button", { name: "Explore graph" }));
   expect(screen.getByRole("heading", { name: "Explore graph" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Explore graph" })).toHaveAttribute("aria-current", "page");
+});
+
+test("selecting a risk opens its evidence-backed explanation", async () => {
+  renderApp(); const user = userEvent.setup();
+  await user.click(await screen.findByRole("button", { name: /Missing decision evidence: Missing Approval/ }));
+  expect(screen.getByRole("heading", { name: "Missing decision evidence: Missing Approval." })).toBeInTheDocument();
+  expect(screen.getByText("What this means")).toBeInTheDocument();
+  await user.click(screen.getByRole("tab", { name: "Limitations" }));
+  expect(screen.getByText("Read before acting")).toBeInTheDocument();
 });

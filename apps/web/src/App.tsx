@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useXraySnapshot } from "./queries";
 import { buildRiskInbox } from "./product/riskModel";
 import { ProductShell } from "./product/ProductShell";
+import { RiskDetail } from "./product/RiskDetail";
 import { RiskInbox } from "./product/RiskInbox";
 import type { ProductView, RiskFilters } from "./product/types";
 import "./product/product.css";
@@ -14,11 +15,13 @@ export function App() {
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string>();
+  const [detailOpen, setDetailOpen] = useState(true);
   const { faultlines, gaps, ghosts, health, snapshot } = useXraySnapshot(undefined, [], filters.windowDays);
   const risks = useMemo(() => buildRiskInbox(ghosts.data, faultlines.data, gaps.data), [faultlines.data, gaps.data, ghosts.data]);
   const activeId = risks.some((risk) => risk.id === selectedId) ? selectedId : risks[0]?.id;
+  const activeRisk = risks.find((risk) => risk.id === activeId);
   return <ProductShell health={health.data} onView={setView} snapshot={snapshot.data} view={view}>
-    {view === "risks" || view === "overview" ? <RiskInbox filters={filters} onFilters={setFilters} onSearch={setSearch} onSelect={setSelectedId} risks={risks} search={search} selectedId={activeId}/> :
+    {view === "risks" || view === "overview" ? <div className={`risks-layout ${detailOpen && activeRisk ? "detail-is-open" : ""}`}><RiskInbox filters={filters} onFilters={(next) => { setFilters(next); setDetailOpen(false); }} onSearch={(value) => { setSearch(value); setDetailOpen(false); }} onSelect={(id) => { setSelectedId(id); setDetailOpen(true); }} risks={risks} search={search} selectedId={detailOpen ? activeId : undefined}/>{detailOpen && activeRisk ? <RiskDetail onClose={() => setDetailOpen(false)} risk={activeRisk}/> : null}</div> :
       <section className="product-placeholder"><h1>{view === "graph" ? "Explore graph" : view[0]?.toUpperCase() + view.slice(1)}</h1><p>This workspace is being upgraded in the next feature slice.</p></section>}
   </ProductShell>;
 }
