@@ -1190,7 +1190,7 @@ label.file.picked em { border-style: solid; border-color: var(--teal); color: va
   height: 100%;
   overflow: hidden;
   display: grid;
-  grid-template-columns: minmax(500px, 1fr) 430px;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 36%);
 }
 .preview-inbox {
   min-width: 0;
@@ -1220,6 +1220,7 @@ label.file.picked em { border-style: solid; border-color: var(--teal); color: va
   padding: 0 16px;
 }
 .preview-inbox .risk-table-wrap {
+  margin: 0 16px 16px;
   overflow: hidden;
 }
 .preview-risk-table {
@@ -1227,16 +1228,43 @@ label.file.picked em { border-style: solid; border-color: var(--teal); color: va
   min-width: 0;
   table-layout: fixed;
 }
-.preview-risk-table th:nth-child(1) { width: 66px; }
-.preview-risk-table th:nth-child(2) { width: 28%; }
-.preview-risk-table th:nth-child(3) { width: 18%; }
-.preview-risk-table th:nth-child(4) { width: 16%; }
-.preview-risk-table th:nth-child(5) { width: 13%; }
-.preview-risk-table th:nth-child(6) { width: 90px; }
-.preview-risk-table th:nth-child(7) { width: 82px; }
+/* Preview pane is narrow (inbox + detail). Keep only readable columns. */
+.preview-risk-table th:nth-child(4),
+.preview-risk-table td:nth-child(4),
+.preview-risk-table th:nth-child(5),
+.preview-risk-table td:nth-child(5),
+.preview-risk-table th:nth-child(7),
+.preview-risk-table td:nth-child(7) {
+  display: none;
+}
+.preview-risk-table th:nth-child(1) { width: 58px; }
+.preview-risk-table th:nth-child(2) { width: auto; }
+.preview-risk-table th:nth-child(3) { width: 34%; }
+.preview-risk-table th:nth-child(6) { width: 88px; }
+.preview-risk-table th,
 .preview-risk-table td {
   height: 58px;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.preview-risk-table .risk-title-button {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.preview-risk-table .risk-type {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.preview-risk-table .risk-type i {
+  display: inline-block;
+  margin-right: 6px;
+  margin-top: 0;
+  vertical-align: middle;
 }
 .preview-detail {
   position: relative;
