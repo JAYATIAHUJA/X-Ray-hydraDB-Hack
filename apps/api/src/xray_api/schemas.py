@@ -141,6 +141,15 @@ class QuestionResponse(BaseModel):
     evidence_ids: tuple[str, ...]
     paths: tuple[tuple[str, ...], ...]
     confidence: int | None = Field(default=None, ge=0, le=100)
+    answer_kind: Literal["direct", "multi_hop", "abstention", "unsupported"]
+    reasoning: tuple[str, ...]
+    limitations: tuple[str, ...]
+    evidence: tuple[dict[str, object], ...] = ()
+    source: Literal["fixture", "hydradb"] = "fixture"
+    degraded_reason: str | None = None
+    executed_query: dict[str, object] | None = None
+    engine_ms: float | None = Field(default=None, ge=0)
+    round_trips: int = Field(default=0, ge=0)
 
 
 class ImportRequest(BaseModel):

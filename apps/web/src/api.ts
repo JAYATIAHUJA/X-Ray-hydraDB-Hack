@@ -162,7 +162,7 @@ export type GapPathRequest = {
 export type QuestionResponse = {
   snapshot_id: string;
   question: string;
-  intent: "owner" | "author" | "reviewer" | "unsupported";
+  intent: "owner" | "author" | "reviewer" | "dependency_impact" | "approval" | "unsupported";
   status: "answered" | "not_found" | "no_answer" | "unsupported";
   answer: string;
   subject_key: string | null;
@@ -170,6 +170,15 @@ export type QuestionResponse = {
   evidence_ids: string[];
   paths: string[][];
   confidence: number | null;
+  answer_kind: "direct" | "multi_hop" | "abstention" | "unsupported";
+  reasoning: string[];
+  limitations: string[];
+  evidence: EvidenceSummary[];
+  source: "fixture" | "hydradb";
+  degraded_reason: string | null;
+  executed_query: { text: string; params: Record<string, unknown>; max_len: number | null; round_trips: number; engine_ms: number } | null;
+  engine_ms: number | null;
+  round_trips: number;
 };
 
 export type ImportPayload = {

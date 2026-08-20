@@ -1,10 +1,11 @@
 import type { SVGProps } from "react";
-export type IconName = "overview" | "risk" | "graph" | "import" | "action" | "settings" | "search" | "filter" | "external" | "close" | "database";
+export type IconName = "overview" | "risk" | "ask" | "graph" | "import" | "action" | "settings" | "search" | "filter" | "external" | "close" | "database";
 export function Icon({ name, ...props }: { name: IconName } & SVGProps<SVGSVGElement>) {
   const common = { fill: "none", stroke: "currentColor", strokeLinecap: "round" as const, strokeLinejoin: "round" as const, strokeWidth: 1.8 };
   return <svg aria-hidden="true" viewBox="0 0 24 24" {...props} {...common}>
     {name === "overview" ? <><path d="M4 11 12 4l8 7"/><path d="M6.5 10v10h11V10M9.5 20v-6h5v6"/></> : null}
     {name === "risk" ? <><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v4.5M12 17h.01"/></> : null}
+    {name === "ask" ? <><path d="M5 5.5h14v10H9l-4 3v-13Z"/><path d="M9 9h6M9 12h4"/></> : null}
     {name === "graph" ? <><circle cx="6" cy="7" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="15" cy="18" r="2.5"/><circle cx="5" cy="17" r="2.5"/><path d="m8.4 6.8 7.1-.5M7.2 9.1l6.5 6.8M7.4 16.9l5.1.7M17.2 8.4l-1.5 7.1"/></> : null}
     {name === "import" ? <><path d="M12 3v12M7.5 10.5 12 15l4.5-4.5"/><path d="M4 19v2h16v-2"/></> : null}
     {name === "action" ? <><path d="M8 4h8M9 2h6v4H9z"/><path d="M6 4H4v18h16V4h-2M8 11h8M8 16h5"/></> : null}

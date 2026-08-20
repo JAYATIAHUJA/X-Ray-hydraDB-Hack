@@ -5,6 +5,7 @@ from .cypher import (
     communication_paths_query,
     edge_upsert_batch,
     node_upsert_batch,
+    ontology_context_query,
     sp_chain_query,
 )
 from .gateway import GatewayError, HydraGateway
@@ -20,5 +21,6 @@ __all__ = [
     "communication_paths_query",
     "edge_upsert_batch",
     "node_upsert_batch",
+    "ontology_context_query",
     "sp_chain_query",
 ]

@@ -3,7 +3,7 @@ import type { HealthResponse, SnapshotResponse } from "../api";
 import type { ProductView } from "./types";
 import { Icon, type IconName } from "./Icons";
 const NAV: Array<{ id: ProductView; label: string; icon: IconName }> = [
-  { id: "overview", label: "Overview", icon: "overview" }, { id: "risks", label: "Risks", icon: "risk" }, { id: "graph", label: "Explore graph", icon: "graph" },
+  { id: "overview", label: "Overview", icon: "overview" }, { id: "risks", label: "Risks", icon: "risk" }, { id: "ask", label: "Ask X-Ray", icon: "ask" }, { id: "graph", label: "Explore graph", icon: "graph" },
   { id: "imports", label: "Imports", icon: "import" }, { id: "actions", label: "Actions", icon: "action" }, { id: "settings", label: "Settings", icon: "settings" }
 ];
 export function ProductShell({ children, view, onView, health, snapshot }: { children: ReactNode; view: ProductView; onView: (view: ProductView) => void; health?: HealthResponse; snapshot?: SnapshotResponse }) {

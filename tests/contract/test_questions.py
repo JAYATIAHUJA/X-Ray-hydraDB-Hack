@@ -21,3 +21,29 @@ def test_unsupported_question_is_explicit_instead_of_guessed() -> None:
     assert answer.status == "unsupported"
     assert answer.person_keys == ()
     assert answer.evidence_ids == ()
+
+
+def test_answers_reverse_dependency_impact_with_multi_hop_evidence() -> None:
+    answer = answer_ontology_question(
+        demo_bundle(), "Which services are affected if ledger-worker changes?"
+    )
+
+    assert answer.status == "answered"
+    assert answer.intent == "dependency_impact"
+    assert answer.answer_kind == "multi_hop"
+    assert answer.subject_key == "module:ledger-worker"
+    assert any("module:payments-api" in path for path in answer.paths)
+    assert answer.evidence_ids
+    assert answer.reasoning
+
+
+def test_missing_approval_abstains_and_explains_export_uncertainty() -> None:
+    answer = answer_ontology_question(
+        demo_bundle(), "Who approved the refund limit change?"
+    )
+
+    assert answer.status == "no_answer"
+    assert answer.intent == "approval"
+    assert answer.answer_kind == "abstention"
+    assert "Not enough evidence" in answer.answer
+    assert any("Absence" in limitation for limitation in answer.limitations)

@@ -6,8 +6,22 @@ from xray_hydra.cypher import (
     communication_paths_query,
     edge_upsert_batch,
     node_upsert_batch,
+    ontology_context_query,
     sp_chain_query,
 )
+
+
+def test_ontology_context_queries_are_typed_and_parameterized() -> None:
+    owner = ontology_context_query("owner", "demo", "module:payments-api")
+    impact = ontology_context_query("dependency_impact", "demo", "module:ledger-worker")
+    approval = ontology_context_query("approval", "demo", "artifact:missing-approval")
+
+    assert "[r:OWNS]" in owner.statement
+    assert "[r:DEPENDS_ON]" in impact.statement
+    assert "p:Phantom" in approval.statement
+    assert "$subject_key" in owner.statement
+    assert owner.parameters["subject_key"] == "module:payments-api"
+    assert ";" not in owner.statement
 
 
 def test_communication_paths_use_equal_pairwise_sets_and_only_communication() -> None:

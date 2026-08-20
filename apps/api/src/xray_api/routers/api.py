@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import time
 from collections.abc import Mapping
 from dataclasses import asdict
 from typing import Annotated
@@ -28,7 +29,7 @@ from xray_core.models import (
     NodeRow,
 )
 from xray_core.paths import normalize_pair
-from xray_hydra import HydraGateway
+from xray_hydra import HydraGateway, ontology_context_query
 
 from ..config import XraySettings, get_settings
 from ..dependencies import (
@@ -390,9 +391,50 @@ def create_app() -> FastAPI:
         "/api/v1/snapshots/{snapshot_id}/questions",
         response_model=QuestionResponse,
     )
-    def answer_question(snapshot_id: str, request: QuestionRequest) -> QuestionResponse:
-        answer = answer_ontology_question(snapshots.require(snapshot_id), request.question)
-        return QuestionResponse(snapshot_id=snapshot_id, **asdict(answer))
+    def answer_question(
+        snapshot_id: str, request: QuestionRequest, gateway: GatewayDep
+    ) -> QuestionResponse:
+        bundle = snapshots.require(snapshot_id)
+        answer = answer_ontology_question(bundle, request.question)
+        source = "fixture"
+        degraded_reason = None
+        executed_query = None
+        engine_ms = None
+        round_trips = 0
+        if gateway is not None and answer.subject_key is not None and answer.intent in {
+            "owner", "dependency_impact", "approval"
+        }:
+            query = ontology_context_query(
+                answer.intent, bundle.dataset_id, answer.subject_key
+            )
+            started = time.perf_counter()
+            try:
+                gateway.run(query)
+                engine_ms = (time.perf_counter() - started) * 1000
+                round_trips = 1
+                source = "hydradb"
+                executed_query = {
+                    "text": query.statement,
+                    "params": dict(query.parameters),
+                    "max_len": query.max_len,
+                    "round_trips": 1,
+                    "engine_ms": engine_ms,
+                }
+            except Exception as exc:
+                engine_ms = (time.perf_counter() - started) * 1000
+                round_trips = 1
+                degraded_reason = str(exc)
+        evidence = {item.evidence_id: item for item in bundle.evidence}
+        return QuestionResponse(
+            snapshot_id=snapshot_id,
+            evidence=_evidence_summaries(evidence, answer.evidence_ids, limit=20),
+            source=source,
+            degraded_reason=degraded_reason,
+            executed_query=executed_query,
+            engine_ms=engine_ms,
+            round_trips=round_trips,
+            **asdict(answer),
+        )
 
     @app.get("/api/v1/snapshots/{snapshot_id}/asymmetries", response_model=LensEnvelope)
     def asymmetries(

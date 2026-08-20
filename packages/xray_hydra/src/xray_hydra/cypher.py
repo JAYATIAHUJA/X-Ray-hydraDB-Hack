@@ -140,6 +140,43 @@ def sp_chain_query(
     )
 
 
+def ontology_context_query(
+    intent: str, dataset_id: str, subject_key: str, *, result_limit: int = 25
+) -> QuerySpec:
+    """Compile the exact graph read used to verify a Judge Mode answer."""
+    if not dataset_id.strip() or not subject_key.strip():
+        raise CypherCompileError("ontology context requires dataset and subject keys")
+    _require_positive(result_limit, "result_limit")
+    if intent == "owner":
+        statement = _one_statement(
+            "MATCH (p:Person {dataset_id: $dataset_id})-[r:OWNS]->"
+            "(m:Module {dataset_id: $dataset_id, canonical_key: $subject_key}) "
+            "RETURN p.canonical_key AS person_key, m.canonical_key AS subject_key, "
+            "r.canonical_key AS relationship_key, r.properties AS properties "
+            "ORDER BY r.canonical_key LIMIT $limit"
+        )
+    elif intent == "dependency_impact":
+        statement = _one_statement(
+            "MATCH (dependent:Module {dataset_id: $dataset_id})-[r:DEPENDS_ON]->"
+            "(changed:Module {dataset_id: $dataset_id, canonical_key: $subject_key}) "
+            "RETURN dependent.canonical_key AS dependent_key, "
+            "changed.canonical_key AS subject_key, r.canonical_key AS relationship_key, "
+            "r.properties AS properties ORDER BY r.canonical_key LIMIT $limit"
+        )
+    elif intent == "approval":
+        statement = _one_statement(
+            "MATCH (p:Phantom {dataset_id: $dataset_id, canonical_key: $subject_key}) "
+            "RETURN p.canonical_key AS subject_key, p.properties AS properties LIMIT $limit"
+        )
+    else:
+        raise CypherCompileError(f"unsupported ontology intent {intent!r}")
+    return QuerySpec(
+        name=f"ontology_{intent}", statement=statement,
+        parameters={"dataset_id": dataset_id, "subject_key": subject_key, "limit": result_limit},
+        max_len=None, result_limit=result_limit,
+    )
+
+
 def node_upsert_batch(label: str, rows: Sequence[dict[str, Scalar]]) -> WriteBatchSpec:
     safe_label = _require_label(label)
     statement = _one_statement(
@@ -184,5 +221,6 @@ __all__ = [
     "communication_paths_query",
     "edge_upsert_batch",
     "node_upsert_batch",
+    "ontology_context_query",
     "sp_chain_query",
 ]
