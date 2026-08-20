@@ -41,7 +41,7 @@ def test_derived_edges_materialize_fixture_topology_with_weighted_cochange_depen
     assert Counter(edge.rel_type for edge in edges) == {
         "COMMUNICATES": 12,
         "DEPENDS_ON": 2,
-        "OWNS": 3,
+        "OWNS": 5,
     }
     communication = next(
         edge
@@ -82,8 +82,8 @@ def test_build_bundle_matches_labelled_fixture_contracts() -> None:
     truth = json.loads((FIXTURE_ROOT / "ground_truth.json").read_text(encoding="utf-8"))
 
     assert len(bundle.nodes) == 17
-    assert len(bundle.edges) == 30
-    assert len(bundle.evidence) == 34
+    assert len(bundle.edges) == 32
+    assert len(bundle.evidence) == 36
     assert truth["ghost_person_key"] in {node.canonical_key for node in bundle.nodes}
     assert truth["gap_path"]["phantom_key"] in {node.canonical_key for node in bundle.nodes}
     assert Counter(edge.rel_type for edge in bundle.edges) == {
@@ -91,7 +91,7 @@ def test_build_bundle_matches_labelled_fixture_contracts() -> None:
         "AUTHORED": 2,
         "COMMUNICATES": 12,
         "DEPENDS_ON": 2,
-        "OWNS": 3,
+        "OWNS": 5,
         "PRECEDED_BY": 2,
         "REPORTS_TO": 7,
     }

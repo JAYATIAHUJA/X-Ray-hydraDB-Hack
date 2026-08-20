@@ -3,7 +3,21 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from xray_core.models import CanonicalBundle, NodeRow
+from xray_core.models import CanonicalBundle, EdgeRow, EvidenceRecord, NodeRow
+
+
+@dataclass(frozen=True, slots=True)
+class EvidenceDecision:
+    person_key: str
+    source_type: str
+    source_record_id: str
+    authority: str
+    observed_epoch: int
+    valid_from_epoch: int | None
+    valid_until_epoch: int | None
+    confidence: int
+    selected: bool
+    reason: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -20,6 +34,8 @@ class OntologyAnswer:
     answer_kind: str
     reasoning: tuple[str, ...]
     limitations: tuple[str, ...]
+    conflicts: tuple[EvidenceDecision, ...] = ()
+    trust_explanation: str | None = None
 
 
 _QUESTION_PATTERNS = (
@@ -31,6 +47,13 @@ _QUESTION_PATTERNS = (
         ),
     ),
     ("approval", re.compile(r"^who\s+approved\s+(.+?)\??$", re.I)),
+    (
+        "owner",
+        re.compile(
+            r"^who\s+(?:owns|is responsible for)\s+(.+?)\s+now(?:,?\s+and\s+why\s+did\s+.+)?\??$",
+            re.I,
+        ),
+    ),
     ("owner", re.compile(r"^who\s+(?:owns|is responsible for)\s+(.+?)\??$", re.I)),
     ("author", re.compile(r"^who\s+(?:authored|wrote|created)\s+(.+?)\??$", re.I)),
     ("reviewer", re.compile(r"^who\s+(?:reviewed|replied to)\s+(.+?)\??$", re.I)),
@@ -87,9 +110,11 @@ def _answer(
         )
 
     nodes = {node.id: node for node in bundle.nodes}
+    if intent == "owner":
+        return _answer_owner(bundle, question, subject, nodes)
     matches: list[tuple[str, tuple[str, ...], tuple[str, ...], int]] = []
-    if intent in {"owner", "author"}:
-        rel_type = "OWNS" if intent == "owner" else "AUTHORED"
+    if intent == "author":
+        rel_type = "AUTHORED"
         for edge in bundle.edges:
             if edge.rel_type == rel_type and edge.target_id == subject.id:
                 person = nodes[edge.source_id]
@@ -160,6 +185,121 @@ def _answer(
             "Returned only people attached to supporting evidence IDs.",
         ),
         limitations=("The answer is limited to the active evidence snapshot.",),
+    )
+
+
+def _answer_owner(
+    bundle: CanonicalBundle,
+    question: str,
+    subject: NodeRow,
+    nodes: dict[int, NodeRow],
+) -> OntologyAnswer:
+    owner_edges = [
+        edge for edge in bundle.edges if edge.rel_type == "OWNS" and edge.target_id == subject.id
+    ]
+    if not owner_edges:
+        return OntologyAnswer(
+            question=question, intent="owner", status="no_answer",
+            answer=f"The graph contains {subject.canonical_key}, but has no ownership evidence.",
+            subject_key=subject.canonical_key, person_keys=(), evidence_ids=(), paths=(),
+            confidence=None, answer_kind="abstention",
+            reasoning=("No typed OWNS edge exists for the matched module.",),
+            limitations=("Missing ownership evidence is not proof that the module has no owner.",),
+        )
+
+    snapshot_epoch = max(
+        (record.observed_epoch for record in bundle.evidence),
+        default=0,
+    )
+    ranked = sorted(owner_edges, key=lambda edge: _owner_sort_key(edge, snapshot_epoch))
+    selected = ranked[0]
+    selected_person = nodes[selected.source_id]
+    evidence_by_id = {record.evidence_id: record for record in bundle.evidence}
+    decisions = tuple(
+        _ownership_decision(edge, selected, snapshot_epoch, nodes, evidence_by_id)
+        for edge in ranked
+    )
+    explicit = tuple(item for item in decisions if item.authority != "inferred_authorship")
+    conflicts = explicit if len({item.person_key for item in explicit}) > 1 else ()
+    selected_decision = decisions[0]
+    trust_explanation = (
+        f"Selected {selected_decision.source_type}:{selected_decision.source_record_id} "
+        f"because it is active in the snapshot and has authority rank "
+        f"{_int_property(selected, 'authority_rank', 0)}."
+    )
+    return OntologyAnswer(
+        question=question,
+        intent="owner",
+        status="answered",
+        answer=f"{_display_name(selected_person)} currently owns {_display_name(subject)}.",
+        subject_key=subject.canonical_key,
+        person_keys=(selected_person.canonical_key,),
+        evidence_ids=tuple(sorted({item for edge in ranked for item in edge.evidence_ids})),
+        paths=((selected_person.canonical_key, subject.canonical_key),),
+        confidence=_edge_confidence(selected),
+        answer_kind="direct",
+        reasoning=(
+            f"Matched {_display_name(subject)} to {subject.canonical_key}.",
+            "Compared every typed OWNS assertion against the snapshot time.",
+            "Ranked active records by declared source authority, observation time, then confidence.",
+        ),
+        limitations=(
+            "Authority ranks are explicit product policy and should be configured per organization.",
+            "The answer is limited to the active evidence snapshot.",
+        ),
+        conflicts=conflicts,
+        trust_explanation=trust_explanation,
+    )
+
+
+def _owner_sort_key(edge: EdgeRow, snapshot_epoch: int) -> tuple[int, int, int, int, str]:
+    valid_from = _optional_int_property(edge, "valid_from_epoch")
+    valid_until = _optional_int_property(edge, "valid_until_epoch")
+    active = (valid_from is None or valid_from <= snapshot_epoch) and (
+        valid_until is None or valid_until >= snapshot_epoch
+    )
+    return (
+        0 if active else 1,
+        -_int_property(edge, "authority_rank", 0),
+        -_int_property(edge, "observed_epoch", 0),
+        -_edge_confidence(edge),
+        edge.canonical_key,
+    )
+
+
+def _ownership_decision(
+    edge: EdgeRow,
+    selected: EdgeRow,
+    snapshot_epoch: int,
+    nodes: dict[int, NodeRow],
+    evidence_by_id: dict[str, EvidenceRecord],
+) -> EvidenceDecision:
+    evidence = next((evidence_by_id[item] for item in edge.evidence_ids if item in evidence_by_id), None)
+    source_type = str(getattr(evidence, "source_type", "derived"))
+    source_record_id = str(getattr(evidence, "source_record_id", edge.canonical_key))
+    valid_from = _optional_int_property(edge, "valid_from_epoch")
+    valid_until = _optional_int_property(edge, "valid_until_epoch")
+    active = (valid_from is None or valid_from <= snapshot_epoch) and (
+        valid_until is None or valid_until >= snapshot_epoch
+    )
+    is_selected = edge.id == selected.id
+    if is_selected:
+        reason = "Selected: active record with the strongest declared authority."
+    elif not active:
+        reason = "Not selected: its validity window ended before the active snapshot."
+    else:
+        reason = "Not selected: a higher-authority active record exists."
+    return EvidenceDecision(
+        person_key=nodes[edge.source_id].canonical_key,
+        source_type=source_type,
+        source_record_id=source_record_id,
+        authority=str(edge.properties.get("authority", "inferred_authorship")),
+        observed_epoch=_int_property(edge, "observed_epoch", int(getattr(evidence, "observed_epoch", 0))),
+        valid_from_epoch=valid_from,
+        valid_until_epoch=valid_until,
+        confidence=_edge_confidence(edge),
+        selected=is_selected,
+        reason=reason,
     )
 
 
@@ -249,10 +389,18 @@ def _answer_approval(bundle: CanonicalBundle, question: str, subject_text: str) 
     )
 
 
-def _edge_confidence(edge: object) -> int:
-    properties = getattr(edge, "properties")
-    confidence = properties.get("confidence", getattr(edge, "confidence"))
-    return confidence if type(confidence) is int else getattr(edge, "confidence")
+def _edge_confidence(edge: EdgeRow) -> int:
+    return _int_property(edge, "confidence", edge.confidence)
+
+
+def _int_property(edge: EdgeRow, key: str, default: int) -> int:
+    value = edge.properties.get(key, default)
+    return value if type(value) is int else default
+
+
+def _optional_int_property(edge: EdgeRow, key: str) -> int | None:
+    value = edge.properties.get(key)
+    return value if type(value) is int else None
 
 
 def _match_subject(bundle: CanonicalBundle, text: str, intent: str) -> NodeRow | None:
@@ -292,4 +440,4 @@ def _node_by_key(bundle: CanonicalBundle, key: str) -> NodeRow:
     return next(node for node in bundle.nodes if node.canonical_key == key)
 
 
-__all__ = ["OntologyAnswer", "answer_ontology_question"]
+__all__ = ["EvidenceDecision", "OntologyAnswer", "answer_ontology_question"]

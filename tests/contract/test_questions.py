@@ -47,3 +47,19 @@ def test_missing_approval_abstains_and_explains_export_uncertainty() -> None:
     assert answer.answer_kind == "abstention"
     assert "Not enough evidence" in answer.answer
     assert any("Absence" in limitation for limitation in answer.limitations)
+
+
+def test_current_owner_resolves_and_discloses_conflicting_records() -> None:
+    answer = answer_ontology_question(
+        demo_bundle(),
+        "Who owns payments-api now, and why did an older Jira record say Alex?",
+    )
+
+    assert answer.status == "answered"
+    assert answer.person_keys == ("person:maya-chen",)
+    assert len(answer.conflicts) == 2
+    assert next(item for item in answer.conflicts if item.selected).source_record_id == (
+        "CODEOWNERS-payments-api"
+    )
+    assert any("validity window ended" in item.reason for item in answer.conflicts)
+    assert answer.trust_explanation is not None

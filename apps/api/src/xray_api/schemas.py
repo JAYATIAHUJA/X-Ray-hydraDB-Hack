@@ -130,6 +130,19 @@ class QuestionRequest(BaseModel):
     question: str = Field(min_length=3, max_length=500)
 
 
+class EvidenceDecisionResponse(BaseModel):
+    person_key: str
+    source_type: str
+    source_record_id: str
+    authority: str
+    observed_epoch: int = Field(ge=0)
+    valid_from_epoch: int | None = Field(default=None, ge=0)
+    valid_until_epoch: int | None = Field(default=None, ge=0)
+    confidence: int = Field(ge=0, le=100)
+    selected: bool
+    reason: str
+
+
 class QuestionResponse(BaseModel):
     snapshot_id: str
     question: str
@@ -144,6 +157,8 @@ class QuestionResponse(BaseModel):
     answer_kind: Literal["direct", "multi_hop", "abstention", "unsupported"]
     reasoning: tuple[str, ...]
     limitations: tuple[str, ...]
+    conflicts: tuple[EvidenceDecisionResponse, ...] = ()
+    trust_explanation: str | None = None
     evidence: tuple[dict[str, object], ...] = ()
     source: Literal["fixture", "hydradb"] = "fixture"
     degraded_reason: str | None = None

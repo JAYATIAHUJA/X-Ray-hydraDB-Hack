@@ -222,6 +222,53 @@ def _ownership_edges(bundle: CanonicalBundle) -> tuple[EdgeRow, ...]:
     return tuple(edges)
 
 
+def _ownership_assertion_edges(bundle: CanonicalBundle) -> tuple[EdgeRow, ...]:
+    """Materialize source-declared, time-bounded ownership facts.
+
+    These edges intentionally coexist with inferred authorship ownership.  The
+    question layer can therefore disclose contradictory records and select a
+    current fact using the recorded validity and authority metadata.
+    """
+    edges = []
+    for evidence in bundle.evidence:
+        if evidence.predicate != "ownership_assertion":
+            continue
+        metadata = _evidence_metadata(evidence)
+        confidence = _int_metadata(metadata, "confidence", evidence.evidence_id)
+        authority_rank = _int_metadata(metadata, "authority_rank", evidence.evidence_id)
+        authority = _str_metadata(metadata, "authority", evidence.evidence_id)
+        valid_from_epoch = _int_metadata(metadata, "valid_from_epoch", evidence.evidence_id)
+        properties: dict[str, Scalar] = {
+            "authority": authority,
+            "authority_rank": authority_rank,
+            "confidence": confidence,
+            "observed_epoch": evidence.observed_epoch,
+            "owner_rank": 1,
+            "source_record_id": evidence.source_record_id,
+            "valid_from_epoch": valid_from_epoch,
+        }
+        valid_until_epoch = metadata.get("valid_until_epoch")
+        if valid_until_epoch is not None:
+            if type(valid_until_epoch) is not int:
+                raise DerivationError(
+                    f"{evidence.evidence_id} metadata 'valid_until_epoch' must be an integer"
+                )
+            properties["valid_until_epoch"] = valid_until_epoch
+        edges.append(
+            _add_edge(
+                bundle,
+                source_key=evidence.subject_key,
+                target_key=evidence.object_key,
+                rel_type="OWNS",
+                discriminator=f"assertion:{evidence.source_record_id}",
+                properties=properties,
+                evidence_ids=(evidence.evidence_id,),
+                evidence_class=evidence.evidence_class,
+            )
+        )
+    return tuple(edges)
+
+
 OWNERS_PER_MODULE = 3
 
 
@@ -396,6 +443,7 @@ def derive_edges(base: CanonicalBundle) -> tuple[EdgeRow, ...]:
     edges = (
         *_communication_edges(base),
         *_ownership_edges(base),
+        *_ownership_assertion_edges(base),
         *_authorship_density_edges(base),
         *_dependency_edges(base),
         *_cochange_dependency_edges(base),

@@ -33,8 +33,8 @@ def test_health_and_current_snapshot() -> None:
 
     assert snapshot["snapshot_id"] == "xray-demo-v1:fixture"
     assert snapshot["node_count"] == 17
-    assert snapshot["edge_count"] == 30
-    assert snapshot["evidence_count"] == 34
+    assert snapshot["edge_count"] == 32
+    assert snapshot["evidence_count"] == 36
 
 
 def test_settings_reads_hydradb_environment_contract() -> None:
@@ -406,7 +406,7 @@ def test_graph_rows_reads_live_hydradb_projection() -> None:
     assert rows.edges[0].weight == 5.0
     assert driver.parameters == [
         {"dataset_id": "xray-demo-v1", "limit": 10},
-        {"dataset_id": "xray-demo-v1", "limit": 30},
+        {"dataset_id": "xray-demo-v1", "limit": 32},
     ]
 
 
@@ -636,6 +636,24 @@ def test_question_endpoint_answers_from_typed_edges_with_evidence() -> None:
     assert payload["subject_key"] == "module:payments-api"
     assert payload["paths"]
     assert payload["evidence_ids"]
+
+
+def test_question_endpoint_exposes_temporal_conflict_decision() -> None:
+    response = client().post(
+        "/api/v1/snapshots/xray-demo-v1:fixture/questions",
+        json={
+            "question": "Who owns payments-api now, and why did an older Jira record say Alex?"
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["person_keys"] == ["person:maya-chen"]
+    assert len(payload["conflicts"]) == 2
+    assert next(item for item in payload["conflicts"] if item["selected"])[
+        "source_record_id"
+    ] == "CODEOWNERS-payments-api"
+    assert payload["trust_explanation"]
 
 
 def test_asymmetry_endpoint_discloses_direction_and_safe_interpretation() -> None:

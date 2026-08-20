@@ -80,6 +80,41 @@
     }
   },
   {
+    "source": "xray-demo-jira",
+    "external_id": "PAY-123-owner",
+    "kind": "ownership_assertion",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": ["person:alex-rivera", "module:payments-api"],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "authority": "jira_component_owner",
+      "authority_rank": 60,
+      "confidence": 82,
+      "valid_from_epoch": 1704067200,
+      "valid_until_epoch": 1738281600
+    }
+  },
+  {
+    "source": "xray-demo-github",
+    "external_id": "CODEOWNERS-payments-api",
+    "kind": "ownership_assertion",
+    "occurred_at_epoch": 1738368000,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": ["person:maya-chen", "module:payments-api"],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "authority": "github_codeowners",
+      "authority_rank": 95,
+      "confidence": 96,
+      "valid_from_epoch": 1738368000
+    }
+  },
+  {
     "source": "xray-demo-git",
     "external_id": "authorship-theo-brooks-ledger-worker",
     "kind": "authorship_aggregate",

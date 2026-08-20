@@ -173,6 +173,19 @@ export type QuestionResponse = {
   answer_kind: "direct" | "multi_hop" | "abstention" | "unsupported";
   reasoning: string[];
   limitations: string[];
+  conflicts: {
+    person_key: string;
+    source_type: string;
+    source_record_id: string;
+    authority: string;
+    observed_epoch: number;
+    valid_from_epoch: number | null;
+    valid_until_epoch: number | null;
+    confidence: number;
+    selected: boolean;
+    reason: string;
+  }[];
+  trust_explanation: string | null;
   evidence: EvidenceSummary[];
   source: "fixture" | "hydradb";
   degraded_reason: string | null;
