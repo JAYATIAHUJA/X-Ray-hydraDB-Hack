@@ -23,7 +23,7 @@ function renderApp() { const client = new QueryClient({ defaultOptions: { querie
 test("the product opens on a prioritized risk inbox with truthful runtime status", async () => {
   renderApp();
   expect(await screen.findAllByText("xray-demo-v1")).toHaveLength(2);
-  expect(screen.getByText("Reference fallback")).toBeInTheDocument();
+  expect(screen.getByText("Snapshot analytics")).toBeInTheDocument();
   expect(screen.getByRole("heading", { name: "Risk inbox" })).toBeInTheDocument();
   expect((await screen.findAllByText(/Payments Api depends on Ledger Worker/)).length).toBeGreaterThan(1);
   expect(screen.getAllByText("Uncoordinated dependency").length).toBeGreaterThan(1);
