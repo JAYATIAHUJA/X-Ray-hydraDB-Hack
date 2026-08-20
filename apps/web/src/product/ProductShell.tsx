@@ -21,15 +21,30 @@ export function ProductShell({
   view,
   onView,
   health,
+  healthState = "ready",
   snapshot
 }: {
   children: ReactNode;
   view: ProductView;
   onView: (view: ProductView) => void;
   health?: HealthResponse;
+  healthState?: "loading" | "error" | "ready";
   snapshot?: SnapshotResponse;
 }) {
-  const engine = health?.hydra.status ?? "offline";
+  const engineStatus =
+    healthState === "loading"
+      ? "connecting"
+      : healthState === "error"
+        ? "offline"
+        : (health?.hydra.status ?? "offline");
+  const engineLabel =
+    engineStatus === "live"
+      ? "HydraDB live"
+      : engineStatus === "fallback"
+        ? "Snapshot analytics"
+        : engineStatus === "connecting"
+          ? "Connecting…"
+          : "Offline";
   const dataPartial = (snapshot?.limitations.length ?? 0) > 0;
 
   return (
@@ -67,8 +82,16 @@ export function ProductShell({
             <div>
               <span>Engine status</span>
               <strong>
-                <i className={`state-dot state-${engine}`} />
-                {engine === "live" ? "HydraDB live" : engine === "fallback" ? "Reference fallback" : "Offline"}
+                <i
+                  className={`state-dot state-${
+                    engineStatus === "connecting"
+                      ? "partial"
+                      : engineStatus === "fallback"
+                        ? "fallback"
+                        : engineStatus
+                  }`}
+                />
+                {engineLabel}
               </strong>
             </div>
             <div>

@@ -18,7 +18,11 @@ if (root === null) {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: false
+      // Render free tier cold-starts often fail the first request; retry so
+      // engine status does not stick on Offline after a transient 502/timeout.
+      retry: 3,
+      retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),
+      refetchOnWindowFocus: true
     }
   }
 });
