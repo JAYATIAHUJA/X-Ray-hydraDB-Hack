@@ -1,0 +1,146 @@
+{
+  "dataset_id": "xray-demo-v1",
+  "label_policy": "Each question inherits the explicit expected result on its group. Variants are kept separate so parser and reasoning regressions are counted.",
+  "groups": [
+    {
+      "category": "direct",
+      "expected_status": "answered",
+      "expected_answer_kind": "direct",
+      "expected_person_keys": ["person:maya-chen"],
+      "minimum_evidence": 1,
+      "questions": [
+        "Who owns payments-api?",
+        "Who is responsible for payments-api?",
+        "Who owns Payments Api?",
+        "Who is responsible for Payments Api?",
+        "Who owns PAYMENTS-API?",
+        "who owns payments-api?",
+        "Who owns module:payments-api?",
+        "WHO OWNS PAYMENTS API?"
+      ]
+    },
+    {
+      "category": "direct",
+      "expected_status": "answered",
+      "expected_answer_kind": "direct",
+      "expected_person_keys": ["person:theo-brooks"],
+      "minimum_evidence": 1,
+      "questions": [
+        "Who owns ledger-worker?",
+        "Who is responsible for ledger-worker?",
+        "Who owns Ledger Worker?",
+        "Who is responsible for Ledger Worker?",
+        "who owns ledger worker?",
+        "Who owns module:ledger-worker?"
+      ]
+    },
+    {
+      "category": "direct",
+      "expected_status": "answered",
+      "expected_answer_kind": "direct",
+      "expected_person_keys": ["person:omar-haddad"],
+      "minimum_evidence": 1,
+      "questions": [
+        "Who owns identity-api?",
+        "Who is responsible for identity-api?",
+        "Who owns Identity Api?",
+        "Who is responsible for Identity Api?",
+        "who owns identity api?",
+        "Who owns module:identity-api?"
+      ]
+    },
+    {
+      "category": "direct",
+      "expected_status": "answered",
+      "expected_answer_kind": "direct",
+      "expected_person_keys": ["person:alex-rivera"],
+      "minimum_evidence": 1,
+      "questions": [
+        "Who authored Directive?",
+        "Who wrote Directive?",
+        "Who created Directive?",
+        "who authored directive?",
+        "WHO WROTE DIRECTIVE?"
+      ]
+    },
+    {
+      "category": "multi_hop",
+      "expected_status": "answered",
+      "expected_answer_kind": "multi_hop",
+      "expected_person_keys": ["person:maya-chen"],
+      "minimum_evidence": 2,
+      "minimum_paths": 1,
+      "questions": [
+        "Which teams are affected if ledger-worker changes?",
+        "Which teams are impacted if ledger-worker changes?",
+        "Which teams affected if ledger-worker changes?",
+        "What teams are affected if ledger-worker changes?",
+        "What teams are impacted if ledger-worker changes?",
+        "What teams impacted if ledger-worker changes?",
+        "Which services are affected if ledger-worker changes?",
+        "Which services are impacted if ledger-worker changes?",
+        "Which services affected if ledger-worker changes?",
+        "What services are affected if ledger-worker changes?",
+        "What services are impacted if ledger-worker changes?",
+        "What services impacted if ledger-worker changes?",
+        "Which modules are affected if ledger-worker changes?",
+        "Which modules are impacted if ledger-worker changes?",
+        "Which modules affected if ledger-worker changes?",
+        "What modules are affected if ledger-worker changes?",
+        "What modules are impacted if ledger-worker changes?",
+        "What modules impacted if ledger-worker changes?",
+        "WHICH SERVICES ARE AFFECTED IF LEDGER WORKER CHANGES?",
+        "what teams are impacted if Ledger Worker changes?"
+      ]
+    },
+    {
+      "category": "conflict",
+      "expected_status": "answered",
+      "expected_answer_kind": "direct",
+      "expected_person_keys": ["person:maya-chen"],
+      "minimum_evidence": 3,
+      "minimum_conflicts": 2,
+      "questions": [
+        "Who owns payments-api now, and why did an older Jira record say Alex?",
+        "Who owns payments-api now and why did Jira list Alex?",
+        "Who owns Payments Api now, and why did the old ticket name Alex?",
+        "Who owns payments api now and why did an older source name Alex?",
+        "Who is responsible for payments-api now, and why did Jira say Alex?",
+        "Who is responsible for Payments Api now and why did the prior record say Alex?",
+        "who owns payments-api now, and why did jira say alex?",
+        "WHO OWNS PAYMENTS API NOW AND WHY DID JIRA SAY ALEX?",
+        "Who owns module:payments-api now, and why did Jira disagree?",
+        "Who owns payments-api now and why did the expired record point to Alex?",
+        "Who owns payments-api now, and why did PAY-123 name Alex?",
+        "Who is responsible for payments api now and why did PAY-123 disagree?",
+        "Who owns Payments Api now and why did an older Jira owner differ?",
+        "Who owns payments-api now, and why did the previous Jira value say Alex?",
+        "Who owns payments api now and why did historical evidence identify Alex?"
+      ]
+    },
+    {
+      "category": "unanswerable",
+      "expected_status": "no_answer",
+      "expected_answer_kind": "abstention",
+      "expected_person_keys": [],
+      "minimum_evidence": 0,
+      "questions": [
+        "Who approved the refund limit change?",
+        "Who approved refund limit change?",
+        "Who approved the production rollout?",
+        "Who approved production rollout?",
+        "Who approved the emergency release?",
+        "Who approved emergency release?",
+        "Who approved the payments migration?",
+        "Who approved payments migration?",
+        "Who approved the ledger change?",
+        "Who approved ledger change?",
+        "who approved the refund limit change?",
+        "WHO APPROVED THE REFUND LIMIT CHANGE?",
+        "Who approved change request PAY-456?",
+        "Who approved the undocumented exception?",
+        "Who approved this change?"
+      ]
+    }
+  ]
+}

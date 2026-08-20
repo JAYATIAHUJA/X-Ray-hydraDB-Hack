@@ -317,13 +317,14 @@ def _answer_dependency_impact(
         )
     nodes = {node.id: node for node in bundle.nodes}
     owner_edges = [edge for edge in bundle.edges if edge.rel_type == "OWNS"]
+    snapshot_epoch = max((record.observed_epoch for record in bundle.evidence), default=0)
     findings: list[tuple[str, str, tuple[str, ...], int]] = []
     for dependency in bundle.edges:
         if dependency.rel_type != "DEPENDS_ON" or dependency.target_id != subject.id:
             continue
         dependent = nodes[dependency.source_id]
         owners = [edge for edge in owner_edges if edge.target_id == dependent.id]
-        owners.sort(key=lambda edge: (-_edge_confidence(edge), edge.canonical_key))
+        owners.sort(key=lambda edge: _owner_sort_key(edge, snapshot_epoch))
         if owners:
             owner = nodes[owners[0].source_id]
             findings.append((dependent.canonical_key, owner.canonical_key, tuple(sorted({*dependency.evidence_ids, *owners[0].evidence_ids})), min(dependency.confidence, _edge_confidence(owners[0]))))

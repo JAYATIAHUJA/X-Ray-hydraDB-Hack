@@ -1,0 +1,1905 @@
+{
+  "corpus": {
+    "category_counts": {
+      "conflict": 15,
+      "direct": 25,
+      "multi_hop": 20,
+      "unanswerable": 15
+    },
+    "path": "data/eval/judge_questions.json",
+    "questions": 75
+  },
+  "dataset_id": "xray-demo-v1",
+  "generated_at_utc": "2026-08-20T09:47:40+00:00",
+  "limitations": [
+    "The corpus is manually labelled but synthetic and concentrated on the bundled demo ontology.",
+    "Question variants test deterministic intent coverage; they are not 75 independent business scenarios.",
+    "Live HydraDB latency remains unreported until the engine benchmark produces non-null p50 and p95."
+  ],
+  "method": "Exact labelled expectations over deterministic typed-edge answers; no LLM judge.",
+  "metrics": {
+    "abstention_accuracy": {
+      "passed": 15,
+      "rate": 1.0,
+      "total": 15
+    },
+    "answer_accuracy": {
+      "passed": 75,
+      "rate": 1.0,
+      "total": 75
+    },
+    "conflict_resolution_accuracy": {
+      "passed": 15,
+      "rate": 1.0,
+      "total": 15
+    },
+    "direct_answer_accuracy": {
+      "passed": 25,
+      "rate": 1.0,
+      "total": 25
+    },
+    "evidence_citation_accuracy": {
+      "passed": 60,
+      "rate": 1.0,
+      "total": 60
+    },
+    "hydradb_latency": {
+      "p50_ms": null,
+      "p95_ms": null,
+      "source": "docs/results/latency.json",
+      "status": "not_measured"
+    },
+    "multi_hop_accuracy": {
+      "passed": 20,
+      "rate": 1.0,
+      "total": 20
+    }
+  },
+  "results": [
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-01-01",
+      "passed": true,
+      "question": "Who owns payments-api?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-01-02",
+      "passed": true,
+      "question": "Who is responsible for payments-api?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-01-03",
+      "passed": true,
+      "question": "Who owns Payments Api?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-01-04",
+      "passed": true,
+      "question": "Who is responsible for Payments Api?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-01-05",
+      "passed": true,
+      "question": "Who owns PAYMENTS-API?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-01-06",
+      "passed": true,
+      "question": "who owns payments-api?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-01-07",
+      "passed": true,
+      "question": "Who owns module:payments-api?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-01-08",
+      "passed": true,
+      "question": "WHO OWNS PAYMENTS API?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [
+          "person:theo-brooks"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-02-01",
+      "passed": true,
+      "question": "Who owns ledger-worker?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [
+          "person:theo-brooks"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-02-02",
+      "passed": true,
+      "question": "Who is responsible for ledger-worker?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [
+          "person:theo-brooks"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-02-03",
+      "passed": true,
+      "question": "Who owns Ledger Worker?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [
+          "person:theo-brooks"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-02-04",
+      "passed": true,
+      "question": "Who is responsible for Ledger Worker?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [
+          "person:theo-brooks"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-02-05",
+      "passed": true,
+      "question": "who owns ledger worker?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [
+          "person:theo-brooks"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-02-06",
+      "passed": true,
+      "question": "Who owns module:ledger-worker?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [
+          "person:omar-haddad"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-03-01",
+      "passed": true,
+      "question": "Who owns identity-api?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [
+          "person:omar-haddad"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-03-02",
+      "passed": true,
+      "question": "Who is responsible for identity-api?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [
+          "person:omar-haddad"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-03-03",
+      "passed": true,
+      "question": "Who owns Identity Api?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [
+          "person:omar-haddad"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-03-04",
+      "passed": true,
+      "question": "Who is responsible for Identity Api?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [
+          "person:omar-haddad"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-03-05",
+      "passed": true,
+      "question": "who owns identity api?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [
+          "person:omar-haddad"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-03-06",
+      "passed": true,
+      "question": "Who owns module:identity-api?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [
+          "person:alex-rivera"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-04-01",
+      "passed": true,
+      "question": "Who authored Directive?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [
+          "person:alex-rivera"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-04-02",
+      "passed": true,
+      "question": "Who wrote Directive?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [
+          "person:alex-rivera"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-04-03",
+      "passed": true,
+      "question": "Who created Directive?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [
+          "person:alex-rivera"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-04-04",
+      "passed": true,
+      "question": "who authored directive?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [
+          "person:alex-rivera"
+        ],
+        "status": "answered"
+      },
+      "category": "direct",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "direct-04-05",
+      "passed": true,
+      "question": "WHO WROTE DIRECTIVE?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-01",
+      "passed": true,
+      "question": "Which teams are affected if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-02",
+      "passed": true,
+      "question": "Which teams are impacted if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-03",
+      "passed": true,
+      "question": "Which teams affected if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-04",
+      "passed": true,
+      "question": "What teams are affected if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-05",
+      "passed": true,
+      "question": "What teams are impacted if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-06",
+      "passed": true,
+      "question": "What teams impacted if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-07",
+      "passed": true,
+      "question": "Which services are affected if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-08",
+      "passed": true,
+      "question": "Which services are impacted if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-09",
+      "passed": true,
+      "question": "Which services affected if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-10",
+      "passed": true,
+      "question": "What services are affected if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-11",
+      "passed": true,
+      "question": "What services are impacted if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-12",
+      "passed": true,
+      "question": "What services impacted if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-13",
+      "passed": true,
+      "question": "Which modules are affected if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-14",
+      "passed": true,
+      "question": "Which modules are impacted if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-15",
+      "passed": true,
+      "question": "Which modules affected if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-16",
+      "passed": true,
+      "question": "What modules are affected if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-17",
+      "passed": true,
+      "question": "What modules are impacted if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-18",
+      "passed": true,
+      "question": "What modules impacted if ledger-worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-19",
+      "passed": true,
+      "question": "WHICH SERVICES ARE AFFECTED IF LEDGER WORKER CHANGES?"
+    },
+    {
+      "actual": {
+        "answer_kind": "multi_hop",
+        "conflict_count": 0,
+        "evidence_count": 2,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "multi_hop",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "multi_hop-05-20",
+      "passed": true,
+      "question": "what teams are impacted if Ledger Worker changes?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "conflict",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "conflict-06-01",
+      "passed": true,
+      "question": "Who owns payments-api now, and why did an older Jira record say Alex?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "conflict",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "conflict-06-02",
+      "passed": true,
+      "question": "Who owns payments-api now and why did Jira list Alex?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "conflict",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "conflict-06-03",
+      "passed": true,
+      "question": "Who owns Payments Api now, and why did the old ticket name Alex?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "conflict",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "conflict-06-04",
+      "passed": true,
+      "question": "Who owns payments api now and why did an older source name Alex?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "conflict",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "conflict-06-05",
+      "passed": true,
+      "question": "Who is responsible for payments-api now, and why did Jira say Alex?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "conflict",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "conflict-06-06",
+      "passed": true,
+      "question": "Who is responsible for Payments Api now and why did the prior record say Alex?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "conflict",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "conflict-06-07",
+      "passed": true,
+      "question": "who owns payments-api now, and why did jira say alex?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "conflict",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "conflict-06-08",
+      "passed": true,
+      "question": "WHO OWNS PAYMENTS API NOW AND WHY DID JIRA SAY ALEX?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "conflict",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "conflict-06-09",
+      "passed": true,
+      "question": "Who owns module:payments-api now, and why did Jira disagree?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "conflict",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "conflict-06-10",
+      "passed": true,
+      "question": "Who owns payments-api now and why did the expired record point to Alex?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "conflict",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "conflict-06-11",
+      "passed": true,
+      "question": "Who owns payments-api now, and why did PAY-123 name Alex?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "conflict",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "conflict-06-12",
+      "passed": true,
+      "question": "Who is responsible for payments api now and why did PAY-123 disagree?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "conflict",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "conflict-06-13",
+      "passed": true,
+      "question": "Who owns Payments Api now and why did an older Jira owner differ?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "conflict",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "conflict-06-14",
+      "passed": true,
+      "question": "Who owns payments-api now, and why did the previous Jira value say Alex?"
+    },
+    {
+      "actual": {
+        "answer_kind": "direct",
+        "conflict_count": 2,
+        "evidence_count": 3,
+        "path_count": 1,
+        "person_keys": [
+          "person:maya-chen"
+        ],
+        "status": "answered"
+      },
+      "category": "conflict",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "conflict-06-15",
+      "passed": true,
+      "question": "Who owns payments api now and why did historical evidence identify Alex?"
+    },
+    {
+      "actual": {
+        "answer_kind": "abstention",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [],
+        "status": "no_answer"
+      },
+      "category": "unanswerable",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "unanswerable-07-01",
+      "passed": true,
+      "question": "Who approved the refund limit change?"
+    },
+    {
+      "actual": {
+        "answer_kind": "abstention",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [],
+        "status": "no_answer"
+      },
+      "category": "unanswerable",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "unanswerable-07-02",
+      "passed": true,
+      "question": "Who approved refund limit change?"
+    },
+    {
+      "actual": {
+        "answer_kind": "abstention",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [],
+        "status": "no_answer"
+      },
+      "category": "unanswerable",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "unanswerable-07-03",
+      "passed": true,
+      "question": "Who approved the production rollout?"
+    },
+    {
+      "actual": {
+        "answer_kind": "abstention",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [],
+        "status": "no_answer"
+      },
+      "category": "unanswerable",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "unanswerable-07-04",
+      "passed": true,
+      "question": "Who approved production rollout?"
+    },
+    {
+      "actual": {
+        "answer_kind": "abstention",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [],
+        "status": "no_answer"
+      },
+      "category": "unanswerable",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "unanswerable-07-05",
+      "passed": true,
+      "question": "Who approved the emergency release?"
+    },
+    {
+      "actual": {
+        "answer_kind": "abstention",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [],
+        "status": "no_answer"
+      },
+      "category": "unanswerable",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "unanswerable-07-06",
+      "passed": true,
+      "question": "Who approved emergency release?"
+    },
+    {
+      "actual": {
+        "answer_kind": "abstention",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [],
+        "status": "no_answer"
+      },
+      "category": "unanswerable",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "unanswerable-07-07",
+      "passed": true,
+      "question": "Who approved the payments migration?"
+    },
+    {
+      "actual": {
+        "answer_kind": "abstention",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [],
+        "status": "no_answer"
+      },
+      "category": "unanswerable",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "unanswerable-07-08",
+      "passed": true,
+      "question": "Who approved payments migration?"
+    },
+    {
+      "actual": {
+        "answer_kind": "abstention",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [],
+        "status": "no_answer"
+      },
+      "category": "unanswerable",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "unanswerable-07-09",
+      "passed": true,
+      "question": "Who approved the ledger change?"
+    },
+    {
+      "actual": {
+        "answer_kind": "abstention",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [],
+        "status": "no_answer"
+      },
+      "category": "unanswerable",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "unanswerable-07-10",
+      "passed": true,
+      "question": "Who approved ledger change?"
+    },
+    {
+      "actual": {
+        "answer_kind": "abstention",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [],
+        "status": "no_answer"
+      },
+      "category": "unanswerable",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "unanswerable-07-11",
+      "passed": true,
+      "question": "who approved the refund limit change?"
+    },
+    {
+      "actual": {
+        "answer_kind": "abstention",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [],
+        "status": "no_answer"
+      },
+      "category": "unanswerable",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "unanswerable-07-12",
+      "passed": true,
+      "question": "WHO APPROVED THE REFUND LIMIT CHANGE?"
+    },
+    {
+      "actual": {
+        "answer_kind": "abstention",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [],
+        "status": "no_answer"
+      },
+      "category": "unanswerable",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "unanswerable-07-13",
+      "passed": true,
+      "question": "Who approved change request PAY-456?"
+    },
+    {
+      "actual": {
+        "answer_kind": "abstention",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [],
+        "status": "no_answer"
+      },
+      "category": "unanswerable",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "unanswerable-07-14",
+      "passed": true,
+      "question": "Who approved the undocumented exception?"
+    },
+    {
+      "actual": {
+        "answer_kind": "abstention",
+        "conflict_count": 0,
+        "evidence_count": 1,
+        "path_count": 1,
+        "person_keys": [],
+        "status": "no_answer"
+      },
+      "category": "unanswerable",
+      "checks": {
+        "answer_kind": true,
+        "evidence_ids_exist": true,
+        "minimum_conflicts": true,
+        "minimum_evidence": true,
+        "minimum_paths": true,
+        "person_keys": true,
+        "status": true
+      },
+      "id": "unanswerable-07-15",
+      "passed": true,
+      "question": "Who approved this change?"
+    }
+  ]
+}
