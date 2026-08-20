@@ -8,6 +8,7 @@ const envelope = { snapshot_id: "xray-demo-v1:fixture", analysis_status: "comple
 const responses: Record<string, object> = {
   "/api/v1/health": { status: "ok", read_only: true, imports_enabled: false, hydra: { status: "fallback", configured: false, database: null, uri: null, detail: "Using reference analytics.", graph_loaded: false, node_count: null, edge_count: null } },
   "/api/v1/snapshots/current": { snapshot_id: "xray-demo-v1:fixture", dataset_id: "xray-demo-v1", node_count: 17, edge_count: 30, evidence_count: 34, limitations: ["Synthetic fixture only"] },
+  "/api/v1/snapshots/available": [{ name: "xray-demo-v1", kind: "fixture", dataset_id: "xray-demo-v1", active: true }],
   "/api/v1/snapshots/xray-demo-v1%3Afixture/graph": { snapshot_id: "xray-demo-v1:fixture", nodes: [], edges: [] },
   "/api/v1/snapshots/xray-demo-v1%3Afixture/ghosts": { ...envelope, findings: [{ person_key: "person:maya-chen", display_name: "Maya Chen", role_rank: 1, structural_rank: 1, formal_rank: 9, rank_gap: 8, sampled_centrality: .231, communication_degree: 4, centrality_method: "exact", removal_impact: { reachable_pairs_before: 15, pairs_lost_without_person: 5, max_len: 4 }, evidence: [{ ...evidence, predicate: "person_profile" }] }] },
   "/api/v1/snapshots/xray-demo-v1%3Afixture/faultlines": { ...envelope, source: "hydradb", findings: [{ source_module_key: "module:payments-api", target_module_key: "module:ledger-worker", source_owner_key: "person:alex-rivera", target_owner_key: "person:theo-brooks", dependency_weight: 12, source_owner_confidence: 90, target_owner_confidence: 80, communication_distance: null, tier: "no_path", severity: 12, evidence: [evidence] }] },
@@ -63,4 +64,13 @@ test("risk ownership changes persist into the actions queue", async () => {
   expect(screen.getByText("Platform team")).toBeInTheDocument();
   expect(screen.getByText("mitigating")).toBeInTheDocument();
   expect(screen.getByText("Draft ready")).toBeInTheDocument();
+});
+
+test("imports explain setup and respect the read-only hosted mode", async () => {
+  renderApp(); const user = userEvent.setup(); await screen.findAllByText("xray-demo-v1");
+  await user.click(screen.getByRole("button", { name: "Imports" }));
+  expect(screen.getByRole("heading", { name: "Import a workspace" })).toBeInTheDocument();
+  expect(screen.getByText("Hosted demo is read-only")).toBeInTheDocument();
+  expect(screen.getByLabelText("Workspace ID")).toBeDisabled();
+  expect(screen.getByText("What improves each lens?")).toBeInTheDocument();
 });
