@@ -1,0 +1,9 @@
+{
+  "server/": "server",
+  "ui/": "ui",
+  "mesheryctl/": "mesheryctl",
+  "provider-ui/": "provider",
+  "docs/": "docs",
+  "install/": "docs",
+  "scripts/": "server"
+}

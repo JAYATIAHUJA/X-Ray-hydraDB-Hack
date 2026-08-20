@@ -1,0 +1,181 @@
+[
+  {
+    "source": "meshery-directory",
+    "external_id": "leecalcote",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:leecalcote"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Lee Calcote",
+      "role_rank": 5,
+      "team_key": "team:maintainers",
+      "title": "Project lead"
+    }
+  },
+  {
+    "source": "meshery-directory",
+    "external_id": "aisuko",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:aisuko"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Aisuko",
+      "role_rank": 3,
+      "team_key": "team:server",
+      "title": "Server maintainer",
+      "manager_external_id": "leecalcote"
+    }
+  },
+  {
+    "source": "meshery-directory",
+    "external_id": "muzairkhattak",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:muzairkhattak"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Muhammad Uzair",
+      "role_rank": 3,
+      "team_key": "team:ui",
+      "title": "UI maintainer",
+      "manager_external_id": "leecalcote"
+    }
+  },
+  {
+    "source": "meshery-directory",
+    "external_id": "alphaolomi",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:alphaolomi"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Alpha Olomi",
+      "role_rank": 3,
+      "team_key": "team:cli",
+      "title": "mesheryctl maintainer",
+      "manager_external_id": "leecalcote"
+    }
+  },
+  {
+    "source": "meshery-directory",
+    "external_id": "sayantan15102",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:sayantan15102"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Sayantan Samanta",
+      "role_rank": 2,
+      "team_key": "team:server",
+      "title": "Provider engineer",
+      "manager_external_id": "aisuko"
+    }
+  },
+  {
+    "source": "meshery-directory",
+    "external_id": "nithish",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:nithish"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Nithish Karthik",
+      "role_rank": 2,
+      "team_key": "team:ui",
+      "title": "UI engineer",
+      "manager_external_id": "muzairkhattak"
+    }
+  },
+  {
+    "source": "meshery-directory",
+    "external_id": "vishalvivekm",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:vishalvivekm"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Vishal Vivek",
+      "role_rank": 3,
+      "team_key": "team:docs",
+      "title": "Docs lead",
+      "manager_external_id": "leecalcote"
+    }
+  },
+  {
+    "source": "meshery-directory",
+    "external_id": "bridge-ops",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:bridge-ops"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Bridge Ops",
+      "role_rank": 1,
+      "team_key": "team:community",
+      "title": "Community bridge (IC)",
+      "manager_external_id": "leecalcote"
+    }
+  },
+  {
+    "source": "meshery-directory",
+    "external_id": "nebula-reviewer",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:nebula-reviewer"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Nebula Reviewer",
+      "role_rank": 2,
+      "team_key": "team:server",
+      "title": "Reviewer",
+      "manager_external_id": "aisuko"
+    }
+  }
+]

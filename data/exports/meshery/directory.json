@@ -1,0 +1,74 @@
+[
+  {
+    "external_id": "leecalcote",
+    "display_name": "Lee Calcote",
+    "title": "Project lead",
+    "role_rank": 5,
+    "team_key": "team:maintainers",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "aisuko",
+    "display_name": "Aisuko",
+    "title": "Server maintainer",
+    "role_rank": 3,
+    "team_key": "team:server",
+    "manager_external_id": "leecalcote"
+  },
+  {
+    "external_id": "muzairkhattak",
+    "display_name": "Muhammad Uzair",
+    "title": "UI maintainer",
+    "role_rank": 3,
+    "team_key": "team:ui",
+    "manager_external_id": "leecalcote"
+  },
+  {
+    "external_id": "alphaolomi",
+    "display_name": "Alpha Olomi",
+    "title": "mesheryctl maintainer",
+    "role_rank": 3,
+    "team_key": "team:cli",
+    "manager_external_id": "leecalcote"
+  },
+  {
+    "external_id": "sayantan15102",
+    "display_name": "Sayantan Samanta",
+    "title": "Provider engineer",
+    "role_rank": 2,
+    "team_key": "team:server",
+    "manager_external_id": "aisuko"
+  },
+  {
+    "external_id": "nithish",
+    "display_name": "Nithish Karthik",
+    "title": "UI engineer",
+    "role_rank": 2,
+    "team_key": "team:ui",
+    "manager_external_id": "muzairkhattak"
+  },
+  {
+    "external_id": "vishalvivekm",
+    "display_name": "Vishal Vivek",
+    "title": "Docs lead",
+    "role_rank": 3,
+    "team_key": "team:docs",
+    "manager_external_id": "leecalcote"
+  },
+  {
+    "external_id": "bridge-ops",
+    "display_name": "Bridge Ops",
+    "title": "Community bridge (IC)",
+    "role_rank": 1,
+    "team_key": "team:community",
+    "manager_external_id": "leecalcote"
+  },
+  {
+    "external_id": "nebula-reviewer",
+    "display_name": "Nebula Reviewer",
+    "title": "Reviewer",
+    "role_rank": 2,
+    "team_key": "team:server",
+    "manager_external_id": "aisuko"
+  }
+]

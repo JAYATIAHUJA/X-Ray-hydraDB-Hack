@@ -1,0 +1,2531 @@
+[
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "adrianmoisey",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:adrianmoisey"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Adrian Moisey",
+      "role_rank": 3,
+      "team_key": "team:autoscaling",
+      "title": "Autoscaling tech lead",
+      "manager_external_id": "jackfrancis"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "adrianreber",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:adrianreber"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Adrian Reber",
+      "role_rank": 4,
+      "team_key": "team:checkpoint-restore",
+      "title": "Checkpoint Restore chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "ahrtr",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:ahrtr"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Benjamin Wang",
+      "role_rank": 4,
+      "team_key": "team:etcd",
+      "title": "etcd Operator chair",
+      "manager_external_id": "ivanvc"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "ameukam",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:ameukam"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Arnaud Meukam",
+      "role_rank": 4,
+      "team_key": "team:k8s-infra",
+      "title": "K8s Infra chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "amy",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:amy"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Amy Chen",
+      "role_rank": 4,
+      "team_key": "team:batch",
+      "title": "Batch chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "anammedina21",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:anammedina21"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Ana Margarita Medina",
+      "role_rank": 5,
+      "team_key": "team:code-of-conduct",
+      "title": "Code of Conduct chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "andreyvelich",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:andreyvelich"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Andrey Velichkevich",
+      "role_rank": 4,
+      "team_key": "team:checkpoint-restore",
+      "title": "Checkpoint Restore chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "aojea",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:aojea"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Antonio Ojea",
+      "role_rank": 5,
+      "team_key": "team:network",
+      "title": "Steering chair",
+      "manager_external_id": "bowei"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "aramase",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:aramase"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Anish Ramasekar",
+      "role_rank": 4,
+      "team_key": "team:auth",
+      "title": "Auth chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "ardaguclu",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:ardaguclu"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Arda Guclu",
+      "role_rank": 4,
+      "team_key": "team:cli",
+      "title": "CLI chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "atiratree",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:atiratree"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Filip K\u0159epinsk\u00fd",
+      "role_rank": 4,
+      "team_key": "team:node-lifecycle",
+      "title": "Node Lifecycle chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "bentheelder",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:bentheelder"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Benjamin Elder",
+      "role_rank": 5,
+      "team_key": "team:testing",
+      "title": "Steering chair",
+      "manager_external_id": "jbpratt"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "bowei",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:bowei"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Bowei Du",
+      "role_rank": 4,
+      "team_key": "team:network",
+      "title": "Network chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "bridgetkromhout",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:bridgetkromhout"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Bridget Kromhout",
+      "role_rank": 4,
+      "team_key": "team:cloud-provider",
+      "title": "Cloud Provider chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "cailyn-codes",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:cailyn-codes"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Cailyn Edwards",
+      "role_rank": 4,
+      "team_key": "team:security",
+      "title": "Security chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "cheftako",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:cheftako"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Walter Fender",
+      "role_rank": 3,
+      "team_key": "team:cloud-provider",
+      "title": "Cloud Provider tech lead",
+      "manager_external_id": "bridgetkromhout"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "cjcullen",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:cjcullen"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "CJ Cullen",
+      "role_rank": 5,
+      "team_key": "team:security-response",
+      "title": "Security Response chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "claudiubelu",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:claudiubelu"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Claudiu Belu",
+      "role_rank": 3,
+      "team_key": "team:windows",
+      "title": "Windows tech lead",
+      "manager_external_id": "jrvaldes"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "cpanato",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:cpanato"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Carlos Tadeu Panato Jr.",
+      "role_rank": 3,
+      "team_key": "team:release",
+      "title": "Release tech lead",
+      "manager_external_id": "jeremyrickard"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "danwinship",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:danwinship"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Dan Winship",
+      "role_rank": 3,
+      "team_key": "team:network",
+      "title": "Network tech lead",
+      "manager_external_id": "bowei"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "dashpole",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:dashpole"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "David Ashpole",
+      "role_rank": 3,
+      "team_key": "team:instrumentation",
+      "title": "Instrumentation tech lead",
+      "manager_external_id": "rexagod"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "dchen1107",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:dchen1107"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Dawn Chen",
+      "role_rank": 3,
+      "team_key": "team:node",
+      "title": "Node tech lead",
+      "manager_external_id": "sergeykanzhelev"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "deads2k",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:deads2k"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "David Eads",
+      "role_rank": 4,
+      "team_key": "team:api-machinery",
+      "title": "API Machinery chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "derekwaynecarr",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:derekwaynecarr"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Derek Carr",
+      "role_rank": 4,
+      "team_key": "team:architecture",
+      "title": "Architecture chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "dgrisonnet",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:dgrisonnet"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Damien Grisonnet",
+      "role_rank": 3,
+      "team_key": "team:instrumentation",
+      "title": "Instrumentation tech lead",
+      "manager_external_id": "rexagod"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "dims",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:dims"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Davanum Srinivas",
+      "role_rank": 4,
+      "team_key": "team:architecture",
+      "title": "Architecture chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "dipesh-rawat",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:dipesh-rawat"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Dipesh Rawat",
+      "role_rank": 3,
+      "team_key": "team:docs",
+      "title": "Docs tech lead",
+      "manager_external_id": "divya-mohan0209"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "divya-mohan0209",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:divya-mohan0209"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Divya Mohan",
+      "role_rank": 5,
+      "team_key": "team:docs",
+      "title": "Code of Conduct chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "dom4ha",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:dom4ha"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Dominik Marci\u0144ski",
+      "role_rank": 3,
+      "team_key": "team:scheduling",
+      "title": "Scheduling tech lead",
+      "manager_external_id": "macsko"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "eddiezane",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:eddiezane"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Eddie Zaneski",
+      "role_rank": 3,
+      "team_key": "team:cli",
+      "title": "CLI tech lead",
+      "manager_external_id": "ardaguclu"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "elmiko",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:elmiko"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Michael McCune",
+      "role_rank": 4,
+      "team_key": "team:cloud-provider",
+      "title": "Cloud Provider chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "endocrimes",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:endocrimes"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Danielle Lancashire",
+      "role_rank": 5,
+      "team_key": "team:code-of-conduct",
+      "title": "Code of Conduct chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "enj",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:enj"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Mo Khan",
+      "role_rank": 5,
+      "team_key": "team:auth",
+      "title": "Security Response chair",
+      "manager_external_id": "aramase"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "fabriziopandini",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:fabriziopandini"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Fabrizio Pandini",
+      "role_rank": 3,
+      "team_key": "team:cluster-lifecycle",
+      "title": "Cluster Lifecycle tech lead",
+      "manager_external_id": "justinsb"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "fedebongio",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:fedebongio"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Federico Bongiovanni",
+      "role_rank": 4,
+      "team_key": "team:api-machinery",
+      "title": "API Machinery chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "floreks",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:floreks"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Sebastian Florek",
+      "role_rank": 4,
+      "team_key": "team:ui",
+      "title": "UI chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "genpage",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:genpage"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Dylan-Daniel Page",
+      "role_rank": 4,
+      "team_key": "team:k8s-infra",
+      "title": "K8s Infra chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "guicassolato",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:guicassolato"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Guilherme Cassolato",
+      "role_rank": 4,
+      "team_key": "team:network",
+      "title": "Network chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "haircommander",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:haircommander"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Peter Hunt",
+      "role_rank": 4,
+      "team_key": "team:node",
+      "title": "Node chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "hakman",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:hakman"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Ciprian Hacman",
+      "role_rank": 4,
+      "team_key": "team:k8s-infra",
+      "title": "K8s Infra chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "helayoty",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:helayoty"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Heba Elayoty",
+      "role_rank": 4,
+      "team_key": "team:workload-aware-scheduling",
+      "title": "Workload-aware Scheduling chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "iancoldwater",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:iancoldwater"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Ian Coldwater",
+      "role_rank": 4,
+      "team_key": "team:security",
+      "title": "Security chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "intunderflow",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:intunderflow"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Lucy Sweet",
+      "role_rank": 4,
+      "team_key": "team:node-lifecycle",
+      "title": "Node Lifecycle chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "ivanvc",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:ivanvc"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Ivan Valdes",
+      "role_rank": 4,
+      "team_key": "team:etcd",
+      "title": "etcd chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "jackfrancis",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:jackfrancis"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Jack Francis",
+      "role_rank": 4,
+      "team_key": "team:autoscaling",
+      "title": "Autoscaling chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "janetkuo",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:janetkuo"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Janet Kuo",
+      "role_rank": 4,
+      "team_key": "team:apps",
+      "title": "Apps chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "jberkus",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:jberkus"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Josh Berkus",
+      "role_rank": 4,
+      "team_key": "team:etcd",
+      "title": "etcd chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "jbpratt",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:jbpratt"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Brady Pratt",
+      "role_rank": 4,
+      "team_key": "team:testing",
+      "title": "Testing chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "jeremyot",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:jeremyot"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Jeremy Olmsted-Thompson",
+      "role_rank": 4,
+      "team_key": "team:multicluster",
+      "title": "Multicluster chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "jeremyrickard",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:jeremyrickard"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Jeremy Rickard",
+      "role_rank": 5,
+      "team_key": "team:release",
+      "title": "Code of Conduct chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "jmhbnz",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:jmhbnz"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "James Blair",
+      "role_rank": 4,
+      "team_key": "team:etcd-operator",
+      "title": "etcd Operator chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "joaquimrocha",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:joaquimrocha"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Joaquim Rocha",
+      "role_rank": 4,
+      "team_key": "team:ui",
+      "title": "UI chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "joelsmith",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:joelsmith"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Joel Smith",
+      "role_rank": 5,
+      "team_key": "team:security-response",
+      "title": "Security Response chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "joelspeed",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:joelspeed"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Joel Speed",
+      "role_rank": 3,
+      "team_key": "team:cloud-provider",
+      "title": "Cloud Provider tech lead",
+      "manager_external_id": "bridgetkromhout"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "johnbelamaric",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:johnbelamaric"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "John Belamaric",
+      "role_rank": 4,
+      "team_key": "team:architecture",
+      "title": "Architecture chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "jpbetz",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:jpbetz"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Joe Betz",
+      "role_rank": 3,
+      "team_key": "team:api-machinery",
+      "title": "API Machinery tech lead",
+      "manager_external_id": "deads2k"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "jrvaldes",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:jrvaldes"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "JR Valdes",
+      "role_rank": 4,
+      "team_key": "team:windows",
+      "title": "Windows chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "jsafrane",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:jsafrane"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Jan \u0160afr\u00e1nek",
+      "role_rank": 3,
+      "team_key": "team:storage",
+      "title": "Storage tech lead",
+      "manager_external_id": "saad-ali"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "justaugustus",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:justaugustus"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Stephen Augustus",
+      "role_rank": 4,
+      "team_key": "team:release",
+      "title": "Release chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "justinsb",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:justinsb"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Justin Santa Barbara",
+      "role_rank": 4,
+      "team_key": "team:cluster-lifecycle",
+      "title": "Cluster Lifecycle chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "k8s-bridge-ops",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:k8s-bridge-ops"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "K8s Bridge Ops",
+      "role_rank": 1,
+      "team_key": "team:contributor-experience",
+      "title": "Cross-SIG coordinator (IC)",
+      "manager_external_id": "deads2k"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "kannon92",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:kannon92"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Kevin Hannon",
+      "role_rank": 4,
+      "team_key": "team:workload-aware-scheduling",
+      "title": "Workload-aware Scheduling chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "kaslin",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:kaslin"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Kaslin Fields",
+      "role_rank": 4,
+      "team_key": "team:contributor-experience",
+      "title": "Contributor Experience chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "katcosgrove",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:katcosgrove"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Kat Cosgrove",
+      "role_rank": 5,
+      "team_key": "team:docs",
+      "title": "Steering chair",
+      "manager_external_id": "divya-mohan0209"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "keithmattix",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:keithmattix"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Keith Mattix",
+      "role_rank": 4,
+      "team_key": "team:ai-gateway",
+      "title": "AI Gateway chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "kep-shepherd",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:kep-shepherd"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "KEP Shepherd",
+      "role_rank": 2,
+      "team_key": "team:architecture",
+      "title": "Enhancements shepherd",
+      "manager_external_id": "derekwaynecarr"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "kflynn",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:kflynn"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Flynn",
+      "role_rank": 4,
+      "team_key": "team:ai-gateway",
+      "title": "AI Gateway chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "kfswain",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:kfswain"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Kellen Swain",
+      "role_rank": 4,
+      "team_key": "team:ai-gateway",
+      "title": "AI Gateway chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "klueska",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:klueska"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Kevin Klues",
+      "role_rank": 4,
+      "team_key": "team:device-management",
+      "title": "Device Management chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "kow3ns",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:kow3ns"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Kenneth Owens",
+      "role_rank": 4,
+      "team_key": "team:apps",
+      "title": "Apps chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "liggitt",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:liggitt"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Jordan Liggitt",
+      "role_rank": 3,
+      "team_key": "team:auth",
+      "title": "Auth tech lead",
+      "manager_external_id": "aramase"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "macsko",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:macsko"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Maciej Skocze\u0144",
+      "role_rank": 4,
+      "team_key": "team:scheduling",
+      "title": "Scheduling chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "madhavjivrajani",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:madhavjivrajani"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Madhav Jivrajani",
+      "role_rank": 3,
+      "team_key": "team:contributor-experience",
+      "title": "Contributor Experience tech lead",
+      "manager_external_id": "kaslin"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "marosset",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:marosset"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Mark Rossetti",
+      "role_rank": 4,
+      "team_key": "team:windows",
+      "title": "Windows chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "marseel",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:marseel"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Marcel Zieba",
+      "role_rank": 4,
+      "team_key": "team:scalability",
+      "title": "Scalability chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "mengqiy",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:mengqiy"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "David (Mengqi) Yu",
+      "role_rank": 4,
+      "team_key": "team:scalability",
+      "title": "Scalability chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "mfahlandt",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:mfahlandt"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Mario Fahlandt",
+      "role_rank": 4,
+      "team_key": "team:contributor-experience",
+      "title": "Contributor Experience chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "micahhausler",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:micahhausler"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Micah Hausler",
+      "role_rank": 5,
+      "team_key": "team:auth",
+      "title": "Security Response chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "michelle192837",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:michelle192837"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Michelle Shepardson",
+      "role_rank": 4,
+      "team_key": "team:testing",
+      "title": "Testing chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "mikezappa87",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:mikezappa87"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Michael Zappa",
+      "role_rank": 4,
+      "team_key": "team:network",
+      "title": "Network chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "mm4tt",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:mm4tt"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Matt Matejczyk",
+      "role_rank": 4,
+      "team_key": "team:workload-aware-scheduling",
+      "title": "Workload-aware Scheduling chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "mpuckett159",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:mpuckett159"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Marly Salazar",
+      "role_rank": 4,
+      "team_key": "team:cli",
+      "title": "CLI chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "mrunalp",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:mrunalp"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Mrunal Patel",
+      "role_rank": 4,
+      "team_key": "team:node",
+      "title": "Node chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "msau42",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:msau42"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Michelle Au",
+      "role_rank": 3,
+      "team_key": "team:storage",
+      "title": "Storage tech lead",
+      "manager_external_id": "saad-ali"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "mwielgus",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:mwielgus"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Marcin Wielgus",
+      "role_rank": 4,
+      "team_key": "team:batch",
+      "title": "Batch chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "natalisucks",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:natalisucks"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Natali Vlatko",
+      "role_rank": 4,
+      "team_key": "team:docs",
+      "title": "Docs chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "natherz97",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:natherz97"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Nathan Herz",
+      "role_rank": 5,
+      "team_key": "team:security-response",
+      "title": "Security Response chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "neolit123",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:neolit123"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Lubomir Ivanov",
+      "role_rank": 4,
+      "team_key": "team:cluster-lifecycle",
+      "title": "Cluster Lifecycle chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "nirrozenbaum",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:nirrozenbaum"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Nir Rozenbaum",
+      "role_rank": 4,
+      "team_key": "team:ai-gateway",
+      "title": "AI Gateway chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "omerap12",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:omerap12"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Omer Aplatony",
+      "role_rank": 3,
+      "team_key": "team:autoscaling",
+      "title": "Autoscaling tech lead",
+      "manager_external_id": "jackfrancis"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "pacoxu",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:pacoxu"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Paco Xu \u5f90\u4fca\u6770",
+      "role_rank": 5,
+      "team_key": "team:steering",
+      "title": "Steering chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "palnabarun",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:palnabarun"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Nabarun Pal",
+      "role_rank": 4,
+      "team_key": "team:contributor-experience",
+      "title": "Contributor Experience chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "pohly",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:pohly"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Patrick Ohly",
+      "role_rank": 4,
+      "team_key": "team:instrumentation",
+      "title": "Device Management chair",
+      "manager_external_id": "rexagod"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "priyankasaggu11929",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:priyankasaggu11929"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Priyanka Saggu",
+      "role_rank": 3,
+      "team_key": "team:contributor-experience",
+      "title": "Contributor Experience tech lead",
+      "manager_external_id": "kaslin"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "puerco",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:puerco"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Adolfo Garc\u00eda Veytia",
+      "role_rank": 5,
+      "team_key": "team:release",
+      "title": "Security Response chair",
+      "manager_external_id": "jeremyrickard"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "rexagod",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:rexagod"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Pranshu Srivastava",
+      "role_rank": 4,
+      "team_key": "team:instrumentation",
+      "title": "Instrumentation chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "reylejano",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:reylejano"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Rey Lejano",
+      "role_rank": 4,
+      "team_key": "team:docs",
+      "title": "Docs chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "richabanker",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:richabanker"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Richa Banker",
+      "role_rank": 4,
+      "team_key": "team:instrumentation",
+      "title": "Instrumentation chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "ritazh",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:ritazh"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Rita Zhang",
+      "role_rank": 5,
+      "team_key": "team:auth",
+      "title": "Steering chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "rst0git",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:rst0git"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Radostin Stoyanov",
+      "role_rank": 4,
+      "team_key": "team:checkpoint-restore",
+      "title": "Checkpoint Restore chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "rthallisey",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:rthallisey"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Ryan Hallisey",
+      "role_rank": 4,
+      "team_key": "team:node-lifecycle",
+      "title": "Node Lifecycle chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "saad-ali",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:saad-ali"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Saad Ali",
+      "role_rank": 4,
+      "team_key": "team:storage",
+      "title": "Storage chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "salaxander",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:salaxander"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Xander Grzywinski",
+      "role_rank": 3,
+      "team_key": "team:docs",
+      "title": "Docs tech lead",
+      "manager_external_id": "divya-mohan0209"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "sanposhiho",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:sanposhiho"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Kensei Nakada",
+      "role_rank": 4,
+      "team_key": "team:scheduling",
+      "title": "Scheduling chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "saschagrunert",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:saschagrunert"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Sascha Grunert",
+      "role_rank": 5,
+      "team_key": "team:release",
+      "title": "Steering chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "serathius",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:serathius"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Marek Siarkowicz",
+      "role_rank": 3,
+      "team_key": "team:etcd",
+      "title": "etcd tech lead",
+      "manager_external_id": "ivanvc"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "sergeykanzhelev",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:sergeykanzhelev"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Sergey Kanzhelev",
+      "role_rank": 4,
+      "team_key": "team:node",
+      "title": "Node chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "shu-mutou",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:shu-mutou"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Shu Muto",
+      "role_rank": 4,
+      "team_key": "team:ui",
+      "title": "UI chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "shyamjvs",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:shyamjvs"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Shyam Jeedigunta",
+      "role_rank": 3,
+      "team_key": "team:scalability",
+      "title": "Scalability tech lead",
+      "manager_external_id": "marseel"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "siyuanfoundation",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:siyuanfoundation"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Siyuan Zhang",
+      "role_rank": 4,
+      "team_key": "team:etcd",
+      "title": "etcd chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "skitt",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:skitt"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Stephen Kitt",
+      "role_rank": 4,
+      "team_key": "team:multicluster",
+      "title": "Multicluster chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "soltysh",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:soltysh"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Maciej Szulik",
+      "role_rank": 5,
+      "team_key": "team:apps",
+      "title": "Steering chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "stlaz",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:stlaz"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Standa L\u00e1zni\u010dka",
+      "role_rank": 5,
+      "team_key": "team:security-response",
+      "title": "Security Response chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "stmcginnis",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:stmcginnis"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Sean McGinnis",
+      "role_rank": 5,
+      "team_key": "team:code-of-conduct",
+      "title": "Code of Conduct chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "sttts",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:sttts"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Stefan Schimanski",
+      "role_rank": 3,
+      "team_key": "team:api-machinery",
+      "title": "API Machinery tech lead",
+      "manager_external_id": "deads2k"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "tabbysable",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:tabbysable"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Tabitha Sable",
+      "role_rank": 5,
+      "team_key": "team:security",
+      "title": "Security Response chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "tengqm",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:tengqm"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Qiming Teng",
+      "role_rank": 3,
+      "team_key": "team:docs",
+      "title": "Docs tech lead",
+      "manager_external_id": "divya-mohan0209"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "tenzen-y",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:tenzen-y"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Yuki Iwai",
+      "role_rank": 4,
+      "team_key": "team:batch",
+      "title": "Batch chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "thockin",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:thockin"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Tim Hockin",
+      "role_rank": 3,
+      "team_key": "team:network",
+      "title": "Network tech lead",
+      "manager_external_id": "bowei"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "towca",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:towca"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Kuba Tu\u017cnik",
+      "role_rank": 4,
+      "team_key": "team:autoscaling",
+      "title": "Autoscaling chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "upodroid",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:upodroid"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Mahamed Ali",
+      "role_rank": 3,
+      "team_key": "team:k8s-infra",
+      "title": "K8s Infra tech lead",
+      "manager_external_id": "genpage"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "usize",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:usize"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Morgan Foster",
+      "role_rank": 4,
+      "team_key": "team:ai-gateway",
+      "title": "AI Gateway chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "verolop",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:verolop"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Ver\u00f3nica L\u00f3pez",
+      "role_rank": 3,
+      "team_key": "team:release",
+      "title": "Release tech lead",
+      "manager_external_id": "jeremyrickard"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "vinayakankugoyal",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:vinayakankugoyal"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Vinayak Goyal",
+      "role_rank": 5,
+      "team_key": "team:security-response",
+      "title": "Security Response chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "vincepri",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:vincepri"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Vince Prignano",
+      "role_rank": 4,
+      "team_key": "team:cluster-lifecycle",
+      "title": "Cluster Lifecycle chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "vyom-yadav",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:vyom-yadav"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Vyom Yadav",
+      "role_rank": 5,
+      "team_key": "team:security-response",
+      "title": "Security Response chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "wojtek-t",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:wojtek-t"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Wojciech Tyczynski",
+      "role_rank": 3,
+      "team_key": "team:scalability",
+      "title": "Scalability tech lead",
+      "manager_external_id": "marseel"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "xing-yang",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:xing-yang"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Xing Yang",
+      "role_rank": 4,
+      "team_key": "team:storage",
+      "title": "Storage chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "xmudrii",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:xmudrii"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Marko Mudrini\u0107",
+      "role_rank": 3,
+      "team_key": "team:k8s-infra",
+      "title": "K8s Infra tech lead",
+      "manager_external_id": "genpage"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "yuxiangqian",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:yuxiangqian"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Xiangqian Yu",
+      "role_rank": 4,
+      "team_key": "team:data-protection",
+      "title": "Data Protection chair"
+    }
+  },
+  {
+    "source": "kubernetes-sigs-yaml",
+    "external_id": "zylxjtu",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:zylxjtu"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Yuanliang Zhang",
+      "role_rank": 3,
+      "team_key": "team:windows",
+      "title": "Windows tech lead",
+      "manager_external_id": "jrvaldes"
+    }
+  }
+]

@@ -1,0 +1,1050 @@
+[
+  {
+    "external_id": "adrianmoisey",
+    "display_name": "Adrian Moisey",
+    "title": "Autoscaling tech lead",
+    "role_rank": 3,
+    "team_key": "team:autoscaling",
+    "manager_external_id": "jackfrancis"
+  },
+  {
+    "external_id": "adrianreber",
+    "display_name": "Adrian Reber",
+    "title": "Checkpoint Restore chair",
+    "role_rank": 4,
+    "team_key": "team:checkpoint-restore",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "ahrtr",
+    "display_name": "Benjamin Wang",
+    "title": "etcd Operator chair",
+    "role_rank": 4,
+    "team_key": "team:etcd",
+    "manager_external_id": "ivanvc"
+  },
+  {
+    "external_id": "ameukam",
+    "display_name": "Arnaud Meukam",
+    "title": "K8s Infra chair",
+    "role_rank": 4,
+    "team_key": "team:k8s-infra",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "amy",
+    "display_name": "Amy Chen",
+    "title": "Batch chair",
+    "role_rank": 4,
+    "team_key": "team:batch",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "anammedina21",
+    "display_name": "Ana Margarita Medina",
+    "title": "Code of Conduct chair",
+    "role_rank": 5,
+    "team_key": "team:code-of-conduct",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "andreyvelich",
+    "display_name": "Andrey Velichkevich",
+    "title": "Checkpoint Restore chair",
+    "role_rank": 4,
+    "team_key": "team:checkpoint-restore",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "aojea",
+    "display_name": "Antonio Ojea",
+    "title": "Steering chair",
+    "role_rank": 5,
+    "team_key": "team:network",
+    "manager_external_id": "bowei"
+  },
+  {
+    "external_id": "aramase",
+    "display_name": "Anish Ramasekar",
+    "title": "Auth chair",
+    "role_rank": 4,
+    "team_key": "team:auth",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "ardaguclu",
+    "display_name": "Arda Guclu",
+    "title": "CLI chair",
+    "role_rank": 4,
+    "team_key": "team:cli",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "atiratree",
+    "display_name": "Filip K\u0159epinsk\u00fd",
+    "title": "Node Lifecycle chair",
+    "role_rank": 4,
+    "team_key": "team:node-lifecycle",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "bentheelder",
+    "display_name": "Benjamin Elder",
+    "title": "Steering chair",
+    "role_rank": 5,
+    "team_key": "team:testing",
+    "manager_external_id": "jbpratt"
+  },
+  {
+    "external_id": "bowei",
+    "display_name": "Bowei Du",
+    "title": "Network chair",
+    "role_rank": 4,
+    "team_key": "team:network",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "bridgetkromhout",
+    "display_name": "Bridget Kromhout",
+    "title": "Cloud Provider chair",
+    "role_rank": 4,
+    "team_key": "team:cloud-provider",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "cailyn-codes",
+    "display_name": "Cailyn Edwards",
+    "title": "Security chair",
+    "role_rank": 4,
+    "team_key": "team:security",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "cheftako",
+    "display_name": "Walter Fender",
+    "title": "Cloud Provider tech lead",
+    "role_rank": 3,
+    "team_key": "team:cloud-provider",
+    "manager_external_id": "bridgetkromhout"
+  },
+  {
+    "external_id": "cjcullen",
+    "display_name": "CJ Cullen",
+    "title": "Security Response chair",
+    "role_rank": 5,
+    "team_key": "team:security-response",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "claudiubelu",
+    "display_name": "Claudiu Belu",
+    "title": "Windows tech lead",
+    "role_rank": 3,
+    "team_key": "team:windows",
+    "manager_external_id": "jrvaldes"
+  },
+  {
+    "external_id": "cpanato",
+    "display_name": "Carlos Tadeu Panato Jr.",
+    "title": "Release tech lead",
+    "role_rank": 3,
+    "team_key": "team:release",
+    "manager_external_id": "jeremyrickard"
+  },
+  {
+    "external_id": "danwinship",
+    "display_name": "Dan Winship",
+    "title": "Network tech lead",
+    "role_rank": 3,
+    "team_key": "team:network",
+    "manager_external_id": "bowei"
+  },
+  {
+    "external_id": "dashpole",
+    "display_name": "David Ashpole",
+    "title": "Instrumentation tech lead",
+    "role_rank": 3,
+    "team_key": "team:instrumentation",
+    "manager_external_id": "rexagod"
+  },
+  {
+    "external_id": "dchen1107",
+    "display_name": "Dawn Chen",
+    "title": "Node tech lead",
+    "role_rank": 3,
+    "team_key": "team:node",
+    "manager_external_id": "sergeykanzhelev"
+  },
+  {
+    "external_id": "deads2k",
+    "display_name": "David Eads",
+    "title": "API Machinery chair",
+    "role_rank": 4,
+    "team_key": "team:api-machinery",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "derekwaynecarr",
+    "display_name": "Derek Carr",
+    "title": "Architecture chair",
+    "role_rank": 4,
+    "team_key": "team:architecture",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "dgrisonnet",
+    "display_name": "Damien Grisonnet",
+    "title": "Instrumentation tech lead",
+    "role_rank": 3,
+    "team_key": "team:instrumentation",
+    "manager_external_id": "rexagod"
+  },
+  {
+    "external_id": "dims",
+    "display_name": "Davanum Srinivas",
+    "title": "Architecture chair",
+    "role_rank": 4,
+    "team_key": "team:architecture",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "dipesh-rawat",
+    "display_name": "Dipesh Rawat",
+    "title": "Docs tech lead",
+    "role_rank": 3,
+    "team_key": "team:docs",
+    "manager_external_id": "divya-mohan0209"
+  },
+  {
+    "external_id": "divya-mohan0209",
+    "display_name": "Divya Mohan",
+    "title": "Code of Conduct chair",
+    "role_rank": 5,
+    "team_key": "team:docs",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "dom4ha",
+    "display_name": "Dominik Marci\u0144ski",
+    "title": "Scheduling tech lead",
+    "role_rank": 3,
+    "team_key": "team:scheduling",
+    "manager_external_id": "macsko"
+  },
+  {
+    "external_id": "eddiezane",
+    "display_name": "Eddie Zaneski",
+    "title": "CLI tech lead",
+    "role_rank": 3,
+    "team_key": "team:cli",
+    "manager_external_id": "ardaguclu"
+  },
+  {
+    "external_id": "elmiko",
+    "display_name": "Michael McCune",
+    "title": "Cloud Provider chair",
+    "role_rank": 4,
+    "team_key": "team:cloud-provider",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "endocrimes",
+    "display_name": "Danielle Lancashire",
+    "title": "Code of Conduct chair",
+    "role_rank": 5,
+    "team_key": "team:code-of-conduct",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "enj",
+    "display_name": "Mo Khan",
+    "title": "Security Response chair",
+    "role_rank": 5,
+    "team_key": "team:auth",
+    "manager_external_id": "aramase"
+  },
+  {
+    "external_id": "fabriziopandini",
+    "display_name": "Fabrizio Pandini",
+    "title": "Cluster Lifecycle tech lead",
+    "role_rank": 3,
+    "team_key": "team:cluster-lifecycle",
+    "manager_external_id": "justinsb"
+  },
+  {
+    "external_id": "fedebongio",
+    "display_name": "Federico Bongiovanni",
+    "title": "API Machinery chair",
+    "role_rank": 4,
+    "team_key": "team:api-machinery",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "floreks",
+    "display_name": "Sebastian Florek",
+    "title": "UI chair",
+    "role_rank": 4,
+    "team_key": "team:ui",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "genpage",
+    "display_name": "Dylan-Daniel Page",
+    "title": "K8s Infra chair",
+    "role_rank": 4,
+    "team_key": "team:k8s-infra",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "guicassolato",
+    "display_name": "Guilherme Cassolato",
+    "title": "Network chair",
+    "role_rank": 4,
+    "team_key": "team:network",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "haircommander",
+    "display_name": "Peter Hunt",
+    "title": "Node chair",
+    "role_rank": 4,
+    "team_key": "team:node",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "hakman",
+    "display_name": "Ciprian Hacman",
+    "title": "K8s Infra chair",
+    "role_rank": 4,
+    "team_key": "team:k8s-infra",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "helayoty",
+    "display_name": "Heba Elayoty",
+    "title": "Workload-aware Scheduling chair",
+    "role_rank": 4,
+    "team_key": "team:workload-aware-scheduling",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "iancoldwater",
+    "display_name": "Ian Coldwater",
+    "title": "Security chair",
+    "role_rank": 4,
+    "team_key": "team:security",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "intunderflow",
+    "display_name": "Lucy Sweet",
+    "title": "Node Lifecycle chair",
+    "role_rank": 4,
+    "team_key": "team:node-lifecycle",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "ivanvc",
+    "display_name": "Ivan Valdes",
+    "title": "etcd chair",
+    "role_rank": 4,
+    "team_key": "team:etcd",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "jackfrancis",
+    "display_name": "Jack Francis",
+    "title": "Autoscaling chair",
+    "role_rank": 4,
+    "team_key": "team:autoscaling",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "janetkuo",
+    "display_name": "Janet Kuo",
+    "title": "Apps chair",
+    "role_rank": 4,
+    "team_key": "team:apps",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "jberkus",
+    "display_name": "Josh Berkus",
+    "title": "etcd chair",
+    "role_rank": 4,
+    "team_key": "team:etcd",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "jbpratt",
+    "display_name": "Brady Pratt",
+    "title": "Testing chair",
+    "role_rank": 4,
+    "team_key": "team:testing",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "jeremyot",
+    "display_name": "Jeremy Olmsted-Thompson",
+    "title": "Multicluster chair",
+    "role_rank": 4,
+    "team_key": "team:multicluster",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "jeremyrickard",
+    "display_name": "Jeremy Rickard",
+    "title": "Code of Conduct chair",
+    "role_rank": 5,
+    "team_key": "team:release",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "jmhbnz",
+    "display_name": "James Blair",
+    "title": "etcd Operator chair",
+    "role_rank": 4,
+    "team_key": "team:etcd-operator",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "joaquimrocha",
+    "display_name": "Joaquim Rocha",
+    "title": "UI chair",
+    "role_rank": 4,
+    "team_key": "team:ui",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "joelsmith",
+    "display_name": "Joel Smith",
+    "title": "Security Response chair",
+    "role_rank": 5,
+    "team_key": "team:security-response",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "joelspeed",
+    "display_name": "Joel Speed",
+    "title": "Cloud Provider tech lead",
+    "role_rank": 3,
+    "team_key": "team:cloud-provider",
+    "manager_external_id": "bridgetkromhout"
+  },
+  {
+    "external_id": "johnbelamaric",
+    "display_name": "John Belamaric",
+    "title": "Architecture chair",
+    "role_rank": 4,
+    "team_key": "team:architecture",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "jpbetz",
+    "display_name": "Joe Betz",
+    "title": "API Machinery tech lead",
+    "role_rank": 3,
+    "team_key": "team:api-machinery",
+    "manager_external_id": "deads2k"
+  },
+  {
+    "external_id": "jrvaldes",
+    "display_name": "JR Valdes",
+    "title": "Windows chair",
+    "role_rank": 4,
+    "team_key": "team:windows",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "jsafrane",
+    "display_name": "Jan \u0160afr\u00e1nek",
+    "title": "Storage tech lead",
+    "role_rank": 3,
+    "team_key": "team:storage",
+    "manager_external_id": "saad-ali"
+  },
+  {
+    "external_id": "justaugustus",
+    "display_name": "Stephen Augustus",
+    "title": "Release chair",
+    "role_rank": 4,
+    "team_key": "team:release",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "justinsb",
+    "display_name": "Justin Santa Barbara",
+    "title": "Cluster Lifecycle chair",
+    "role_rank": 4,
+    "team_key": "team:cluster-lifecycle",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "k8s-bridge-ops",
+    "display_name": "K8s Bridge Ops",
+    "title": "Cross-SIG coordinator (IC)",
+    "role_rank": 1,
+    "team_key": "team:contributor-experience",
+    "manager_external_id": "deads2k"
+  },
+  {
+    "external_id": "kannon92",
+    "display_name": "Kevin Hannon",
+    "title": "Workload-aware Scheduling chair",
+    "role_rank": 4,
+    "team_key": "team:workload-aware-scheduling",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "kaslin",
+    "display_name": "Kaslin Fields",
+    "title": "Contributor Experience chair",
+    "role_rank": 4,
+    "team_key": "team:contributor-experience",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "katcosgrove",
+    "display_name": "Kat Cosgrove",
+    "title": "Steering chair",
+    "role_rank": 5,
+    "team_key": "team:docs",
+    "manager_external_id": "divya-mohan0209"
+  },
+  {
+    "external_id": "keithmattix",
+    "display_name": "Keith Mattix",
+    "title": "AI Gateway chair",
+    "role_rank": 4,
+    "team_key": "team:ai-gateway",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "kep-shepherd",
+    "display_name": "KEP Shepherd",
+    "title": "Enhancements shepherd",
+    "role_rank": 2,
+    "team_key": "team:architecture",
+    "manager_external_id": "derekwaynecarr"
+  },
+  {
+    "external_id": "kflynn",
+    "display_name": "Flynn",
+    "title": "AI Gateway chair",
+    "role_rank": 4,
+    "team_key": "team:ai-gateway",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "kfswain",
+    "display_name": "Kellen Swain",
+    "title": "AI Gateway chair",
+    "role_rank": 4,
+    "team_key": "team:ai-gateway",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "klueska",
+    "display_name": "Kevin Klues",
+    "title": "Device Management chair",
+    "role_rank": 4,
+    "team_key": "team:device-management",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "kow3ns",
+    "display_name": "Kenneth Owens",
+    "title": "Apps chair",
+    "role_rank": 4,
+    "team_key": "team:apps",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "liggitt",
+    "display_name": "Jordan Liggitt",
+    "title": "Auth tech lead",
+    "role_rank": 3,
+    "team_key": "team:auth",
+    "manager_external_id": "aramase"
+  },
+  {
+    "external_id": "macsko",
+    "display_name": "Maciej Skocze\u0144",
+    "title": "Scheduling chair",
+    "role_rank": 4,
+    "team_key": "team:scheduling",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "madhavjivrajani",
+    "display_name": "Madhav Jivrajani",
+    "title": "Contributor Experience tech lead",
+    "role_rank": 3,
+    "team_key": "team:contributor-experience",
+    "manager_external_id": "kaslin"
+  },
+  {
+    "external_id": "marosset",
+    "display_name": "Mark Rossetti",
+    "title": "Windows chair",
+    "role_rank": 4,
+    "team_key": "team:windows",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "marseel",
+    "display_name": "Marcel Zieba",
+    "title": "Scalability chair",
+    "role_rank": 4,
+    "team_key": "team:scalability",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "mengqiy",
+    "display_name": "David (Mengqi) Yu",
+    "title": "Scalability chair",
+    "role_rank": 4,
+    "team_key": "team:scalability",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "mfahlandt",
+    "display_name": "Mario Fahlandt",
+    "title": "Contributor Experience chair",
+    "role_rank": 4,
+    "team_key": "team:contributor-experience",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "micahhausler",
+    "display_name": "Micah Hausler",
+    "title": "Security Response chair",
+    "role_rank": 5,
+    "team_key": "team:auth",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "michelle192837",
+    "display_name": "Michelle Shepardson",
+    "title": "Testing chair",
+    "role_rank": 4,
+    "team_key": "team:testing",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "mikezappa87",
+    "display_name": "Michael Zappa",
+    "title": "Network chair",
+    "role_rank": 4,
+    "team_key": "team:network",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "mm4tt",
+    "display_name": "Matt Matejczyk",
+    "title": "Workload-aware Scheduling chair",
+    "role_rank": 4,
+    "team_key": "team:workload-aware-scheduling",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "mpuckett159",
+    "display_name": "Marly Salazar",
+    "title": "CLI chair",
+    "role_rank": 4,
+    "team_key": "team:cli",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "mrunalp",
+    "display_name": "Mrunal Patel",
+    "title": "Node chair",
+    "role_rank": 4,
+    "team_key": "team:node",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "msau42",
+    "display_name": "Michelle Au",
+    "title": "Storage tech lead",
+    "role_rank": 3,
+    "team_key": "team:storage",
+    "manager_external_id": "saad-ali"
+  },
+  {
+    "external_id": "mwielgus",
+    "display_name": "Marcin Wielgus",
+    "title": "Batch chair",
+    "role_rank": 4,
+    "team_key": "team:batch",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "natalisucks",
+    "display_name": "Natali Vlatko",
+    "title": "Docs chair",
+    "role_rank": 4,
+    "team_key": "team:docs",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "natherz97",
+    "display_name": "Nathan Herz",
+    "title": "Security Response chair",
+    "role_rank": 5,
+    "team_key": "team:security-response",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "neolit123",
+    "display_name": "Lubomir Ivanov",
+    "title": "Cluster Lifecycle chair",
+    "role_rank": 4,
+    "team_key": "team:cluster-lifecycle",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "nirrozenbaum",
+    "display_name": "Nir Rozenbaum",
+    "title": "AI Gateway chair",
+    "role_rank": 4,
+    "team_key": "team:ai-gateway",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "omerap12",
+    "display_name": "Omer Aplatony",
+    "title": "Autoscaling tech lead",
+    "role_rank": 3,
+    "team_key": "team:autoscaling",
+    "manager_external_id": "jackfrancis"
+  },
+  {
+    "external_id": "pacoxu",
+    "display_name": "Paco Xu \u5f90\u4fca\u6770",
+    "title": "Steering chair",
+    "role_rank": 5,
+    "team_key": "team:steering",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "palnabarun",
+    "display_name": "Nabarun Pal",
+    "title": "Contributor Experience chair",
+    "role_rank": 4,
+    "team_key": "team:contributor-experience",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "pohly",
+    "display_name": "Patrick Ohly",
+    "title": "Device Management chair",
+    "role_rank": 4,
+    "team_key": "team:instrumentation",
+    "manager_external_id": "rexagod"
+  },
+  {
+    "external_id": "priyankasaggu11929",
+    "display_name": "Priyanka Saggu",
+    "title": "Contributor Experience tech lead",
+    "role_rank": 3,
+    "team_key": "team:contributor-experience",
+    "manager_external_id": "kaslin"
+  },
+  {
+    "external_id": "puerco",
+    "display_name": "Adolfo Garc\u00eda Veytia",
+    "title": "Security Response chair",
+    "role_rank": 5,
+    "team_key": "team:release",
+    "manager_external_id": "jeremyrickard"
+  },
+  {
+    "external_id": "rexagod",
+    "display_name": "Pranshu Srivastava",
+    "title": "Instrumentation chair",
+    "role_rank": 4,
+    "team_key": "team:instrumentation",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "reylejano",
+    "display_name": "Rey Lejano",
+    "title": "Docs chair",
+    "role_rank": 4,
+    "team_key": "team:docs",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "richabanker",
+    "display_name": "Richa Banker",
+    "title": "Instrumentation chair",
+    "role_rank": 4,
+    "team_key": "team:instrumentation",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "ritazh",
+    "display_name": "Rita Zhang",
+    "title": "Steering chair",
+    "role_rank": 5,
+    "team_key": "team:auth",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "rst0git",
+    "display_name": "Radostin Stoyanov",
+    "title": "Checkpoint Restore chair",
+    "role_rank": 4,
+    "team_key": "team:checkpoint-restore",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "rthallisey",
+    "display_name": "Ryan Hallisey",
+    "title": "Node Lifecycle chair",
+    "role_rank": 4,
+    "team_key": "team:node-lifecycle",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "saad-ali",
+    "display_name": "Saad Ali",
+    "title": "Storage chair",
+    "role_rank": 4,
+    "team_key": "team:storage",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "salaxander",
+    "display_name": "Xander Grzywinski",
+    "title": "Docs tech lead",
+    "role_rank": 3,
+    "team_key": "team:docs",
+    "manager_external_id": "divya-mohan0209"
+  },
+  {
+    "external_id": "sanposhiho",
+    "display_name": "Kensei Nakada",
+    "title": "Scheduling chair",
+    "role_rank": 4,
+    "team_key": "team:scheduling",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "saschagrunert",
+    "display_name": "Sascha Grunert",
+    "title": "Steering chair",
+    "role_rank": 5,
+    "team_key": "team:release",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "serathius",
+    "display_name": "Marek Siarkowicz",
+    "title": "etcd tech lead",
+    "role_rank": 3,
+    "team_key": "team:etcd",
+    "manager_external_id": "ivanvc"
+  },
+  {
+    "external_id": "sergeykanzhelev",
+    "display_name": "Sergey Kanzhelev",
+    "title": "Node chair",
+    "role_rank": 4,
+    "team_key": "team:node",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "shu-mutou",
+    "display_name": "Shu Muto",
+    "title": "UI chair",
+    "role_rank": 4,
+    "team_key": "team:ui",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "shyamjvs",
+    "display_name": "Shyam Jeedigunta",
+    "title": "Scalability tech lead",
+    "role_rank": 3,
+    "team_key": "team:scalability",
+    "manager_external_id": "marseel"
+  },
+  {
+    "external_id": "siyuanfoundation",
+    "display_name": "Siyuan Zhang",
+    "title": "etcd chair",
+    "role_rank": 4,
+    "team_key": "team:etcd",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "skitt",
+    "display_name": "Stephen Kitt",
+    "title": "Multicluster chair",
+    "role_rank": 4,
+    "team_key": "team:multicluster",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "soltysh",
+    "display_name": "Maciej Szulik",
+    "title": "Steering chair",
+    "role_rank": 5,
+    "team_key": "team:apps",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "stlaz",
+    "display_name": "Standa L\u00e1zni\u010dka",
+    "title": "Security Response chair",
+    "role_rank": 5,
+    "team_key": "team:security-response",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "stmcginnis",
+    "display_name": "Sean McGinnis",
+    "title": "Code of Conduct chair",
+    "role_rank": 5,
+    "team_key": "team:code-of-conduct",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "sttts",
+    "display_name": "Stefan Schimanski",
+    "title": "API Machinery tech lead",
+    "role_rank": 3,
+    "team_key": "team:api-machinery",
+    "manager_external_id": "deads2k"
+  },
+  {
+    "external_id": "tabbysable",
+    "display_name": "Tabitha Sable",
+    "title": "Security Response chair",
+    "role_rank": 5,
+    "team_key": "team:security",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "tengqm",
+    "display_name": "Qiming Teng",
+    "title": "Docs tech lead",
+    "role_rank": 3,
+    "team_key": "team:docs",
+    "manager_external_id": "divya-mohan0209"
+  },
+  {
+    "external_id": "tenzen-y",
+    "display_name": "Yuki Iwai",
+    "title": "Batch chair",
+    "role_rank": 4,
+    "team_key": "team:batch",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "thockin",
+    "display_name": "Tim Hockin",
+    "title": "Network tech lead",
+    "role_rank": 3,
+    "team_key": "team:network",
+    "manager_external_id": "bowei"
+  },
+  {
+    "external_id": "towca",
+    "display_name": "Kuba Tu\u017cnik",
+    "title": "Autoscaling chair",
+    "role_rank": 4,
+    "team_key": "team:autoscaling",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "upodroid",
+    "display_name": "Mahamed Ali",
+    "title": "K8s Infra tech lead",
+    "role_rank": 3,
+    "team_key": "team:k8s-infra",
+    "manager_external_id": "genpage"
+  },
+  {
+    "external_id": "usize",
+    "display_name": "Morgan Foster",
+    "title": "AI Gateway chair",
+    "role_rank": 4,
+    "team_key": "team:ai-gateway",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "verolop",
+    "display_name": "Ver\u00f3nica L\u00f3pez",
+    "title": "Release tech lead",
+    "role_rank": 3,
+    "team_key": "team:release",
+    "manager_external_id": "jeremyrickard"
+  },
+  {
+    "external_id": "vinayakankugoyal",
+    "display_name": "Vinayak Goyal",
+    "title": "Security Response chair",
+    "role_rank": 5,
+    "team_key": "team:security-response",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "vincepri",
+    "display_name": "Vince Prignano",
+    "title": "Cluster Lifecycle chair",
+    "role_rank": 4,
+    "team_key": "team:cluster-lifecycle",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "vyom-yadav",
+    "display_name": "Vyom Yadav",
+    "title": "Security Response chair",
+    "role_rank": 5,
+    "team_key": "team:security-response",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "wojtek-t",
+    "display_name": "Wojciech Tyczynski",
+    "title": "Scalability tech lead",
+    "role_rank": 3,
+    "team_key": "team:scalability",
+    "manager_external_id": "marseel"
+  },
+  {
+    "external_id": "xing-yang",
+    "display_name": "Xing Yang",
+    "title": "Storage chair",
+    "role_rank": 4,
+    "team_key": "team:storage",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "xmudrii",
+    "display_name": "Marko Mudrini\u0107",
+    "title": "K8s Infra tech lead",
+    "role_rank": 3,
+    "team_key": "team:k8s-infra",
+    "manager_external_id": "genpage"
+  },
+  {
+    "external_id": "yuxiangqian",
+    "display_name": "Xiangqian Yu",
+    "title": "Data Protection chair",
+    "role_rank": 4,
+    "team_key": "team:data-protection",
+    "manager_external_id": null
+  },
+  {
+    "external_id": "zylxjtu",
+    "display_name": "Yuanliang Zhang",
+    "title": "Windows tech lead",
+    "role_rank": 3,
+    "team_key": "team:windows",
+    "manager_external_id": "jrvaldes"
+  }
+]

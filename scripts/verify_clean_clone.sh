@@ -55,7 +55,9 @@ for f in data/fixtures/xray-demo/directory.json \
           data/fixtures/xray-demo/events.json \
           data/fixtures/xray-demo/git_facts.json \
           data/fixtures/xray-demo/manifest.json \
-          data/snapshots/kafka-2025q2/manifest.json; do
+          data/snapshots/kafka-2025q2/manifest.json \
+          data/snapshots/meshery-demo/manifest.json \
+          data/snapshots/kubernetes-demo/manifest.json; do
   [[ -f "$f" ]] && ok "$f" || fail "Missing: $f"
 done
 

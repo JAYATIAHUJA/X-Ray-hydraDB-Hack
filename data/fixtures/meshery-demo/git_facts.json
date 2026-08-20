@@ -1,0 +1,536 @@
+[
+  {
+    "source": "meshery-git",
+    "external_id": "module-server",
+    "kind": "module",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "module:server"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Meshery server",
+      "module_external_id": "server"
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "module-ui",
+    "kind": "module",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "module:ui"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Meshery UI",
+      "module_external_id": "ui"
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "module-mesheryctl",
+    "kind": "module",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "module:mesheryctl"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "mesheryctl CLI",
+      "module_external_id": "mesheryctl"
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "module-provider",
+    "kind": "module",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "module:provider"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Remote provider",
+      "module_external_id": "provider"
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "module-docs",
+    "kind": "module",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "module:docs"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Documentation",
+      "module_external_id": "docs"
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "module-nighthawk",
+    "kind": "module",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "module:nighthawk"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Nighthawk performance",
+      "module_external_id": "nighthawk"
+    }
+  },
+  {
+    "source": "meshery-github",
+    "external_id": "owner-aisuko-server-github_codeowners",
+    "kind": "ownership_assertion",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:aisuko",
+      "module:server"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "authority": "github_codeowners",
+      "authority_rank": 95,
+      "confidence": 96,
+      "valid_from_epoch": 1727913600
+    }
+  },
+  {
+    "source": "meshery-github",
+    "external_id": "owner-muzairkhattak-ui-github_codeowners",
+    "kind": "ownership_assertion",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:muzairkhattak",
+      "module:ui"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "authority": "github_codeowners",
+      "authority_rank": 95,
+      "confidence": 94,
+      "valid_from_epoch": 1727913600
+    }
+  },
+  {
+    "source": "meshery-github",
+    "external_id": "owner-alphaolomi-mesheryctl-github_codeowners",
+    "kind": "ownership_assertion",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:alphaolomi",
+      "module:mesheryctl"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "authority": "github_codeowners",
+      "authority_rank": 95,
+      "confidence": 93,
+      "valid_from_epoch": 1727913600
+    }
+  },
+  {
+    "source": "meshery-tickets",
+    "external_id": "owner-sayantan15102-provider-jira_component_owner",
+    "kind": "ownership_assertion",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:sayantan15102",
+      "module:provider"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "authority": "jira_component_owner",
+      "authority_rank": 60,
+      "confidence": 78,
+      "valid_from_epoch": 1727913600
+    }
+  },
+  {
+    "source": "meshery-github",
+    "external_id": "owner-vishalvivekm-docs-github_codeowners",
+    "kind": "ownership_assertion",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:vishalvivekm",
+      "module:docs"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "authority": "github_codeowners",
+      "authority_rank": 90,
+      "confidence": 90,
+      "valid_from_epoch": 1727913600
+    }
+  },
+  {
+    "source": "meshery-tickets",
+    "external_id": "owner-aisuko-nighthawk-jira_component_owner",
+    "kind": "ownership_assertion",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:aisuko",
+      "module:nighthawk"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "authority": "jira_component_owner",
+      "authority_rank": 60,
+      "confidence": 72,
+      "valid_from_epoch": 1727913600
+    }
+  },
+  {
+    "source": "meshery-tickets",
+    "external_id": "owner-leecalcote-server-jira_component_owner",
+    "kind": "ownership_assertion",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:leecalcote",
+      "module:server"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "authority": "jira_component_owner",
+      "authority_rank": 60,
+      "confidence": 70,
+      "valid_from_epoch": 1727913600,
+      "valid_until_epoch": 1735603200
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "authorship-aisuko-server",
+    "kind": "authorship_aggregate",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": "aisuko",
+    "parent_external_id": null,
+    "subjects": [
+      "person:aisuko",
+      "module:server"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "attributed_count": 48,
+      "module_external_id": "server",
+      "total_attributed_count": 48
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "authorship-sayantan15102-server",
+    "kind": "authorship_aggregate",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": "sayantan15102",
+    "parent_external_id": null,
+    "subjects": [
+      "person:sayantan15102",
+      "module:server"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "attributed_count": 18,
+      "module_external_id": "server",
+      "total_attributed_count": 18
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "authorship-muzairkhattak-ui",
+    "kind": "authorship_aggregate",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": "muzairkhattak",
+    "parent_external_id": null,
+    "subjects": [
+      "person:muzairkhattak",
+      "module:ui"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "attributed_count": 36,
+      "module_external_id": "ui",
+      "total_attributed_count": 36
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "authorship-nithish-ui",
+    "kind": "authorship_aggregate",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": "nithish",
+    "parent_external_id": null,
+    "subjects": [
+      "person:nithish",
+      "module:ui"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "attributed_count": 14,
+      "module_external_id": "ui",
+      "total_attributed_count": 14
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "authorship-alphaolomi-mesheryctl",
+    "kind": "authorship_aggregate",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": "alphaolomi",
+    "parent_external_id": null,
+    "subjects": [
+      "person:alphaolomi",
+      "module:mesheryctl"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "attributed_count": 28,
+      "module_external_id": "mesheryctl",
+      "total_attributed_count": 28
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "authorship-sayantan15102-provider",
+    "kind": "authorship_aggregate",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": "sayantan15102",
+    "parent_external_id": null,
+    "subjects": [
+      "person:sayantan15102",
+      "module:provider"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "attributed_count": 22,
+      "module_external_id": "provider",
+      "total_attributed_count": 22
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "authorship-vishalvivekm-docs",
+    "kind": "authorship_aggregate",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": "vishalvivekm",
+    "parent_external_id": null,
+    "subjects": [
+      "person:vishalvivekm",
+      "module:docs"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "attributed_count": 30,
+      "module_external_id": "docs",
+      "total_attributed_count": 30
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "authorship-bridge-ops-docs",
+    "kind": "authorship_aggregate",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": "bridge-ops",
+    "parent_external_id": null,
+    "subjects": [
+      "person:bridge-ops",
+      "module:docs"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "attributed_count": 4,
+      "module_external_id": "docs",
+      "total_attributed_count": 4
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "authorship-aisuko-nighthawk",
+    "kind": "authorship_aggregate",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": "aisuko",
+    "parent_external_id": null,
+    "subjects": [
+      "person:aisuko",
+      "module:nighthawk"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "attributed_count": 12,
+      "module_external_id": "nighthawk",
+      "total_attributed_count": 12
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "dep-ui-server",
+    "kind": "dependency",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "module:ui",
+      "module:server"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "dependency_kind": "import",
+      "source_module_external_id": "ui",
+      "target_module_external_id": "server",
+      "weight": 18
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "dep-mesheryctl-server",
+    "kind": "dependency",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "module:mesheryctl",
+      "module:server"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "dependency_kind": "import",
+      "source_module_external_id": "mesheryctl",
+      "target_module_external_id": "server",
+      "weight": 14
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "dep-provider-server",
+    "kind": "dependency",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "module:provider",
+      "module:server"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "dependency_kind": "import",
+      "source_module_external_id": "provider",
+      "target_module_external_id": "server",
+      "weight": 11
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "dep-docs-ui",
+    "kind": "dependency",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "module:docs",
+      "module:ui"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "dependency_kind": "import",
+      "source_module_external_id": "docs",
+      "target_module_external_id": "ui",
+      "weight": 6
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "dep-nighthawk-server",
+    "kind": "dependency",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "module:nighthawk",
+      "module:server"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "dependency_kind": "import",
+      "source_module_external_id": "nighthawk",
+      "target_module_external_id": "server",
+      "weight": 9
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "cochange-ui-provider",
+    "kind": "cochange",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "module:ui",
+      "module:provider"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "cochange_count": 5,
+      "relationship_class": "inferred_coupling",
+      "source_module_external_id": "ui",
+      "target_module_external_id": "provider"
+    }
+  }
+]

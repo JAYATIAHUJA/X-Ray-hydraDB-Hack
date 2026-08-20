@@ -1,0 +1,86 @@
+{
+  "dataset_id": "kubernetes-demo",
+  "fixture_version": 1,
+  "schema_version": "1.0.0",
+  "created_at_epoch": 1735689600,
+  "evidence_classes": [
+    "observed",
+    "inferred",
+    "demo_ground_truth"
+  ],
+  "source_files": [
+    {
+      "path": "directory.json",
+      "source_type": "directory",
+      "source_uri": "fixture://kubernetes-demo/directory",
+      "record_count": 131,
+      "sha256": "bfdd8ea71f9d9ab22975c5b4ff6822c73ef498da652e16f7b338230f1d7159e3",
+      "input_status": "complete"
+    },
+    {
+      "path": "events.json",
+      "source_type": "event_export",
+      "source_uri": "fixture://kubernetes-demo/events",
+      "record_count": 388,
+      "sha256": "69ae387f0c9a681a3f959e75e4c75a9f6c264428ebaac7b4ce4d3101a071d578",
+      "input_status": "complete"
+    },
+    {
+      "path": "git_facts.json",
+      "source_type": "git",
+      "source_uri": "fixture://kubernetes-demo/git-facts",
+      "record_count": 1106,
+      "sha256": "68c8f8439bbac56d82c48f768722ab9edd510842f711c7a5d237daf4ebca182e",
+      "input_status": "complete"
+    }
+  ],
+  "ground_truth_file": "ground_truth.json",
+  "ground_truth_descriptor": {
+    "evidence_class": "demo_ground_truth",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sequence_contracts": [
+    {
+      "contract_id": "contract:k8s-kep-approval:v1",
+      "contract_kind": "contiguous_sequence",
+      "sequence_key": "k8s-kep-approval",
+      "steps": [
+        {
+          "ordinal": 0,
+          "canonical_key": "artifact:directive",
+          "artifact_kind": "directive",
+          "required": true
+        },
+        {
+          "ordinal": 1,
+          "canonical_key": "artifact:missing-approval",
+          "artifact_kind": "approval",
+          "required": true
+        },
+        {
+          "ordinal": 2,
+          "canonical_key": "artifact:code-change",
+          "artifact_kind": "code_change",
+          "required": true
+        }
+      ],
+      "source_uri": "fixture://kubernetes-demo/contracts/kep-approval",
+      "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "limitations": [
+        "Slack is a SIG-shaped mock unless --slack-dir points at a real export."
+      ]
+    }
+  ],
+  "acceptance_labels": {
+    "ghost_broker_key": "person:k8s-bridge-ops",
+    "faultline_source_module_key": "module:network",
+    "faultline_target_module_key": "module:api-machinery"
+  },
+  "limitations": [
+    "Dataset kubernetes-demo is snapshot analytics over public Kubernetes org governance + 283 active repos (kubernetes + kubernetes-sigs), not a live HydraDB org connection.",
+    "People come from sigs.yaml chairs/tech leads; not every org member.",
+    "Repo\u2192SIG ownership uses topic/name heuristics when OWNERS files are not parsed.",
+    "Slack edges are SIG-shaped mocks unless a real Slack export is provided.",
+    "Absence does not establish deletion. The corpus is structurally incomplete."
+  ]
+}

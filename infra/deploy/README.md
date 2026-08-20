@@ -4,7 +4,7 @@ Two images, built from the repo root:
 
 | Image | Dockerfile | Serves |
 |---|---|---|
-| `xray-api` | `apps/api/Dockerfile` | FastAPI on :8000, bundled Kafka snapshot (`XRAY_SNAPSHOT_DIR`), optional live HydraDB via `XRAY_HYDRA_URI` |
+| `xray-api` | `apps/api/Dockerfile` | FastAPI on :8000, bundled Meshery demo snapshot (`XRAY_SNAPSHOT_DIR`), optional live HydraDB via `XRAY_HYDRA_URI` |
 | `xray-web` | `apps/web/Dockerfile` | nginx on :8080 — landing `/`, dashboard `/app`, `/api/*` proxied same-origin to `API_UPSTREAM` |
 
 ## Local, one command

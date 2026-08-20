@@ -22,10 +22,14 @@ from xray_ingest.pipeline import ingest_exports
 from ..dependencies import (
     DEMO_V2_DATASET_ID,
     FIXTURE_VARIANTS,
+    KUBERNETES_DATASET_ID,
+    MESHERY_DATASET_ID,
     SYNTH_DATASET_ID,
     active_bundle,
     demo_bundle,
     demo_v2_bundle,
+    kubernetes_bundle,
+    meshery_bundle,
     snapshot_bundle,
     snapshot_dir,
     synth_bundle,
@@ -101,6 +105,10 @@ class SnapshotService:
                 bundle = synth_bundle()
             elif dataset_id == DEMO_V2_DATASET_ID:
                 bundle = demo_v2_bundle()
+            elif dataset_id == MESHERY_DATASET_ID:
+                bundle = meshery_bundle()
+            elif dataset_id == KUBERNETES_DATASET_ID:
+                bundle = kubernetes_bundle()
             else:
                 bundle = demo_bundle()
             return self._set(bundle=bundle, kind="fixture", name=name)

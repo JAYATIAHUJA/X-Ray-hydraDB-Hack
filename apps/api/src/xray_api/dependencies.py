@@ -22,9 +22,13 @@ logger = logging.getLogger(__name__)
 FIXTURE_ROOT = Path(__file__).parents[4] / "data" / "fixtures" / "xray-demo"
 DEMO_V2_FIXTURE_ROOT = Path(__file__).parents[4] / "data" / "fixtures" / "xray-demo-v2"
 SYNTH_FIXTURE_ROOT = Path(__file__).parents[4] / "data" / "fixtures" / "xray-synth-500"
+MESHERY_FIXTURE_ROOT = Path(__file__).parents[4] / "data" / "fixtures" / "meshery-demo"
+KUBERNETES_FIXTURE_ROOT = Path(__file__).parents[4] / "data" / "fixtures" / "kubernetes-demo"
 DATASET_ID = "xray-demo-v1"
 DEMO_V2_DATASET_ID = "xray-demo-v2"
 SYNTH_DATASET_ID = "xray-synth-500"
+MESHERY_DATASET_ID = "meshery-demo"
+KUBERNETES_DATASET_ID = "kubernetes-demo"
 
 # XRAY_FIXTURE_VARIANT selects which bundled fixture the API serves. Only labelled
 # fixtures with a complete lens surface (people, ownership, dependencies, gaps) are
@@ -33,6 +37,8 @@ FIXTURE_VARIANTS: dict[str, str] = {
     "demo": DATASET_ID,
     "demo-v2": DEMO_V2_DATASET_ID,
     "synth500": SYNTH_DATASET_ID,
+    "meshery": MESHERY_DATASET_ID,
+    "kubernetes": KUBERNETES_DATASET_ID,
 }
 
 
@@ -75,6 +81,16 @@ def synth_bundle() -> CanonicalBundle:
     return _canonical_fixture_bundle(SYNTH_FIXTURE_ROOT, SYNTH_DATASET_ID)
 
 
+@lru_cache(maxsize=1)
+def meshery_bundle() -> CanonicalBundle:
+    return _canonical_fixture_bundle(MESHERY_FIXTURE_ROOT, MESHERY_DATASET_ID)
+
+
+@lru_cache(maxsize=1)
+def kubernetes_bundle() -> CanonicalBundle:
+    return _canonical_fixture_bundle(KUBERNETES_FIXTURE_ROOT, KUBERNETES_DATASET_ID)
+
+
 @lru_cache(maxsize=4)
 def snapshot_bundle(root: str) -> CanonicalBundle:
     """A bundle read from an ingested snapshot directory (see scripts/ingest_export.py)."""
@@ -115,6 +131,10 @@ def active_bundle() -> CanonicalBundle:
         return synth_bundle()
     if dataset_id == DEMO_V2_DATASET_ID:
         return demo_v2_bundle()
+    if dataset_id == MESHERY_DATASET_ID:
+        return meshery_bundle()
+    if dataset_id == KUBERNETES_DATASET_ID:
+        return kubernetes_bundle()
     return demo_bundle()
 
 
@@ -147,6 +167,8 @@ __all__ = [
     "DATASET_ID",
     "DEMO_V2_DATASET_ID",
     "FIXTURE_VARIANTS",
+    "KUBERNETES_DATASET_ID",
+    "MESHERY_DATASET_ID",
     "SYNTH_DATASET_ID",
     "active_bundle",
     "active_dataset_id",
@@ -154,6 +176,8 @@ __all__ = [
     "demo_bundle",
     "demo_v2_bundle",
     "get_gateway",
+    "kubernetes_bundle",
+    "meshery_bundle",
     "snapshot_bundle",
     "snapshot_dir",
     "synth_bundle",

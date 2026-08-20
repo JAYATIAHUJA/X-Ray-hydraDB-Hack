@@ -1,0 +1,10 @@
+{
+  "ghost_broker_key": "person:bridge-ops",
+  "owner_conflict_module_key": "module:server",
+  "missing_sequence_key": "meshery-change-approval",
+  "notes": [
+    "Bridge Ops is the load-bearing communicator despite IC formal rank.",
+    "ui \u2192 server is a coordination faultline (owners rarely interact directly).",
+    "Approval step is missing between directive and code change on server."
+  ]
+}

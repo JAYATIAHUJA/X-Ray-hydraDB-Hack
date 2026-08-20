@@ -1,0 +1,86 @@
+{
+  "dataset_id": "meshery-demo",
+  "fixture_version": 1,
+  "schema_version": "1.0.0",
+  "created_at_epoch": 1735689600,
+  "evidence_classes": [
+    "observed",
+    "inferred",
+    "demo_ground_truth"
+  ],
+  "source_files": [
+    {
+      "path": "directory.json",
+      "source_type": "directory",
+      "source_uri": "fixture://meshery-demo/directory",
+      "record_count": 9,
+      "sha256": "82562b89a51c15e13689266df09e8167f2aca3478975efef3c0cf84ff4688e08",
+      "input_status": "complete"
+    },
+    {
+      "path": "events.json",
+      "source_type": "event_export",
+      "source_uri": "fixture://meshery-demo/events",
+      "record_count": 14,
+      "sha256": "e613ee565d276a27b6d11a13d7a08691c632c86be6e9cbd7f75b6a3bbf734dda",
+      "input_status": "complete"
+    },
+    {
+      "path": "git_facts.json",
+      "source_type": "git",
+      "source_uri": "fixture://meshery-demo/git-facts",
+      "record_count": 28,
+      "sha256": "332c680f86f06421b08d9912d3631cc4d0c6a14ff70e6d22815061441c8c3b99",
+      "input_status": "complete"
+    }
+  ],
+  "ground_truth_file": "ground_truth.json",
+  "ground_truth_descriptor": {
+    "evidence_class": "demo_ground_truth",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "sequence_contracts": [
+    {
+      "contract_id": "contract:meshery-approval-sequence:v1",
+      "contract_kind": "contiguous_sequence",
+      "sequence_key": "meshery-change-approval",
+      "steps": [
+        {
+          "ordinal": 0,
+          "canonical_key": "artifact:directive",
+          "artifact_kind": "directive",
+          "required": true
+        },
+        {
+          "ordinal": 1,
+          "canonical_key": "artifact:missing-approval",
+          "artifact_kind": "approval",
+          "required": true
+        },
+        {
+          "ordinal": 2,
+          "canonical_key": "artifact:code-change",
+          "artifact_kind": "code_change",
+          "required": true
+        }
+      ],
+      "source_uri": "fixture://meshery-demo/contracts/approval-sequence",
+      "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "limitations": [
+        "Slack mock fills communication edges until a real Meshery Slack export is provided."
+      ]
+    }
+  ],
+  "acceptance_labels": {
+    "ghost_broker_key": "person:bridge-ops",
+    "owner_conflict_module_key": "module:server",
+    "faultline_source_module_key": "module:ui",
+    "faultline_target_module_key": "module:server"
+  },
+  "limitations": [
+    "Dataset meshery-demo is snapshot analytics over public Meshery-shaped evidence, not a live HydraDB org connection.",
+    "Slack edges are Meshery-shaped mock messages unless --slack-dir points at a real workspace export.",
+    "GitHub Issues CSV is optional; ownership and dependency edges come from curated git facts when issues are not fetched.",
+    "Absence does not establish deletion. The corpus is structurally incomplete at this point."
+  ]
+}

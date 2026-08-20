@@ -1,0 +1,12 @@
+{
+  "ghost_broker_key": "person:k8s-bridge-ops",
+  "faultline_source_module_key": "module:network",
+  "faultline_target_module_key": "module:api-machinery",
+  "missing_sequence_key": "k8s-kep-approval",
+  "sig_count": 35,
+  "notes": [
+    "K8s Bridge Ops is the load-bearing cross-SIG communicator despite IC rank.",
+    "network \u2192 api-machinery is a primary coordination faultline.",
+    "KEP approval step is missing between directive and code change."
+  ]
+}

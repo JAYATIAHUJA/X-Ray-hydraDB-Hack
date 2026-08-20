@@ -21,7 +21,7 @@ services:
       - key: PORT
         value: "10000"
       - key: XRAY_SNAPSHOT_DIR
-        value: /app/data/snapshots/kafka-2025q2
+        value: /app/data/snapshots/kubernetes-demo
       - key: XRAY_READ_ONLY
         value: "true"
 

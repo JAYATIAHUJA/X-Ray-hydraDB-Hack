@@ -13,4 +13,13 @@ export type RiskItem = {
   query: LensEnvelope<unknown>["executed_query"];
 };
 
-export type RiskFilters = { kind: RiskKind | "all"; confidence: "all" | "high" | "medium" | "low"; team: string; windowDays: number };
+export type RiskFilters = {
+  kind: RiskKind | "all";
+  confidence: "all" | "high" | "medium" | "low" | "high-medium";
+  priority: "all" | "P1" | "P1-P2";
+  team: string;
+  windowDays: number;
+};
+
+/** Cap inbox noise on large corpora (Kafka-style walls). */
+export const RISK_INBOX_LIMIT = 25;

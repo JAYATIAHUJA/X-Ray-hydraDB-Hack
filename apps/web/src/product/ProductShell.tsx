@@ -8,12 +8,7 @@ const NAV: Array<{ id: ProductView; label: string; icon: IconName }> = [
   { id: "overview", label: "Overview", icon: "overview" },
   { id: "risks", label: "Risks", icon: "risk" },
   { id: "ask", label: "Ask X-Ray", icon: "ask" },
-  { id: "identities", label: "Identity review", icon: "identity" },
-  { id: "repairs", label: "Repairs", icon: "repair" },
-  { id: "graph", label: "Explore graph", icon: "graph" },
-  { id: "imports", label: "Imports", icon: "import" },
-  { id: "actions", label: "Actions", icon: "action" },
-  { id: "settings", label: "Settings", icon: "settings" }
+  { id: "graph", label: "Explore graph", icon: "graph" }
 ];
 
 export function ProductShell({
@@ -31,12 +26,15 @@ export function ProductShell({
   healthState?: "loading" | "error" | "ready";
   snapshot?: SnapshotResponse;
 }) {
-  const engineStatus =
+  const rawEngine =
     healthState === "loading"
       ? "connecting"
       : healthState === "error"
         ? "offline"
         : (health?.hydra.status ?? "offline");
+  // Reachable Hydra with no loaded dataset graph is still snapshot analytics.
+  const engineStatus =
+    rawEngine === "live" && health?.hydra.graph_loaded === false ? "fallback" : rawEngine;
   const engineLabel =
     engineStatus === "live"
       ? "HydraDB live"
@@ -45,7 +43,7 @@ export function ProductShell({
         : engineStatus === "connecting"
           ? "Connecting…"
           : "Offline";
-  const dataPartial = (snapshot?.limitations.length ?? 0) > 0;
+  const dataset = snapshot?.dataset_id ?? "Loading…";
 
   return (
     <div className="product-shell">
@@ -68,40 +66,29 @@ export function ProductShell({
           ))}
         </nav>
         <div className="sidebar-foot">
-          <span>Evidence platform</span>
-          <small>{snapshot?.dataset_id ?? "Loading workspace"}</small>
+          <span>Snapshot analytics</span>
+          <small>{dataset}</small>
         </div>
       </aside>
       <div className="product-main">
         <header className="product-topbar">
           <div className="workspace-switcher">
             <span>Workspace</span>
-            <strong>{snapshot?.dataset_id ?? "Loading..."}</strong>
+            <strong>{dataset}</strong>
           </div>
-          <div className="runtime-state">
-            <div>
-              <span>Engine status</span>
-              <strong>
-                <i
-                  className={`state-dot state-${
-                    engineStatus === "connecting"
-                      ? "partial"
-                      : engineStatus === "fallback"
-                        ? "fallback"
-                        : engineStatus
-                  }`}
-                />
-                {engineLabel}
-              </strong>
-            </div>
-            <div>
-              <span>Data status</span>
-              <strong>
-                <i className={`state-dot ${dataPartial ? "state-partial" : "state-live"}`} />
-                {dataPartial ? "Partial coverage" : "Ready"}
-              </strong>
-            </div>
-          </div>
+          <p className="runtime-quiet" role="status">
+            <i
+              className={`state-dot state-${
+                engineStatus === "connecting"
+                  ? "partial"
+                  : engineStatus === "fallback"
+                    ? "fallback"
+                    : engineStatus
+              }`}
+            />
+            {engineLabel}
+            {snapshot?.dataset_id ? ` · ${snapshot.dataset_id}` : ""}
+          </p>
         </header>
         {children}
       </div>

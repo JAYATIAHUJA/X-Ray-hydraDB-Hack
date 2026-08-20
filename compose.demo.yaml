@@ -1,4 +1,4 @@
-# One-command hosted-style demo: web + API on the bundled Apache Kafka snapshot.
+# One-command hosted-style demo: web + API on the bundled Kubernetes org snapshot.
 #
 #   docker compose -f compose.demo.yaml up --build
 #   → http://localhost:8080        (landing)      http://localhost:8080/app  (dashboard)
@@ -14,7 +14,7 @@ services:
       context: .
       dockerfile: apps/api/Dockerfile
     environment:
-      XRAY_SNAPSHOT_DIR: /app/data/snapshots/kafka-2025q2
+      XRAY_SNAPSHOT_DIR: /app/data/snapshots/kubernetes-demo
       # XRAY_HYDRA_URI: bolt://host.docker.internal:7687
       # XRAY_HYDRA_AUTH_TOKEN_FILE: /run/secrets/hydra-auth-token
     ports:

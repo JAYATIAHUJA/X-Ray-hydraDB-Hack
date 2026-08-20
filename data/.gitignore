@@ -10,6 +10,10 @@
 !snapshots/
 !snapshots/kafka-2025q2/
 !snapshots/kafka-2025q2/**
+!snapshots/meshery-demo/
+!snapshots/meshery-demo/**
+!snapshots/kubernetes-demo/
+!snapshots/kubernetes-demo/**
 # Derived corpus inputs (directory, identity map, module map); raw exports stay out.
 !exports/
 !exports/kafka/
@@ -18,3 +22,11 @@
 !exports/kafka/modules.json
 !exports/kafka/skip-senders.json
 !exports/kafka/ignore-addresses.json
+!exports/meshery/
+!exports/meshery/directory.json
+!exports/meshery/identity.json
+!exports/meshery/modules.json
+!exports/kubernetes/
+!exports/kubernetes/directory.json
+!exports/kubernetes/identity.json
+!exports/kubernetes/modules.json

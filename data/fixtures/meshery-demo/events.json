@@ -1,0 +1,308 @@
+[
+  {
+    "source": "meshery-slack",
+    "external_id": "comm-bridge-ops-muzairkhattak",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776022,
+    "author_external_id": "bridge-ops",
+    "parent_external_id": null,
+    "subjects": [
+      "person:bridge-ops",
+      "person:muzairkhattak"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776000,
+      "interaction_count": 22,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776022,
+      "recipient_external_id": "muzairkhattak",
+      "sender_external_id": "bridge-ops"
+    }
+  },
+  {
+    "source": "meshery-slack",
+    "external_id": "comm-bridge-ops-alphaolomi",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776060,
+    "author_external_id": "bridge-ops",
+    "parent_external_id": null,
+    "subjects": [
+      "person:bridge-ops",
+      "person:alphaolomi"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776040,
+      "interaction_count": 20,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776060,
+      "recipient_external_id": "alphaolomi",
+      "sender_external_id": "bridge-ops"
+    }
+  },
+  {
+    "source": "meshery-slack",
+    "external_id": "comm-bridge-ops-nithish",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776100,
+    "author_external_id": "bridge-ops",
+    "parent_external_id": null,
+    "subjects": [
+      "person:bridge-ops",
+      "person:nithish"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776080,
+      "interaction_count": 18,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776100,
+      "recipient_external_id": "nithish",
+      "sender_external_id": "bridge-ops"
+    }
+  },
+  {
+    "source": "meshery-slack",
+    "external_id": "comm-bridge-ops-vishalvivekm",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776140,
+    "author_external_id": "bridge-ops",
+    "parent_external_id": null,
+    "subjects": [
+      "person:bridge-ops",
+      "person:vishalvivekm"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776120,
+      "interaction_count": 16,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776140,
+      "recipient_external_id": "vishalvivekm",
+      "sender_external_id": "bridge-ops"
+    }
+  },
+  {
+    "source": "meshery-slack",
+    "external_id": "comm-bridge-ops-nebula-reviewer",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776180,
+    "author_external_id": "bridge-ops",
+    "parent_external_id": null,
+    "subjects": [
+      "person:bridge-ops",
+      "person:nebula-reviewer"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776160,
+      "interaction_count": 15,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776180,
+      "recipient_external_id": "nebula-reviewer",
+      "sender_external_id": "bridge-ops"
+    }
+  },
+  {
+    "source": "meshery-slack",
+    "external_id": "comm-bridge-ops-leecalcote",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776220,
+    "author_external_id": "bridge-ops",
+    "parent_external_id": null,
+    "subjects": [
+      "person:bridge-ops",
+      "person:leecalcote"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776200,
+      "interaction_count": 14,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776220,
+      "recipient_external_id": "leecalcote",
+      "sender_external_id": "bridge-ops"
+    }
+  },
+  {
+    "source": "meshery-slack",
+    "external_id": "comm-muzairkhattak-nithish",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776260,
+    "author_external_id": "muzairkhattak",
+    "parent_external_id": null,
+    "subjects": [
+      "person:muzairkhattak",
+      "person:nithish"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776240,
+      "interaction_count": 8,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776260,
+      "recipient_external_id": "nithish",
+      "sender_external_id": "muzairkhattak"
+    }
+  },
+  {
+    "source": "meshery-slack",
+    "external_id": "comm-alphaolomi-nithish",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776300,
+    "author_external_id": "alphaolomi",
+    "parent_external_id": null,
+    "subjects": [
+      "person:alphaolomi",
+      "person:nithish"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776280,
+      "interaction_count": 4,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776300,
+      "recipient_external_id": "nithish",
+      "sender_external_id": "alphaolomi"
+    }
+  },
+  {
+    "source": "meshery-slack",
+    "external_id": "comm-aisuko-sayantan15102",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776340,
+    "author_external_id": "aisuko",
+    "parent_external_id": null,
+    "subjects": [
+      "person:aisuko",
+      "person:sayantan15102"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776320,
+      "interaction_count": 7,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776340,
+      "recipient_external_id": "sayantan15102",
+      "sender_external_id": "aisuko"
+    }
+  },
+  {
+    "source": "meshery-slack",
+    "external_id": "comm-leecalcote-aisuko",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776380,
+    "author_external_id": "leecalcote",
+    "parent_external_id": null,
+    "subjects": [
+      "person:leecalcote",
+      "person:aisuko"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776360,
+      "interaction_count": 3,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776380,
+      "recipient_external_id": "aisuko",
+      "sender_external_id": "leecalcote"
+    }
+  },
+  {
+    "source": "meshery-slack",
+    "external_id": "comm-nebula-reviewer-aisuko",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776420,
+    "author_external_id": "nebula-reviewer",
+    "parent_external_id": null,
+    "subjects": [
+      "person:nebula-reviewer",
+      "person:aisuko"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776400,
+      "interaction_count": 2,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776420,
+      "recipient_external_id": "aisuko",
+      "sender_external_id": "nebula-reviewer"
+    }
+  },
+  {
+    "source": "meshery-slack",
+    "external_id": "comm-vishalvivekm-muzairkhattak",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776460,
+    "author_external_id": "vishalvivekm",
+    "parent_external_id": null,
+    "subjects": [
+      "person:vishalvivekm",
+      "person:muzairkhattak"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776440,
+      "interaction_count": 2,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776460,
+      "recipient_external_id": "muzairkhattak",
+      "sender_external_id": "vishalvivekm"
+    }
+  },
+  {
+    "source": "meshery-tickets",
+    "external_id": "directive-designs-api",
+    "kind": "artifact",
+    "occurred_at_epoch": 1735776000,
+    "author_external_id": "leecalcote",
+    "parent_external_id": null,
+    "subjects": [
+      "artifact:directive",
+      "module:server"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "artifact_kind": "directive",
+      "canonical_key": "artifact:directive",
+      "input_complete": true,
+      "sequence_key": "meshery-change-approval",
+      "sequence_ordinal": 0
+    }
+  },
+  {
+    "source": "meshery-git",
+    "external_id": "code-change-designs-api",
+    "kind": "artifact",
+    "occurred_at_epoch": 1735948800,
+    "author_external_id": "aisuko",
+    "parent_external_id": null,
+    "subjects": [
+      "artifact:code-change",
+      "module:server"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "artifact_kind": "code_change",
+      "canonical_key": "artifact:code-change",
+      "input_complete": true,
+      "sequence_key": "meshery-change-approval",
+      "sequence_ordinal": 2
+    }
+  }
+]

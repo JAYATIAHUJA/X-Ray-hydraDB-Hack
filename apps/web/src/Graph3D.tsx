@@ -59,6 +59,7 @@ function withAlpha(hex: string, alpha: number) {
 }
 
 const MAX_NODES = 220;
+export const GRAPH_MAX_NODES = MAX_NODES;
 const FOCAL = 900;
 
 /**

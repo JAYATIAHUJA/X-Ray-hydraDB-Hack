@@ -38,8 +38,13 @@ HydraDB query, limitations, and a recommended next action.
 | Salesforce HERB, all 30 products | 5,126-person communication graph; Ghost #1 remains #1 after unresolved handles are removed; no fabricated faultlines or gaps |
 | Apache Kafka, Mar–Jun 2025 | 292 people; 49 faultlines; 53 in-window dangling parents separated from 82 export-boundary cases |
 | Synthetic 500-person org | Faultline and gap precision/recall 1.000/1.000; Ghost top-10 overlap 0.933 against exact betweenness |
+| Kubernetes full-org demo (`kubernetes-demo`) | Snapshot analytics over `kubernetes` + `kubernetes-sigs`: Ghost (K8s Bridge Ops), network→api-machinery faultlines, missing KEP approval gap |
+| Meshery OSS demo (`meshery-demo`) | Smaller snapshot corpus (optional): Ghost (Bridge Ops), ui→server faultlines, missing approval gap |
 
-Reproducible outputs live in [docs/results](docs/results).
+Reproducible outputs live in [docs/results](docs/results). Hosted Render defaults to
+`XRAY_SNAPSHOT_DIR=data/snapshots/kubernetes-demo` (Snapshot analytics — not live HydraDB).
+Refresh with `uv run python scripts/build_kubernetes_corpus.py`. Recording path:
+[docs/judge-demo.md](docs/judge-demo.md)#kubernetes-snapshot-demo-recording.
 
 ## Quick start
 

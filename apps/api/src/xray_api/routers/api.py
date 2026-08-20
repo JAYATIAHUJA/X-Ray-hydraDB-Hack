@@ -50,6 +50,7 @@ from ..hydra import (
     communication_distances,
     gap_rows,
     graph_rows,
+    hydra_health,
 )
 from ..lenses import (
     client_ghost_baseline_ms,
@@ -188,6 +189,13 @@ def create_app() -> FastAPI:
         live_result = live_ghost_findings(
             settings, bundle, gateway=gateway, exclude_person_keys=excluded
         )
+        # Empty Hydra (ping OK, no dataset graph) must not mask fixture Ghosts.
+        if (
+            live_result is not None
+            and live_result.error is None
+            and not hydra_health(settings, bundle.dataset_id).graph_loaded
+        ):
+            live_result = None
         if live_result is not None and live_result.error is None:
             comparison = EngineComparison(
                 engine_ms=live_result.executed_query.engine_ms,
@@ -416,7 +424,10 @@ def create_app() -> FastAPI:
         response_model=QuestionResponse,
     )
     def answer_question(
-        snapshot_id: str, request: QuestionRequest, gateway: GatewayDep
+        snapshot_id: str,
+        request: QuestionRequest,
+        settings: SettingsDep,
+        gateway: GatewayDep,
     ) -> QuestionResponse:
         bundle = snapshots.require(snapshot_id)
         provisional = answer_ontology_question(bundle, request.question)
@@ -426,8 +437,12 @@ def create_app() -> FastAPI:
         executed_query: dict[str, object] | None = None
         engine_ms = None
         round_trips = 0
+        # Prefer snapshot answers when Hydra is reachable but this dataset is not loaded.
+        hydra_graph_ready = (
+            gateway is not None and hydra_health(settings, bundle.dataset_id).graph_loaded
+        )
         if (
-            gateway is not None
+            hydra_graph_ready
             and provisional.subject_key is not None
             and provisional.intent in {"owner", "dependency_impact", "approval"}
         ):
