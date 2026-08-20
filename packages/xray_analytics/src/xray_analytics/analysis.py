@@ -161,6 +161,10 @@ def _bundle_graph_snapshot(bundle: CanonicalBundle) -> _GraphSnapshot:
         source = nodes[edge.source_id].canonical_key
         target = nodes[edge.target_id].canonical_key
         weight = _int_property(edge, "weight", 1)
+        # Unresolved identities are omitted from ranked people but may still appear
+        # on COMMUNICATES edges; keep them as adjacency stubs so path lenses do not crash.
+        graph.setdefault(source, {})
+        graph.setdefault(target, {})
         graph[source][target] = weight
         graph[target][source] = weight
     snapshot = _GraphSnapshot(
@@ -195,6 +199,10 @@ def communication_graph(bundle: CanonicalBundle) -> CommunicationGraph:
         source = nodes[edge.source_id]
         target = nodes[edge.target_id]
         weight = _int_property(edge, "weight", 1)
+        # Unresolved identities are omitted from ranked people but may still appear
+        # on COMMUNICATES edges; keep them as adjacency stubs so path lenses do not crash.
+        graph.setdefault(source.canonical_key, {})
+        graph.setdefault(target.canonical_key, {})
         graph[source.canonical_key][target.canonical_key] = weight
         graph[target.canonical_key][source.canonical_key] = weight
     return graph
@@ -209,6 +217,8 @@ def directed_communication_graph(bundle: CanonicalBundle) -> CommunicationGraph:
             continue
         source = nodes[edge.source_id].canonical_key
         target = nodes[edge.target_id].canonical_key
+        graph.setdefault(source, {})
+        graph.setdefault(target, {})
         graph[source][target] = _int_property(edge, "weight", 1)
     return graph
 

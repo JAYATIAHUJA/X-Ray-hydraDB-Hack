@@ -6,15 +6,18 @@ from pathlib import Path
 from xray_analytics import (
     bus_factor_impact,
     communication_asymmetries,
+    communication_graph,
     directed_communication_graph,
     faultlines,
     gap_findings,
     ghost_scores,
 )
 from xray_core.models import CanonicalRecord, SequenceContractSet
+from xray_ingest.manifest import read_snapshot
 from xray_ingest.pipeline import build_bundle
 
 FIXTURE_ROOT = Path(__file__).parents[2] / "data" / "fixtures" / "xray-demo"
+KAFKA_SNAPSHOT = Path(__file__).parents[2] / "data" / "snapshots" / "kafka-2025q2"
 
 
 def demo_bundle():
@@ -32,6 +35,23 @@ def demo_bundle():
         }
     )
     return build_bundle(records, contracts, "xray-demo-v1")
+
+
+def test_communication_graph_keeps_unresolved_edge_endpoints() -> None:
+    """Real Kafka snapshot has unresolved COMMUNICATES endpoints; path lenses must not crash."""
+    bundle = read_snapshot(KAFKA_SNAPSHOT)
+    unresolved = {
+        node.canonical_key
+        for node in bundle.nodes
+        if node.label == "Person" and node.properties.get("identity_status") == "unresolved"
+    }
+    assert unresolved, "fixture regression: kafka snapshot should include unresolved people"
+    graph = communication_graph(bundle)
+    for key in unresolved:
+        assert key in graph
+    scores = ghost_scores(bundle, max_len=3)
+    assert scores
+    assert all(score.person_key not in unresolved for score in scores)
 
 
 def test_ghost_scores_surface_structural_gap_from_communication_paths() -> None:
