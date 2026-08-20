@@ -404,10 +404,7 @@ def test_graph_rows_reads_live_hydradb_projection() -> None:
     assert rows.edges[0].source == "person:alex-rivera"
     assert rows.edges[0].target == "person:maya-chen"
     assert rows.edges[0].weight == 5.0
-    assert driver.parameters == [
-        {"dataset_id": "xray-demo-v1", "limit": 10},
-        {"dataset_id": "xray-demo-v1", "limit": 35},
-    ]
+    assert driver.parameters == [{}, {}]
 
 
 class FailingGraphDriver:
@@ -464,7 +461,9 @@ def test_communication_distances_reads_live_hydradb_paths() -> None:
     assert "sourceLabel: 'Person'" in result.query.statement
     assert "canonical_key" not in result.query.statement
     assert driver.parameters[0] == result.query.parameters
-    assert set(driver.parameters[0] or {}) == {"source_values", "target_values"}
+    assert driver.parameters[0] == {}
+    assert "sourceValues: ['person:" in result.query.statement
+    assert "targetValues: ['person:" in result.query.statement
 
 
 def test_faultline_live_distance_lookup_accepts_reversed_owner_pair() -> None:
@@ -517,7 +516,9 @@ def test_live_ghost_findings_use_single_integer_id_mspaths_call() -> None:
     assert "canonical_key" not in result.executed_query.text
     assert "pairwise: false" in result.executed_query.text
     assert driver.parameters[0] == result.executed_query.params
-    assert set(driver.parameters[0] or {}) == {"source_values", "target_values"}
+    assert driver.parameters[0] == {}
+    assert "sourceValues: ['person:" in result.executed_query.text
+    assert "targetValues: ['person:" in result.executed_query.text
     maya = next(
         finding for finding in result.findings if finding["person_key"] == "person:maya-chen"
     )
@@ -543,12 +544,9 @@ def test_live_gap_chain_uses_integer_id_sppaths_call() -> None:
         "artifact:missing-approval",
         "artifact:directive",
     )
-    assert "sourceNode: $source_id" in result.executed_query.text
-    assert "targetNode: $target_id" in result.executed_query.text
-    assert result.executed_query.params == {
-        "source_id": 5711979473372363488,
-        "target_id": 9197572505128004661,
-    }
+    assert "sourceNode: 5711979473372363488" in result.executed_query.text
+    assert "targetNode: 9197572505128004661" in result.executed_query.text
+    assert result.executed_query.params == {}
     assert driver.parameters == [result.executed_query.params]
 
 
@@ -641,18 +639,17 @@ def test_question_endpoint_answers_from_typed_edges_with_evidence() -> None:
 def test_question_endpoint_exposes_temporal_conflict_decision() -> None:
     response = client().post(
         "/api/v1/snapshots/xray-demo-v1:fixture/questions",
-        json={
-            "question": "Who owns payments-api now, and why did an older Jira record say Alex?"
-        },
+        json={"question": "Who owns payments-api now, and why did an older Jira record say Alex?"},
     )
 
     assert response.status_code == 200
     payload = response.json()
     assert payload["person_keys"] == ["person:maya-chen"]
     assert len(payload["conflicts"]) == 2
-    assert next(item for item in payload["conflicts"] if item["selected"])[
-        "source_record_id"
-    ] == "CODEOWNERS-payments-api"
+    assert (
+        next(item for item in payload["conflicts"] if item["selected"])["source_record_id"]
+        == "CODEOWNERS-payments-api"
+    )
     assert payload["trust_explanation"]
 
 

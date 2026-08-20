@@ -10,11 +10,11 @@
     "questions": 75
   },
   "dataset_id": "xray-demo-v1",
-  "generated_at_utc": "2026-08-20T10:05:14+00:00",
+  "generated_at_utc": "2026-08-20T12:43:32+00:00",
   "limitations": [
     "The corpus is manually labelled but synthetic and concentrated on the bundled demo ontology.",
     "Question variants test deterministic intent coverage; they are not 75 independent business scenarios.",
-    "Live HydraDB latency remains unreported until the engine benchmark produces non-null p50 and p95."
+    "HydraDB latency was measured locally; network and hardware can change production latency."
   ],
   "method": "Exact labelled expectations over deterministic typed-edge answers; no LLM judge.",
   "metrics": {
@@ -44,10 +44,10 @@
       "total": 60
     },
     "hydradb_latency": {
-      "p50_ms": null,
-      "p95_ms": null,
+      "p50_ms": 6.62,
+      "p95_ms": 11.43,
       "source": "docs/results/judge-latency.json",
-      "status": "not_measured"
+      "status": "measured"
     },
     "multi_hop_accuracy": {
       "passed": 20,

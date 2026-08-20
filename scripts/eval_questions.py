@@ -44,9 +44,7 @@ def evaluate(corpus_path: Path) -> dict[str, Any]:
             category_passed[category] += int(passed)
             if group["minimum_evidence"] > 0:
                 evidence_total += 1
-                evidence_passed += int(
-                    checks["minimum_evidence"] and checks["evidence_ids_exist"]
-                )
+                evidence_passed += int(checks["minimum_evidence"] and checks["evidence_ids_exist"])
             results.append(
                 {
                     "id": f"{category}-{group_index:02d}-{question_index:02d}",
@@ -68,6 +66,11 @@ def evaluate(corpus_path: Path) -> dict[str, Any]:
     total = len(results)
     passed = sum(item["passed"] for item in results)
     latency = _latency_status(Path("docs/results/judge-latency.json"))
+    latency_limitation = (
+        "HydraDB latency was measured locally; network and hardware can change production latency."
+        if latency["status"] == "measured"
+        else "Live HydraDB latency remains unreported until the engine benchmark produces non-null p50 and p95."
+    )
     return {
         "dataset_id": corpus["dataset_id"],
         "generated_at_utc": datetime.now(UTC).replace(microsecond=0).isoformat(),
@@ -93,7 +96,7 @@ def evaluate(corpus_path: Path) -> dict[str, Any]:
         "limitations": [
             "The corpus is manually labelled but synthetic and concentrated on the bundled demo ontology.",
             "Question variants test deterministic intent coverage; they are not 75 independent business scenarios.",
-            "Live HydraDB latency remains unreported until the engine benchmark produces non-null p50 and p95.",
+            latency_limitation,
         ],
         "results": results,
     }

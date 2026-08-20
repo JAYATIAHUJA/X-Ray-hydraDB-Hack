@@ -14,7 +14,7 @@ from neo4j.exceptions import Neo4jError
 from xray_core.models import CanonicalBundle, LoadReport, QuerySpec, Scalar, SnapshotManifest
 from xray_core.paths import normalize_pair, path_key_tuple
 from xray_hydra import GatewayError, HydraGateway, HydraLoader
-from xray_hydra.cypher import communication_paths_query
+from xray_hydra.cypher import communication_paths_query, cypher_string_literal
 from xray_ingest.manifest import write_snapshot
 
 from .config import XraySettings
@@ -125,7 +125,7 @@ def hydra_health(settings: XraySettings, dataset_id: str | None = None) -> Hydra
         try:
             with driver.session(database=settings.hydra_database) as session:
                 if dataset_id is None:
-                    rows = session.run("MATCH (n:Person) RETURN count(n) AS count").data()
+                    rows = session.run("MATCH (n:Person) RETURN count(*) AS count").data()
                     graph_loaded = bool(_single_count(rows))
                     node_count = None
                     edge_count = None
@@ -309,13 +309,13 @@ def graph_rows(
     if not settings.hydra_configured:
         return None
 
+    dataset_literal = cypher_string_literal(bundle.dataset_id)
     try:
         with open_gateway(settings, gateway) as resolved_gateway:
             people_ids = {
                 node.id
                 for node in bundle.nodes
-                if node.label == "Person"
-                and node.properties.get("identity_status") != "unresolved"
+                if node.label == "Person" and node.properties.get("identity_status") != "unresolved"
             }
             node_limit = max(1, len(people_ids))
             edge_limit = max(1, len(bundle.edges))
@@ -323,11 +323,11 @@ def graph_rows(
                 QuerySpec(
                     name="hydra_graph_people",
                     statement=(
-                        "MATCH (p:Person {dataset_id: $dataset_id}) "
+                        f"MATCH (p:Person {{dataset_id: {dataset_literal}}}) "
                         "RETURN p.id AS id, p.canonical_key AS key, p.properties AS properties "
-                        "ORDER BY p.canonical_key LIMIT $limit"
+                        f"ORDER BY p.canonical_key LIMIT {node_limit}"
                     ),
-                    parameters={"dataset_id": bundle.dataset_id, "limit": node_limit},
+                    parameters={},
                     max_len=None,
                     result_limit=node_limit,
                 )
@@ -336,14 +336,14 @@ def graph_rows(
                 QuerySpec(
                     name="hydra_graph_communications",
                     statement=(
-                        "MATCH (s:Person {dataset_id: $dataset_id})-"
-                        "[r:COMMUNICATES]->(t:Person {dataset_id: $dataset_id}) "
+                        f"MATCH (s:Person {{dataset_id: {dataset_literal}}})-"
+                        f"[r:COMMUNICATES]->(t:Person {{dataset_id: {dataset_literal}}}) "
                         "RETURN s.id AS source_id, t.id AS target_id, "
                         "s.canonical_key AS source, t.canonical_key AS target, "
                         "r.properties AS properties "
-                        "ORDER BY r.canonical_key LIMIT $limit"
+                        f"ORDER BY r.canonical_key LIMIT {edge_limit}"
                     ),
-                    parameters={"dataset_id": bundle.dataset_id, "limit": edge_limit},
+                    parameters={},
                     max_len=None,
                     result_limit=edge_limit,
                 )
@@ -373,6 +373,7 @@ def gap_rows(
     if not settings.hydra_configured:
         return None
 
+    dataset_literal = cypher_string_literal(bundle.dataset_id)
     try:
         with open_gateway(settings, gateway) as resolved_gateway:
             phantom_ids = {node.id for node in bundle.nodes if node.label == "Phantom"}
@@ -380,12 +381,12 @@ def gap_rows(
                 QuerySpec(
                     name="hydra_gap_phantoms",
                     statement=(
-                        "MATCH (phantom:Phantom {dataset_id: $dataset_id}) "
+                        f"MATCH (phantom:Phantom {{dataset_id: {dataset_literal}}}) "
                         "RETURN phantom.id AS phantom_id, phantom.canonical_key AS phantom_key, "
                         "phantom.properties AS properties "
-                        "ORDER BY phantom.canonical_key LIMIT $limit"
+                        f"ORDER BY phantom.canonical_key LIMIT {max(1, len(phantom_ids))}"
                     ),
-                    parameters={"dataset_id": bundle.dataset_id, "limit": max(1, len(phantom_ids))},
+                    parameters={},
                     max_len=None,
                     result_limit=max(1, len(phantom_ids)),
                 )
@@ -420,33 +421,34 @@ def gap_rows(
 
 def _gap_lineage_query(kind: str, bundle: CanonicalBundle) -> QuerySpec:
     limit = max(1, len(bundle.edges))
+    dataset_literal = cypher_string_literal(bundle.dataset_id)
     if kind == "predecessors":
         statement = (
-            "MATCH (phantom:Phantom {dataset_id: $dataset_id})-"
-            "[r:PRECEDED_BY]->(artifact:Artifact {dataset_id: $dataset_id}) "
+            f"MATCH (phantom:Phantom {{dataset_id: {dataset_literal}}})-"
+            f"[r:PRECEDED_BY]->(artifact:Artifact {{dataset_id: {dataset_literal}}}) "
             "RETURN phantom.canonical_key AS phantom_key, artifact.canonical_key AS artifact_key "
-            "LIMIT $limit"
+            f"LIMIT {limit}"
         )
     elif kind == "successors":
         statement = (
-            "MATCH (artifact:Artifact {dataset_id: $dataset_id})-"
-            "[r:PRECEDED_BY]->(phantom:Phantom {dataset_id: $dataset_id}) "
+            f"MATCH (artifact:Artifact {{dataset_id: {dataset_literal}}})-"
+            f"[r:PRECEDED_BY]->(phantom:Phantom {{dataset_id: {dataset_literal}}}) "
             "RETURN phantom.canonical_key AS phantom_key, artifact.canonical_key AS artifact_key "
-            "LIMIT $limit"
+            f"LIMIT {limit}"
         )
     elif kind == "replies":
         statement = (
-            "MATCH (artifact:Artifact {dataset_id: $dataset_id})-"
-            "[r:REPLIES_TO]->(phantom:Phantom {dataset_id: $dataset_id}) "
+            f"MATCH (artifact:Artifact {{dataset_id: {dataset_literal}}})-"
+            f"[r:REPLIES_TO]->(phantom:Phantom {{dataset_id: {dataset_literal}}}) "
             "RETURN phantom.canonical_key AS phantom_key, artifact.canonical_key AS artifact_key "
-            "LIMIT $limit"
+            f"LIMIT {limit}"
         )
     else:
         raise ValueError(f"unknown gap lineage query kind {kind!r}")
     return QuerySpec(
         name=f"hydra_gap_{kind}",
         statement=statement,
-        parameters={"dataset_id": bundle.dataset_id, "limit": limit},
+        parameters={},
         max_len=None,
         result_limit=limit,
     )
@@ -520,17 +522,19 @@ def _single_count(rows: list[dict[str, object]]) -> int | None:
 
 
 def _bounded_node_count(session: SessionRun, dataset_id: str) -> int:
+    dataset_literal = cypher_string_literal(dataset_id)
     total = 0
     for label in ["Person", "Team", "Artifact", "Module", "Phantom"]:
         rows = session.run(
-            f"MATCH (n:{label} {{dataset_id: $dataset_id}}) RETURN count(n) AS count",
-            {"dataset_id": dataset_id},
+            f"MATCH (n:{label} {{dataset_id: {dataset_literal}}}) RETURN count(*) AS count",
+            {},
         ).data()
         total += _single_count(rows) or 0
     return total
 
 
 def _bounded_edge_count(session: SessionRun, dataset_id: str) -> int:
+    dataset_literal = cypher_string_literal(dataset_id)
     shapes = [
         ("Person", "REPORTS_TO", "Person"),
         ("Person", "AUTHORED", "Artifact"),
@@ -549,11 +553,11 @@ def _bounded_edge_count(session: SessionRun, dataset_id: str) -> int:
     for source_label, rel_type, target_label in shapes:
         rows = session.run(
             (
-                f"MATCH (s:{source_label} {{dataset_id: $dataset_id}})-"
-                f"[r:{rel_type}]->(t:{target_label} {{dataset_id: $dataset_id}}) "
-                "RETURN count(r) AS count"
+                f"MATCH (s:{source_label} {{dataset_id: {dataset_literal}}})-"
+                f"[r:{rel_type}]->(t:{target_label} {{dataset_id: {dataset_literal}}}) "
+                "RETURN count(*) AS count"
             ),
-            {"dataset_id": dataset_id},
+            {},
         ).data()
         total += _single_count(rows) or 0
     return total

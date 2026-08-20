@@ -237,7 +237,7 @@ def test_graph_route_scopes_live_reads_by_dataset_and_limit() -> None:
     driver = ScriptedDriver(
         [
             (
-                "MATCH (p:Person {dataset_id: $dataset_id})",
+                "MATCH (p:Person {dataset_id: 'xray-demo-v1'})",
                 [
                     {
                         "id": 8735786581004019202,
@@ -255,9 +255,10 @@ def test_graph_route_scopes_live_reads_by_dataset_and_limit() -> None:
     payload = _client(driver).get(f"/api/v1/snapshots/{SNAPSHOT}/graph").json()
 
     assert [node["key"] for node in payload["nodes"]] == ["person:maya-chen"]
-    scoped = [p for p in driver.parameters if p and "dataset_id" in p]
-    assert scoped and all(p["dataset_id"] == "xray-demo-v1" and "limit" in p for p in scoped)
-    assert all("LIMIT $limit" in s for s in driver.statements if "MATCH (p:Person" in s)
+    assert driver.parameters == [{}, {}]
+    person_reads = [s for s in driver.statements if "MATCH (p:Person" in s]
+    assert person_reads and all("dataset_id: 'xray-demo-v1'" in s for s in person_reads)
+    assert all("LIMIT 10" in s for s in person_reads)
 
 
 def test_ghosts_route_what_if_recomputes_graph_without_removed_person() -> None:

@@ -1,16 +1,33 @@
 {
   "dataset_id": "xray-demo-v1",
-  "generated_at_utc": null,
-  "method": "Run scripts/bench_judge_latency.py against a seeded live HydraDB runtime.",
+  "generated_at_utc": "2026-08-20T12:42:03+00:00",
+  "method": "20 timed executions after 3 warmups for each Judge Mode ontology query.",
+  "endpoint": "bolt://127.0.0.1:17687",
   "round_trips_per_question": 1,
-  "queries": {},
-  "percentiles": {
-    "samples": 0,
-    "p50_ms": null,
-    "p95_ms": null
+  "queries": {
+    "ontology_owner": {
+      "samples": 20,
+      "p50_ms": 9.16,
+      "p95_ms": 12.2
+    },
+    "ontology_dependency_impact": {
+      "samples": 20,
+      "p50_ms": 6.63,
+      "p95_ms": 9.73
+    },
+    "ontology_approval": {
+      "samples": 20,
+      "p50_ms": 2.24,
+      "p95_ms": 2.9
+    }
   },
-  "status": "not_measured",
+  "percentiles": {
+    "samples": 60,
+    "p50_ms": 6.62,
+    "p95_ms": 11.43
+  },
   "limitations": [
-    "Live HydraDB was unavailable in the current environment; latency is intentionally null rather than estimated."
+    "Measured on the local judge-demo machine; network and hardware affect latency.",
+    "This measures database query latency, not browser rendering or full HTTP response latency."
   ]
 }

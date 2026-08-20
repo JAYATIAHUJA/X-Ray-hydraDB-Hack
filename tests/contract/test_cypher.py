@@ -11,7 +11,7 @@ from xray_hydra.cypher import (
 )
 
 
-def test_ontology_context_queries_are_typed_and_parameterized() -> None:
+def test_ontology_context_queries_are_typed_and_literalized_for_hydradb() -> None:
     owner = ontology_context_query("owner", "demo", "module:payments-api")
     impact = ontology_context_query("dependency_impact", "demo", "module:ledger-worker")
     approval = ontology_context_query("approval", "demo", "artifact:missing-approval")
@@ -19,8 +19,8 @@ def test_ontology_context_queries_are_typed_and_parameterized() -> None:
     assert "[r:OWNS]" in owner.statement
     assert "[r:DEPENDS_ON]" in impact.statement
     assert "p:Phantom" in approval.statement
-    assert "$subject_key" in owner.statement
-    assert owner.parameters["subject_key"] == "module:payments-api"
+    assert "canonical_key: 'module:payments-api'" in owner.statement
+    assert owner.parameters == {}
     assert ";" not in owner.statement
 
 
@@ -40,9 +40,15 @@ def test_communication_paths_use_equal_pairwise_sets_and_only_communication() ->
 
     assert "sourceLabel: 'Person'" in spec.statement
     assert "sourceProperty: 'path_key'" in spec.statement
-    assert "sourceValues: $source_values" in spec.statement
+    assert (
+        "sourceValues: ['person:00000000000000000001', 'person:00000000000000000002']"
+        in spec.statement
+    )
     assert "targetLabel: 'Person'" in spec.statement
-    assert "targetValues: $target_values" in spec.statement
+    assert (
+        "targetValues: ['person:00000000000000000001', 'person:00000000000000000002']"
+        in spec.statement
+    )
     assert "relTypes: ['COMMUNICATES']" in spec.statement
     assert "relDirection: 'BOTH'" in spec.statement
     assert "resultLimit: 100" in spec.statement
@@ -50,10 +56,7 @@ def test_communication_paths_use_equal_pairwise_sets_and_only_communication() ->
     assert "collect(" not in spec.statement
     assert spec.max_len == 4
     assert spec.result_limit == 100
-    assert spec.parameters == {
-        "source_values": tuple(keys),
-        "target_values": tuple(keys),
-    }
+    assert spec.parameters == {}
 
 
 def test_cross_set_communication_paths_disable_pairwise() -> None:
@@ -110,13 +113,13 @@ def test_communication_paths_reject_invalid_inputs(
         )
 
 
-def test_sp_chain_hard_codes_preceded_by_and_binds_ids() -> None:
+def test_sp_chain_hard_codes_preceded_by_and_literalizes_validated_ids() -> None:
     spec = sp_chain_query(1, 2, max_len=8, result_limit=20)
 
     assert "relTypes: ['PRECEDED_BY']" in spec.statement
-    assert "sourceNode: $source_id" in spec.statement
-    assert "targetNode: $target_id" in spec.statement
-    assert spec.parameters == {"source_id": 1, "target_id": 2}
+    assert "sourceNode: 1" in spec.statement
+    assert "targetNode: 2" in spec.statement
+    assert spec.parameters == {}
     assert spec.max_len == 8
     assert spec.result_limit == 20
 

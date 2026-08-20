@@ -32,6 +32,14 @@ class CypherCompileError(ValueError):
     """Raised when a query cannot be rendered inside the allow-listed compiler."""
 
 
+def cypher_string_literal(value: str) -> str:
+    """Render a trusted scalar for HydraDB's literal-only property predicates."""
+    if not value or any(ord(character) < 32 for character in value):
+        raise CypherCompileError("Cypher string literals must be non-empty printable strings")
+    escaped = value.replace("\\", "\\\\").replace("'", "\\'")
+    return f"'{escaped}'"
+
+
 def _require_positive(value: int, name: str) -> int:
     if type(value) is not int or value <= 0:
         raise CypherCompileError(f"{name} must be a positive integer")
@@ -86,14 +94,20 @@ def communication_paths_query(
     pairwise_literal = "true" if pairwise else "false"
     source_values = _validated_path_keys(sources)
     target_values = _validated_path_keys(targets)
+    source_values_literal = (
+        "[" + ", ".join(cypher_string_literal(value) for value in source_values) + "]"
+    )
+    target_values_literal = (
+        "[" + ", ".join(cypher_string_literal(value) for value in target_values) + "]"
+    )
     statement = _one_statement(
         "CALL algo.MSpaths({"
         "sourceLabel: 'Person', "
         "sourceProperty: 'path_key', "
-        "sourceValues: $source_values, "
+        f"sourceValues: {source_values_literal}, "
         "targetLabel: 'Person', "
         "targetProperty: 'path_key', "
-        "targetValues: $target_values, "
+        f"targetValues: {target_values_literal}, "
         "relTypes: ['COMMUNICATES'], "
         f"relDirection: '{REL_DIRECTION_BOTH}', "
         f"maxLen: {max_len}, "
@@ -106,7 +120,7 @@ def communication_paths_query(
     return QuerySpec(
         name="communication_paths",
         statement=statement,
-        parameters={"source_values": source_values, "target_values": target_values},
+        parameters={},
         max_len=max_len,
         result_limit=result_limit,
     )
@@ -122,8 +136,8 @@ def sp_chain_query(
     _require_positive(result_limit, "result_limit")
     statement = _one_statement(
         "CALL algo.SPpaths({"
-        "sourceNode: $source_id, "
-        "targetNode: $target_id, "
+        f"sourceNode: {source_id}, "
+        f"targetNode: {target_id}, "
         "relTypes: ['PRECEDED_BY'], "
         f"relDirection: '{REL_DIRECTION_OUT}', "
         f"maxLen: {max_len}, "
@@ -134,7 +148,7 @@ def sp_chain_query(
     return QuerySpec(
         name="sp_chain",
         statement=statement,
-        parameters={"source_id": source_id, "target_id": target_id},
+        parameters={},
         max_len=max_len,
         result_limit=result_limit,
     )
@@ -147,33 +161,40 @@ def ontology_context_query(
     if not dataset_id.strip() or not subject_key.strip():
         raise CypherCompileError("ontology context requires dataset and subject keys")
     _require_positive(result_limit, "result_limit")
+    dataset_literal = cypher_string_literal(dataset_id)
+    subject_literal = cypher_string_literal(subject_key)
     if intent == "owner":
         statement = _one_statement(
-            "MATCH (p:Person {dataset_id: $dataset_id})-[r:OWNS]->"
-            "(m:Module {dataset_id: $dataset_id, canonical_key: $subject_key}) "
+            f"MATCH (p:Person {{dataset_id: {dataset_literal}}})-[r:OWNS]->"
+            f"(m:Module {{dataset_id: {dataset_literal}, canonical_key: {subject_literal}}}) "
             "RETURN p.canonical_key AS person_key, m.canonical_key AS subject_key, "
             "r.canonical_key AS relationship_key, r.properties AS properties "
-            "ORDER BY r.canonical_key LIMIT $limit"
+            f"ORDER BY r.canonical_key LIMIT {result_limit}"
         )
     elif intent == "dependency_impact":
         statement = _one_statement(
-            "MATCH (dependent:Module {dataset_id: $dataset_id})-[r:DEPENDS_ON]->"
-            "(changed:Module {dataset_id: $dataset_id, canonical_key: $subject_key}) "
+            f"MATCH (dependent:Module {{dataset_id: {dataset_literal}}})-"
+            f"[r:DEPENDS_ON]->(changed:Module {{dataset_id: {dataset_literal}, "
+            f"canonical_key: {subject_literal}}}) "
             "RETURN dependent.canonical_key AS dependent_key, "
             "changed.canonical_key AS subject_key, r.canonical_key AS relationship_key, "
-            "r.properties AS properties ORDER BY r.canonical_key LIMIT $limit"
+            f"r.properties AS properties ORDER BY r.canonical_key LIMIT {result_limit}"
         )
     elif intent == "approval":
         statement = _one_statement(
-            "MATCH (p:Phantom {dataset_id: $dataset_id, canonical_key: $subject_key}) "
-            "RETURN p.canonical_key AS subject_key, p.properties AS properties LIMIT $limit"
+            f"MATCH (p:Phantom {{dataset_id: {dataset_literal}, "
+            f"canonical_key: {subject_literal}}}) "
+            "RETURN p.canonical_key AS subject_key, p.properties AS properties "
+            f"LIMIT {result_limit}"
         )
     else:
         raise CypherCompileError(f"unsupported ontology intent {intent!r}")
     return QuerySpec(
-        name=f"ontology_{intent}", statement=statement,
-        parameters={"dataset_id": dataset_id, "subject_key": subject_key, "limit": result_limit},
-        max_len=None, result_limit=result_limit,
+        name=f"ontology_{intent}",
+        statement=statement,
+        parameters={},
+        max_len=None,
+        result_limit=result_limit,
     )
 
 
@@ -219,6 +240,7 @@ def edge_upsert_batch(
 __all__ = [
     "CypherCompileError",
     "communication_paths_query",
+    "cypher_string_literal",
     "edge_upsert_batch",
     "node_upsert_batch",
     "ontology_context_query",

@@ -22,4 +22,7 @@ def test_labelled_question_eval_has_requested_category_sizes_and_passes() -> Non
         "total": 75,
         "rate": 1.0,
     }
-    assert result["metrics"]["hydradb_latency"]["status"] == "not_measured"
+    latency = result["metrics"]["hydradb_latency"]
+    assert latency["status"] == "measured"
+    assert latency["p50_ms"] > 0
+    assert latency["p95_ms"] >= latency["p50_ms"]
