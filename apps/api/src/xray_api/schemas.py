@@ -165,6 +165,7 @@ class QuestionResponse(BaseModel):
     executed_query: dict[str, object] | None = None
     engine_ms: float | None = Field(default=None, ge=0)
     round_trips: int = Field(default=0, ge=0)
+    verdict: Literal["SUPPORTED", "DISPUTED", "NOT_FOUND", "UNKNOWN"] = "UNKNOWN"
 
 
 class IdentityMemberResponse(BaseModel):

@@ -16,6 +16,7 @@ export function ExploreWorkspace({
   error?: string;
 }) {
   const [mode, setMode] = useState<"visual" | "list">("visual");
+  const [sizeMode, setSizeMode] = useState<"official" | "actual">("actual");
   const [search, setSearch] = useState("");
   const [selectedKey, setSelectedKey] = useState<string>();
   const riskByKey = useMemo(() => {
@@ -35,10 +36,11 @@ export function ExploreWorkspace({
   const visibleKeys = new Set(visible.map((node) => node.key));
   const nodes: Graph3DNode[] = visible.map((node) => {
     const risk = riskByKey.get(node.key);
+    const sized = sizeMode === "official" ? node.official_size : node.actual_size;
     return {
       key: node.key,
       label: node.name,
-      size: Math.max(20, node.actual_size),
+      size: Math.max(20, sized),
       focus: Boolean(risk) || node.selected,
       role:
         risk?.kind === "key-person"
@@ -60,7 +62,10 @@ export function ExploreWorkspace({
       <header className="section-heading">
         <div>
           <h1>Explore graph</h1>
-          <p>Relationships behind findings. Node size reflects observed connectivity.</p>
+          <p>
+            Toggle Official vs Actual size — formal rank vs observed coordination load (Ghost money
+            shot).
+          </p>
         </div>
         <div className="graph-stats">
           <span>
@@ -86,6 +91,22 @@ export function ExploreWorkspace({
             onChange={(event) => setSearch(event.target.value)}
           />
         </label>
+        <div role="group" aria-label="Node size mode" className="segmented size-mode">
+          <button
+            aria-pressed={sizeMode === "official"}
+            onClick={() => setSizeMode("official")}
+            type="button"
+          >
+            Official
+          </button>
+          <button
+            aria-pressed={sizeMode === "actual"}
+            onClick={() => setSizeMode("actual")}
+            type="button"
+          >
+            Actual
+          </button>
+        </div>
         <div role="group" aria-label="Graph view">
           <button aria-pressed={mode === "visual"} onClick={() => setMode("visual")} type="button">
             Visual
@@ -192,12 +213,12 @@ export function ExploreWorkspace({
                   <dd>{selected.team}</dd>
                 </div>
                 <div>
-                  <dt>Observed links</dt>
-                  <dd>{selected.actual_size}</dd>
+                  <dt>{sizeMode === "official" ? "Formal size (Official)" : "Observed size (Actual)"}</dt>
+                  <dd>{sizeMode === "official" ? selected.official_size : selected.actual_size}</dd>
                 </div>
                 <div>
-                  <dt>Formal size</dt>
-                  <dd>{selected.official_size}</dd>
+                  <dt>{sizeMode === "official" ? "Observed (Actual)" : "Formal (Official)"}</dt>
+                  <dd>{sizeMode === "official" ? selected.actual_size : selected.official_size}</dd>
                 </div>
               </dl>
               {riskByKey.get(selected.key) ? (

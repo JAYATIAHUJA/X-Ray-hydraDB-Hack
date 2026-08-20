@@ -58,6 +58,11 @@ Outputs: `docs/results/plan-graph-baseline.json`, `docs/results/blinded-retrospe
 
 Hosted / Docker defaults use `data/snapshots/kubernetes-demo` (Snapshot analytics — not live HydraDB on free Render). Built from public `sigs.yaml` plus active repos in `kubernetes` and `kubernetes-sigs`.
 
+For the **≤3:00 judge video**, prefer the live Hydra path above, then follow
+[`DEMO_SCRIPT.md`](DEMO_SCRIPT.md) (Official→Actual money shot, Faultline, Gap,
+Cypher / verdict proof). Use this snapshot path only when live seed is unavailable
+— keep the UI badge honest.
+
 ```bash
 uv run python scripts/build_kubernetes_corpus.py   # refresh fixture + snapshot
 export XRAY_SNAPSHOT_DIR=data/snapshots/kubernetes-demo
@@ -66,9 +71,9 @@ export XRAY_SNAPSHOT_DIR=data/snapshots/kubernetes-demo
 Open `/app` and record:
 
 1. **Overview** — dataset `kubernetes-demo`, engine line “Snapshot analytics”.
-2. **Risks** — key-person (K8s Bridge Ops), network→api-machinery faultline, missing KEP approval gap.
-3. **Ask X-Ray** — e.g. “Who owns network?” / “Which services are affected if api-machinery changes?”
-4. **Explore graph** — people + SIG/repo ownership structure.
+2. **Explore graph** — toggle **Official → Actual** node sizes (Ghost money shot).
+3. **Risks** — key-person, network→api-machinery faultline, missing KEP approval gap; open the proof strip.
+4. **Ask X-Ray** — e.g. “Who owns network?” → **SUPPORTED** verdict + proof inspector.
 
 Optional: replace mock Slack with a real export via `--slack-dir /path/to/unzipped/slack`.
 The smaller Meshery corpus remains available via `XRAY_SNAPSHOT_DIR=data/snapshots/meshery-demo`.

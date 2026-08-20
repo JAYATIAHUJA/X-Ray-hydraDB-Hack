@@ -28,6 +28,7 @@ from xray_analytics import (
 )
 from xray_analytics.questions import answer_from_hydra_rows
 from xray_analytics.repairs import ApprovedRepair
+from xray_analytics.verdicts import decide_question_verdict
 from xray_core.models import (
     AnalysisStatus,
     CanonicalBundle,
@@ -485,6 +486,7 @@ def create_app() -> FastAPI:
             executed_query=executed_query,
             engine_ms=engine_ms,
             round_trips=round_trips,
+            verdict=decide_question_verdict(answer),
             **asdict(answer),
         )
 

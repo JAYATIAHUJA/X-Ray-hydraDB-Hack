@@ -9,6 +9,15 @@ const EXAMPLES = [
   "Who approved the cross-SIG API change?",
   "Who authored Directive?"
 ];
+const VERDICT_DEFINITIONS: Array<{
+  id: QuestionResponse["verdict"];
+  blurb: string;
+}> = [
+  { id: "SUPPORTED", blurb: "A typed path and evidence back the answer." },
+  { id: "DISPUTED", blurb: "Competing claims exist and none is trusted yet." },
+  { id: "NOT_FOUND", blurb: "Coverage is complete enough to say the fact is absent." },
+  { id: "UNKNOWN", blurb: "Not enough graph evidence — refuse to guess." }
+];
 const displayKey = (key: string) => key.split(":").at(-1)?.replaceAll("-", " ") ?? key;
 
 export function AskWorkspace({ snapshotId }: { snapshotId?: string }) {
@@ -112,13 +121,30 @@ export function AskWorkspace({ snapshotId }: { snapshotId?: string }) {
 function Answer({ result }: { result: QuestionResponse }) {
   const abstained = result.answer_kind === "abstention" || result.status !== "answered";
   const conflicts = result.conflicts ?? [];
+  const verdict = result.verdict ?? (abstained ? "UNKNOWN" : "SUPPORTED");
   return (
     <div className="answer-layout">
       <main className="answer-main">
+        <div className="verdict-strip" aria-label="Verdict definitions">
+          {VERDICT_DEFINITIONS.map((item) => (
+            <article
+              className={`verdict-definition ${item.id.toLowerCase()} ${
+                item.id === verdict ? "is-active" : ""
+              }`}
+              key={item.id}
+            >
+              <strong>{item.id}</strong>
+              <span>{item.blurb}</span>
+            </article>
+          ))}
+        </div>
         <section className={`answer-summary ${abstained ? "is-abstention" : ""}`}>
-          <div>
-            <span>{abstained ? "Refused to guess" : "Answer"}</span>
-            <small>{result.status.replaceAll("_", " ")}</small>
+          <div className="dossier-verdict">
+            <div>
+              <span>{abstained ? "Refused to guess" : "Answer"}</span>
+              <small>{result.status.replaceAll("_", " ")}</small>
+            </div>
+            <span className={`verdict-badge ${verdict.toLowerCase()}`}>{verdict}</span>
           </div>
           <h2>{result.answer}</h2>
           <p>
@@ -253,10 +279,21 @@ function formatEpoch(value: number | null) {
 }
 
 function ProofInspector({ result }: { result: QuestionResponse }) {
+  const engineBadge =
+    result.source === "hydradb" && result.executed_query
+      ? "REAL HydraDB"
+      : "Snapshot analytics";
   return (
     <aside className="proof-inspector">
       <h2>Proof inspector</h2>
+      <p className={`engine-honesty-badge source-${result.source}`}>{engineBadge}</p>
       <dl>
+        <div>
+          <dt>Verdict</dt>
+          <dd>
+            <span className={`verdict-badge ${result.verdict.toLowerCase()}`}>{result.verdict}</span>
+          </dd>
+        </div>
         <div>
           <dt>Source</dt>
           <dd className={`proof-source source-${result.source}`}>{result.source}</dd>

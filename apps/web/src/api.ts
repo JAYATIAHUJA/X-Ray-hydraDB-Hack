@@ -192,6 +192,7 @@ export type QuestionResponse = {
   executed_query: { text: string; params: Record<string, unknown>; max_len: number | null; round_trips: number; engine_ms: number } | null;
   engine_ms: number | null;
   round_trips: number;
+  verdict: "SUPPORTED" | "DISPUTED" | "NOT_FOUND" | "UNKNOWN";
 };
 
 export type IdentityCandidate = {

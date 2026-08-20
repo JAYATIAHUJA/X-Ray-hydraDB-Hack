@@ -66,7 +66,7 @@ export function ProductShell({
           ))}
         </nav>
         <div className="sidebar-foot">
-          <span>Snapshot analytics</span>
+          <span>{engineLabel}</span>
           <small>{dataset}</small>
         </div>
       </aside>

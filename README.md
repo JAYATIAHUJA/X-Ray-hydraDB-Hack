@@ -128,6 +128,28 @@ The API visibly reports whether a result came from live HydraDB or the bounded
 in-process reference implementation. It never labels fallback execution as
 live.
 
+## How HydraDB is used
+
+Criterion #2 answer, in order:
+
+1. **Primitives:** `algo.MSpaths` for Ghost sampled betweenness and Faultline
+   owner reachability; `algo.SPpaths` for Gap chain-of-custody; bounded
+   traversal and snapshot reads throughout
+   ([`packages/xray_hydra`](packages/xray_hydra)).
+2. **Without HydraDB:** Ghost becomes tens of millions of client BFS pairs on
+   HERB-scale graphs (see `client_baseline` in
+   [`docs/results/herb-2026.json`](docs/results/herb-2026.json)); Faultline
+   becomes an owner-pair query storm.
+3. **Why a vector index cannot do this:** the signal is an edge present in the
+   **work graph** and absent in the **human graph**. One embedding space has no
+   concept of “missing edge between two typed graphs.”
+
+Ask answers also return a SourceTruce-inspired verdict
+(`SUPPORTED` / `DISPUTED` / `NOT_FOUND` / `UNKNOWN`). See [ATTRIBUTION.md](ATTRIBUTION.md).
+
+Demo recording: [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) ·
+[docs/VOICEOVER_SCRIPT.md](docs/VOICEOVER_SCRIPT.md).
+
 ## Repository map
 
 | Path | Purpose |
@@ -153,7 +175,10 @@ live.
 ## Deeper documentation
 
 - [Verified HydraDB Cypher compatibility](docs/cypher-compat-verified.md)
+- [Judge demo runbook](docs/judge-demo.md)
+- [Demo video script (≤3:00)](docs/DEMO_SCRIPT.md)
 - [Deployment notes](infra/deploy/README.md)
+- [Third-party pattern attribution](ATTRIBUTION.md)
 
 Licensed under Apache-2.0. HydraDB and MinIO runtime images retain their own
 licenses; see [NOTICE.md](NOTICE.md).
