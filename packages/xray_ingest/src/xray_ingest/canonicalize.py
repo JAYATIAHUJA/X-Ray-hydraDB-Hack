@@ -183,6 +183,11 @@ def _node_properties(record: CanonicalRecord, label: NodeLabel) -> dict[str, Sca
             # Present only on identity stubs synthesized for unmapped source ids.
             "identity_status": "identity_status",
             "source_identity": "source_identity",
+            "identity_candidate_id": "identity_candidate_id",
+            "identity_confidence": "identity_confidence",
+            "identity_primary": "identity_primary",
+            "identity_signal": "identity_signal",
+            "identity_source": "identity_source",
         }
     elif label == "Team":
         properties = {"name": record.external_id}

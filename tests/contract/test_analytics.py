@@ -84,7 +84,7 @@ def test_faultlines_find_dependency_without_owner_communication() -> None:
     finding = findings[0]
     assert finding.source_module_key == "module:payments-api"
     assert finding.target_module_key == "module:ledger-worker"
-    assert finding.source_owner_key == "person:alex-rivera"
+    assert finding.source_owner_key == "person:maya-chen"
     assert finding.target_owner_key == "person:theo-brooks"
     assert finding.dependency_weight == 12
     assert finding.communication_distance is None

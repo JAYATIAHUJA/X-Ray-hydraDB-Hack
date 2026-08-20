@@ -175,5 +175,71 @@
       "team_key": "team:customer-success",
       "title": "Customer success partner"
     }
+  },
+  {
+    "source": "xray-demo-directory",
+    "external_id": "sam-ratnaparkhi",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": ["person:sam-ratnaparkhi"],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Sam Ratnaparkhi",
+      "manager_external_id": "alex-rivera",
+      "identity_candidate_id": "candidate:sam-ratnaparkhi",
+      "identity_confidence": 88,
+      "identity_primary": true,
+      "identity_signal": "Same surname, first initial, and company email local-part",
+      "identity_source": "directory",
+      "identity_status": "unresolved",
+      "source_identity": "sam@company.com"
+    }
+  },
+  {
+    "source": "xray-demo-slack",
+    "external_id": "soham",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": ["person:soham"],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Soham Ratnaparkhi",
+      "manager_external_id": "alex-rivera",
+      "identity_candidate_id": "candidate:sam-ratnaparkhi",
+      "identity_confidence": 91,
+      "identity_primary": false,
+      "identity_signal": "Shared workspace, surname, and overlapping active dates",
+      "identity_source": "slack",
+      "identity_status": "unresolved",
+      "source_identity": "@soham"
+    }
+  },
+  {
+    "source": "xray-demo-git",
+    "external_id": "s-ratnaparkhi",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": ["person:s-ratnaparkhi"],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "S. Ratnaparkhi",
+      "manager_external_id": "alex-rivera",
+      "identity_candidate_id": "candidate:sam-ratnaparkhi",
+      "identity_confidence": 88,
+      "identity_primary": false,
+      "identity_signal": "Git author name matches surname and first initial",
+      "identity_source": "git",
+      "identity_status": "unresolved",
+      "source_identity": "S. Ratnaparkhi"
+    }
   }
 ]

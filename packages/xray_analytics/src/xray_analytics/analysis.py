@@ -78,7 +78,15 @@ def _nodes_by_key(bundle: CanonicalBundle) -> dict[str, NodeRow]:
 
 def _person_nodes(bundle: CanonicalBundle) -> tuple[NodeRow, ...]:
     return tuple(
-        sorted((node for node in bundle.nodes if node.label == "Person"), key=lambda n: n.id)
+        sorted(
+            (
+                node
+                for node in bundle.nodes
+                if node.label == "Person"
+                and node.properties.get("identity_status") != "unresolved"
+            ),
+            key=lambda n: n.id,
+        )
     )
 
 
@@ -449,23 +457,56 @@ def _module_owners(
     min_owner_confidence: int,
 ) -> dict[str, tuple[tuple[str, int], ...]]:
     nodes = _nodes_by_id(bundle)
-    owners: dict[str, list[tuple[str, int]]] = defaultdict(list)
+    owner_edges: dict[str, list[EdgeRow]] = defaultdict(list)
     for edge in bundle.edges:
         if edge.rel_type != "OWNS":
             continue
-        confidence = _int_property(edge, "confidence", edge.confidence)
-        owner_rank = _int_property(edge, "owner_rank", 1)
-        # The top author of a module is its owner even when their share is small;
-        # additional owners must clear the confidence threshold.
-        if confidence <= min_owner_confidence and owner_rank != 1:
-            continue
-        owner = nodes[edge.source_id].canonical_key
         module = nodes[edge.target_id].canonical_key
-        owners[module].append((owner, confidence))
+        owner_edges[module].append(edge)
+
+    snapshot_epoch = max((record.observed_epoch for record in bundle.evidence), default=0)
+    owners: dict[str, list[tuple[str, int]]] = defaultdict(list)
+    for module, edges in owner_edges.items():
+        active_assertions = [
+            edge
+            for edge in edges
+            if _int_property(edge, "authority_rank", 0) > 0
+            and _ownership_edge_is_active(edge, snapshot_epoch)
+        ]
+        considered = (
+            [
+                min(
+                    active_assertions,
+                    key=lambda edge: (
+                        -_int_property(edge, "authority_rank", 0),
+                        -_int_property(edge, "observed_epoch", 0),
+                        -_int_property(edge, "confidence", edge.confidence),
+                        edge.canonical_key,
+                    ),
+                )
+            ]
+            if active_assertions
+            else edges
+        )
+        for edge in considered:
+            confidence = _int_property(edge, "confidence", edge.confidence)
+            owner_rank = _int_property(edge, "owner_rank", 1)
+            # The top author of a module is its owner even when their share is small;
+            # additional owners must clear the confidence threshold.
+            if confidence <= min_owner_confidence and owner_rank != 1:
+                continue
+            owner = nodes[edge.source_id].canonical_key
+            owners[module].append((owner, confidence))
     return {
         module: tuple(sorted(module_owners, key=lambda item: (-item[1], item[0])))
         for module, module_owners in owners.items()
     }
+
+
+def _ownership_edge_is_active(edge: EdgeRow, snapshot_epoch: int) -> bool:
+    valid_from = _int_property(edge, "valid_from_epoch", 0)
+    valid_until = _int_property(edge, "valid_until_epoch", snapshot_epoch)
+    return valid_from <= snapshot_epoch <= valid_until
 
 
 def _bounded_distance(

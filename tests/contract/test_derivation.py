@@ -81,9 +81,9 @@ def test_build_bundle_matches_labelled_fixture_contracts() -> None:
     bundle = build_bundle(source_records(), sequence_contracts(), "xray-demo-v1")
     truth = json.loads((FIXTURE_ROOT / "ground_truth.json").read_text(encoding="utf-8"))
 
-    assert len(bundle.nodes) == 17
-    assert len(bundle.edges) == 32
-    assert len(bundle.evidence) == 36
+    assert len(bundle.nodes) == 20
+    assert len(bundle.edges) == 35
+    assert len(bundle.evidence) == 39
     assert truth["ghost_person_key"] in {node.canonical_key for node in bundle.nodes}
     assert truth["gap_path"]["phantom_key"] in {node.canonical_key for node in bundle.nodes}
     assert Counter(edge.rel_type for edge in bundle.edges) == {
@@ -93,7 +93,7 @@ def test_build_bundle_matches_labelled_fixture_contracts() -> None:
         "DEPENDS_ON": 2,
         "OWNS": 5,
         "PRECEDED_BY": 2,
-        "REPORTS_TO": 7,
+        "REPORTS_TO": 10,
     }
     assert "Export filtering is an alternative explanation." in bundle.limitations
     assert (

@@ -194,6 +194,20 @@ export type QuestionResponse = {
   round_trips: number;
 };
 
+export type IdentityCandidate = {
+  candidate_id: string;
+  proposed_person_key: string;
+  proposed_display_name: string;
+  confidence: number;
+  signals: string[];
+  members: { person_key: string; display_name: string; source_identity: string; source_type: string }[];
+  status: "pending" | "accepted" | "rejected";
+  projected_node_reduction: number;
+  affected_edge_count: number;
+  duplicate_relationships_removed: number;
+  limitations: string[];
+};
+
 export type ImportPayload = {
   dataset_id: string;
   directory: Record<string, unknown>[];
@@ -282,6 +296,23 @@ export function askQuestion(snapshotId: string, question: string) {
   return requestJson<QuestionResponse>(
     `/api/v1/snapshots/${encodeURIComponent(snapshotId)}/questions`,
     { body: JSON.stringify({ question }), method: "POST" }
+  );
+}
+
+export function getIdentityCandidates(snapshotId: string) {
+  return requestJson<IdentityCandidate[]>(
+    `/api/v1/snapshots/${encodeURIComponent(snapshotId)}/identity-candidates`
+  );
+}
+
+export function decideIdentityCandidate(
+  snapshotId: string,
+  candidateId: string,
+  decision: IdentityCandidate["status"]
+) {
+  return requestJson<IdentityCandidate>(
+    `/api/v1/snapshots/${encodeURIComponent(snapshotId)}/identity-candidates/${encodeURIComponent(candidateId)}/decision`,
+    { body: JSON.stringify({ decision }), method: "POST" }
   );
 }
 

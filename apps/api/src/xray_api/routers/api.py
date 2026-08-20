@@ -19,6 +19,7 @@ from xray_analytics import (
     faultlines,
     gap_findings,
     ghost_scores,
+    identity_candidates,
     shortest_communication_bridge,
 )
 from xray_core.models import (
@@ -57,6 +58,8 @@ from ..schemas import (
     GraphEdge,
     GraphNode,
     GraphResponse,
+    IdentityCandidateResponse,
+    IdentityDecisionRequest,
     LensEnvelope,
     QuestionRequest,
     QuestionResponse,
@@ -74,6 +77,7 @@ GatewayDep = Annotated[HydraGateway | None, Depends(get_gateway)]
 def create_app() -> FastAPI:
     app = FastAPI(title="X-Ray Evidence Platform API", version="0.1.0")
     snapshots = SnapshotService()
+    identity_decisions: dict[tuple[str, str], str] = {}
     # Extra origins for deployed frontends, comma-separated (the demo compose/Fly setup
     # proxies /api same-origin, so it needs none of this).
     extra_origins = [
@@ -133,7 +137,12 @@ def create_app() -> FastAPI:
 
         people = tuple(
             sorted(
-                (node for node in bundle.nodes if node.label == "Person"),
+                (
+                    node
+                    for node in bundle.nodes
+                    if node.label == "Person"
+                    and node.properties.get("identity_status") != "unresolved"
+                ),
                 key=lambda node: node.canonical_key,
             )
         )
@@ -188,7 +197,12 @@ def create_app() -> FastAPI:
                 comparison=comparison,
             )
         findings = fixture_ghost_findings(bundle, exclude_person_keys=excluded)
-        people_count = sum(1 for node in bundle.nodes if node.label == "Person")
+        people_count = sum(
+            1
+            for node in bundle.nodes
+            if node.label == "Person"
+            and node.properties.get("identity_status") != "unresolved"
+        )
         return _lens_envelope(
             snapshot_id=snapshot_id,
             limitations=bundle.limitations,
@@ -436,6 +450,46 @@ def create_app() -> FastAPI:
             **asdict(answer),
         )
 
+    @app.get(
+        "/api/v1/snapshots/{snapshot_id}/identity-candidates",
+        response_model=tuple[IdentityCandidateResponse, ...],
+    )
+    def get_identity_candidates(snapshot_id: str) -> tuple[IdentityCandidateResponse, ...]:
+        bundle = snapshots.require(snapshot_id)
+        decisions = {
+            candidate_id: decision
+            for (decision_snapshot, candidate_id), decision in identity_decisions.items()
+            if decision_snapshot == snapshot_id
+        }
+        return tuple(
+            IdentityCandidateResponse.model_validate(asdict(candidate))
+            for candidate in identity_candidates(bundle, decisions)
+        )
+
+    @app.post(
+        "/api/v1/snapshots/{snapshot_id}/identity-candidates/{candidate_id}/decision",
+        response_model=IdentityCandidateResponse,
+    )
+    def decide_identity_candidate(
+        snapshot_id: str,
+        candidate_id: str,
+        request: IdentityDecisionRequest,
+    ) -> IdentityCandidateResponse:
+        bundle = snapshots.require(snapshot_id)
+        candidates = {item.candidate_id: item for item in identity_candidates(bundle)}
+        if candidate_id not in candidates:
+            raise not_found(
+                f"Identity candidate {candidate_id!r} does not exist in this snapshot.",
+                code="identity_candidate_not_found",
+            )
+        identity_decisions[(snapshot_id, candidate_id)] = request.decision
+        updated = next(
+            item
+            for item in identity_candidates(bundle, {candidate_id: request.decision})
+            if item.candidate_id == candidate_id
+        )
+        return IdentityCandidateResponse.model_validate(asdict(updated))
+
     @app.get("/api/v1/snapshots/{snapshot_id}/asymmetries", response_model=LensEnvelope)
     def asymmetries(
         snapshot_id: str,
@@ -547,7 +601,11 @@ def _lens_envelope(
 
 def _validated_person_keys(bundle: CanonicalBundle, keys: list[str]) -> tuple[str, ...]:
     """Keep only keys that name people in the bundle; unknown keys are a 404, not a silent no-op."""
-    people = {node.canonical_key for node in bundle.nodes if node.label == "Person"}
+    people = {
+        node.canonical_key
+        for node in bundle.nodes
+        if node.label == "Person" and node.properties.get("identity_status") != "unresolved"
+    }
     unknown = sorted(key for key in keys if key not in people)
     if unknown:
         raise not_found(f"Unknown person keys: {', '.join(unknown)}", code="person_not_found")

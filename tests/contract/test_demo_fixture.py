@@ -84,6 +84,9 @@ def test_demo_fixture_encodes_the_required_topology() -> None:
         "sam-wu",
         "ines-costa",
         "jon-bell",
+        "sam-ratnaparkhi",
+        "soham",
+        "s-ratnaparkhi",
     ]
     maya = next(record for record in directory if record["external_id"] == "maya-chen")
     assert maya["metadata"]["role_rank"] == 1

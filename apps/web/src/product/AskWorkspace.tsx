@@ -12,8 +12,8 @@ const EXAMPLES = [
 const displayKey = (key: string) => key.split(":").at(-1)?.replaceAll("-", " ") ?? key;
 
 export function AskWorkspace({ snapshotId }: { snapshotId?: string }) {
-  const [question, setQuestion] = useState(EXAMPLES[1]); const [result, setResult] = useState<QuestionResponse>(); const [busy, setBusy] = useState(false); const [error, setError] = useState<string>();
-  async function run(nextQuestion = question) { if (!snapshotId || !nextQuestion.trim()) return; setBusy(true); setError(undefined); try { setResult(await askQuestion(snapshotId, nextQuestion.trim())); } catch (reason) { setError(reason instanceof Error ? reason.message : "Question failed"); } finally { setBusy(false); } }
+  const [question, setQuestion] = useState<string>(EXAMPLES[1] ?? "Who owns payments-api?"); const [result, setResult] = useState<QuestionResponse>(); const [busy, setBusy] = useState(false); const [error, setError] = useState<string>();
+  async function run(nextQuestion: string = question) { if (!snapshotId || !nextQuestion.trim()) return; setBusy(true); setError(undefined); try { setResult(await askQuestion(snapshotId, nextQuestion.trim())); } catch (reason) { setError(reason instanceof Error ? reason.message : "Question failed"); } finally { setBusy(false); } }
   return <section className="ask-workspace"><header className="ask-heading"><h1>Ask X-Ray</h1><p>Ask deterministic questions over the evidence graph. Every supported answer cites its path and sources.</p></header>
     <div className="ask-composer"><label><span className="sr-only">Question</span><input value={question} onChange={(event) => setQuestion(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") void run(); }}/></label><button disabled={busy || !snapshotId} onClick={() => void run()} type="button">{busy ? "Reasoning…" : "Ask"}</button></div>
     <div className="ask-examples"><span>Try an example</span><div>{EXAMPLES.map((example) => <button key={example} onClick={() => { setQuestion(example); void run(example); }} type="button">{example}</button>)}</div></div>

@@ -167,6 +167,31 @@ class QuestionResponse(BaseModel):
     round_trips: int = Field(default=0, ge=0)
 
 
+class IdentityMemberResponse(BaseModel):
+    person_key: str
+    display_name: str
+    source_identity: str
+    source_type: str
+
+
+class IdentityCandidateResponse(BaseModel):
+    candidate_id: str
+    proposed_person_key: str
+    proposed_display_name: str
+    confidence: int = Field(ge=0, le=100)
+    signals: tuple[str, ...]
+    members: tuple[IdentityMemberResponse, ...]
+    status: Literal["pending", "accepted", "rejected"]
+    projected_node_reduction: int = Field(ge=0)
+    affected_edge_count: int = Field(ge=0)
+    duplicate_relationships_removed: int = Field(ge=0)
+    limitations: tuple[str, ...]
+
+
+class IdentityDecisionRequest(BaseModel):
+    decision: Literal["accepted", "rejected", "pending"]
+
+
 class ImportRequest(BaseModel):
     """Browser-friendly JSON form of the supported offline export inputs."""
 
@@ -203,6 +228,9 @@ __all__ = [
     "HealthResponse",
     "HydraHealthResponse",
     "HydraSeedResponse",
+    "IdentityCandidateResponse",
+    "IdentityDecisionRequest",
+    "IdentityMemberResponse",
     "ImportRequest",
     "LensEnvelope",
     "LoadReportResponse",

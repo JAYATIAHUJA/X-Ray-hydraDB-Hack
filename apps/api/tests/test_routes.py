@@ -32,9 +32,9 @@ def test_health_and_current_snapshot() -> None:
     snapshot = api.get("/api/v1/snapshots/current").json()
 
     assert snapshot["snapshot_id"] == "xray-demo-v1:fixture"
-    assert snapshot["node_count"] == 17
-    assert snapshot["edge_count"] == 32
-    assert snapshot["evidence_count"] == 36
+    assert snapshot["node_count"] == 20
+    assert snapshot["edge_count"] == 35
+    assert snapshot["evidence_count"] == 39
 
 
 def test_settings_reads_hydradb_environment_contract() -> None:
@@ -406,7 +406,7 @@ def test_graph_rows_reads_live_hydradb_projection() -> None:
     assert rows.edges[0].weight == 5.0
     assert driver.parameters == [
         {"dataset_id": "xray-demo-v1", "limit": 10},
-        {"dataset_id": "xray-demo-v1", "limit": 32},
+        {"dataset_id": "xray-demo-v1", "limit": 35},
     ]
 
 
@@ -654,6 +654,38 @@ def test_question_endpoint_exposes_temporal_conflict_decision() -> None:
         "source_record_id"
     ] == "CODEOWNERS-payments-api"
     assert payload["trust_explanation"]
+
+
+def test_identity_candidate_decision_is_reviewable_and_persists() -> None:
+    api = client()
+    endpoint = "/api/v1/snapshots/xray-demo-v1:fixture/identity-candidates"
+
+    candidates = api.get(endpoint).json()
+    assert len(candidates) == 1
+    candidate = candidates[0]
+    assert candidate["candidate_id"] == "candidate:sam-ratnaparkhi"
+    assert candidate["status"] == "pending"
+    assert len(candidate["members"]) == 3
+    assert candidate["projected_node_reduction"] == 2
+    assert candidate["duplicate_relationships_removed"] == 2
+
+    decision = api.post(
+        f"{endpoint}/candidate:sam-ratnaparkhi/decision",
+        json={"decision": "accepted"},
+    )
+    assert decision.status_code == 200
+    assert decision.json()["status"] == "accepted"
+    assert api.get(endpoint).json()[0]["status"] == "accepted"
+
+
+def test_unknown_identity_candidate_returns_problem_detail() -> None:
+    response = client().post(
+        "/api/v1/snapshots/xray-demo-v1:fixture/identity-candidates/missing/decision",
+        json={"decision": "rejected"},
+    )
+
+    assert response.status_code == 404
+    assert response.json()["detail"]["code"] == "identity_candidate_not_found"
 
 
 def test_asymmetry_endpoint_discloses_direction_and_safe_interpretation() -> None:

@@ -26,6 +26,7 @@ from .analysis import (
     shortest_communication_bridge,
     without_people,
 )
+from .identities import IdentityCandidate, IdentityMember, identity_candidates
 from .questions import OntologyAnswer, answer_ontology_question
 
 __all__ = [
@@ -38,6 +39,8 @@ __all__ = [
     "FaultlineFinding",
     "GapFinding",
     "GhostScore",
+    "IdentityCandidate",
+    "IdentityMember",
     "OntologyAnswer",
     "answer_ontology_question",
     "bounded_shortest_path_tallies",
@@ -51,6 +54,7 @@ __all__ = [
     "formal_ranks",
     "gap_findings",
     "ghost_scores",
+    "identity_candidates",
     "reachable_pair_count",
     "role_rank",
     "shortest_communication_bridge",

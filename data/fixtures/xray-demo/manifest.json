@@ -13,8 +13,8 @@
       "path": "directory.json",
       "source_type": "directory",
       "source_uri": "fixture://xray-demo/directory",
-      "record_count": 10,
-      "sha256": "441a6d24431dfadca5d17c3fa4bd2655bcd1bdbfd6a11311b349cab5f32b0fd7",
+      "record_count": 13,
+      "sha256": "76be54530cffa44529586f14976ae200fe5e788a5b589eb4f19c1f55516833cb",
       "input_status": "complete"
     },
     {
@@ -29,8 +29,8 @@
       "path": "git_facts.json",
       "source_type": "git",
       "source_uri": "fixture://xray-demo/git-facts",
-      "record_count": 9,
-      "sha256": "de5f104d5f5ef64ef460d681ef169f4c3b0110cad15500ad189eab24a5c5e86a",
+      "record_count": 11,
+      "sha256": "dc56f91914fae2460f6a252ca00280eeb07565e7382f0f4c3b66cbeb018eacea",
       "input_status": "complete"
     }
   ],

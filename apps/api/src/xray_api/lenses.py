@@ -72,7 +72,15 @@ def live_ghost_findings(
         return None
 
     people = tuple(
-        sorted((node for node in bundle.nodes if node.label == "Person"), key=lambda n: n.id)
+        sorted(
+            (
+                node
+                for node in bundle.nodes
+                if node.label == "Person"
+                and node.properties.get("identity_status") != "unresolved"
+            ),
+            key=lambda n: n.id,
+        )
     )
     if len(people) < 2:
         return None

@@ -198,9 +198,9 @@ def test_canonicalization_rejects_conflicting_source_record_identity() -> None:
 def test_demo_canonicalization_materializes_safe_observed_topology() -> None:
     bundle = canonicalize(source_records(), "xray-demo-v1")
 
-    assert len(bundle.nodes) == 16
-    assert len(bundle.edges) == 11
-    assert len(bundle.evidence) == 33
+    assert len(bundle.nodes) == 19
+    assert len(bundle.edges) == 14
+    assert len(bundle.evidence) == 38
     assert len({node.id for node in bundle.nodes}) == len(bundle.nodes)
     assert len({node.path_key for node in bundle.nodes}) == len(bundle.nodes)
     maya = next(node for node in bundle.nodes if node.canonical_key == "person:maya-chen")
@@ -220,7 +220,7 @@ def test_demo_canonicalization_materializes_safe_observed_topology() -> None:
     assert Counter(edge.rel_type for edge in bundle.edges) == {
         "ABOUT": 2,
         "AUTHORED": 2,
-        "REPORTS_TO": 7,
+        "REPORTS_TO": 10,
     }
     assert not {"COMMUNICATES", "OWNS", "DEPENDS_ON", "PRECEDED_BY"} & {
         edge.rel_type for edge in bundle.edges
@@ -236,8 +236,9 @@ def test_demo_canonicalization_materializes_safe_observed_topology() -> None:
         "cochange": 1,
         "communication_aggregate": 12,
         "dependency": 1,
-        "directory_person": 10,
+        "directory_person": 13,
         "module": 4,
+        "ownership_assertion": 2,
     }
     node_ids = {node.id for node in bundle.nodes}
     assert all(edge.source_id in node_ids and edge.target_id in node_ids for edge in bundle.edges)

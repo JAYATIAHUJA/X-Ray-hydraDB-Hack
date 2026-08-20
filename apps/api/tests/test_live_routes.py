@@ -104,7 +104,7 @@ def test_ghosts_route_runs_one_mspaths_call_and_reports_hydradb_source() -> None
 
 
 def test_faultlines_route_batches_owner_pairs_into_one_call_and_tiers_correctly() -> None:
-    # Owners on the demo faultline are alex-rivera and theo-brooks. Return a 3-hop
+    # Current owners on the demo faultline are maya-chen and theo-brooks. Return a 3-hop
     # path between them so the live tier becomes weak_coordination, not no_path.
     driver = ScriptedDriver(
         [
@@ -113,9 +113,9 @@ def test_faultlines_route_batches_owner_pairs_into_one_call_and_tiers_correctly(
                 [
                     _path(
                         "person:theo-brooks",
-                        "person:maya-chen",
-                        "person:sam-wu",
                         "person:alex-rivera",
+                        "person:sam-wu",
+                        "person:maya-chen",
                     )
                 ],
             )
@@ -132,7 +132,7 @@ def test_faultlines_route_batches_owner_pairs_into_one_call_and_tiers_correctly(
     assert sum("algo.MSpaths" in s for s in driver.statements) == 1
     finding = payload["findings"][0]
     assert {finding["source_owner_key"], finding["target_owner_key"]} == {
-        "person:alex-rivera",
+        "person:maya-chen",
         "person:theo-brooks",
     }
     assert finding["communication_distance"] == 3
@@ -142,7 +142,7 @@ def test_faultlines_route_batches_owner_pairs_into_one_call_and_tiers_correctly(
 def test_faultlines_route_uses_reversed_pair_lookup_without_fabricating_no_path() -> None:
     # A direct 1-hop path in the *reverse* owner order must still be recognised
     # (regression for the sorted-vs-unsorted lookup bug) and must yield no finding.
-    driver = ScriptedDriver([("algo.MSpaths", [_path("person:theo-brooks", "person:alex-rivera")])])
+    driver = ScriptedDriver([("algo.MSpaths", [_path("person:theo-brooks", "person:maya-chen")])])
 
     payload = _client(driver).get(f"/api/v1/snapshots/{SNAPSHOT}/faultlines").json()
 

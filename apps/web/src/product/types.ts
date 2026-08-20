@@ -1,6 +1,6 @@
 import type { EvidenceSummary, LensEnvelope } from "../api";
 
-export type ProductView = "overview" | "risks" | "ask" | "graph" | "imports" | "actions" | "settings";
+export type ProductView = "overview" | "risks" | "ask" | "identities" | "graph" | "imports" | "actions" | "settings";
 export type RiskKind = "key-person" | "coordination" | "missing-evidence";
 export type RiskPriority = "P1" | "P2" | "P3" | "P4";
 export type RiskStatus = "open" | "acknowledged" | "mitigating" | "resolved" | "dismissed";

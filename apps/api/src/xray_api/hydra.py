@@ -244,7 +244,11 @@ def communication_distances(
     if not settings.hydra_configured or not pairs:
         return None
 
-    people_by_key = {node.canonical_key: node for node in bundle.nodes if node.label == "Person"}
+    people_by_key = {
+        node.canonical_key: node
+        for node in bundle.nodes
+        if node.label == "Person" and node.properties.get("identity_status") != "unresolved"
+    }
     normalized_pairs = tuple(sorted({normalize_pair(*pair) for pair in pairs}))
     resolved_pairs = tuple(
         pair for pair in normalized_pairs if pair[0] in people_by_key and pair[1] in people_by_key
@@ -307,7 +311,12 @@ def graph_rows(
 
     try:
         with open_gateway(settings, gateway) as resolved_gateway:
-            people_ids = {node.id for node in bundle.nodes if node.label == "Person"}
+            people_ids = {
+                node.id
+                for node in bundle.nodes
+                if node.label == "Person"
+                and node.properties.get("identity_status") != "unresolved"
+            }
             node_limit = max(1, len(people_ids))
             edge_limit = max(1, len(bundle.edges))
             node_rows = resolved_gateway.run(
