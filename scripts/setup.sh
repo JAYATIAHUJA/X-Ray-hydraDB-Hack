@@ -23,6 +23,13 @@ done
 RUNTIME_DIR="infra/runtime/$RUNTIME_ID"
 ENV_FILE="$RUNTIME_DIR/compose.env"
 
+if ! docker info >/dev/null 2>&1; then
+  echo "Docker is not ready. Start Docker and wait until 'docker info' succeeds." >&2
+  exit 1
+fi
+
+uv sync --locked
+
 if [ -f "$ENV_FILE" ]; then
   docker compose --env-file "$ENV_FILE" -p "$PROJECT" -f compose.yaml -f compose.test.yaml --profile core up -d --wait
 else
@@ -30,8 +37,6 @@ else
     --runtime-id "$RUNTIME_ID" \
     --compose-project "$PROJECT"
 fi
-
-uv sync
 
 if [ "$CORE_ONLY" -eq 1 ]; then
   echo "HydraDB runtime is live. Env file: $ENV_FILE"
@@ -65,6 +70,7 @@ raise SystemExit(f"timed out waiting for {url}")
 PY
 
 python - <<PY
+import json
 import urllib.request
 
 request = urllib.request.Request(
@@ -72,10 +78,16 @@ request = urllib.request.Request(
     method="POST",
 )
 with urllib.request.urlopen(request, timeout=60) as response:
-    print(response.read().decode("utf-8"))
+    payload = json.loads(response.read().decode("utf-8"))
+    print(json.dumps(payload, indent=2))
+    if payload["status"] != "complete":
+        raise SystemExit(f"HydraDB seed did not complete: {payload['detail']}")
 PY
 
-npm install
+uv run python scripts/verify_judge_demo.py --api-base "http://127.0.0.1:$API_PORT"
+uv run python scripts/bench_judge_latency.py
+
+npm ci
 npm run dev -- --port "$WEB_PORT" > "$RUNTIME_DIR/web.log" 2>&1 &
 echo "$!" > "$RUNTIME_DIR/web.pid"
 

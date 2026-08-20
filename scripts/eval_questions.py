@@ -67,7 +67,7 @@ def evaluate(corpus_path: Path) -> dict[str, Any]:
 
     total = len(results)
     passed = sum(item["passed"] for item in results)
-    latency = _latency_status(Path("docs/results/latency.json"))
+    latency = _latency_status(Path("docs/results/judge-latency.json"))
     return {
         "dataset_id": corpus["dataset_id"],
         "generated_at_utc": datetime.now(UTC).replace(microsecond=0).isoformat(),

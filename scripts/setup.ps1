@@ -11,13 +11,18 @@ $startedAt = Get-Date
 $runtimeDir = "infra/runtime/$RuntimeId"
 $envFile = "$runtimeDir/compose.env"
 
+docker info *> $null
+if ($LASTEXITCODE -ne 0) {
+    throw "Docker Desktop is not ready. Start Docker Desktop and wait until 'docker info' succeeds."
+}
+
+uv sync --locked
+
 if (Test-Path $envFile) {
     docker compose --env-file $envFile -p $Project -f compose.yaml -f compose.test.yaml --profile core up -d --wait
 } else {
     uv run python -m xray_runtime.manager start --runtime-id $RuntimeId --compose-project $Project
 }
-uv sync
-
 if ($CoreOnly) {
     Write-Host "HydraDB runtime is live. Env file: $runtimeDir/compose.env"
     exit 0
@@ -51,9 +56,16 @@ if ((Get-Date) -ge $deadline) {
     throw "timed out waiting for API health"
 }
 
-Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:$ApiPort/api/v1/hydra/seed-fixture" | ConvertTo-Json -Depth 8
+$seed = Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:$ApiPort/api/v1/hydra/seed-fixture"
+if ($seed.status -ne "complete") {
+    throw "HydraDB seed did not complete: $($seed.detail)"
+}
+$seed | ConvertTo-Json -Depth 8
 
-npm install
+uv run python scripts/verify_judge_demo.py --api-base "http://127.0.0.1:$ApiPort"
+uv run python scripts/bench_judge_latency.py
+
+npm ci
 $web = Start-Process -FilePath "npm" `
     -ArgumentList @("run", "dev", "--", "--port", "$WebPort") `
     -RedirectStandardOutput "$runtimeDir/web.log" `

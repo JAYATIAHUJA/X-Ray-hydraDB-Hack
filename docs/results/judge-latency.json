@@ -1,0 +1,16 @@
+{
+  "dataset_id": "xray-demo-v1",
+  "generated_at_utc": null,
+  "method": "Run scripts/bench_judge_latency.py against a seeded live HydraDB runtime.",
+  "round_trips_per_question": 1,
+  "queries": {},
+  "percentiles": {
+    "samples": 0,
+    "p50_ms": null,
+    "p95_ms": null
+  },
+  "status": "not_measured",
+  "limitations": [
+    "Live HydraDB was unavailable in the current environment; latency is intentionally null rather than estimated."
+  ]
+}

@@ -60,7 +60,9 @@ Windows PowerShell:
 
 The setup command starts the pinned HydraDB/MinIO runtime, seeds the demo
 fixture, and launches the API and web app. It prints the local URLs and teardown
-command when ready.
+command when ready. It also fails closed if HydraDB is not live, verifies three
+Judge Mode queries, and records real query latency. See
+[the judge demo runbook](docs/judge-demo.md).
 
 To run only the database services:
 
