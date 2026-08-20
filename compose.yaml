@@ -39,6 +39,22 @@ services:
       minio:
         condition: service_healthy
 
+  hydra-secrets-init:
+    image: alpine:3.20
+    profiles: ["core"]
+    user: "0:0"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -eu
+        cp /run/secrets/hydra-auth-token /out/hydra-auth-token
+        chown 10001:10001 /out/hydra-auth-token
+        chmod 0400 /out/hydra-auth-token
+    secrets:
+      - hydra-auth-token
+    volumes:
+      - hydra-auth-token-data:/out
+
   hydradb:
     image: ${XRAY_HYDRA_IMAGE}
     profiles: ["core"]
@@ -66,23 +82,20 @@ services:
       GRAPH_ADMIN_ADDR: 0.0.0.0:9090
       GRAPH_BOLT_NODE_ADDRESSES: node-0=hydradb:7687
       GRAPH_ADVERTISED_BOLT_ADDR: hydradb:7687
-      GRAPH_AUTH_TOKEN_FILE: /run/secrets/hydra-auth-token
+      GRAPH_AUTH_TOKEN_FILE: /var/run/hydra-secrets/hydra-auth-token
       GRAPH_ALLOW_PLAINTEXT: "true"
     ports:
       - "127.0.0.1:${XRAY_BOLT_PORT}:7687"
       - "127.0.0.1:${XRAY_HTTP_PORT}:8443"
       - "127.0.0.1:${XRAY_ADMIN_PORT}:9090"
-    secrets:
-      - source: hydra-auth-token
-        target: hydra-auth-token
-        mode: 0444
-        uid: "10001"
-        gid: "10001"
     depends_on:
       minio-init:
         condition: service_completed_successfully
+      hydra-secrets-init:
+        condition: service_completed_successfully
     volumes:
       - hydra-cache:/var/cache/slatedb
+      - hydra-auth-token-data:/var/run/hydra-secrets:ro
 
   hydradb-indexer:
     image: ${XRAY_HYDRA_IMAGE}
@@ -93,17 +106,14 @@ services:
       GRAPH_INDEXER_ADMIN_ADDR: 0.0.0.0:9091
     ports:
       - "127.0.0.1:${XRAY_INDEXER_ADMIN_PORT}:9091"
-    secrets:
-      - source: hydra-auth-token
-        target: hydra-auth-token
-        mode: 0444
-        uid: "10001"
-        gid: "10001"
     depends_on:
       minio-init:
         condition: service_completed_successfully
+      hydra-secrets-init:
+        condition: service_completed_successfully
     volumes:
       - hydra-indexer-cache:/var/cache/slatedb
+      - hydra-auth-token-data:/var/run/hydra-secrets:ro
 
 secrets:
   hydra-auth-token:
@@ -120,3 +130,5 @@ volumes:
     name: ${XRAY_COMPOSE_PROJECT}-hydra-cache
   hydra-indexer-cache:
     name: ${XRAY_COMPOSE_PROJECT}-hydra-indexer-cache
+  hydra-auth-token-data:
+    name: ${XRAY_COMPOSE_PROJECT}-hydra-auth-token

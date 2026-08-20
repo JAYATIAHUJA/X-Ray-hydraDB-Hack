@@ -99,7 +99,7 @@ def test_ghosts_route_runs_one_mspaths_call_and_reports_hydradb_source() -> None
     top = payload["findings"][0]
     assert top["person_key"] == "person:maya-chen"
     assert top["sampled_centrality"] > 0
-    assert top["centrality_method"] == "exact_undirected_networkx"
+    assert top["centrality_method"] == "hydradb_mspaths_exact_betweenness"
     assert top["removal_impact"] is not None
 
 

@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""Measure live HydraDB Ghost lens latency and update docs/results/latency.json.
+"""Measure live HydraDB ping latency and update docs/results/latency.json.
 
 Usage:
     uv run python scripts/bench_latency.py
     XRAY_HYDRA_URI=bolt://localhost:7687 uv run python scripts/bench_latency.py
 
-Requires a running HydraDB stack (docker compose --profile core up -d) with the
-synth-500 fixture already seeded (POST /api/v1/hydra/seed-fixture).
+Requires a running HydraDB stack (docker compose --profile core up -d).
 """
 
 from __future__ import annotations
@@ -27,23 +26,26 @@ def main() -> None:
         print("Set it to bolt://localhost:7687 (or your HydraDB address) and re-run.")
         return
 
+    from xray_core.models import QuerySpec
     from xray_hydra.gateway import HydraGateway
 
     try:
         import neo4j  # type: ignore[import-untyped]
-
-        driver = neo4j.GraphDatabase.driver(uri)
     except ImportError:
         try:
             import neo4j_driver as neo4j  # type: ignore[import-untyped, no-redef]
-
-            driver = neo4j.GraphDatabase.driver(uri)
         except ImportError:
             print("No Bolt driver found (neo4j or neo4j-driver). Skipping live measurement.")
             return
 
-    gateway = HydraGateway(driver)
-    from xray_core.models import QuerySpec
+    user = os.environ.get("XRAY_HYDRA_USER")
+    password = os.environ.get("XRAY_HYDRA_PASSWORD")
+    database = os.environ.get("XRAY_HYDRA_DATABASE")
+    auth = None
+    if user is not None or password is not None:
+        auth = (user or "", password or "")
+    driver = neo4j.GraphDatabase.driver(uri, auth=auth)
+    gateway = HydraGateway(driver, database=database)
 
     ping = QuerySpec(
         name="bench_ping",
@@ -69,6 +71,12 @@ def main() -> None:
     data["percentiles"]["p50_ms"] = round(p50, 1)
     data["percentiles"]["p95_ms"] = round(p95, 1)
     data["percentiles"]["note"] = f"Measured against live HydraDB at {uri} ({rounds} ping rounds)."
+    data["method"] = (
+        "client_ghost_baseline_ms() runs 10 repeated bounded BFS passes over the synth-500 "
+        "bundle and returns the median wall-clock time. Live HydraDB p50/p95 filled by "
+        "scripts/bench_latency.py against a running stack. Judge Mode Q&A latency remains in "
+        "docs/results/judge-latency.json."
+    )
     RESULTS.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"  Updated {RESULTS}")
     driver.close()

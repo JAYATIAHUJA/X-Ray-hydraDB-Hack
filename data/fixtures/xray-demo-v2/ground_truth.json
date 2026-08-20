@@ -1,0 +1,36 @@
+{
+  "ghost_person_key": "person:maya-chen",
+  "faultline_module_keys": [
+    "module:payments-api",
+    "module:ledger-worker"
+  ],
+  "gap_path": {
+    "source_artifact_key": "artifact:code-change",
+    "target_artifact_key": "artifact:directive",
+    "phantom_key": "artifact:missing-approval"
+  },
+  "owner_conflict": {
+    "module_key": "module:payments-api",
+    "contending_person_keys": [
+      "person:maya-chen",
+      "person:alex-rivera"
+    ],
+    "authorities": [
+      "github_codeowners",
+      "jira_component_owner"
+    ]
+  },
+  "dependency_impact": {
+    "source_module_key": "module:payments-api",
+    "target_module_key": "module:ledger-worker",
+    "dependency_kind": "import"
+  },
+  "identity_candidate_id": "candidate:sam-ratnaparkhi",
+  "demo_scenarios": [
+    "owner_conflict",
+    "dependency_impact",
+    "missing_approval_phantom",
+    "identity_merge",
+    "ghost_broker"
+  ]
+}

@@ -52,6 +52,7 @@ def test_hydradb_is_immutable_and_stack_safe() -> None:
     compose = load_compose()
     services = compose["services"]
     hydra = services["hydradb"]
+    secrets_init = services["hydra-secrets-init"]
 
     assert services["minio"]["image"] == "${XRAY_MINIO_IMAGE}"
     assert hydra["image"] == "${XRAY_HYDRA_IMAGE}"
@@ -59,7 +60,15 @@ def test_hydradb_is_immutable_and_stack_safe() -> None:
     assert locked_hydra_image().startswith("ghcr.io/hydra-db/hydradb@sha256:")
     assert locked_image("minio").startswith("minio/minio@sha256:")
     assert hydra["environment"]["RUST_MIN_STACK"] == "33554432"
-    assert {"minio", "minio-init", "hydradb", "hydradb-indexer"} <= set(services)
+    assert {"minio", "minio-init", "hydra-secrets-init", "hydradb", "hydradb-indexer"} <= set(
+        services
+    )
+    assert secrets_init["user"] == "0:0"
+    assert hydra["environment"]["GRAPH_AUTH_TOKEN_FILE"] == (
+        "/var/run/hydra-secrets/hydra-auth-token"
+    )
+    assert "hydra-auth-token-data:/var/run/hydra-secrets:ro" in hydra["volumes"]
+    assert "secrets" not in hydra
     assert "${XRAY_HYDRA_IMAGE}" in {
         service["image"] for service in services.values() if "image" in service
     }

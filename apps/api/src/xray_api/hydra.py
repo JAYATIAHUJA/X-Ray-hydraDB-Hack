@@ -593,7 +593,9 @@ def create_gateway(settings: XraySettings) -> HydraGateway:
     if settings.hydra_user is not None or settings.hydra_password is not None:
         auth = (settings.hydra_user or "", settings.hydra_password or "")
 
-    return HydraGateway(GraphDatabase.driver(hydra_uri, auth=auth))
+    return HydraGateway(
+        GraphDatabase.driver(hydra_uri, auth=auth), database=settings.hydra_database
+    )
 
 
 __all__ = [

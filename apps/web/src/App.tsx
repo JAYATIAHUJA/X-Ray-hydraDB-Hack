@@ -11,6 +11,7 @@ import { OverviewWorkspace } from "./product/OverviewWorkspace";
 import { SettingsWorkspace } from "./product/SettingsWorkspace";
 import { AskWorkspace } from "./product/AskWorkspace";
 import { IdentityWorkbench } from "./product/IdentityWorkbench";
+import { RepairsWorkspace } from "./product/RepairsWorkspace";
 import { RiskInbox } from "./product/RiskInbox";
 import type { ProductView, RiskFilters } from "./product/types";
 import "./product/product.css";
@@ -18,7 +19,7 @@ import "./product/product.css";
 // The bundled demo corpus is historical. A rolling default can make a healthy
 // snapshot look empty, so the inbox opens on all available evidence.
 const DEFAULT_FILTERS: RiskFilters = { kind: "all", confidence: "all", team: "all", windowDays: 0 };
-const PRODUCT_VIEWS: ProductView[] = ["overview", "risks", "ask", "identities", "graph", "imports", "actions", "settings"];
+const PRODUCT_VIEWS: ProductView[] = ["overview", "risks", "ask", "identities", "repairs", "graph", "imports", "actions", "settings"];
 function initialView(): ProductView {
   if (!window.location.pathname.startsWith("/app")) return "risks";
   const requested = new URL(window.location.href).searchParams.get("view");
@@ -37,6 +38,6 @@ export function App() {
   const activeRisk = risks.find((risk) => risk.id === activeId);
   function navigate(next: ProductView) { const url = new URL(window.location.href); url.searchParams.set("view", next); window.history.replaceState({}, "", url); setView(next); }
   return <ProductShell health={health.data} onView={navigate} snapshot={snapshot.data} view={view}>
-    {view === "overview" ? <OverviewWorkspace actions={actions} health={health.data} onRisk={(id) => { setSelectedId(id); setDetailOpen(true); navigate("risks"); }} onView={navigate} risks={risks} snapshot={snapshot.data}/> : view === "risks" ? <div className={`risks-layout ${detailOpen && activeRisk ? "detail-is-open" : ""}`}><RiskInbox filters={filters} loading={faultlines.isPending || gaps.isPending || ghosts.isPending} onFilters={(next) => { setFilters(next); setDetailOpen(false); }} onSearch={(value) => { setSearch(value); setDetailOpen(false); }} onSelect={(id) => { setSelectedId(id); setDetailOpen(true); }} risks={risks} search={search} selectedId={detailOpen ? activeId : undefined}/>{detailOpen && activeRisk ? <RiskDetail action={actions[activeRisk.id] ?? EMPTY_ACTION} onAction={(patch) => updateAction(activeRisk.id, patch)} onClose={() => setDetailOpen(false)} risk={activeRisk}/> : null}</div> : view === "ask" ? <AskWorkspace snapshotId={snapshot.data?.snapshot_id}/> : view === "identities" ? <IdentityWorkbench snapshotId={snapshot.data?.snapshot_id}/> : view === "graph" ? <ExploreWorkspace graph={graph.data} risks={risks}/> : view === "actions" ? <ActionsWorkspace actions={actions} onOpen={(id) => { setSelectedId(id); setDetailOpen(true); navigate("risks"); }} risks={risks}/> : view === "imports" ? <ImportsWorkspace health={health.data} onDone={() => navigate("risks")} snapshot={snapshot.data}/> : <SettingsWorkspace health={health.data} snapshot={snapshot.data}/>}
+    {view === "overview" ? <OverviewWorkspace actions={actions} health={health.data} onRisk={(id) => { setSelectedId(id); setDetailOpen(true); navigate("risks"); }} onView={navigate} risks={risks} snapshot={snapshot.data}/> : view === "risks" ? <div className={`risks-layout ${detailOpen && activeRisk ? "detail-is-open" : ""}`}><RiskInbox filters={filters} loading={faultlines.isPending || gaps.isPending || ghosts.isPending} onFilters={(next) => { setFilters(next); setDetailOpen(false); }} onSearch={(value) => { setSearch(value); setDetailOpen(false); }} onSelect={(id) => { setSelectedId(id); setDetailOpen(true); }} risks={risks} search={search} selectedId={detailOpen ? activeId : undefined}/>{detailOpen && activeRisk ? <RiskDetail action={actions[activeRisk.id] ?? EMPTY_ACTION} onAction={(patch) => updateAction(activeRisk.id, patch)} onClose={() => setDetailOpen(false)} risk={activeRisk}/> : null}</div> : view === "ask" ? <AskWorkspace snapshotId={snapshot.data?.snapshot_id}/> : view === "identities" ? <IdentityWorkbench snapshotId={snapshot.data?.snapshot_id}/> : view === "repairs" ? <RepairsWorkspace snapshotId={snapshot.data?.snapshot_id}/> : view === "graph" ? <ExploreWorkspace graph={graph.data} risks={risks}/> : view === "actions" ? <ActionsWorkspace actions={actions} onOpen={(id) => { setSelectedId(id); setDetailOpen(true); navigate("risks"); }} risks={risks}/> : view === "imports" ? <ImportsWorkspace health={health.data} onDone={() => navigate("risks")} snapshot={snapshot.data}/> : <SettingsWorkspace health={health.data} snapshot={snapshot.data}/>}
   </ProductShell>;
 }

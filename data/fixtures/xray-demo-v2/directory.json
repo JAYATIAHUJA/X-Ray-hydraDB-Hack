@@ -1,0 +1,271 @@
+[
+  {
+    "source": "xray-demo-v2-directory",
+    "external_id": "maya-chen",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:maya-chen"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Maya Chen",
+      "manager_external_id": "alex-rivera",
+      "role_rank": 1,
+      "team_key": "team:operations",
+      "title": "Operations specialist"
+    }
+  },
+  {
+    "source": "xray-demo-v2-directory",
+    "external_id": "alex-rivera",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:alex-rivera"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Alex Rivera",
+      "role_rank": 4,
+      "team_key": "team:payments",
+      "title": "Payments director"
+    }
+  },
+  {
+    "source": "xray-demo-v2-directory",
+    "external_id": "priya-shah",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:priya-shah"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Priya Shah",
+      "manager_external_id": "alex-rivera",
+      "role_rank": 3,
+      "team_key": "team:payments",
+      "title": "Payments lead"
+    }
+  },
+  {
+    "source": "xray-demo-v2-directory",
+    "external_id": "omar-haddad",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:omar-haddad"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Omar Haddad",
+      "manager_external_id": "theo-brooks",
+      "role_rank": 3,
+      "team_key": "team:ledger",
+      "title": "Ledger lead"
+    }
+  },
+  {
+    "source": "xray-demo-v2-directory",
+    "external_id": "lena-park",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:lena-park"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Lena Park",
+      "manager_external_id": "omar-haddad",
+      "role_rank": 2,
+      "team_key": "team:ledger",
+      "title": "Ledger engineer"
+    }
+  },
+  {
+    "source": "xray-demo-v2-directory",
+    "external_id": "theo-brooks",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:theo-brooks"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Theo Brooks",
+      "role_rank": 4,
+      "team_key": "team:ledger",
+      "title": "Ledger director"
+    }
+  },
+  {
+    "source": "xray-demo-v2-directory",
+    "external_id": "nina-okafor",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:nina-okafor"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Nina Okafor",
+      "role_rank": 3,
+      "team_key": "team:customer-success",
+      "title": "Customer success lead"
+    }
+  },
+  {
+    "source": "xray-demo-v2-directory",
+    "external_id": "sam-wu",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:sam-wu"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Sam Wu",
+      "manager_external_id": "nina-okafor",
+      "role_rank": 2,
+      "team_key": "team:customer-success",
+      "title": "Customer success partner"
+    }
+  },
+  {
+    "source": "xray-demo-v2-directory",
+    "external_id": "ines-costa",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:ines-costa"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Ines Costa",
+      "manager_external_id": "nina-okafor",
+      "role_rank": 2,
+      "team_key": "team:customer-success",
+      "title": "Customer success partner"
+    }
+  },
+  {
+    "source": "xray-demo-v2-directory",
+    "external_id": "jon-bell",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:jon-bell"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Jon Bell",
+      "manager_external_id": "nina-okafor",
+      "role_rank": 2,
+      "team_key": "team:customer-success",
+      "title": "Customer success partner"
+    }
+  },
+  {
+    "source": "xray-demo-v2-directory",
+    "external_id": "sam-ratnaparkhi",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:sam-ratnaparkhi"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Sam Ratnaparkhi",
+      "manager_external_id": "alex-rivera",
+      "identity_candidate_id": "candidate:sam-ratnaparkhi",
+      "identity_confidence": 88,
+      "identity_primary": true,
+      "identity_signal": "Same surname, first initial, and company email local-part",
+      "identity_source": "directory",
+      "identity_status": "unresolved",
+      "source_identity": "sam@company.com"
+    }
+  },
+  {
+    "source": "xray-demo-v2-directory",
+    "external_id": "soham",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:soham"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "Soham Ratnaparkhi",
+      "manager_external_id": "alex-rivera",
+      "identity_candidate_id": "candidate:sam-ratnaparkhi",
+      "identity_confidence": 91,
+      "identity_primary": false,
+      "identity_signal": "Shared workspace, surname, and overlapping active dates",
+      "identity_source": "slack",
+      "identity_status": "unresolved",
+      "source_identity": "@soham"
+    }
+  },
+  {
+    "source": "xray-demo-v2-directory",
+    "external_id": "s-ratnaparkhi",
+    "kind": "directory_person",
+    "occurred_at_epoch": 1735689600,
+    "author_external_id": null,
+    "parent_external_id": null,
+    "subjects": [
+      "person:s-ratnaparkhi"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "display_name": "S. Ratnaparkhi",
+      "manager_external_id": "alex-rivera",
+      "identity_candidate_id": "candidate:sam-ratnaparkhi",
+      "identity_confidence": 88,
+      "identity_primary": false,
+      "identity_signal": "Git author name matches surname and first initial",
+      "identity_source": "git",
+      "identity_status": "unresolved",
+      "source_identity": "S. Ratnaparkhi"
+    }
+  }
+]

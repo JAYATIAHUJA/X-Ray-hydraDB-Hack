@@ -21,7 +21,7 @@ class SessionLike(Protocol):
 
 @runtime_checkable
 class SessionDriverLike(Protocol):
-    def session(self) -> AbstractContextManager[SessionLike]: ...
+    def session(self, *, database: str | None = None) -> AbstractContextManager[SessionLike]: ...
 
 
 class GatewayError(RuntimeError):
@@ -36,17 +36,19 @@ class HydraGateway:
     only normalizes result rows; query construction lives in ``cypher.py``.
     """
 
-    def __init__(self, driver: DriverLike) -> None:
+    def __init__(self, driver: DriverLike, *, database: str | None = None) -> None:
         self.driver = driver
+        self.database = database
 
     def run(self, query: QuerySpec) -> list[dict[str, object]]:
-        return _execute(self.driver, query.statement, dict(query.parameters))
+        return _execute(self.driver, query.statement, dict(query.parameters), self.database)
 
     def run_batch(self, batch: WriteBatchSpec) -> list[dict[str, object]]:
         return _execute(
             self.driver,
             batch.statement,
             {"rows": [dict(row) for row in batch.rows]},
+            self.database,
         )
 
     def close(self) -> None:
@@ -78,12 +80,13 @@ def _execute(
     driver: DriverLike,
     statement: str,
     parameters: dict[str, object],
+    database: str | None,
 ) -> list[dict[str, object]]:
     last_error: Exception | None = None
     for attempt in range(2):
         try:
             if isinstance(driver, SessionDriverLike):
-                with driver.session() as session:
+                with driver.session(database=database) as session:
                     result = session.run(statement, parameters)
                     return _records(list(result))
             return _records(driver.execute_query(statement, parameters_=parameters))

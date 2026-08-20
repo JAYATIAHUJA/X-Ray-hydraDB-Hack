@@ -208,6 +208,31 @@ export type IdentityCandidate = {
   limitations: string[];
 };
 
+export type RepairProposal = {
+  repair_id: string;
+  finding_kind: "gap" | "faultline";
+  finding_key: string;
+  title: string;
+  repair_kind:
+    | "record_missing_approval"
+    | "establish_owner_bridge"
+    | "add_backup_owner"
+    | "publish_codeowners";
+  summary: string;
+  verdict: "SUPPORTED" | "UNSUPPORTED" | "UNKNOWN";
+  evidence_ids: string[];
+  limitations: string[];
+  status: "proposed" | "approved" | "rejected" | "closed" | "open";
+  closed: boolean;
+};
+
+export type RepairVerifyResult = {
+  repair_id: string;
+  closed: boolean;
+  reason: string;
+  status: RepairProposal["status"];
+};
+
 export type ImportPayload = {
   dataset_id: string;
   directory: Record<string, unknown>[];
@@ -230,14 +255,20 @@ export const DEFAULT_GAP_REQUEST: GapPathRequest = {
 };
 
 const apiBaseUrl = import.meta.env.VITE_XRAY_API_BASE_URL ?? "http://127.0.0.1:8000";
+const writeToken = import.meta.env.VITE_XRAY_WRITE_TOKEN ?? "";
 
 async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
+  const method = (init?.method ?? "GET").toUpperCase();
+  const headers: Record<string, string> = {
+    "content-type": "application/json",
+    ...(init?.headers as Record<string, string> | undefined)
+  };
+  if (writeToken && method !== "GET" && method !== "HEAD" && method !== "OPTIONS") {
+    headers["X-Xray-Write-Token"] = writeToken;
+  }
   const response = await fetch(`${apiBaseUrl}${path}`, {
-    headers: {
-      "content-type": "application/json",
-      ...init?.headers
-    },
-    ...init
+    ...init,
+    headers
   });
   if (!response.ok) {
     const problem = await response.json().catch(() => null) as { detail?: string | { detail?: string } } | null;
@@ -313,6 +344,30 @@ export function decideIdentityCandidate(
   return requestJson<IdentityCandidate>(
     `/api/v1/snapshots/${encodeURIComponent(snapshotId)}/identity-candidates/${encodeURIComponent(candidateId)}/decision`,
     { body: JSON.stringify({ decision }), method: "POST" }
+  );
+}
+
+export function getRepairs(snapshotId: string) {
+  return requestJson<RepairProposal[]>(
+    `/api/v1/snapshots/${encodeURIComponent(snapshotId)}/repairs`
+  );
+}
+
+export function decideRepair(
+  snapshotId: string,
+  repairId: string,
+  decision: "approved" | "rejected"
+) {
+  return requestJson<RepairProposal>(
+    `/api/v1/snapshots/${encodeURIComponent(snapshotId)}/repairs/${encodeURIComponent(repairId)}/decision`,
+    { body: JSON.stringify({ decision }), method: "POST" }
+  );
+}
+
+export function verifyRepair(snapshotId: string, repairId: string) {
+  return requestJson<RepairVerifyResult>(
+    `/api/v1/snapshots/${encodeURIComponent(snapshotId)}/repairs/${encodeURIComponent(repairId)}/verify`,
+    { method: "POST" }
   );
 }
 

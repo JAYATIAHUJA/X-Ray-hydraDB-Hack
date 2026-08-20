@@ -32,7 +32,9 @@ $env:XRAY_HYDRA_URI = "bolt://127.0.0.1:17687"
 $env:XRAY_HYDRA_USER = "neo4j"
 $env:XRAY_HYDRA_PASSWORD = (Get-Content -Raw "$runtimeDir/hydra-auth-token").Trim()
 $env:XRAY_HYDRA_DATABASE = "xray"
+$env:XRAY_WRITE_TOKEN = "local-demo-write-token"
 $env:VITE_XRAY_API_BASE_URL = "http://127.0.0.1:$ApiPort"
+$env:VITE_XRAY_WRITE_TOKEN = $env:XRAY_WRITE_TOKEN
 
 $api = Start-Process -FilePath "uv" `
     -ArgumentList @("run", "uvicorn", "xray_api.app:app", "--host", "127.0.0.1", "--port", "$ApiPort") `
@@ -56,7 +58,7 @@ if ((Get-Date) -ge $deadline) {
     throw "timed out waiting for API health"
 }
 
-$seed = Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:$ApiPort/api/v1/hydra/seed-fixture"
+$seed = Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:$ApiPort/api/v1/hydra/seed-fixture" -Headers @{ "X-Xray-Write-Token" = $env:XRAY_WRITE_TOKEN }
 if ($seed.status -ne "complete") {
     throw "HydraDB seed did not complete: $($seed.detail)"
 }
@@ -64,6 +66,7 @@ $seed | ConvertTo-Json -Depth 8
 
 uv run python scripts/verify_judge_demo.py --api-base "http://127.0.0.1:$ApiPort"
 uv run python scripts/bench_judge_latency.py
+uv run python scripts/bench_latency.py
 
 npm ci
 $web = Start-Process -FilePath "npm" `

@@ -4,15 +4,16 @@ import logging
 import time
 from dataclasses import asdict, dataclass
 from functools import lru_cache
+from itertools import pairwise
 
 from xray_analytics import (
     bounded_shortest_path_tallies,
-    bus_factor_impact,
     communication_graph,
     ghost_scores,
     reachable_pair_count,
     without_people,
 )
+from xray_analytics.analysis import BusFactorImpact, GhostScore, display_name, formal_ranks
 from xray_core.models import CanonicalBundle, NodeRow, QuerySpec
 from xray_core.paths import path_key_tuple
 from xray_hydra import HydraGateway
@@ -22,6 +23,8 @@ from .config import XraySettings
 from .hydra import open_gateway
 
 logger = logging.getLogger(__name__)
+
+HYDRA_GHOST_METHOD = "hydradb_mspaths_exact_betweenness"
 
 
 @dataclass(frozen=True, slots=True)
@@ -98,7 +101,7 @@ def live_ghost_findings(
     started = time.perf_counter()
     try:
         with open_gateway(settings, gateway) as resolved_gateway:
-            resolved_gateway.run(query)
+            rows = resolved_gateway.run(query)
     except Exception as exc:
         logger.exception("HydraDB Ghost MSpaths query failed")
         return LiveGhostResult(
@@ -107,17 +110,15 @@ def live_ghost_findings(
             error=str(exc),
         )
 
-    # MSpaths remains the engine traversal and timing measurement. Ranking is computed
-    # over the full immutable bundle so a truncated path result cannot bias people who
-    # were not selected as endpoints. Counterfactuals rebuild the graph without the
-    # excluded nodes, allowing alternate paths to be discovered.
-    findings = fixture_ghost_findings(
+    graph = _communication_graph_from_paths(rows)
+    findings = _ghost_findings_from_graph(
         bundle,
+        graph,
         max_len=max_len,
         exclude_person_keys=exclude_person_keys,
     )
     what_if = (
-        fixture_what_if(bundle, exclude_person_keys, max_len=max_len)
+        _what_if_from_graph(graph, exclude_person_keys, max_len=max_len)
         if exclude_person_keys
         else None
     )
@@ -143,6 +144,125 @@ def _evenly_spaced_people(people: tuple[NodeRow, ...], sample_size: int) -> tupl
     return tuple(people[round(index * last / (limit - 1))] for index in range(limit))
 
 
+def _communication_graph_from_paths(rows: list[dict[str, object]]) -> dict[str, dict[str, int]]:
+    graph: dict[str, dict[str, int]] = {}
+    for row in rows:
+        keys = path_key_tuple(row.get("path"))
+        for left, right in pairwise(keys):
+            if left == right:
+                continue
+            graph.setdefault(left, {})[right] = 1
+            graph.setdefault(right, {})[left] = 1
+        for key in keys:
+            graph.setdefault(key, {})
+    return graph
+
+
+def _ghost_findings_from_graph(
+    bundle: CanonicalBundle,
+    graph: dict[str, dict[str, int]],
+    *,
+    max_len: int,
+    exclude_person_keys: tuple[str, ...],
+) -> tuple[dict[str, object], ...]:
+    excluded = set(exclude_person_keys)
+    scored_graph = {
+        node: {
+            neighbor: weight for neighbor, weight in neighbors.items() if neighbor not in excluded
+        }
+        for node, neighbors in graph.items()
+        if node not in excluded
+    }
+    people_by_key = {
+        node.canonical_key: node
+        for node in bundle.nodes
+        if node.label == "Person" and node.properties.get("identity_status") != "unresolved"
+    }
+    person_keys = sorted(key for key in scored_graph if key in people_by_key)
+    if len(person_keys) < 2:
+        return ()
+
+    import networkx as nx
+
+    reference: nx.Graph[str] = nx.Graph()
+    reference.add_nodes_from(person_keys)
+    reference.add_edges_from(
+        (source, target)
+        for source, neighbors in scored_graph.items()
+        for target in neighbors
+        if source < target and source in people_by_key and target in people_by_key
+    )
+    centrality = nx.betweenness_centrality(reference, normalized=True, weight=None)
+    structural_order = sorted(person_keys, key=lambda key: (-centrality[key], key))
+    structural_rank = {key: index for index, key in enumerate(structural_order, start=1)}
+    people_nodes = tuple(people_by_key[key] for key in person_keys)
+    formal_rank = formal_ranks(people_nodes)
+
+    findings: list[dict[str, object]] = []
+    for index, person_key in enumerate(structural_order):
+        node = people_by_key[person_key]
+        role_rank = node.properties.get("role_rank")
+        score = GhostScore(
+            person_key=person_key,
+            display_name=display_name(node),
+            role_rank=role_rank if type(role_rank) is int else 0,
+            structural_rank=structural_rank[person_key],
+            formal_rank=formal_rank[person_key],
+            rank_gap=formal_rank[person_key] - structural_rank[person_key],
+            sampled_centrality=float(centrality[person_key]),
+            communication_degree=len(scored_graph.get(person_key, {})),
+            centrality_method=HYDRA_GHOST_METHOD,
+        )
+        impact = None
+        if index < 10:
+            before = reachable_pair_count(scored_graph, max_len=max_len)
+            reduced = {
+                node_key: {
+                    neighbor: weight
+                    for neighbor, weight in neighbors.items()
+                    if neighbor != person_key
+                }
+                for node_key, neighbors in scored_graph.items()
+                if node_key != person_key
+            }
+            after = reachable_pair_count(reduced, max_len=max_len)
+            impact = asdict(
+                BusFactorImpact(
+                    person_key=person_key,
+                    reachable_pairs_before=before,
+                    pairs_lost_without_person=before - after,
+                    max_len=max_len,
+                )
+            )
+        findings.append({**asdict(score), "removal_impact": impact})
+    return tuple(findings)
+
+
+def _what_if_from_graph(
+    graph: dict[str, dict[str, int]],
+    exclude_person_keys: tuple[str, ...],
+    *,
+    max_len: int,
+) -> WhatIfResult:
+    excluded = tuple(sorted(set(exclude_person_keys)))
+    before = reachable_pair_count(graph, max_len=max_len, excluding=excluded)
+    reduced = {
+        node: {
+            neighbor: weight for neighbor, weight in neighbors.items() if neighbor not in excluded
+        }
+        for node, neighbors in graph.items()
+        if node not in excluded
+    }
+    after = reachable_pair_count(reduced, max_len=max_len)
+    return WhatIfResult(
+        excluded_person_keys=excluded,
+        sampled_pairs_before=before,
+        sampled_pairs_after=after,
+        pairs_lost=before - after,
+        max_len=max_len,
+    )
+
+
 def fixture_ghost_findings(
     bundle: CanonicalBundle,
     *,
@@ -154,11 +274,27 @@ def fixture_ghost_findings(
     scored_bundle = without_people(bundle, exclude_person_keys) if exclude_person_keys else bundle
     graph = communication_graph(scored_bundle)
     for index, score in enumerate(ghost_scores(scored_bundle, max_len=max_len)):
-        impact = (
-            asdict(bus_factor_impact(scored_bundle, score.person_key, max_len=max_len, graph=graph))
-            if index < 10
-            else None
-        )
+        impact = None
+        if index < 10:
+            before = reachable_pair_count(graph, max_len=max_len)
+            reduced = {
+                node: {
+                    neighbor: weight
+                    for neighbor, weight in neighbors.items()
+                    if neighbor != score.person_key
+                }
+                for node, neighbors in graph.items()
+                if node != score.person_key
+            }
+            after = reachable_pair_count(reduced, max_len=max_len)
+            impact = asdict(
+                BusFactorImpact(
+                    person_key=score.person_key,
+                    reachable_pairs_before=before,
+                    pairs_lost_without_person=before - after,
+                    max_len=max_len,
+                )
+            )
         findings.append({**asdict(score), "removal_impact": impact})
     return tuple(findings)
 

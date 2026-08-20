@@ -9,6 +9,7 @@ const NAV: Array<{ id: ProductView; label: string; icon: IconName }> = [
   { id: "risks", label: "Risks", icon: "risk" },
   { id: "ask", label: "Ask X-Ray", icon: "ask" },
   { id: "identities", label: "Identity review", icon: "identity" },
+  { id: "repairs", label: "Repairs", icon: "repair" },
   { id: "graph", label: "Explore graph", icon: "graph" },
   { id: "imports", label: "Imports", icon: "import" },
   { id: "actions", label: "Actions", icon: "action" },

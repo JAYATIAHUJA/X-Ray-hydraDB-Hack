@@ -275,8 +275,8 @@ export function Landing() {
               <header className="product-topbar preview-topbar">
                 <div className="workspace-switcher"><span>Workspace</span><strong>demo-org</strong></div>
                 <div className="runtime-state">
-                  <div><span>Engine status</span><strong><i className="state-dot state-live" />HydraDB live</strong></div>
-                  <div><span>Data status</span><strong><i className="state-dot state-live" />Ready</strong></div>
+                  <div><span>Engine status</span><strong><i className="state-dot state-live" />Demo preview</strong></div>
+                  <div><span>Data status</span><strong><i className="state-dot state-live" />Fixture UI</strong></div>
                 </div>
               </header>
               <div className="preview-risks-layout">
@@ -441,7 +441,7 @@ export function Landing() {
         <div className="engine-visual rv">
           <div className="hydra-run">
             <header className="hydra-run-top">
-              <div><i />HydraDB live</div>
+              <div><i />HydraDB query path</div>
               <code>algo.MSpaths</code>
               <span>1 round trip</span>
             </header>

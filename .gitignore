@@ -14,8 +14,11 @@ coverage.xml
 docs/*
 !docs/
 !docs/cypher-compat-verified.md
+!docs/judge-demo.md
 !docs/results/
 !docs/results/**
+!docs/superpowers/
+!docs/superpowers/**
 htmlcov/
 node_modules/
 playwright-report/

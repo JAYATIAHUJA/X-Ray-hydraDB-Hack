@@ -192,6 +192,36 @@ class IdentityDecisionRequest(BaseModel):
     decision: Literal["accepted", "rejected", "pending"]
 
 
+class RepairProposalResponse(BaseModel):
+    repair_id: str
+    finding_kind: Literal["gap", "faultline"]
+    finding_key: str
+    title: str
+    repair_kind: Literal[
+        "record_missing_approval",
+        "establish_owner_bridge",
+        "add_backup_owner",
+        "publish_codeowners",
+    ]
+    summary: str
+    verdict: Literal["SUPPORTED", "UNSUPPORTED", "UNKNOWN"]
+    evidence_ids: tuple[str, ...]
+    limitations: tuple[str, ...]
+    status: Literal["proposed", "approved", "rejected", "closed", "open"] = "proposed"
+    closed: bool = False
+
+
+class RepairDecisionRequest(BaseModel):
+    decision: Literal["approved", "rejected"]
+
+
+class RepairVerifyResponse(BaseModel):
+    repair_id: str
+    closed: bool
+    reason: str
+    status: Literal["proposed", "approved", "rejected", "closed", "open"]
+
+
 class ImportRequest(BaseModel):
     """Browser-friendly JSON form of the supported offline export inputs."""
 
@@ -237,6 +267,9 @@ __all__ = [
     "ProblemDetail",
     "QuestionRequest",
     "QuestionResponse",
+    "RepairDecisionRequest",
+    "RepairProposalResponse",
+    "RepairVerifyResponse",
     "SnapshotResponse",
     "WhatIfSummary",
 ]

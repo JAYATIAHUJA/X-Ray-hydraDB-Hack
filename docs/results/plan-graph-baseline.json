@@ -1,0 +1,42 @@
+{
+  "title": "PlanGraph-style baseline vs X-Ray",
+  "fixture": "xray-demo-v2",
+  "disclaimer": "Synthetic fixture comparison of multi-query BFS / first-edge ownership versus X-Ray typed faultlines and authority-ranked ownership. Does not claim a head-to-head win against the PlanGraph product.",
+  "faultline_comparison": {
+    "naive_client_style": {
+      "method": "naive_per_pair_bfs",
+      "round_trips": 6,
+      "open_faultline_pairs": 3,
+      "wall_ms": 0.023
+    },
+    "xray": {
+      "method": "xray_typed_faultlines",
+      "round_trips": 1,
+      "open_faultline_pairs": 1,
+      "wall_ms": 0.073,
+      "top_finding": {
+        "source_module_key": "module:payments-api",
+        "target_module_key": "module:ledger-worker",
+        "source_owner_key": "person:maya-chen",
+        "target_owner_key": "person:theo-brooks",
+        "tier": "no_path"
+      }
+    }
+  },
+  "ownership_conflict": {
+    "module_key": "module:payments-api",
+    "naive_first_edge_owner": "person:maya-chen",
+    "xray_authority_ranked_owner": "person:maya-chen",
+    "expected_primary_owner": "person:maya-chen",
+    "naive_correct": true,
+    "xray_correct": true
+  },
+  "supporting_lenses": {
+    "gap_count": 1,
+    "ghost_top": "person:maya-chen"
+  },
+  "limitations": [
+    "Measured on a labelled synthetic corpus, not a shared enterprise PlanGraph benchmark.",
+    "Na\u00efve round-trips count client BFS calls; a real PlanGraph deployment may batch differently."
+  ]
+}

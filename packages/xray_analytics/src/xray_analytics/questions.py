@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 import re
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
 from xray_core.models import CanonicalBundle, EdgeRow, EvidenceRecord, NodeRow
@@ -87,6 +89,332 @@ def answer_ontology_question(bundle: CanonicalBundle, question: str) -> Ontology
         reasoning=(),
         limitations=("No answer was inferred outside the supported deterministic intents.",),
     )
+
+
+def answer_from_hydra_rows(
+    provisional: OntologyAnswer,
+    rows: Sequence[Mapping[str, object]],
+    bundle: CanonicalBundle,
+) -> OntologyAnswer | None:
+    """Build the Judge Mode answer from live HydraDB rows for supported intents.
+
+    Returns ``None`` when the intent is not Hydra-backed. An empty row set is still a
+    live result and becomes an honest abstention rather than a fixture fallback.
+    """
+    if provisional.intent == "owner":
+        return _owner_from_hydra_rows(provisional, rows, bundle)
+    if provisional.intent == "dependency_impact":
+        return _dependency_from_hydra_rows(provisional, rows, bundle)
+    if provisional.intent == "approval":
+        return _approval_from_hydra_rows(provisional, rows, bundle)
+    return None
+
+
+def _owner_from_hydra_rows(
+    provisional: OntologyAnswer,
+    rows: Sequence[Mapping[str, object]],
+    bundle: CanonicalBundle,
+) -> OntologyAnswer:
+    subject_key = provisional.subject_key
+    if subject_key is None:
+        return provisional
+    parsed = [
+        row
+        for row in (_hydra_relation_row(item, person_field="person_key") for item in rows)
+        if row is not None and row.subject_key == subject_key
+    ]
+    if not parsed:
+        return OntologyAnswer(
+            question=provisional.question,
+            intent="owner",
+            status="no_answer",
+            answer=f"HydraDB has no OWNS rows for {subject_key}.",
+            subject_key=subject_key,
+            person_keys=(),
+            evidence_ids=(),
+            paths=(),
+            confidence=None,
+            answer_kind="abstention",
+            reasoning=("The live HydraDB query returned no ownership relationships.",),
+            limitations=("Missing ownership evidence is not proof that the module has no owner.",),
+        )
+    snapshot_epoch = max((record.observed_epoch for record in bundle.evidence), default=0)
+    ranked = sorted(parsed, key=lambda row: _hydra_owner_sort_key(row.properties, snapshot_epoch))
+    selected = ranked[0]
+    person_key = selected.person_key
+    person_node = _node_by_key(bundle, person_key)
+    subject_node = _node_by_key(bundle, subject_key)
+    evidence_ids = _evidence_ids_for_relationship(bundle, selected.relationship_key)
+    people = {row.person_key for row in ranked}
+    conflicts: tuple[EvidenceDecision, ...] = (
+        tuple(
+            EvidenceDecision(
+                person_key=row.person_key,
+                source_type=str(row.properties.get("authority", "hydradb")),
+                source_record_id=row.relationship_key or row.person_key,
+                authority=str(row.properties.get("authority", "inferred_authorship")),
+                observed_epoch=_mapping_int(row.properties, "observed_epoch", 0),
+                valid_from_epoch=_mapping_optional_int(row.properties, "valid_from_epoch"),
+                valid_until_epoch=_mapping_optional_int(row.properties, "valid_until_epoch"),
+                confidence=_mapping_int(row.properties, "confidence", 50),
+                selected=row.person_key == person_key,
+                reason=(
+                    "Selected from live HydraDB OWNS rows by authority and validity."
+                    if row.person_key == person_key
+                    else "Not selected: a higher-authority active HydraDB OWNS row exists."
+                ),
+            )
+            for row in ranked
+        )
+        if len(people) > 1
+        else ()
+    )
+    return OntologyAnswer(
+        question=provisional.question,
+        intent="owner",
+        status="answered",
+        answer=f"{_display_name(person_node)} currently owns {_display_name(subject_node)}.",
+        subject_key=subject_key,
+        person_keys=(person_key,),
+        evidence_ids=evidence_ids,
+        paths=((person_key, subject_key),),
+        confidence=_mapping_int(selected.properties, "confidence", 50),
+        answer_kind="direct",
+        reasoning=(
+            f"Matched {_display_name(subject_node)} to {subject_key}.",
+            "Selected the owner from live HydraDB OWNS rows.",
+            "Ranked active records by declared source authority, observation time, then confidence.",
+        ),
+        limitations=(
+            "Authority ranks are explicit product policy and should be configured per organization.",
+            "The answer is limited to the active HydraDB graph snapshot.",
+        ),
+        conflicts=conflicts,
+        trust_explanation=(
+            f"Selected HydraDB relationship {selected.relationship_key} "
+            f"with authority rank {_mapping_int(selected.properties, 'authority_rank', 0)}."
+        ),
+    )
+
+
+def _dependency_from_hydra_rows(
+    provisional: OntologyAnswer,
+    rows: Sequence[Mapping[str, object]],
+    bundle: CanonicalBundle,
+) -> OntologyAnswer:
+    subject_key = provisional.subject_key
+    if subject_key is None:
+        return provisional
+    dependents: list[tuple[str, str, tuple[str, ...], int]] = []
+    for row in rows:
+        dependent_key = row.get("dependent_key")
+        row_subject = row.get("subject_key")
+        if not isinstance(dependent_key, str) or row_subject != subject_key:
+            continue
+        properties = _coerce_properties(row.get("properties"))
+        relationship_key = row.get("relationship_key")
+        evidence_ids = (
+            _evidence_ids_for_relationship(bundle, str(relationship_key))
+            if isinstance(relationship_key, str)
+            else ()
+        )
+        owner_key = ""
+        for edge in bundle.edges:
+            if edge.rel_type != "OWNS":
+                continue
+            target = _node_by_id(bundle, edge.target_id)
+            if target is not None and target.canonical_key == dependent_key:
+                source = _node_by_id(bundle, edge.source_id)
+                if source is not None:
+                    owner_key = source.canonical_key
+                    evidence_ids = tuple(sorted({*evidence_ids, *edge.evidence_ids}))
+                    break
+        dependents.append(
+            (
+                dependent_key,
+                owner_key,
+                evidence_ids,
+                _mapping_int(properties, "confidence", 50),
+            )
+        )
+    if not dependents:
+        subject_node = _node_by_key(bundle, subject_key)
+        return OntologyAnswer(
+            question=provisional.question,
+            intent="dependency_impact",
+            status="no_answer",
+            answer=f"HydraDB has no DEPENDS_ON rows into {_display_name(subject_node)}.",
+            subject_key=subject_key,
+            person_keys=(),
+            evidence_ids=(),
+            paths=(),
+            confidence=None,
+            answer_kind="abstention",
+            reasoning=("The live HydraDB query returned no reverse-dependency relationships.",),
+            limitations=("Absence from the graph may reflect export or module-mapping coverage.",),
+        )
+    dependents.sort(key=lambda item: item[0])
+    people = tuple(dict.fromkeys(item[1] for item in dependents if item[1]))
+    subject_node = _node_by_key(bundle, subject_key)
+    modules = ", ".join(_display_name(_node_by_key(bundle, item[0])) for item in dependents)
+    return OntologyAnswer(
+        question=provisional.question,
+        intent="dependency_impact",
+        status="answered",
+        answer=(
+            f"{modules} {'depends' if len(dependents) == 1 else 'depend'} on "
+            f"{_display_name(subject_node)} and may be affected."
+        ),
+        subject_key=subject_key,
+        person_keys=people,
+        evidence_ids=tuple(sorted({evidence_id for item in dependents for evidence_id in item[2]})),
+        paths=tuple(
+            (subject_key, item[0], item[1]) if item[1] else (subject_key, item[0])
+            for item in dependents
+        ),
+        confidence=min(item[3] for item in dependents),
+        answer_kind="multi_hop",
+        reasoning=(
+            f"Matched {_display_name(subject_node)} to {subject_key}.",
+            "Read incoming DEPENDS_ON relationships from live HydraDB rows.",
+            "Attached current owners from the local evidence bundle when present.",
+        ),
+        limitations=(
+            "Impact means graph reachability, not proof that a change will cause an incident.",
+        ),
+    )
+
+
+def _approval_from_hydra_rows(
+    provisional: OntologyAnswer,
+    rows: Sequence[Mapping[str, object]],
+    bundle: CanonicalBundle,
+) -> OntologyAnswer:
+    if not rows:
+        return OntologyAnswer(
+            question=provisional.question,
+            intent="approval",
+            status="no_answer",
+            answer=(
+                "Not enough evidence to answer. HydraDB has no approval Phantom for this subject."
+            ),
+            subject_key=provisional.subject_key,
+            person_keys=(),
+            evidence_ids=(),
+            paths=(),
+            confidence=None,
+            answer_kind="abstention",
+            reasoning=("The live HydraDB approval query returned no Phantom rows.",),
+            limitations=("Missing evidence is not proof that approval did not occur.",),
+        )
+    subject_key = str(rows[0].get("subject_key") or provisional.subject_key or "")
+    subject = _node_by_key(bundle, subject_key) if subject_key else None
+    evidence_ids = subject.evidence_ids if subject is not None else ()
+    return OntologyAnswer(
+        question=provisional.question,
+        intent="approval",
+        status="no_answer",
+        answer=(
+            "Not enough evidence to answer. The expected approval record is absent "
+            "from the supplied corpus."
+        ),
+        subject_key=subject_key or provisional.subject_key,
+        person_keys=(),
+        evidence_ids=evidence_ids,
+        paths=((subject_key,),) if subject_key else (),
+        confidence=None,
+        answer_kind="abstention",
+        reasoning=(
+            "HydraDB returned a Phantom placeholder instead of an observed approval record.",
+            "X-Ray refuses to infer an approver without source evidence.",
+        ),
+        limitations=(
+            "The export boundary is an alternative explanation for the missing record.",
+            "Absence does not establish deletion or process failure.",
+        ),
+    )
+
+
+def _hydra_relation_row(
+    row: Mapping[str, object], *, person_field: str
+) -> _HydraRelationRow | None:
+    person_key = row.get(person_field)
+    subject_key = row.get("subject_key")
+    if not isinstance(person_key, str) or not isinstance(subject_key, str):
+        return None
+    relationship_key = row.get("relationship_key")
+    return _HydraRelationRow(
+        person_key=person_key,
+        subject_key=subject_key,
+        relationship_key=relationship_key if isinstance(relationship_key, str) else "",
+        properties=_coerce_properties(row.get("properties")),
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class _HydraRelationRow:
+    person_key: str
+    subject_key: str
+    relationship_key: str
+    properties: dict[str, object]
+
+
+def _hydra_owner_sort_key(
+    properties: Mapping[str, object], snapshot_epoch: int
+) -> tuple[int, int, int, int, str]:
+    valid_from = _mapping_optional_int(properties, "valid_from_epoch")
+    valid_until = _mapping_optional_int(properties, "valid_until_epoch")
+    active = (valid_from is None or valid_from <= snapshot_epoch) and (
+        valid_until is None or valid_until >= snapshot_epoch
+    )
+    return (
+        0 if active else 1,
+        -_mapping_int(properties, "authority_rank", 0),
+        -_mapping_int(properties, "observed_epoch", 0),
+        -_mapping_int(properties, "confidence", 0),
+        str(properties.get("canonical_key", "")),
+    )
+
+
+def _coerce_properties(value: object) -> dict[str, object]:
+    if isinstance(value, Mapping):
+        return dict(value)
+    if isinstance(value, str) and value.strip():
+        try:
+            loaded = json.loads(value)
+        except json.JSONDecodeError:
+            return {}
+        if isinstance(loaded, Mapping):
+            return dict(loaded)
+    return {}
+
+
+def _mapping_int(properties: Mapping[str, object], key: str, default: int) -> int:
+    value = properties.get(key, default)
+    return value if type(value) is int else default
+
+
+def _mapping_optional_int(properties: Mapping[str, object], key: str) -> int | None:
+    value = properties.get(key)
+    return value if type(value) is int else None
+
+
+def _evidence_ids_for_relationship(
+    bundle: CanonicalBundle, relationship_key: str
+) -> tuple[str, ...]:
+    if not relationship_key:
+        return ()
+    for edge in bundle.edges:
+        if edge.canonical_key == relationship_key:
+            return edge.evidence_ids
+    return ()
+
+
+def _node_by_id(bundle: CanonicalBundle, node_id: int) -> NodeRow | None:
+    for node in bundle.nodes:
+        if node.id == node_id:
+            return node
+    return None
 
 
 def _answer(
@@ -514,4 +842,9 @@ def _node_by_key(bundle: CanonicalBundle, key: str) -> NodeRow:
     return next(node for node in bundle.nodes if node.canonical_key == key)
 
 
-__all__ = ["EvidenceDecision", "OntologyAnswer", "answer_ontology_question"]
+__all__ = [
+    "EvidenceDecision",
+    "OntologyAnswer",
+    "answer_from_hydra_rows",
+    "answer_ontology_question",
+]

@@ -1,0 +1,86 @@
+{
+  "dataset_id": "xray-demo-v2",
+  "fixture_version": 2,
+  "schema_version": "1.0.0",
+  "created_at_epoch": 1735689600,
+  "evidence_classes": [
+    "observed",
+    "inferred",
+    "demo_ground_truth"
+  ],
+  "source_files": [
+    {
+      "path": "directory.json",
+      "source_type": "directory",
+      "source_uri": "fixture://xray-demo-v2/directory",
+      "record_count": 13,
+      "sha256": "1faac53c667cbe099221b295b3b6d91d580bf7c897d983ca55c6deaf355c9d39",
+      "input_status": "complete"
+    },
+    {
+      "path": "events.json",
+      "source_type": "event_export",
+      "source_uri": "fixture://xray-demo-v2/events",
+      "record_count": 14,
+      "sha256": "c012e23d1b1a06aebbf5856d13c0e574ae319cbfd69097c87f71536374140633",
+      "input_status": "complete"
+    },
+    {
+      "path": "git_facts.json",
+      "source_type": "git",
+      "source_uri": "fixture://xray-demo-v2/git-facts",
+      "record_count": 12,
+      "sha256": "5206b374eba04b4cea5c757630b8493e9ec252fb1ea99a6b5a72cf2374cd6c4c",
+      "input_status": "complete"
+    }
+  ],
+  "ground_truth_file": "ground_truth.json",
+  "ground_truth_descriptor": {
+    "evidence_class": "demo_ground_truth",
+    "sha256": "1862a07f4524813828d4fbcfb619040869e106050ba016d5b700f1980c44b051"
+  },
+  "sequence_contracts": [
+    {
+      "contract_id": "contract:approval-sequence:v2",
+      "contract_kind": "contiguous_sequence",
+      "sequence_key": "payments-change-approval",
+      "steps": [
+        {
+          "ordinal": 0,
+          "canonical_key": "artifact:directive",
+          "artifact_kind": "directive",
+          "required": true
+        },
+        {
+          "ordinal": 1,
+          "canonical_key": "artifact:missing-approval",
+          "artifact_kind": "approval",
+          "required": true
+        },
+        {
+          "ordinal": 2,
+          "canonical_key": "artifact:code-change",
+          "artifact_kind": "code_change",
+          "required": true
+        }
+      ],
+      "source_uri": "fixture://xray-demo-v2/contracts/approval-sequence",
+      "content_sha256": "44c4e6415bf57ef462119686b90e20cd22f408d817816f195efc0402d15d8556",
+      "limitations": [
+        "Export filtering is an alternative explanation."
+      ]
+    }
+  ],
+  "acceptance_labels": {
+    "ghost_broker_key": "person:maya-chen",
+    "weighted_degree_baseline_key": "person:nina-okafor",
+    "communication_isolate_key": "person:theo-brooks",
+    "owner_conflict_module_key": "module:payments-api",
+    "identity_candidate_id": "candidate:sam-ratnaparkhi"
+  },
+  "limitations": [
+    "This is a labelled synthetic fixture and is not a measured real-organization result.",
+    "Absence does not establish deletion. The corpus is structurally incomplete at this point.",
+    "demo-v2 adds explicit conflict/impact/identity labels for judge scenarios and repair ledger demos."
+  ]
+}

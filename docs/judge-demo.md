@@ -12,14 +12,21 @@ Node 22, and npm 10.
 ./scripts/setup.ps1
 ```
 
-The command now fails closed unless all of these are true:
+```bash
+./scripts/setup.sh
+```
+
+The command fails closed unless all of these are true:
 
 1. Docker is ready.
 2. The pinned HydraDB and MinIO runtime is healthy.
 3. The demo graph seeds completely.
 4. API health reports `hydra.status: live` and `graph_loaded: true`.
-5. Owner, reverse-dependency, and abstention questions each execute a HydraDB query.
-6. Live query p50/p95 is written to `docs/results/judge-latency.json`.
+5. Owner, reverse-dependency, and abstention questions each execute a HydraDB query
+   whose returned rows produce the answer (not a discarded timing ping).
+6. Live Judge Mode query p50/p95 is written to `docs/results/judge-latency.json`.
+
+One-page proof summary: [`docs/results/judge-scorecard.json`](results/judge-scorecard.json).
 
 Open `http://127.0.0.1:5173/app`, then use this sequence:
 
@@ -33,6 +40,19 @@ Open `http://127.0.0.1:5173/app`, then use this sequence:
    refusal to guess.
 6. Open **Identity review**. Explain why unresolved aliases are excluded from risk
    scores until a human accepts the proposed merge.
+7. Open **Repairs** (`/app?view=repairs`). Approve a gap repair with the write token,
+   then **Re-check / prove closed** so the Phantom finding disappears.
+8. Optional: in Settings / snapshot picker, activate **demo-v2** for the labelled
+   conflict + impact + identity + ghost scenarios on one fixture.
+
+## Baselines (synthetic, honest)
+
+```bash
+uv run python scripts/eval_plan_graph_baseline.py
+uv run python scripts/eval_blinded_retrospective.py
+```
+
+Outputs: `docs/results/plan-graph-baseline.json`, `docs/results/blinded-retrospective.json`.
 
 ## Verify an already-running API
 
@@ -43,6 +63,16 @@ uv run python scripts/verify_judge_demo.py --api-base http://127.0.0.1:8000
 This command exits non-zero on fallback execution, an unloaded graph, a degraded
 query, or missing query proof.
 
+## Latency proofs
+
+| File | What it measures |
+|---|---|
+| `docs/results/judge-latency.json` | Judge Mode ontology queries against live HydraDB (official Q&A latency) |
+| `docs/results/latency.json` | Ghost / ping-style HydraDB latency (`scripts/bench_latency.py`) |
+
+`setup` regenerates `judge-latency.json` with measured p50/p95. Do not present null
+percentiles as live proof.
+
 ## Stop
 
 ```powershell
@@ -50,5 +80,4 @@ query, or missing query proof.
 ```
 
 If Docker Desktop cannot start, do not present latency numbers or claim a live
-demo. The committed `judge-latency.json` deliberately keeps p50/p95 null until a
-real run succeeds.
+demo. Present the fixture UI only as offline/reference mode.

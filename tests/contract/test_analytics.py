@@ -103,3 +103,47 @@ def test_gap_findings_summarize_phantom_chain_neighbors() -> None:
     assert gap.inferred_epoch == 1736003600
     assert gap.predecessor_keys == ("artifact:directive",)
     assert gap.successor_keys == ("artifact:code-change",)
+
+
+def test_repair_ledger_closes_gap_and_faultline() -> None:
+    from xray_analytics import apply_approved_repairs, propose_repairs, verify_repair
+    from xray_analytics.repairs import ApprovedRepair
+
+    bundle = demo_bundle()
+    proposals = {item.repair_id: item for item in propose_repairs(bundle)}
+    gap = next(item for item in proposals.values() if item.finding_kind == "gap")
+    fault = next(item for item in proposals.values() if item.finding_kind == "faultline")
+
+    after_gap = apply_approved_repairs(
+        bundle,
+        (
+            ApprovedRepair(
+                repair_id=gap.repair_id,
+                repair_kind=gap.repair_kind,
+                finding_kind=gap.finding_kind,
+                finding_key=gap.finding_key,
+                payload={"phantom_key": gap.finding_key},
+            ),
+        ),
+    )
+    assert gap_findings(after_gap) == ()
+    assert verify_repair(after_gap, gap)[0] is True
+
+    parts = fault.finding_key.split("|")
+    after_fault = apply_approved_repairs(
+        bundle,
+        (
+            ApprovedRepair(
+                repair_id=fault.repair_id,
+                repair_kind=fault.repair_kind,
+                finding_kind=fault.finding_kind,
+                finding_key=fault.finding_key,
+                payload={
+                    "source_owner_key": parts[2],
+                    "target_owner_key": parts[3],
+                },
+            ),
+        ),
+    )
+    assert faultlines(after_fault) == ()
+    assert verify_repair(after_fault, fault)[0] is True

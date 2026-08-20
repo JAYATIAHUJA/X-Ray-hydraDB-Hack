@@ -4,7 +4,7 @@
     "digest": "sha256:db78309a233be54662db29744047e985a39b51c45a270d1a1f47c31a62cdb709",
     "source_commit": "02a40025d2d57e97ab2754c8256219cdbfeab379"
   },
-  "method": "client_ghost_baseline_ms() runs 10 repeated bounded BFS passes over the synth-500 bundle and returns the median wall-clock time. Live HydraDB p50/p95 require a running engine and are left null here rather than fabricated; re-measure with `scripts/bench_latency.py` against a live stack.",
+  "method": "client_ghost_baseline_ms() runs 10 repeated bounded BFS passes over the synth-500 bundle and returns the median wall-clock time. Live HydraDB p50/p95 are filled by `scripts/bench_latency.py` against a running stack. For Judge Mode Q&A latency, use docs/results/judge-latency.json (measured).",
   "measurements": {
     "fixture_ghost_baseline_ms": 398.8,
     "sampled_people": 500,
@@ -17,11 +17,11 @@
   "percentiles": {
     "p50_ms": null,
     "p95_ms": null,
-    "note": "Live HydraDB latency intentionally not fabricated. Run `scripts/bench_latency.py` with a live stack to populate these."
+    "note": "Live Ghost/ping latency is not fabricated here. Official Judge Mode latency proof is docs/results/judge-latency.json (p50_ms 6.62, p95_ms 11.43). Populate these fields with `scripts/bench_latency.py` against a live stack."
   },
   "limitations": [
     "Fixture BFS time is measured in-process on the developer machine; actual time is hardware-dependent.",
-    "Live HydraDB p50/p95 requires a running engine and is intentionally not fabricated here.",
+    "Live HydraDB p50/p95 in this file require scripts/bench_latency.py; until then prefer judge-latency.json for Q&A proof.",
     "The 124,750 client-equivalent round-trips assumes one shortest-path query per pair for 500 people."
   ]
 }

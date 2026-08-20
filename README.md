@@ -24,7 +24,7 @@ prove that an action never happened.
 
 | Lens | Question | Output |
 |---|---|---|
-| Ghost | Who is structurally central but formally overlooked? | Rank gap and bounded removal impact |
+| Ghost (structural centrality) | Who sits on many communication paths relative to formal rank? | Rank gap and bounded removal impact — not a performance score |
 | Faultlines | Which dependent modules lack a communication path between owners? | Dependency evidence, owner confidence, and bridge suggestion |
 | Gaps | Which required evidence step is absent from the corpus? | Phantom node, chain context, and export-window position |
 
@@ -57,6 +57,13 @@ Windows PowerShell:
 ```powershell
 ./scripts/setup.ps1
 ```
+
+Judge path in under five minutes:
+
+1. Run `setup` (fails closed unless HydraDB is live and seeded).
+2. Open `http://127.0.0.1:5173/app`.
+3. Run `uv run python scripts/verify_judge_demo.py`.
+4. Read [`docs/results/judge-scorecard.json`](docs/results/judge-scorecard.json).
 
 The setup command starts the pinned HydraDB/MinIO runtime, seeds the demo
 fixture, and launches the API and web app. It prints the local URLs and teardown

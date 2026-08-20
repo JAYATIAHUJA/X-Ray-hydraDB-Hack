@@ -15,9 +15,16 @@ from xray_api.schemas import ImportRequest
 from xray_core.models import CanonicalBundle, LoadReport, SnapshotManifest, WriteBatchSpec
 from xray_hydra import HydraGateway
 
+WRITE_TOKEN = "test-write-token"
+WRITE_HEADERS = {"X-Xray-Write-Token": WRITE_TOKEN}
+
 
 def client() -> TestClient:
-    return TestClient(create_app())
+    app = create_app()
+    app.dependency_overrides[get_settings] = lambda: settings_from_env(
+        {"XRAY_WRITE_TOKEN": WRITE_TOKEN}
+    )
+    return TestClient(app)
 
 
 def test_health_and_current_snapshot() -> None:
@@ -129,7 +136,7 @@ def test_risk_report_carries_method_evidence_hashes_and_actions() -> None:
 
 
 def test_seed_fixture_endpoint_skips_without_hydradb_config() -> None:
-    response = client().post("/api/v1/hydra/seed-fixture")
+    response = client().post("/api/v1/hydra/seed-fixture", headers=WRITE_HEADERS)
 
     assert response.status_code == 200
     payload = response.json()
@@ -669,6 +676,7 @@ def test_identity_candidate_decision_is_reviewable_and_persists() -> None:
     decision = api.post(
         f"{endpoint}/candidate:sam-ratnaparkhi/decision",
         json={"decision": "accepted"},
+        headers=WRITE_HEADERS,
     )
     assert decision.status_code == 200
     assert decision.json()["status"] == "accepted"
@@ -679,10 +687,35 @@ def test_unknown_identity_candidate_returns_problem_detail() -> None:
     response = client().post(
         "/api/v1/snapshots/xray-demo-v1:fixture/identity-candidates/missing/decision",
         json={"decision": "rejected"},
+        headers=WRITE_HEADERS,
     )
 
     assert response.status_code == 404
     assert response.json()["detail"]["code"] == "identity_candidate_not_found"
+
+
+def test_repair_ledger_approve_and_verify_closes_gap() -> None:
+    api = client()
+    snapshot = "xray-demo-v1:fixture"
+    repairs = api.get(f"/api/v1/snapshots/{snapshot}/repairs").json()
+    gap = next(item for item in repairs if item["finding_kind"] == "gap")
+    repair_id = gap["repair_id"]
+
+    decided = api.post(
+        f"/api/v1/snapshots/{snapshot}/repairs/{repair_id}/decision",
+        json={"decision": "approved"},
+        headers=WRITE_HEADERS,
+    )
+    assert decided.status_code == 200
+    assert decided.json()["status"] == "approved"
+
+    gaps = api.get(f"/api/v1/snapshots/{snapshot}/gaps").json()
+    assert gaps["findings"] == []
+
+    verified = api.post(f"/api/v1/snapshots/{snapshot}/repairs/{repair_id}/verify")
+    assert verified.status_code == 200
+    assert verified.json()["closed"] is True
+    assert verified.json()["status"] == "closed"
 
 
 def test_asymmetry_endpoint_discloses_direction_and_safe_interpretation() -> None:
@@ -729,19 +762,41 @@ def test_snapshot_picker_lists_bundled_corpora_and_rejects_paths(
 
     listing = api.get("/api/v1/snapshots/available").json()
     names = {item["name"]: item for item in listing}
-    assert {"demo", "synth500"} <= set(names)
+    assert {"demo", "demo-v2", "synth500"} <= set(names)
     assert names["demo"]["active"] is True
     assert all(item["kind"] == "fixture" for item in listing)
 
     # Path-shaped or unknown names are refused before anything is touched.
-    assert api.post("/api/v1/snapshots/activate", json={"name": "../etc"}).status_code == 422
-    assert api.post("/api/v1/snapshots/activate", json={"name": "nope"}).status_code == 404
+    assert (
+        api.post(
+            "/api/v1/snapshots/activate",
+            json={"name": "../etc"},
+            headers=WRITE_HEADERS,
+        ).status_code
+        == 422
+    )
+    assert (
+        api.post(
+            "/api/v1/snapshots/activate",
+            json={"name": "nope"},
+            headers=WRITE_HEADERS,
+        ).status_code
+        == 404
+    )
 
-    switched = api.post("/api/v1/snapshots/activate", json={"name": "synth500"}).json()
+    switched = api.post(
+        "/api/v1/snapshots/activate",
+        json={"name": "synth500"},
+        headers=WRITE_HEADERS,
+    ).json()
     assert switched["dataset_id"] == "xray-synth-500"
     assert api.get("/api/v1/snapshots/current").json()["dataset_id"] == "xray-synth-500"
 
-    back = api.post("/api/v1/snapshots/activate", json={"name": "demo"}).json()
+    back = api.post(
+        "/api/v1/snapshots/activate",
+        json={"name": "demo"},
+        headers=WRITE_HEADERS,
+    ).json()
     assert back["snapshot_id"] == "xray-demo-v1:fixture"
 
 
@@ -751,7 +806,14 @@ def test_snapshot_selection_is_isolated_per_app(monkeypatch) -> None:
     first = client()
     second = client()
 
-    assert first.post("/api/v1/snapshots/activate", json={"name": "synth500"}).status_code == 200
+    assert (
+        first.post(
+            "/api/v1/snapshots/activate",
+            json={"name": "synth500"},
+            headers=WRITE_HEADERS,
+        ).status_code
+        == 200
+    )
 
     assert first.get("/api/v1/snapshots/current").json()["dataset_id"] == "xray-synth-500"
     assert second.get("/api/v1/snapshots/current").json()["dataset_id"] == "xray-demo-v1"
@@ -769,8 +831,13 @@ def test_read_only_deployment_blocks_mutations() -> None:
     assert api.post("/api/v1/snapshots/import", json={"dataset_id": "private"}).status_code == 403
 
 
-def test_import_is_opt_in_and_mutations_can_require_token() -> None:
+def test_import_is_opt_in_and_mutations_require_token() -> None:
     app = create_app()
+    app.dependency_overrides[get_settings] = lambda: settings_from_env({})
+    api = TestClient(app)
+
+    assert api.post("/api/v1/snapshots/activate", json={"name": "synth500"}).status_code == 403
+
     app.dependency_overrides[get_settings] = lambda: settings_from_env(
         {"XRAY_WRITE_TOKEN": "secret"}
     )

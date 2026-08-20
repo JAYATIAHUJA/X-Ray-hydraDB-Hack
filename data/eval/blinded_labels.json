@@ -1,0 +1,16 @@
+{
+  "study_id": "xray-blinded-demo-v2",
+  "sealed": true,
+  "answers": {
+    "ghost_person_key": "person:maya-chen",
+    "phantom_key": "artifact:missing-approval",
+    "faultline_modules": ["module:payments-api", "module:ledger-worker"],
+    "primary_owner_payments": "person:maya-chen",
+    "identity_candidate_id": "candidate:sam-ratnaparkhi"
+  },
+  "limitations": [
+    "Hold-out labels are synthetic and derived from the same labelled fixture family.",
+    "This is a protocol demonstration for judges, not a multi-org blinded field study.",
+    "Do not treat accuracy here as generalization to live enterprise incidents."
+  ]
+}

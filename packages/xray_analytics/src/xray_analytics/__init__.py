@@ -28,6 +28,14 @@ from .analysis import (
 )
 from .identities import IdentityCandidate, IdentityMember, identity_candidates
 from .questions import OntologyAnswer, answer_ontology_question
+from .repairs import (
+    ApprovedRepair,
+    RepairProposal,
+    apply_approved_repairs,
+    propose_repairs,
+    verify_repair,
+    with_status,
+)
 
 __all__ = [
     "EXACT_CENTRALITY_MAX_PEOPLE",
@@ -41,8 +49,14 @@ __all__ = [
     "GhostScore",
     "IdentityCandidate",
     "IdentityMember",
+    "ApprovedRepair",
     "OntologyAnswer",
+    "RepairProposal",
     "answer_ontology_question",
+    "apply_approved_repairs",
+    "propose_repairs",
+    "verify_repair",
+    "with_status",
     "bounded_shortest_path_tallies",
     "bus_factor_impact",
     "communication_asymmetries",

@@ -1,0 +1,308 @@
+[
+  {
+    "source": "xray-demo-v2-events",
+    "external_id": "comm-alex-rivera-priya-shah",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776020,
+    "author_external_id": "alex-rivera",
+    "parent_external_id": null,
+    "subjects": [
+      "person:alex-rivera",
+      "person:priya-shah"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776000,
+      "interaction_count": 3,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776020,
+      "recipient_external_id": "priya-shah",
+      "sender_external_id": "alex-rivera"
+    }
+  },
+  {
+    "source": "xray-demo-v2-events",
+    "external_id": "comm-alex-rivera-maya-chen",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776120,
+    "author_external_id": "alex-rivera",
+    "parent_external_id": null,
+    "subjects": [
+      "person:alex-rivera",
+      "person:maya-chen"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776080,
+      "interaction_count": 5,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776120,
+      "recipient_external_id": "maya-chen",
+      "sender_external_id": "alex-rivera"
+    }
+  },
+  {
+    "source": "xray-demo-v2-events",
+    "external_id": "comm-priya-shah-maya-chen",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776220,
+    "author_external_id": "priya-shah",
+    "parent_external_id": null,
+    "subjects": [
+      "person:priya-shah",
+      "person:maya-chen"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776190,
+      "interaction_count": 4,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776220,
+      "recipient_external_id": "maya-chen",
+      "sender_external_id": "priya-shah"
+    }
+  },
+  {
+    "source": "xray-demo-v2-events",
+    "external_id": "comm-maya-chen-omar-haddad",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776320,
+    "author_external_id": "maya-chen",
+    "parent_external_id": null,
+    "subjects": [
+      "person:maya-chen",
+      "person:omar-haddad"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776280,
+      "interaction_count": 5,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776320,
+      "recipient_external_id": "omar-haddad",
+      "sender_external_id": "maya-chen"
+    }
+  },
+  {
+    "source": "xray-demo-v2-events",
+    "external_id": "comm-maya-chen-lena-park",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776420,
+    "author_external_id": "maya-chen",
+    "parent_external_id": null,
+    "subjects": [
+      "person:maya-chen",
+      "person:lena-park"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776390,
+      "interaction_count": 4,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776420,
+      "recipient_external_id": "lena-park",
+      "sender_external_id": "maya-chen"
+    }
+  },
+  {
+    "source": "xray-demo-v2-events",
+    "external_id": "comm-omar-haddad-lena-park",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776520,
+    "author_external_id": "omar-haddad",
+    "parent_external_id": null,
+    "subjects": [
+      "person:omar-haddad",
+      "person:lena-park"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776500,
+      "interaction_count": 3,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776520,
+      "recipient_external_id": "lena-park",
+      "sender_external_id": "omar-haddad"
+    }
+  },
+  {
+    "source": "xray-demo-v2-events",
+    "external_id": "comm-nina-okafor-sam-wu",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776720,
+    "author_external_id": "nina-okafor",
+    "parent_external_id": null,
+    "subjects": [
+      "person:nina-okafor",
+      "person:sam-wu"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776530,
+      "interaction_count": 20,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776720,
+      "recipient_external_id": "sam-wu",
+      "sender_external_id": "nina-okafor"
+    }
+  },
+  {
+    "source": "xray-demo-v2-events",
+    "external_id": "comm-nina-okafor-ines-costa",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735776920,
+    "author_external_id": "nina-okafor",
+    "parent_external_id": null,
+    "subjects": [
+      "person:nina-okafor",
+      "person:ines-costa"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776730,
+      "interaction_count": 20,
+      "interaction_kind": "mention",
+      "last_epoch": 1735776920,
+      "recipient_external_id": "ines-costa",
+      "sender_external_id": "nina-okafor"
+    }
+  },
+  {
+    "source": "xray-demo-v2-events",
+    "external_id": "comm-nina-okafor-jon-bell",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735777120,
+    "author_external_id": "nina-okafor",
+    "parent_external_id": null,
+    "subjects": [
+      "person:nina-okafor",
+      "person:jon-bell"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735776930,
+      "interaction_count": 20,
+      "interaction_kind": "mention",
+      "last_epoch": 1735777120,
+      "recipient_external_id": "jon-bell",
+      "sender_external_id": "nina-okafor"
+    }
+  },
+  {
+    "source": "xray-demo-v2-events",
+    "external_id": "comm-sam-wu-ines-costa",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735777220,
+    "author_external_id": "sam-wu",
+    "parent_external_id": null,
+    "subjects": [
+      "person:sam-wu",
+      "person:ines-costa"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735777220,
+      "interaction_count": 1,
+      "interaction_kind": "mention",
+      "last_epoch": 1735777220,
+      "recipient_external_id": "ines-costa",
+      "sender_external_id": "sam-wu"
+    }
+  },
+  {
+    "source": "xray-demo-v2-events",
+    "external_id": "comm-sam-wu-jon-bell",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735777320,
+    "author_external_id": "sam-wu",
+    "parent_external_id": null,
+    "subjects": [
+      "person:sam-wu",
+      "person:jon-bell"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735777320,
+      "interaction_count": 1,
+      "interaction_kind": "mention",
+      "last_epoch": 1735777320,
+      "recipient_external_id": "jon-bell",
+      "sender_external_id": "sam-wu"
+    }
+  },
+  {
+    "source": "xray-demo-v2-events",
+    "external_id": "comm-ines-costa-jon-bell",
+    "kind": "communication_aggregate",
+    "occurred_at_epoch": 1735777420,
+    "author_external_id": "ines-costa",
+    "parent_external_id": null,
+    "subjects": [
+      "person:ines-costa",
+      "person:jon-bell"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "first_epoch": 1735777420,
+      "interaction_count": 1,
+      "interaction_kind": "mention",
+      "last_epoch": 1735777420,
+      "recipient_external_id": "jon-bell",
+      "sender_external_id": "ines-costa"
+    }
+  },
+  {
+    "source": "xray-demo-v2-events",
+    "external_id": "directive",
+    "kind": "artifact",
+    "occurred_at_epoch": 1736000000,
+    "author_external_id": "alex-rivera",
+    "parent_external_id": null,
+    "subjects": [
+      "artifact:directive",
+      "module:payments-api"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "artifact_kind": "directive",
+      "canonical_key": "artifact:directive",
+      "input_complete": true,
+      "sequence_key": "payments-change-approval",
+      "sequence_ordinal": 0
+    }
+  },
+  {
+    "source": "xray-demo-v2-events",
+    "external_id": "code-change",
+    "kind": "artifact",
+    "occurred_at_epoch": 1736007200,
+    "author_external_id": "alex-rivera",
+    "parent_external_id": null,
+    "subjects": [
+      "artifact:code-change",
+      "module:payments-api"
+    ],
+    "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "content": null,
+    "metadata": {
+      "artifact_kind": "code_change",
+      "canonical_key": "artifact:code-change",
+      "input_complete": true,
+      "sequence_key": "payments-change-approval",
+      "sequence_ordinal": 2
+    }
+  }
+]

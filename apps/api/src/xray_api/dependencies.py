@@ -20,8 +20,10 @@ from .hydra import create_gateway
 logger = logging.getLogger(__name__)
 
 FIXTURE_ROOT = Path(__file__).parents[4] / "data" / "fixtures" / "xray-demo"
+DEMO_V2_FIXTURE_ROOT = Path(__file__).parents[4] / "data" / "fixtures" / "xray-demo-v2"
 SYNTH_FIXTURE_ROOT = Path(__file__).parents[4] / "data" / "fixtures" / "xray-synth-500"
 DATASET_ID = "xray-demo-v1"
+DEMO_V2_DATASET_ID = "xray-demo-v2"
 SYNTH_DATASET_ID = "xray-synth-500"
 
 # XRAY_FIXTURE_VARIANT selects which bundled fixture the API serves. Only labelled
@@ -29,6 +31,7 @@ SYNTH_DATASET_ID = "xray-synth-500"
 # exposed here; adapter smoke data lives in tests, not behind a runtime flag.
 FIXTURE_VARIANTS: dict[str, str] = {
     "demo": DATASET_ID,
+    "demo-v2": DEMO_V2_DATASET_ID,
     "synth500": SYNTH_DATASET_ID,
 }
 
@@ -60,6 +63,11 @@ def _canonical_fixture_bundle(root: Path, dataset_id: str) -> CanonicalBundle:
 @lru_cache(maxsize=1)
 def demo_bundle() -> CanonicalBundle:
     return _canonical_fixture_bundle(FIXTURE_ROOT, DATASET_ID)
+
+
+@lru_cache(maxsize=1)
+def demo_v2_bundle() -> CanonicalBundle:
+    return _canonical_fixture_bundle(DEMO_V2_FIXTURE_ROOT, DEMO_V2_DATASET_ID)
 
 
 @lru_cache(maxsize=1)
@@ -102,8 +110,11 @@ def active_bundle() -> CanonicalBundle:
     root = snapshot_dir()
     if root is not None:
         return snapshot_bundle(str(root))
-    if active_dataset_id() == SYNTH_DATASET_ID:
+    dataset_id = active_dataset_id()
+    if dataset_id == SYNTH_DATASET_ID:
         return synth_bundle()
+    if dataset_id == DEMO_V2_DATASET_ID:
+        return demo_v2_bundle()
     return demo_bundle()
 
 
@@ -134,12 +145,14 @@ def get_gateway(
 
 __all__ = [
     "DATASET_ID",
+    "DEMO_V2_DATASET_ID",
     "FIXTURE_VARIANTS",
     "SYNTH_DATASET_ID",
     "active_bundle",
     "active_dataset_id",
     "current_snapshot_id",
     "demo_bundle",
+    "demo_v2_bundle",
     "get_gateway",
     "snapshot_bundle",
     "snapshot_dir",

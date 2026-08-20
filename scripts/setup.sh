@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -eu
 
-STARTED_AT=$(python -c "import time; print(time.time())")
+STARTED_AT=$(uv run python -c "import time; print(time.time())")
 RUNTIME_ID="runtime-demo"
 PROJECT="xray-runtime-demo"
 API_PORT="8000"
@@ -47,13 +47,15 @@ XRAY_HYDRA_URI="bolt://127.0.0.1:17687"
 XRAY_HYDRA_USER="neo4j"
 XRAY_HYDRA_PASSWORD="$(tr -d '\r\n' < "$RUNTIME_DIR/hydra-auth-token")"
 XRAY_HYDRA_DATABASE="xray"
-export XRAY_HYDRA_URI XRAY_HYDRA_USER XRAY_HYDRA_PASSWORD XRAY_HYDRA_DATABASE
+XRAY_WRITE_TOKEN="local-demo-write-token"
+export XRAY_HYDRA_URI XRAY_HYDRA_USER XRAY_HYDRA_PASSWORD XRAY_HYDRA_DATABASE XRAY_WRITE_TOKEN
 export VITE_XRAY_API_BASE_URL="http://127.0.0.1:$API_PORT"
+export VITE_XRAY_WRITE_TOKEN="$XRAY_WRITE_TOKEN"
 
 uv run uvicorn xray_api.app:app --host 127.0.0.1 --port "$API_PORT" > "$RUNTIME_DIR/api.log" 2>&1 &
 echo "$!" > "$RUNTIME_DIR/api.pid"
 
-python - <<PY
+uv run python - <<PY
 import time
 import urllib.request
 
@@ -69,13 +71,14 @@ while time.time() < deadline:
 raise SystemExit(f"timed out waiting for {url}")
 PY
 
-python - <<PY
+uv run python - <<PY
 import json
 import urllib.request
 
 request = urllib.request.Request(
     "http://127.0.0.1:$API_PORT/api/v1/hydra/seed-fixture",
     method="POST",
+    headers={"X-Xray-Write-Token": "$XRAY_WRITE_TOKEN"},
 )
 with urllib.request.urlopen(request, timeout=60) as response:
     payload = json.loads(response.read().decode("utf-8"))
@@ -86,12 +89,13 @@ PY
 
 uv run python scripts/verify_judge_demo.py --api-base "http://127.0.0.1:$API_PORT"
 uv run python scripts/bench_judge_latency.py
+uv run python scripts/bench_latency.py
 
 npm ci
 npm run dev -- --port "$WEB_PORT" > "$RUNTIME_DIR/web.log" 2>&1 &
 echo "$!" > "$RUNTIME_DIR/web.pid"
 
-ELAPSED=$(python -c "import time; print(round(time.time() - $STARTED_AT, 1))")
+ELAPSED=$(uv run python -c "import time; print(round(time.time() - $STARTED_AT, 1))")
 echo "X-Ray is running in ${ELAPSED}s"
 echo "API: http://127.0.0.1:$API_PORT/api/v1/health"
 echo "Web: http://127.0.0.1:$WEB_PORT"

@@ -1,5 +1,5 @@
 import type { SVGProps } from "react";
-export type IconName = "overview" | "risk" | "ask" | "identity" | "graph" | "import" | "action" | "settings" | "search" | "filter" | "external" | "close" | "database";
+export type IconName = "overview" | "risk" | "ask" | "identity" | "repair" | "graph" | "import" | "action" | "settings" | "search" | "filter" | "external" | "close" | "database";
 export function Icon({ name, ...props }: { name: IconName } & SVGProps<SVGSVGElement>) {
   const common = { fill: "none", stroke: "currentColor", strokeLinecap: "round" as const, strokeLinejoin: "round" as const, strokeWidth: 1.8 };
   return <svg aria-hidden="true" viewBox="0 0 24 24" {...props} {...common}>
@@ -7,6 +7,7 @@ export function Icon({ name, ...props }: { name: IconName } & SVGProps<SVGSVGEle
     {name === "risk" ? <><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v4.5M12 17h.01"/></> : null}
     {name === "ask" ? <><path d="M5 5.5h14v10H9l-4 3v-13Z"/><path d="M9 9h6M9 12h4"/></> : null}
     {name === "identity" ? <><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3.5 20v-2.2c0-2.7 2-4.8 4.5-4.8s4.5 2.1 4.5 4.8V20M14 14.5c.8-.7 1.8-1.1 3-1.1 2.2 0 4 1.8 4 4V20"/></> : null}
+    {name === "repair" ? <><path d="M14.7 6.3a4 4 0 0 1 0 5.6L12 14.6l-2.7-2.7a4 4 0 1 1 5.4-5.6"/><path d="m9 15-5 5M15 9l5-5"/></> : null}
     {name === "graph" ? <><circle cx="6" cy="7" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="15" cy="18" r="2.5"/><circle cx="5" cy="17" r="2.5"/><path d="m8.4 6.8 7.1-.5M7.2 9.1l6.5 6.8M7.4 16.9l5.1.7M17.2 8.4l-1.5 7.1"/></> : null}
     {name === "import" ? <><path d="M12 3v12M7.5 10.5 12 15l4.5-4.5"/><path d="M4 19v2h16v-2"/></> : null}
     {name === "action" ? <><path d="M8 4h8M9 2h6v4H9z"/><path d="M6 4H4v18h16V4h-2M8 11h8M8 16h5"/></> : null}

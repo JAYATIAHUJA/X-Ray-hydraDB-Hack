@@ -113,8 +113,29 @@ class HydraLoader:
                 for rel_type in sorted(RELATION_TYPES)
             ),
         )
-        for query in verification_queries:
-            self.gateway.run(query)
+        verified_node_count: int | None = None
+        verified_edge_count = 0
+        if not failed:
+            for query in verification_queries:
+                rows = self.gateway.run(query)
+                count = _single_count(rows)
+                if query.name == "verify_snapshot_nodes":
+                    verified_node_count = count
+                else:
+                    verified_edge_count += count
+            expected_nodes = manifest.row_counts["nodes"]
+            expected_edges = manifest.row_counts["edges"]
+            if verified_node_count != expected_nodes:
+                raise LoaderError(
+                    f"HydraDB node count mismatch: expected {expected_nodes}, got {verified_node_count}"
+                )
+            if verified_edge_count != expected_edges:
+                raise LoaderError(
+                    f"HydraDB edge count mismatch: expected {expected_edges}, got {verified_edge_count}"
+                )
+        else:
+            for query in verification_queries:
+                self.gateway.run(query)
 
         return LoadReport(
             snapshot_id=manifest.snapshot_id,
@@ -139,6 +160,15 @@ class HydraLoader:
             actual_digest = hashlib.sha256(path.read_bytes()).hexdigest()
             if actual_digest != expected_digest:
                 raise LoaderError(f"snapshot file hash mismatch: {name}")
+
+
+def _single_count(rows: list[dict[str, object]]) -> int:
+    if not rows:
+        raise LoaderError("verification query returned no rows")
+    value = rows[0].get("count")
+    if type(value) is not int:
+        raise LoaderError("verification query did not return an integer count")
+    return value
 
 
 def _read_node_rows(path: Path, dataset_id: str) -> tuple[dict[str, Scalar], ...]:

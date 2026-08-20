@@ -20,9 +20,12 @@ def require_write_access(
             status_code=403,
             detail="Snapshot imports are disabled; set XRAY_ENABLE_IMPORTS=true locally to opt in.",
         )
-    if settings.write_token is not None and (
-        supplied_token is None or not secrets.compare_digest(supplied_token, settings.write_token)
-    ):
+    if settings.write_token is None:
+        raise HTTPException(
+            status_code=403,
+            detail="Mutations require XRAY_WRITE_TOKEN to be configured.",
+        )
+    if supplied_token is None or not secrets.compare_digest(supplied_token, settings.write_token):
         raise HTTPException(status_code=401, detail="A valid X-Xray-Write-Token is required.")
 
 

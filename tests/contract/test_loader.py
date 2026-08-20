@@ -14,6 +14,8 @@ FIXTURE_ROOT = Path(__file__).parents[2] / "data" / "fixtures" / "xray-demo"
 class RecordingDriver:
     def __init__(self) -> None:
         self.calls: list[tuple[str, dict[str, object] | None]] = []
+        self.node_count = 0
+        self.edge_counts: dict[str, int] = {}
 
     def execute_query(
         self,
@@ -21,7 +23,36 @@ class RecordingDriver:
         parameters_: dict[str, object] | None = None,
     ) -> list[dict[str, object]]:
         self.calls.append((query_, parameters_))
-        return [{"count": len((parameters_ or {}).get("rows", []))}]
+        rows = (parameters_ or {}).get("rows", [])
+        row_count = len(rows) if isinstance(rows, list) else 0
+        if "MERGE (n {id: row.id})" in query_:
+            self.node_count += row_count
+            return [{"count": row_count}]
+        if "MERGE (s)-[r:" in query_:
+            for rel_type in (
+                "REPORTS_TO",
+                "AUTHORED",
+                "MENTIONS",
+                "COMMUNICATES",
+                "ABOUT",
+                "OWNS",
+                "DEPENDS_ON",
+                "PRECEDED_BY",
+                "REPLIES_TO",
+                "EXPECTED_BEFORE",
+            ):
+                if f"[r:{rel_type}" in query_:
+                    self.edge_counts[rel_type] = self.edge_counts.get(rel_type, 0) + row_count
+                    break
+            return [{"count": row_count}]
+        if "RETURN count(*) AS count" in query_:
+            if "MATCH (n {" in query_:
+                return [{"count": self.node_count}]
+            for rel_type, count in self.edge_counts.items():
+                if f"[r:{rel_type}" in query_:
+                    return [{"count": count}]
+            return [{"count": 0}]
+        return [{"count": row_count}]
 
 
 class FailOnceDriver(RecordingDriver):
@@ -101,4 +132,4 @@ def test_loader_records_failure_and_resumes_after_transient_batch_error(tmp_path
 
     second = loader.load(snapshot_dir, manifest, batch_size=500)
     assert second.failed_batches == ()
-    assert second.resumed_batches == second.attempted_batches - 1
+    assert second.completed_batches == second.attempted_batches

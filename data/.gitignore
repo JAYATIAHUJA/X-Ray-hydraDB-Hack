@@ -1,5 +1,7 @@
 *
 !.gitignore
+!eval/
+!eval/**
 !fixtures/
 !fixtures/**
 !schemas/

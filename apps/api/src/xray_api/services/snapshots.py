@@ -20,10 +20,12 @@ from xray_ingest.manifest import write_snapshot
 from xray_ingest.pipeline import ingest_exports
 
 from ..dependencies import (
+    DEMO_V2_DATASET_ID,
     FIXTURE_VARIANTS,
     SYNTH_DATASET_ID,
     active_bundle,
     demo_bundle,
+    demo_v2_bundle,
     snapshot_bundle,
     snapshot_dir,
     synth_bundle,
@@ -94,7 +96,13 @@ class SnapshotService:
 
     def activate(self, name: str) -> SelectedSnapshot:
         if name in FIXTURE_VARIANTS:
-            bundle = synth_bundle() if FIXTURE_VARIANTS[name] == SYNTH_DATASET_ID else demo_bundle()
+            dataset_id = FIXTURE_VARIANTS[name]
+            if dataset_id == SYNTH_DATASET_ID:
+                bundle = synth_bundle()
+            elif dataset_id == DEMO_V2_DATASET_ID:
+                bundle = demo_v2_bundle()
+            else:
+                bundle = demo_bundle()
             return self._set(bundle=bundle, kind="fixture", name=name)
         candidate = snapshots_root() / name
         if not (candidate / "manifest.json").is_file():
@@ -104,6 +112,11 @@ class SnapshotService:
             kind="snapshot",
             name=name,
         )
+
+    def replace_bundle(self, bundle: CanonicalBundle) -> SelectedSnapshot:
+        """Replace the active graph (used by Repair Ledger overlays)."""
+        current = self.current()
+        return self._set(bundle=bundle, kind=current.kind, name=current.name)
 
     def import_request(self, request: ImportRequest) -> SelectedSnapshot:
         bundle = _ingest_request(request)
@@ -162,7 +175,10 @@ def _ingest_request(request: ImportRequest) -> CanonicalBundle:
         slack_dir = root / "slack"
         slack_dir.mkdir()
         for channel, rows in request.slack_exports.items():
-            (slack_dir / f"{channel}.json").write_text(json.dumps(list(rows)), encoding="utf-8")
+            channel_name = _safe_slack_channel_name(channel)
+            channel_dir = slack_dir / channel_name
+            channel_dir.mkdir(parents=True, exist_ok=False)
+            (channel_dir / "messages.json").write_text(json.dumps(list(rows)), encoding="utf-8")
         jira_rows = jira_csv_rows(jira_path) if jira_path is not None else ()
         confluence_rows = (
             confluence_xml_rows(confluence_path) if confluence_path is not None else ()
@@ -187,6 +203,16 @@ def _ingest_request(request: ImportRequest) -> CanonicalBundle:
             if request.slack_exports
             else (),
         )
+
+
+def _safe_slack_channel_name(channel: str) -> str:
+    """Reject path traversal and keep Slack channel folders single-segment."""
+    candidate = channel.strip()
+    if not candidate or candidate in {".", ".."} or "/" in candidate or "\\" in candidate:
+        raise ValueError(f"invalid Slack channel name: {channel!r}")
+    if Path(candidate).name != candidate:
+        raise ValueError(f"invalid Slack channel name: {channel!r}")
+    return candidate
 
 
 __all__ = ["SelectedSnapshot", "SnapshotService", "snapshots_root"]

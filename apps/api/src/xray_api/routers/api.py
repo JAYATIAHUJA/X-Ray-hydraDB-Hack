@@ -6,7 +6,7 @@ from collections.abc import Mapping
 from dataclasses import asdict
 from typing import Annotated, Literal
 
-from fastapi import Depends, FastAPI, Query
+from fastapi import Depends, FastAPI, Header, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
 from xray_analytics import (
@@ -14,14 +14,20 @@ from xray_analytics import (
     GapFinding,
     GhostScore,
     answer_ontology_question,
+    apply_approved_repairs,
     communication_asymmetries,
     faultline_tier,
     faultlines,
     gap_findings,
     ghost_scores,
     identity_candidates,
+    propose_repairs,
     shortest_communication_bridge,
+    verify_repair,
+    with_status,
 )
+from xray_analytics.questions import answer_from_hydra_rows
+from xray_analytics.repairs import ApprovedRepair
 from xray_core.models import (
     AnalysisStatus,
     CanonicalBundle,
@@ -63,8 +69,12 @@ from ..schemas import (
     LensEnvelope,
     QuestionRequest,
     QuestionResponse,
+    RepairDecisionRequest,
+    RepairProposalResponse,
+    RepairVerifyResponse,
     WhatIfSummary,
 )
+from ..services.access import require_write_access
 from ..services.reports import render_risk_report
 from ..services.snapshots import SnapshotService
 from .snapshots import snapshot_router
@@ -78,6 +88,7 @@ def create_app() -> FastAPI:
     app = FastAPI(title="X-Ray Evidence Platform API", version="0.1.0")
     snapshots = SnapshotService()
     identity_decisions: dict[tuple[str, str], str] = {}
+    repair_ledger: dict[tuple[str, str], dict[str, object]] = {}
     # Extra origins for deployed frontends, comma-separated (the demo compose/Fly setup
     # proxies /api same-origin, so it needs none of this).
     extra_origins = [
@@ -90,7 +101,7 @@ def create_app() -> FastAPI:
         allow_origins=["http://127.0.0.1:5173", "http://localhost:5173", *extra_origins],
         allow_credentials=True,
         allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
-        allow_headers=["content-type"],
+        allow_headers=["content-type", "X-Xray-Write-Token"],
     )
     app.include_router(system_router(snapshots))
     app.include_router(snapshot_router(snapshots))
@@ -212,7 +223,7 @@ def create_app() -> FastAPI:
                 else "Fixture Ghost analysis completed with bounded in-memory path scoring."
             ),
             status=AnalysisStatus.PARTIAL if live_result is not None else AnalysisStatus.COMPLETE,
-            source="fixture" if live_result is None else "hydradb",
+            source="fixture",
             degraded_reason=None if live_result is None else live_result.error,
             executed_query=None if live_result is None else asdict(live_result.executed_query),
             what_if=None if not excluded else asdict(fixture_what_if(bundle, excluded)),
@@ -408,7 +419,8 @@ def create_app() -> FastAPI:
         snapshot_id: str, request: QuestionRequest, gateway: GatewayDep
     ) -> QuestionResponse:
         bundle = snapshots.require(snapshot_id)
-        answer = answer_ontology_question(bundle, request.question)
+        provisional = answer_ontology_question(bundle, request.question)
+        answer = provisional
         source: Literal["fixture", "hydradb"] = "fixture"
         degraded_reason = None
         executed_query: dict[str, object] | None = None
@@ -416,16 +428,21 @@ def create_app() -> FastAPI:
         round_trips = 0
         if (
             gateway is not None
-            and answer.subject_key is not None
-            and answer.intent in {"owner", "dependency_impact", "approval"}
+            and provisional.subject_key is not None
+            and provisional.intent in {"owner", "dependency_impact", "approval"}
         ):
-            query = ontology_context_query(answer.intent, bundle.dataset_id, answer.subject_key)
+            query = ontology_context_query(
+                provisional.intent, bundle.dataset_id, provisional.subject_key
+            )
             started = time.perf_counter()
             try:
-                gateway.run(query)
+                rows = gateway.run(query)
                 engine_ms = (time.perf_counter() - started) * 1000
                 round_trips = 1
-                source = "hydradb"
+                hydra_answer = answer_from_hydra_rows(provisional, rows, bundle)
+                if hydra_answer is not None:
+                    answer = hydra_answer
+                    source = "hydradb"
                 executed_query = {
                     "text": query.statement,
                     "params": dict(query.parameters),
@@ -437,6 +454,13 @@ def create_app() -> FastAPI:
                 engine_ms = (time.perf_counter() - started) * 1000
                 round_trips = 1
                 degraded_reason = str(exc)
+                executed_query = {
+                    "text": query.statement,
+                    "params": dict(query.parameters),
+                    "max_len": query.max_len,
+                    "round_trips": 1,
+                    "engine_ms": engine_ms,
+                }
         evidence = {item.evidence_id: item for item in bundle.evidence}
         return QuestionResponse(
             snapshot_id=snapshot_id,
@@ -473,7 +497,10 @@ def create_app() -> FastAPI:
         snapshot_id: str,
         candidate_id: str,
         request: IdentityDecisionRequest,
+        settings: SettingsDep,
+        write_token: Annotated[str | None, Header(alias="X-Xray-Write-Token")] = None,
     ) -> IdentityCandidateResponse:
+        require_write_access(settings, write_token)
         bundle = snapshots.require(snapshot_id)
         candidates = {item.candidate_id: item for item in identity_candidates(bundle)}
         if candidate_id not in candidates:
@@ -488,6 +515,137 @@ def create_app() -> FastAPI:
             if item.candidate_id == candidate_id
         )
         return IdentityCandidateResponse.model_validate(asdict(updated))
+
+    @app.get(
+        "/api/v1/snapshots/{snapshot_id}/repairs",
+        response_model=tuple[RepairProposalResponse, ...],
+    )
+    def get_repairs(snapshot_id: str) -> tuple[RepairProposalResponse, ...]:
+        bundle = snapshots.require(snapshot_id)
+        statuses = {
+            repair_id: str(entry["status"])
+            for (sid, repair_id), entry in repair_ledger.items()
+            if sid == snapshot_id
+        }
+        closed_map = {
+            repair_id: bool(entry.get("closed", False))
+            for (sid, repair_id), entry in repair_ledger.items()
+            if sid == snapshot_id
+        }
+        responses: dict[str, RepairProposalResponse] = {
+            item.repair_id: RepairProposalResponse.model_validate(asdict(item))
+            for item in with_status(propose_repairs(bundle), statuses=statuses, closed=closed_map)
+        }
+        for (sid, repair_id), entry in repair_ledger.items():
+            if sid != snapshot_id or repair_id in responses:
+                continue
+            stored = entry.get("proposal")
+            if isinstance(stored, dict):
+                responses[repair_id] = RepairProposalResponse.model_validate(
+                    {
+                        **stored,
+                        "status": entry["status"],
+                        "closed": bool(entry.get("closed", False)),
+                    }
+                )
+        return tuple(sorted(responses.values(), key=lambda item: item.repair_id))
+
+    @app.post(
+        "/api/v1/snapshots/{snapshot_id}/repairs/{repair_id}/decision",
+        response_model=RepairProposalResponse,
+    )
+    def decide_repair(
+        snapshot_id: str,
+        repair_id: str,
+        request: RepairDecisionRequest,
+        settings: SettingsDep,
+        write_token: Annotated[str | None, Header(alias="X-Xray-Write-Token")] = None,
+    ) -> RepairProposalResponse:
+        require_write_access(settings, write_token)
+        bundle = snapshots.require(snapshot_id)
+        proposals = {item.repair_id: item for item in propose_repairs(bundle)}
+        ledger_key = (snapshot_id, repair_id)
+        proposal = proposals.get(repair_id)
+        if proposal is None:
+            stored = repair_ledger.get(ledger_key, {}).get("proposal")
+            if not isinstance(stored, dict):
+                raise not_found(
+                    f"Repair {repair_id!r} does not exist in this snapshot.",
+                    code="repair_not_found",
+                )
+            proposal_payload = stored
+        else:
+            proposal_payload = asdict(proposal)
+        if request.decision == "rejected":
+            repair_ledger[ledger_key] = {
+                "status": "rejected",
+                "closed": False,
+                "proposal": proposal_payload,
+            }
+            return RepairProposalResponse.model_validate(
+                {**proposal_payload, "status": "rejected", "closed": False}
+            )
+
+        approved = ApprovedRepair(
+            repair_id=repair_id,
+            repair_kind=proposal_payload["repair_kind"],  # type: ignore[arg-type]
+            finding_kind=proposal_payload["finding_kind"],  # type: ignore[arg-type]
+            finding_key=str(proposal_payload["finding_key"]),
+            payload=_repair_payload(str(proposal_payload["finding_key"]), str(proposal_payload["repair_kind"])),
+        )
+        snapshots.replace_bundle(apply_approved_repairs(bundle, (approved,)))
+        repair_ledger[ledger_key] = {
+            "status": "approved",
+            "closed": False,
+            "proposal": proposal_payload,
+            "approved": approved,
+        }
+        return RepairProposalResponse.model_validate(
+            {**proposal_payload, "status": "approved", "closed": False}
+        )
+
+    @app.post(
+        "/api/v1/snapshots/{snapshot_id}/repairs/{repair_id}/verify",
+        response_model=RepairVerifyResponse,
+    )
+    def verify_repair_endpoint(snapshot_id: str, repair_id: str) -> RepairVerifyResponse:
+        bundle = snapshots.require(snapshot_id)
+        ledger_key = (snapshot_id, repair_id)
+        entry = repair_ledger.get(ledger_key)
+        proposal = next((item for item in propose_repairs(bundle) if item.repair_id == repair_id), None)
+        if proposal is None and entry and isinstance(entry.get("proposal"), dict):
+            from xray_analytics.repairs import RepairProposal
+
+            stored = entry["proposal"]
+            assert isinstance(stored, dict)
+            proposal = RepairProposal(
+                repair_id=str(stored["repair_id"]),
+                finding_kind=stored["finding_kind"],  # type: ignore[arg-type]
+                finding_key=str(stored["finding_key"]),
+                title=str(stored["title"]),
+                repair_kind=stored["repair_kind"],  # type: ignore[arg-type]
+                summary=str(stored["summary"]),
+                verdict=stored["verdict"],  # type: ignore[arg-type]
+                evidence_ids=tuple(stored.get("evidence_ids") or ()),
+                limitations=tuple(stored.get("limitations") or ()),
+                status=str(entry.get("status", "approved")),  # type: ignore[arg-type]
+            )
+        if proposal is None:
+            raise not_found(
+                f"Repair {repair_id!r} does not exist in this snapshot.",
+                code="repair_not_found",
+            )
+        closed, reason = verify_repair(bundle, proposal)
+        status = "closed" if closed else str(entry.get("status", proposal.status) if entry else proposal.status)
+        if entry is not None:
+            entry["closed"] = closed
+            entry["status"] = status
+        return RepairVerifyResponse(
+            repair_id=repair_id,
+            closed=closed,
+            reason=reason,
+            status=status,  # type: ignore[arg-type]
+        )
 
     @app.get("/api/v1/snapshots/{snapshot_id}/asymmetries", response_model=LensEnvelope)
     def asymmetries(
@@ -728,6 +886,28 @@ def _matching_edge_evidence_ids(
         if edge.rel_type == rel_type and edge.source_id == source.id and edge.target_id == target.id
         for evidence_id in edge.evidence_ids
     )
+
+
+def _repair_payload(finding_key: str, repair_kind: str) -> dict[str, str]:
+    """Map a repair finding key into overlay payload fields."""
+    if repair_kind == "record_missing_approval":
+        return {"phantom_key": finding_key}
+    parts = finding_key.split("|")
+    if len(parts) != 4:
+        return {}
+    source_module, target_module, source_owner, target_owner = parts
+    if repair_kind == "establish_owner_bridge":
+        return {
+            "source_owner_key": source_owner,
+            "target_owner_key": target_owner,
+            "source_module_key": source_module,
+            "target_module_key": target_module,
+        }
+    return {
+        "module_key": target_module,
+        "source_owner_key": source_owner,
+        "target_owner_key": target_owner,
+    }
 
 
 def _evidence_summaries(
