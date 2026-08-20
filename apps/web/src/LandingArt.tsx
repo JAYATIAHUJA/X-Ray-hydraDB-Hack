@@ -20,11 +20,11 @@ export function PixelText({ text, className, dot = 5, gap = 3, color = "#1C1E21"
     const off = document.createElement("canvas");
     const octx = off.getContext("2d")!;
     const fontPx = 120;
-    octx.font = `700 ${fontPx}px Inter, system-ui, sans-serif`;
+    octx.font = `700 ${fontPx}px "Inter Variable", Inter, system-ui, sans-serif`;
     const w = Math.ceil(octx.measureText(text).width) + 20;
     const h = fontPx + 24;
     off.width = w; off.height = h;
-    octx.font = `700 ${fontPx}px Inter, system-ui, sans-serif`;
+    octx.font = `700 ${fontPx}px "Inter Variable", Inter, system-ui, sans-serif`;
     octx.textBaseline = "middle";
     octx.fillStyle = "#000";
     octx.fillText(text, 10, h / 2 + 4);
@@ -69,7 +69,6 @@ export function PixelText({ text, className, dot = 5, gap = 3, color = "#1C1E21"
   }, [text, dot, gap, color]);
   return <canvas className={className} ref={ref} aria-hidden="true" />;
 }
-
 /* ─────────────────────────────────────────────────────────────
    HexPattern — geometric hex lattice with a few accent-filled
    cells (Coding-Bio style). Pure SVG.
@@ -440,3 +439,4 @@ export function SourceTile({ kind }: { kind: "slack" | "mail" | "jira" | "git" |
   };
   return <span className={`tile tile-${kind}`}>{glyph[kind]}</span>;
 }
+

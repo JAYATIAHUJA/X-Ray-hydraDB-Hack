@@ -4,6 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getCurrentSnapshot, getHealth } from "./api";
 import heroNight from "./assets/xray-hero-night.png";
+import { XRayLogo } from "./Brand";
 import { Graph3D } from "./Graph3D";
 import type { Graph3DEdge, Graph3DNode } from "./Graph3D";
 import { ParticleGraph, SourceTile } from "./LandingArt";
@@ -40,12 +41,20 @@ export function Landing() {
   const root = useRef<HTMLElement | null>(null);
   const demoWindow = useRef<HTMLElement | null>(null);
   const grainRef = useRef<HTMLDivElement | null>(null);
+  const [navCompact, setNavCompact] = useState(false);
   const [selected, setSelected] = useState<string | undefined>("p0");
   const [demoStep, setDemoStep] = useState(0);
   const [demoPlaying, setDemoPlaying] = useState(true);
   const [demoVisible, setDemoVisible] = useState(false);
   const demo = useMemo(demoGraph, []);
   const activeDemo = demoSteps[demoStep]!;
+
+  useEffect(() => {
+    const updateNav = () => setNavCompact(globalThis.scrollY > 72);
+    updateNav();
+    globalThis.addEventListener("scroll", updateNav, { passive: true });
+    return () => globalThis.removeEventListener("scroll", updateNav);
+  }, []);
 
   useEffect(() => {
     const el = grainRef.current;
@@ -117,6 +126,32 @@ export function Landing() {
       gsap.to(".dark-art", { yPercent: -14, ease: "none",
         scrollTrigger: { trigger: ".dark", start: "top bottom", end: "bottom top", scrub: true } });
 
+      ScrollTrigger.create({
+        trigger: ".engine-visual",
+        start: "top 88%",
+        end: "bottom 12%",
+        toggleClass: { targets: ".engine-visual", className: "is-active" }
+      });
+
+      const lensCards = gsap.utils.toArray<HTMLElement>(".lens");
+      if (lensCards.length >= 3) {
+        gsap.set(".lenses-head", { opacity: 1, y: 0 });
+        gsap.set(lensCards, { transformOrigin: "50% 88%", willChange: "transform, opacity" });
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: ".lenses",
+            start: "top top",
+            end: "+=900",
+            scrub: 0.85,
+            pin: true,
+            anticipatePin: 1
+          }
+        })
+          .fromTo(lensCards[0]!, { xPercent: 101, y: 42, rotate: -8, scale: 0.92, opacity: 0.72, zIndex: 1 }, { xPercent: 0, y: 0, rotate: 0, scale: 1, opacity: 1, zIndex: 1, ease: "none" }, 0)
+          .fromTo(lensCards[1]!, { xPercent: 0, y: 0, rotate: 0, scale: 1, opacity: 1, zIndex: 3 }, { xPercent: 0, y: 0, rotate: 0, scale: 1, opacity: 1, zIndex: 2, ease: "none" }, 0)
+          .fromTo(lensCards[2]!, { xPercent: -101, y: 50, rotate: 8, scale: 0.92, opacity: 0.78, zIndex: 2 }, { xPercent: 0, y: 0, rotate: 0, scale: 1, opacity: 1, zIndex: 3, ease: "none" }, 0);
+      }
+
     }, root);
 
     const magnets = Array.from(document.querySelectorAll<HTMLElement>(".magnet"));
@@ -136,10 +171,14 @@ export function Landing() {
       const rect = hero.getBoundingClientRect();
       const nx = (e.clientX - rect.left) / rect.width - 0.5;
       const ny = (e.clientY - rect.top) / rect.height - 0.5;
+      hero.style.setProperty("--mx", `${((nx + 0.5) * 100).toFixed(2)}%`);
+      hero.style.setProperty("--my", `${((ny + 0.5) * 100).toFixed(2)}%`);
       photoX(nx * 34);
       photoY(ny * 22);
     };
     const leaveHero = () => {
+      hero?.style.setProperty("--mx", "50%");
+      hero?.style.setProperty("--my", "50%");
       photoX?.(0);
       photoY?.(0);
     };
@@ -182,16 +221,16 @@ export function Landing() {
     <main className="lp" ref={root}>
       <div className="grain" ref={grainRef} />
 
-      <header className="lp-nav">
-        <a className="lp-brand" href="/"><i />X-Ray</a>
+      <header className={`lp-nav${navCompact ? " is-compact" : ""}`}>
+        <a className="lp-brand" href="/"><XRayLogo />X-Ray</a>
         <nav>
+          <a href="#proof">Proof</a>
           <a href="#lenses">Lenses</a>
           <a href="#engine">Engine</a>
-          <a href="#data">Data</a>
-          <a href="#faq">FAQ</a>
+          <a href="#data">Sources</a>
         </nav>
         <div className="lp-nav-r">
-          <a className="btn-pill sm magnet" href="/app">Open X-Ray</a>
+          <a className="github-link magnet" href="https://github.com/JAYATIAHUJA/X-Ray-hydraDB-Hack" rel="noreferrer" target="_blank">GitHub</a>
         </div>
       </header>
 
@@ -200,7 +239,7 @@ export function Landing() {
         <div className="hero-scan" aria-hidden="true">
           <span>01 10 11 00 01 10 11 00 10 01 00 11 10 01 10 00 11 01</span>
           <span>EDGE NODE PATH TRACE SOURCE COMMIT MESSAGE OWNER</span>
-          <span>SCAN TRACE NODE PATH SOURCE COMMIT OWNER EVIDENCE EXPORT</span>
+          <span>Missing evidence</span>
         </div>
         <div className="hero-inner">
           <h1 className="h-hero">
@@ -209,11 +248,11 @@ export function Landing() {
           <div className="hero-copy">
             <p className="h-kicker">Your org chart is <em>fiction.</em> See who <span>actually</span> holds it together.</p>
             <p className="h-sub">
-              Two graphs from your own exports: the human one and the work one, with the exact places they disagree.
+              Import Slack, mail, Jira, Confluence, GitHub, and git exports. X-Ray turns them into a risk inbox for hidden key people, silent dependencies, and missing evidence.
             </p>
             <div className="h-cta">
               <a className="btn-pill magnet" href="/app">Open X-Ray</a>
-              <a className="btn-text-light" href="#lenses">See how it works <span className="arrow">-&gt;</span></a>
+              <a className="btn-text-light" href="#lenses">See how it works <span className="arrow" aria-hidden="true">→</span></a>
             </div>
           </div>
         </div>
@@ -224,7 +263,7 @@ export function Landing() {
           <div className="window-bar"><span /><span /><span /><em>x-ray · demo-org · Actual</em><b>live</b></div>
           <div className="window-body real-app-preview">
             <aside className="product-sidebar preview-sidebar">
-              <a className="product-brand" href="/app"><i aria-hidden="true">X</i><span>X-Ray</span></a>
+              <a className="product-brand" href="/app"><XRayLogo /><span>X-Ray</span></a>
               <nav aria-label="Preview navigation">
                 {["Overview", "Risks", "Ask X-Ray", "Identity review", "Explore graph", "Imports", "Actions", "Settings"].map((label) => (
                   <button aria-current={label === "Risks" ? "page" : undefined} key={label} type="button"><span>{label}</span></button>
@@ -279,17 +318,10 @@ export function Landing() {
                   </div>
                   <div className="detail-tabs"><button aria-selected="true" type="button">Evidence</button><button type="button">Impact</button><button type="button">Query</button></div>
                   <div className="preview-graph-strip">
-                    <Graph3D nodes={demo.nodes} edges={demo.edges} onSelect={selectGraphNode} selectedKey={selected} spin />
+                    <Graph3D nodes={demo.nodes} edges={demo.edges} initialZoom={2.35} onSelect={selectGraphNode} selectedKey={selected} spin />
                   </div>
                   <div className="detail-body">
                     <section><h3>Why this matters</h3><p>{activeDemo.body}</p></section>
-                    <section className="evidence-section">
-                      <h3>Opened evidence</h3>
-                      <ul className="evidence-list">
-                        <li><div><strong>{activeDemo.sideLabel}</strong><span>{activeDemo.sideDetail}</span><code>source://demo/{activeDemo.key}</code></div></li>
-                        <li><div><strong>12 source records</strong><span>messages, commits, and ownership links</span><code>snapshot://demo-org/current</code></div></li>
-                      </ul>
-                    </section>
                   </div>
                 </aside>
               </div>
@@ -310,19 +342,22 @@ export function Landing() {
         </ul>
       </div>
 
-      <section className="proof">
+      <section className="proof" id="proof">
         <div className="proof-card rv">
-          <span className="eyebrow">Single-point risk</span>
-          <strong className="dot"><span data-count="516">0</span></strong>
-          <p>collaboration paths depend on one person staying available</p>
+          <span className="eyebrow">Open-corpus validation</span>
+          <strong className="dot"><span data-count="5126">0</span></strong>
+          <h3>People in one evidence graph</h3>
+          <p>Validated on all 30 Salesforce HERB products while keeping unresolved identities out of the score.</p>
         </div>
         <div className="proof-card rv">
-          <span className="eyebrow">Hidden coordination gap</span>
+          <span className="eyebrow">Apache Kafka corpus</span>
           <strong className="dot"><span data-count="49">0</span></strong>
-          <p>code dependencies connect teams whose owners never communicate</p>
+          <h3>Source-backed faultlines</h3>
+          <p>Found across 292 people, with missing in-window records kept separate from export-boundary cases.</p>
         </div>
         <div className="proof-card rv proof-cta">
-          <p>Runs entirely on your machine, against your own exports. <em>Nothing leaves.</em></p>
+          <span className="eyebrow">What you get</span>
+          <p>A prioritized risk inbox. Each finding opens the exact people, artifacts, paths, and source records behind the claim. <em>Runs in the self-hosted deployment you control.</em></p>
           <a className="btn-dark magnet" href="/app">Load your exports</a>
         </div>
       </section>
@@ -330,73 +365,142 @@ export function Landing() {
       <section className="dark" id="lenses">
         <ParticleGraph className="dark-art" ink="#F4F2ED" />
         <div className="dark-copy">
-          <span className="eyebrow light rv">Three lenses</span>
-          <h2 className="rv">See what the org chart <em>leaves out.</em></h2>
-          <p className="rv">X-Ray compares how work is supposed to flow with how it actually moves. It shows the people carrying hidden load, the teams that depend on each other without talking, and the missing handoffs that create risk.</p>
-          <span>SCAN TRACE NODE PATH SOURCE COMMIT OWNER EVIDENCE EXPORT</span>
+          <span className="eyebrow light rv">What X-Ray checks</span>
+          <h2 className="rv">Find coordination risk before it becomes delivery risk.</h2>
+          <p className="rv">X-Ray turns Slack, email, Jira, Confluence, GitHub, and git exports into an evidence graph. It highlights hidden key people, teams that depend on each other without talking, and missing records in important decision chains.</p>
+          <span>Source-backed findings from your own work exports</span>
         </div>
       </section>
 
       <section className="lenses">
-        <article className="lens rv">
-          <svg className="conn" viewBox="0 0 400 220" preserveAspectRatio="none"><path d="M6 6 V 150 Q 6 190 46 190 H 394" /></svg>
-          <span>SCAN TRACE NODE PATH SOURCE COMMIT OWNER EVIDENCE EXPORT</span>
-          <h3>Who <em>quietly</em> holds it together?</h3>
-          <p>Rank people by how many bounded shortest paths route through them, then compare with their title. The person at #1 is rarely the one on top of the chart.</p>
-          <div className="lens-fig fig-ghost"><i /><i /><i /><i /><i /><i /><i /><b /></div>
+        <header className="lenses-head">
+          <span className="eyebrow">Evidence lenses</span>
+          <h2>Three checks your normal dashboards miss.</h2>
+          <p>Each lens produces a source-backed finding, not a vague score. Open a risk and X-Ray shows the people, artifacts, and records behind it.</p>
+        </header>
+        <article className="lens">
+          <span>Key-person dependency</span>
+          <h3>Find the people carrying invisible load.</h3>
+          <p>X-Ray compares observed collaboration paths with formal roles, then flags people whose absence would break too many handoffs.</p>
+          <div className="lens-fig finding-person" aria-label="Priya has 22 observed collaboration paths but only 4 assigned handoffs">
+            <div className="finding-top"><span>Collaboration load</span><b>High risk</b></div>
+            <div className="person-summary">
+              <i aria-hidden="true">P</i>
+              <div><strong>Priya N.</strong><small>Platform engineering</small></div>
+              <em>+22</em>
+            </div>
+            <div className="signal-row"><span>Observed paths</span><i><b /></i><strong>22</strong></div>
+            <div className="signal-row assigned"><span>Assigned handoffs</span><i><b /></i><strong>4</strong></div>
+            <p className="finding-note"><i />18 handoffs exist outside the org chart</p>
+          </div>
         </article>
-        <article className="lens rv">
-          <svg className="conn" viewBox="0 0 400 220" preserveAspectRatio="none"><path d="M6 6 V 150 Q 6 190 46 190 H 394" /></svg>
-          <span>SCAN TRACE NODE PATH SOURCE COMMIT OWNER EVIDENCE EXPORT</span>
-          <h3>Where does code depend but <em>people don&apos;t talk?</em></h3>
-          <p>Modules that co-change constantly whose owners have no communication path within four hops. Each ships with the shortest introduction that would fix it.</p>
-          <div className="lens-fig fig-fault"><i /><s /><i /></div>
+        <article className="lens">
+          <span>Uncoordinated dependency</span>
+          <h3>Catch teams that share code but not context.</h3>
+          <p>When modules depend on each other but owners have no short communication path, X-Ray shows the affected areas and source evidence.</p>
+          <div className="lens-fig finding-dependency" aria-label="Billing API depends on Ledger Core but their owners have no communication path">
+            <div className="finding-top"><span>Dependency check</span><b>Needs attention</b></div>
+            <div className="module-pair">
+              <div><small>Service</small><strong>Billing API</strong><span>Maya</span></div>
+              <i aria-hidden="true"><span>code edge</span><b /></i>
+              <div><small>Service</small><strong>Ledger Core</strong><span>Owen</span></div>
+            </div>
+            <div className="path-result"><span>Owner communication</span><strong><i />No path found</strong></div>
+          </div>
         </article>
-        <article className="lens rv">
-          <svg className="conn" viewBox="0 0 400 220" preserveAspectRatio="none"><path d="M6 6 V 150 Q 6 190 46 190 H 394" /></svg>
-          <span>SCAN TRACE NODE PATH SOURCE COMMIT OWNER EVIDENCE EXPORT</span>
-          <h3>Where is a record the chain <em>requires</em> — but isn&apos;t there?</h3>
-          <p>A reply whose parent is missing. X-Ray marks a Phantom node and traces the chain through it. Absence isn&apos;t proof of deletion; it&apos;s a precise question.</p>
-          <div className="lens-fig fig-gap"><i /><i /><u /><i /><i /></div>
+        <article className="lens">
+          <span>Missing evidence</span>
+          <h3>Spot gaps in the decision trail.</h3>
+          <p>If a workflow requires a message, ticket, approval, or parent record that is not in the export, X-Ray marks the gap clearly instead of guessing.</p>
+          <div className="lens-fig finding-evidence" aria-label="The decision trail is missing an approval record between the issue and deployment">
+            <div className="finding-top"><span>Evidence trace</span><b>Incomplete</b></div>
+            <div className="trace-line">
+              <div className="is-found"><i>1</i><strong>Issue</strong><small>Jira</small></div>
+              <span />
+              <div className="is-found"><i>2</i><strong>Decision</strong><small>Slack</small></div>
+              <span className="is-gap" />
+              <div className="is-missing"><i>?</i><strong>Approval</strong><small>Missing</small></div>
+              <span className="is-gap" />
+              <div className="is-found"><i>4</i><strong>Deploy</strong><small>GitHub</small></div>
+            </div>
+            <p className="finding-note"><i />Required approval record was not found</p>
+          </div>
         </article>
       </section>
 
       <section className="engine" id="engine">
         <div className="engine-l">
           <span className="eyebrow rv">Why a graph engine</span>
-          <h2 className="rv">The signal is an edge that exists in one graph <em>and not the other.</em></h2>
-          <p className="rv">A vector index has one embedding space and no notion of &ldquo;present here, absent there.&rdquo; X-Ray asks HydraDB for bounded pairwise traversal in one server-side call, and compares client-side.</p>
+          <h2 className="rv">Graph risk starts with a <em>mismatch</em> between work and communication.</h2>
+          <p className="rv">A vector index cannot tell whether a typed edge exists in one graph and is absent in another. X-Ray sends HydraDB one bounded multi-source traversal and returns the paths, weights, and costs behind the finding.</p>
           <div className="engine-stat rv">
-            <div><strong data-count="42486">0</strong><span>per-pair queries</span></div>
-            <i>→</i>
-            <div><strong>1</strong><span>round trip</span></div>
+            <div><strong data-count="42486">0</strong><span>naive pair checks for 292 people</span></div>
+            <div><strong>1</strong><span>bounded multi-source query</span></div>
           </div>
         </div>
-        <pre className="q-code rv"><code>{`CALL algo.MSpaths({
-  sourceLabel: 'Person', sourceValues: $people,
-  targetLabel: 'Person', targetValues: $people,
-  relTypes: ['COMMUNICATES'], relDirection: 'BOTH',
-  maxLen: 4, pairwise: true
-}) YIELD path
-RETURN collect(path)`}</code></pre>
+        <div className="engine-visual rv">
+          <div className="hydra-run">
+            <header className="hydra-run-top">
+              <div><i />HydraDB live</div>
+              <code>algo.MSpaths</code>
+              <span>1 round trip</span>
+            </header>
+            <div className="hydra-run-body">
+              <section className="run-input">
+                <span>Person set</span>
+                <strong>292 people</strong>
+                <small>COMMUNICATES · max 4 hops</small>
+                <div className="run-people" aria-hidden="true"><i>P</i><i>K</i><i>J</i><i>M</i><b>+288</b></div>
+              </section>
+              <div className="run-core" aria-hidden="true"><i>H</i><span /></div>
+              <section className="run-output">
+                <span>Bounded paths</span>
+                <strong>Evidence returned</strong>
+                <small>path · weight · cost</small>
+                <ul>
+                  <li><i /><span>Priya → Jonas</span><b>3 hops</b></li>
+                  <li><i /><span>Kofi → Marcus</span><b>2 hops</b></li>
+                  <li><i /><span>Aditi → Lena</span><b>4 hops</b></li>
+                </ul>
+              </section>
+            </div>
+            <footer className="hydra-run-foot"><span>Typed relationships</span><span>Bounded traversal</span><span>Query proof attached</span></footer>
+          </div>
+        </div>
+      </section>
+
+      <section className="hydra-tribute" id="hydradb">
+        <div className="hydra-tribute-inner">
+          <div className="hydra-tribute-copy">
+            <span className="eyebrow rv">Built on HydraDB</span>
+            <h2 className="rv">The graph engine behind X-Ray’s live path queries.</h2>
+            <p className="rv">HydraDB gives X-Ray graph-native traversal over typed relationships. That is what lets a finding carry its exact route, execution bounds, engine timing, and source evidence instead of a similarity score.</p>
+          </div>
+          <dl className="hydra-capabilities rv">
+            <div><dt>algo.MSpaths</dt><dd>Multi-source ownership and communication paths</dd></div>
+            <div><dt>algo.SPpaths</dt><dd>Shortest evidence chains and missing-link context</dd></div>
+            <div><dt>Fail-closed proof</dt><dd>X-Ray only says “HydraDB live” when the query actually ran</dd></div>
+          </dl>
+        </div>
+        <strong className="hydra-wordmark" aria-hidden="true">HydraDB</strong>
       </section>
 
       <section className="datasets" id="data">
         <div className="ds-head rv">
-          <h2>Runs on <em>your</em> exports.<br />Ships with four corpora.</h2>
+          <h2>Runs on your work exports.<br />Includes safe demo corpora.</h2>
           <p>Every adapter is deterministic — explicit IDs only, no NLP guessing. What you load is what you get.</p>
         </div>
         <div className="ds-grid">
           <div className="ds rv"><span>demo</span><strong>xray-demo</strong><p>10-person synthetic org, planted findings, no external service.</p></div>
-          <span>SCAN TRACE NODE PATH SOURCE COMMIT OWNER EVIDENCE EXPORT</span>
-          <span>SCAN TRACE NODE PATH SOURCE COMMIT OWNER EVIDENCE EXPORT</span>
-          <span>SCAN TRACE NODE PATH SOURCE COMMIT OWNER EVIDENCE EXPORT</span>
+          <div className="ds rv"><span>synthetic</span><strong>xray-synth-500</strong><p>Larger generated org for stress-testing graph traversal and ranking.</p></div>
+          <div className="ds rv"><span>benchmark</span><strong>Kafka export</strong><p>Open-source collaboration data used to validate parser and evidence behavior.</p></div>
+          <div className="ds rv"><span>custom</span><strong>Your exports</strong><p>Slack, email, Jira, Confluence, GitHub, and git loaded into one evidence graph.</p></div>
         </div>
         <div className="ds-live rv">
-          <span>SCAN TRACE NODE PATH SOURCE COMMIT OWNER EVIDENCE EXPORT</span>
-          <span>SCAN TRACE NODE PATH SOURCE COMMIT OWNER EVIDENCE EXPORT</span>
-          <span>SCAN TRACE NODE PATH SOURCE COMMIT OWNER EVIDENCE EXPORT</span>
-          <span>SCAN TRACE NODE PATH SOURCE COMMIT OWNER EVIDENCE EXPORT</span>
+          <div><strong>{data?.node_count ?? "500+"}</strong><span>people, artifacts, and records</span></div>
+          <div><strong>{data?.edge_count ?? "2k+"}</strong><span>observed relationships</span></div>
+          <div><strong>{data?.evidence_count ?? "12k+"}</strong><span>source-backed evidence records</span></div>
+          <div><strong>{health.data?.hydra.status === "live" ? "Live" : "Local"}</strong><span>graph engine status</span></div>
         </div>
       </section>
 
@@ -414,29 +518,28 @@ RETURN collect(path)`}</code></pre>
         </div>
       </section>
 
-      <section className="lp-cta">
-        <div className="orb orb-cta-1" />
-        <div className="orb orb-cta-2" />
-        <h2 className="rv">See who actually holds<br /><em>your</em> org together.</h2>
-        <div className="rv cta-row">
-          <a className="btn-pill magnet" href="/app">Open X-Ray</a>
-          <span>SCAN TRACE NODE PATH SOURCE COMMIT OWNER EVIDENCE EXPORT</span>
-        </div>
-      </section>
-
       <footer className="lp-foot">
-        <div className="foot-grid">
+        <p className="foot-script">Run it locally.</p>
+        <div className="foot-card">
           <div className="foot-brand">
-            <a className="lp-brand" href="/"><i />X-Ray</a>
-            <p>Coordination-risk intelligence for engineering organizations. Self-hosted on HydraDB.</p>
+            <a className="lp-brand" href="/"><XRayLogo />X-Ray</a>
+            <h2>Source-backed coordination findings inside the deployment you control.</h2>
+            <a className="foot-input" href="/app">
+              <span>Open X-Ray</span>
+              <i aria-hidden="true">→</i>
+            </a>
+            <p>Load Slack, mail, Jira, Confluence, GitHub, and git exports. X-Ray compares the work graph with the human graph in your self-hosted runtime.</p>
+            <div className="foot-legal">
+              <span>© 2026 X-Ray</span>
+              <a href="#faq">FAQ</a>
+              <a href="#engine">Evidence model</a>
+            </div>
           </div>
-          <div><h4>Product</h4><a href="#lenses">Ghost</a><a href="#lenses">Faultlines</a><a href="#lenses">Gaps</a><a href="/app">Open X-Ray</a></div>
-          <div><h4>Engine</h4><a href="#engine">Why HydraDB</a><a href="#engine">algo.MSpaths</a><a href="#data">Corpora</a><a href="#faq">FAQ</a></div>
-          <div><h4>Sources</h4><a href="/app">Slack</a><a href="/app">Email · mbox</a><a href="/app">JIRA · Confluence</a><a href="/app">GitHub · git</a></div>
-        </div>
-        <div className="foot-bottom">
-          <span>SCAN TRACE NODE PATH SOURCE COMMIT OWNER EVIDENCE EXPORT</span>
-          <span>SCAN TRACE NODE PATH SOURCE COMMIT OWNER EVIDENCE EXPORT</span>
+          <nav className="foot-links" aria-label="Footer">
+            <div><h4>Explore</h4><a href="#proof">Proof</a><a href="#lenses">Lenses</a><a href="#engine">Engine</a><a href="#hydradb">HydraDB</a></div>
+            <div><h4>Use</h4><a href="#data">Sources</a><a href="#faq">FAQ</a><a href="/app">Open X-Ray</a></div>
+          </nav>
+          <strong className="foot-wordmark">X-Ray</strong>
         </div>
       </footer>
     </main>

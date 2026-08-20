@@ -51,7 +51,6 @@ function shortLabel(label: string) {
   const base = label.includes("@") ? label.slice(0, label.indexOf("@")) : label;
   return base.length > 22 ? `${base.slice(0, 20)}…` : base;
 }
-
 function withAlpha(hex: string, alpha: number) {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
@@ -72,18 +71,20 @@ export function Graph3D({
   edges,
   selectedKey,
   onSelect,
-  spin = true
+  spin = true,
+  initialZoom = 1
 }: {
   nodes: Graph3DNode[];
   edges: Graph3DEdge[];
   selectedKey?: string;
   onSelect: (key: string) => void;
   spin?: boolean;
+  initialZoom?: number;
 }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const bodiesRef = useRef<Body[]>([]);
   const linksRef = useRef<Array<{ a: Body; b: Body; kind: Graph3DEdge["kind"] }>>([]);
-  const camRef = useRef({ rotX: -0.22, rotY: 0.4, zoom: 1, autoSpin: spin });
+  const camRef = useRef({ rotX: -0.22, rotY: 0.4, zoom: initialZoom, autoSpin: spin });
   const dragRef = useRef<{ active: boolean; x: number; y: number; moved: boolean }>({
     active: false,
     x: 0,
@@ -364,7 +365,7 @@ export function Graph3D({
           return qq - pp || p.depth - q.depth;
         });
       const placed: Array<{ x: number; y: number; w: number; h: number }> = [];
-      context!.font = "600 11px Inter, system-ui, sans-serif";
+      context!.font = '600 11px "Inter Variable", Inter, system-ui, sans-serif';
       context!.textAlign = "center";
       context!.textBaseline = "top";
       for (const body of labelled) {
@@ -477,3 +478,4 @@ export function Graph3D({
     </div>
   );
 }
+

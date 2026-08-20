@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { HealthResponse, SnapshotResponse } from "../api";
+import { XRayLogo } from "../Brand";
 import type { ProductView } from "./types";
 import { Icon, type IconName } from "./Icons";
 
@@ -34,7 +35,7 @@ export function ProductShell({
     <div className="product-shell">
       <aside className="product-sidebar">
         <a className="product-brand" href="/">
-          <i aria-hidden="true">X</i>
+          <XRayLogo />
           <span>X-Ray</span>
         </a>
         <nav aria-label="Product navigation">
