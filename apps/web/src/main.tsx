@@ -26,7 +26,7 @@ const queryClient = new QueryClient({
 createRoot(root).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-    {window.location.pathname === "/app" ? <App /> : <Landing />}
+      {window.location.pathname === "/app" ? <App /> : <Landing />}
     </QueryClientProvider>
   </StrictMode>
 );
