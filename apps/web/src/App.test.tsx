@@ -37,7 +37,10 @@ function renderApp(path = "/app?view=overview") {
 
 test("the product opens on overview with truthful runtime status", async () => {
   renderApp();
-  expect((await screen.findAllByText("xray-demo-v1")).length).toBeGreaterThanOrEqual(2);
+  expect((await screen.findAllByText("xray-demo-v1")).length).toBeGreaterThanOrEqual(1);
+  expect(await screen.findByRole("combobox", { name: /switch workspace/i })).toHaveValue(
+    "xray-demo-v1"
+  );
   expect(screen.getAllByText(/Snapshot analytics/).length).toBeGreaterThan(0);
   expect(screen.getByRole("heading", { name: "Overview" })).toBeInTheDocument();
   expect(screen.getByText("Runtime")).toBeInTheDocument();

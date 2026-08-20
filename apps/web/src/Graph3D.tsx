@@ -58,7 +58,7 @@ function withAlpha(hex: string, alpha: number) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-const MAX_NODES = 220;
+const MAX_NODES = 520;
 export const GRAPH_MAX_NODES = MAX_NODES;
 const FOCAL = 900;
 

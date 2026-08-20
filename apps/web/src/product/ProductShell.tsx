@@ -1,4 +1,6 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
+import { activateSnapshot, getAvailableSnapshots } from "../api";
 import type { HealthResponse, SnapshotResponse } from "../api";
 import { XRayLogo } from "../Brand";
 import type { ProductView } from "./types";
@@ -44,6 +46,16 @@ export function ProductShell({
           ? "Connecting…"
           : "Offline";
   const dataset = snapshot?.dataset_id ?? "Loading…";
+  const queryClient = useQueryClient();
+  const available = useQuery({
+    queryKey: ["available-snapshots"],
+    queryFn: getAvailableSnapshots
+  });
+  const switching = useMutation({
+    mutationFn: activateSnapshot,
+    onSuccess: () => queryClient.invalidateQueries()
+  });
+  const activeName = available.data?.find((item) => item.active)?.name ?? "";
 
   return (
     <div className="product-shell">
@@ -74,7 +86,23 @@ export function ProductShell({
         <header className="product-topbar">
           <div className="workspace-switcher">
             <span>Workspace</span>
-            <strong>{dataset}</strong>
+            {available.data?.length ? (
+              <select
+                aria-label="Switch workspace dataset"
+                disabled={switching.isPending}
+                onChange={(event) => switching.mutate(event.target.value)}
+                value={activeName}
+              >
+                {available.data.map((item) => (
+                  <option key={`${item.kind}:${item.name}`} value={item.name}>
+                    {item.dataset_id}
+                    {item.kind === "snapshot" ? " · snapshot" : ""}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <strong>{dataset}</strong>
+            )}
           </div>
           <p className="runtime-quiet" role="status">
             <i

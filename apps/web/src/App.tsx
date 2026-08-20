@@ -117,12 +117,20 @@ export function App() {
             totalAvailable={risks.length}
           />
           {detailOpen && activeRisk ? (
-            <RiskDetail
-              action={actions[activeRisk.id] ?? EMPTY_ACTION}
-              onAction={(patch) => updateAction(activeRisk.id, patch)}
-              onClose={() => setDetailOpen(false)}
-              risk={activeRisk}
-            />
+            <>
+              <button
+                aria-label="Close risk details"
+                className="detail-backdrop"
+                onClick={() => setDetailOpen(false)}
+                type="button"
+              />
+              <RiskDetail
+                action={actions[activeRisk.id] ?? EMPTY_ACTION}
+                onAction={(patch) => updateAction(activeRisk.id, patch)}
+                onClose={() => setDetailOpen(false)}
+                risk={activeRisk}
+              />
+            </>
           ) : null}
         </div>
       ) : view === "ask" ? (

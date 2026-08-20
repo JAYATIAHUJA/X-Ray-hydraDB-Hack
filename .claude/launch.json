@@ -16,7 +16,8 @@
       "port": 8000,
       "env": {
         "PYTHONPATH": "apps/api/src;packages/xray_analytics/src;packages/xray_core/src;packages/xray_hydra/src;packages/xray_ingest/src;packages/xray_runtime/src",
-        "XRAY_SNAPSHOT_DIR": "data/snapshots/kafka-2025q2"
+        "XRAY_FIXTURE_VARIANT": "kubernetes",
+        "XRAY_WRITE_TOKEN": "local-dev-demo"
       }
     },
     {
@@ -28,7 +29,8 @@
       ],
       "port": 5173,
       "env": {
-        "VITE_XRAY_API_BASE_URL": "http://127.0.0.1:8000"
+        "VITE_XRAY_API_BASE_URL": "http://127.0.0.1:8000",
+        "VITE_XRAY_WRITE_TOKEN": "local-dev-demo"
       }
     }
   ]

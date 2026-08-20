@@ -248,7 +248,7 @@ export function Landing() {
           <div className="hero-copy">
             <p className="h-kicker">Your org chart is <em>fiction.</em> See who <span>actually</span> holds it together.</p>
             <p className="h-sub">
-              Import Slack, mail, Jira, Confluence, GitHub, and git exports. X-Ray turns them into a risk inbox for hidden key people, silent dependencies, and missing evidence.
+              X-Ray maps the real coordination graph from your exports. Open the preloaded Kubernetes and Apache Kafka demos to see source-backed risks, dependency chains, and missing evidence — then run it on your own data.
             </p>
             <div className="h-cta">
               <a className="btn-pill magnet" href="/app">Open X-Ray</a>
@@ -265,7 +265,7 @@ export function Landing() {
             <aside className="product-sidebar preview-sidebar">
               <a className="product-brand" href="/app"><XRayLogo /><span>X-Ray</span></a>
               <nav aria-label="Preview navigation">
-                {["Overview", "Risks", "Ask X-Ray", "Identity review", "Explore graph", "Imports", "Actions", "Settings"].map((label) => (
+                {["Overview", "Risks", "Ask X-Ray", "Explore graph"].map((label) => (
                   <button aria-current={label === "Risks" ? "page" : undefined} key={label} type="button"><span>{label}</span></button>
                 ))}
               </nav>
@@ -358,7 +358,7 @@ export function Landing() {
         <div className="proof-card rv proof-cta">
           <span className="eyebrow">What you get</span>
           <p>A prioritized risk inbox. Each finding opens the exact people, artifacts, paths, and source records behind the claim. <em>Runs in the self-hosted deployment you control.</em></p>
-          <a className="btn-dark magnet" href="/app">Load your exports</a>
+          <a className="btn-dark magnet" href="/app">Open X-Ray</a>
         </div>
       </section>
 
@@ -494,7 +494,7 @@ export function Landing() {
           <div className="ds rv"><span>demo</span><strong>xray-demo</strong><p>10-person synthetic org, planted findings, no external service.</p></div>
           <div className="ds rv"><span>synthetic</span><strong>xray-synth-500</strong><p>Larger generated org for stress-testing graph traversal and ranking.</p></div>
           <div className="ds rv"><span>benchmark</span><strong>Kafka export</strong><p>Open-source collaboration data used to validate parser and evidence behavior.</p></div>
-          <div className="ds rv"><span>custom</span><strong>Your exports</strong><p>Slack, email, Jira, Confluence, GitHub, and git loaded into one evidence graph.</p></div>
+          <div className="ds rv"><span>preloaded · real</span><strong>kubernetes-demo</strong><p>Kubernetes contributor graph — real GitHub and git data, loaded and ready to explore.</p></div>
         </div>
         <div className="ds-live rv">
           <div><strong>{data?.node_count ?? "500+"}</strong><span>people, artifacts, and records</span></div>
@@ -528,7 +528,7 @@ export function Landing() {
               <span>Open X-Ray</span>
               <i aria-hidden="true">→</i>
             </a>
-            <p>Load Slack, mail, Jira, Confluence, GitHub, and git exports. X-Ray compares the work graph with the human graph in your self-hosted runtime.</p>
+            <p>Kubernetes and Apache Kafka demos are preloaded. Run it on your own Slack, mail, Jira, Confluence, GitHub, and git exports in a self-hosted deployment.</p>
             <div className="foot-legal">
               <span>© 2026 X-Ray</span>
               <a href="#faq">FAQ</a>

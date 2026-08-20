@@ -144,6 +144,7 @@ export function ExploreWorkspace({
               <>
                 <Graph3D
                   edges={edges}
+                  initialZoom={1.45}
                   nodes={nodes}
                   onSelect={setSelectedKey}
                   selectedKey={selectedKey}
