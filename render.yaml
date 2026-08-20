@@ -1,19 +1,15 @@
-# X-Ray Evidence Platform — Render Blueprint (Docker)
+# X-Ray Evidence Platform — Render Blueprint (Docker, free tier)
 # Repo: https://github.com/JAYATIAHUJA/X-Ray-hydraDB-Hack (branch main)
 #
-# Deploy: Dashboard → New → Blueprint → connect this repo, or:
-#   render blueprints validate && (after `render login`) apply via Dashboard.
-#
-# Networking notes:
-# - API must be a paid plan (starter+) so web can reach it on the private network.
-# - Free web services can *send* private traffic but cannot *receive* it.
-# - API_UPSTREAM uses the Blueprint service name + PORT (Render private DNS).
+# Both services are free. Web reaches API over the public HTTPS URL
+# (free instances cannot receive private-network traffic).
+# After first deploy, confirm API_UPSTREAM matches the live API hostname.
 
 services:
   - type: web
     name: xray-api
     runtime: docker
-    plan: starter
+    plan: free
     region: singapore
     repo: https://github.com/JAYATIAHUJA/X-Ray-hydraDB-Hack
     branch: main
@@ -43,7 +39,6 @@ services:
     envVars:
       - key: PORT
         value: "10000"
-      # Private DNS: http://<api-service-name>:<api-PORT>
-      # Requires API on starter+ (free web cannot receive private inbound).
+      # Public URL — update if Render assigns a suffix (xray-api-xxxx.onrender.com)
       - key: API_UPSTREAM
-        value: http://xray-api:10000
+        value: https://xray-api-a0lg.onrender.com
