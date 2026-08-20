@@ -76,3 +76,14 @@ test("imports explain setup and respect the read-only hosted mode", async () => 
   expect(screen.getByLabelText("Workspace ID")).toBeDisabled();
   expect(screen.getByText("What improves each lens?")).toBeInTheDocument();
 });
+
+test("overview and settings explain the product and API runtime", async () => {
+  renderApp(); const user = userEvent.setup(); await screen.findAllByText("xray-demo-v1");
+  await user.click(screen.getByRole("button", { name: "Overview" }));
+  expect(screen.getByRole("heading", { name: "Workspace overview" })).toBeInTheDocument();
+  expect(screen.getByText("Runtime truth")).toBeInTheDocument();
+  await user.click(screen.getByRole("button", { name: "Open API & runtime guide" }));
+  expect(screen.getByRole("heading", { name: "API & runtime" })).toBeInTheDocument();
+  expect(screen.getByText("Useful endpoints")).toBeInTheDocument();
+  expect(screen.getByText(/source: "hydradb"/)).toBeInTheDocument();
+});
