@@ -25,7 +25,6 @@ import os
 import re
 import urllib.error
 import urllib.request
-from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
