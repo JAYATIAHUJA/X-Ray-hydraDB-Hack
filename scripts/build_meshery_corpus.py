@@ -131,7 +131,6 @@ MODULE_PREFIXES = {
 
 def main() -> int:
     args = _parse_args()
-    root = Path(__file__).resolve().parents[1]
     fixture_out = Path(args.fixture_out)
     snapshot_out = Path(args.snapshot_out)
     export_root = Path(args.export_root)
